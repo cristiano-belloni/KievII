@@ -16,6 +16,10 @@
     <canvas id="plugin" width="640" height="450"></canvas>
     <script type="text/javascript">
 
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+
+
         var mouseUp = true;
         var startedonknob = undefined;
         var knobtype = undefined;
