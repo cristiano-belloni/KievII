@@ -24,8 +24,11 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     this.gAnaMagn = [];
     this.gSynFreq = [];
     this.gSynMagn = [];
-    // WTF?
-    this.gFFTworksp = [[]];
+    // Only the signal, multiplied for the window. (TODO dsp.js has windowing funcs).
+    this.gFFTworksp = [];
+    // Real and imaginary parts of the resynthesized signal
+    this.real_ = [];
+    this.imag_ = [];
 
     for (k = 0; k < fftFrameSize; k++) {
         //Pre-generating Hann wavetable
@@ -57,8 +60,9 @@ Pitchshift.prototype.getready = function (pitchShift, numSampsToProcess, osamp, 
 
 			/* Do the windowing */
 			for (k = 0 ; k < this.fftFrameSize_ ; k++) {
-                            this.gFFTworksp[k][0] = this.gInFIFO[k] * this.hanWindow_[k];
-                            this.gFFTworksp[k][1] = 0.;
+                            //Need the signal for the FFT.
+                            this.gFFTworksp[k] = this.gInFIFO[k] * this.hanWindow_[k];
+                            //this.gFFTworksp[k][1] = 0.;
                         }
 
                         /*
@@ -68,13 +72,19 @@ Pitchshift.prototype.getready = function (pitchShift, numSampsToProcess, osamp, 
 			fftw_execute(p);
                         */
 
+                       //FFT(bufferSize, sampleRate): Fast Fourier Transform
+
+                       var fft = new FFT(this.fftFrameSize_, this.sampleRate_);
+                       fft.forward(this.gFFTworksp);
+                       //this.gFFTworksp = fft.spectrum;
+
+
                        /* this is the analysis step */
                        for (k = 0; k <= fftFrameSize2; k++) {
 
-				/* compute magnitude and phase */
-				var magn = 2. * Math.sqrt (this.gFFTworksp[k][0] * this.gFFTworksp[k][0] + this.gFFTworksp[k][1] * this.gFFTworksp[k][1]);
-                                // Use the math one
-				var phase = Math.atan2 (this.gFFTworksp[k][1], this.gFFTworksp[k][0]);
+                                //Mmmmh. Taking some "private" member out of fft here.
+                                var magn = 2 * Math.sqrt (fft.real[k] * fft.real[k] + fft.imag[k] * fft.imag[k]);
+                                var phase = Math.atan2 (fft.imag[k], fft.real[k]);
 
 				/* compute phase difference */
 				var tmp = phase - this.gLastPhase[k];
@@ -143,27 +153,26 @@ Pitchshift.prototype.getready = function (pitchShift, numSampsToProcess, osamp, 
 				this.gSumPhase[k] += tmp;
 				phase = this.gSumPhase[k];
 
-				/* get real and imag part and re-interleave */
-				this.gFFTworksp[k][0] = magn*cos(phase);
-				this.gFFTworksp[k][1] = magn*sin(phase);
+				// Get real and imag part
+				this.real_[k] = magn*cos(phase);
+				this.imag_[k] = magn*sin(phase);
 			}
 
-                        /* zero negative frequencies */
+                        // zero negative frequencies
 			for (k = ((fftFrameSize2)+1); (k < this.fftFrameSize_); k++) {
 
-                            this.gFFTworksp[k][0] = 0;
-			    this.gFFTworksp[k][1] = 0;
+                            this.real_[k] = 0;
+			    this.imag_[k] = 0;
 
                         }
 
-			/* Do the Inverse transform
-			fftw_execute(q);
-                        */
+			// Do the Inverse transform
+                       var signal = fft.inverse(this.real_, this.imag_);
 
-			/* do windowing and add to output accumulator */
+			// Do windowing and add to output accumulator
 			for(k=0; k < this.fftFrameSize_; k++) {
 
-				this.gOutputAccum[k] += 2. * this.han_window_[k] *(this.gFFTworksp[k][0]) / (fftFrameSize2 * osamp);
+				this.gOutputAccum[k] += this.han_window_[k] * signal[k];
 
 			}
 
