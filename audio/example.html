@@ -1,3 +1,6 @@
+<!--
+Simple example of reading / writing audio with Mozilla Audio Data low level APIs.
+-->
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,9 +16,6 @@
     var a1 = document.getElementById('a1'),
         a2 = new Audio(),
         buffers = [];
-        if(outputAudio.mozSetup) {
-            outputAudio.mozSetup(2, 44100);
-        }
         
     function loadedMetadata() {
       // Mute a1 audio.
@@ -24,14 +24,12 @@
       setTimeout("throw new Error('Error: " + "loadedMetadata called" + "')",0);
       // Setup a2 to be identical to a1, and play through there.
       a2.mozSetup(a1.mozChannels, a1.mozSampleRate);
-      //Without this, Firefox not only is silent, but it hangs, too. Don't know why.
-      a2.volume = 1;
-      a1.mozFrameBufferLength = 4096;
       a1.addEventListener("MozAudioAvailable", audioAvailable, false);
     }
 
     function audioAvailable(event) {
       var frameBuffer = event.frameBuffer;
+      //setTimeout("throw new Error('Error: " + "audioAvailable called: " + frameBuffer.length + "')",0);
       writeAudio(frameBuffer);
     }
 
@@ -44,6 +42,11 @@
       // If there's buffered data, write that
       while(buffers.length > 0) {
           var buffer = buffers.shift();
+          var len = buffer.length;
+          // Sample stupid thing to verify it really works.
+          for (i= 0; i < len; i++) {
+              buffer[i] = buffer[i] * 0.2;
+          }
           var written = a2.mozWriteAudio(buffer);
           // If all data wasn't written, keep it in the buffers:
           if(written < buffer.length) {
