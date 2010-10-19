@@ -1,0 +1,66 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <audio id="a1"
+           src="sound_files/german_numbers.ogg"
+           controls>
+    </audio>
+    <script>
+    var a1 = document.getElementById('a1'),
+        a2 = new Audio(),
+        buffers = [];
+        
+    function loadedMetadata() {
+      // Mute a1 audio.
+      a1.volume = 0;
+      //alert ("Channels are " + a1.mozChannels + " sampling rate is " + a1.mozSampleRate + " buffer length is " + a1.mozFrameBufferLength);
+      setTimeout("throw new Error('Error: " + "loadedMetadata called" + "')",0);
+      // Setup a2 to be identical to a1, and play through there.
+      a2.mozSetup(a1.mozChannels, a1.mozSampleRate);
+    }
+
+    function audioAvailable(event) {
+      if (event.frameBuffer == undefined) {
+          setTimeout("throw new Error('Error: " + "aA called, framebuffer is undefined" + "')",0);
+      }
+      setTimeout("throw new Error('Error: " + "aA called, framebuffer is NOT undefined " + "')",0);
+      // Write the current framebuffer
+      var frameBuffer = event.frameBuffer;
+      //setTimeout("throw new Error('Error: " + "writeAudio is being called" + "')",0);
+      writeAudio(frameBuffer);
+    }
+
+    a1.addEventListener('MozAudioAvailable', audioAvailable, false);
+    a1.addEventListener('loadedmetadata', loadedMetadata, false);
+
+    function writeAudio(audio) {
+      //alert ("writeAudio called");
+
+      buffers.push(audio);
+
+      // If there's buffered data, write that
+      while(buffers.length > 0) {
+        var buffer = buffers.shift();
+
+        //alert ("About to write " + buffer.length + " bytes of buffer.");
+        var written = a2.mozWriteAudio(buffer);
+        //alert ("Written" + written);
+        // // If all data wasn't written, keep it in the buffers:
+        if(written < buffer.length) {
+          buffers.unshift(buffer.slice(written));
+          return;
+        }
+      }
+    }
+    </script>
+
+  </body>
+</html>
