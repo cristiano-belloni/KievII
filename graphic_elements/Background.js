@@ -1,7 +1,7 @@
 function Background(name, topleft, image) {
-  if( arguments.length ) {
-      this.getready(name, topleft, image);
-  }
+    if (arguments.length) {
+        this.getready(name, topleft, image);
+    }
 }
 
 //inherit from the Element prototype
@@ -27,48 +27,48 @@ Background.prototype.getready = function (name, topleft, image) {
     this.image.onload = this.onLoad(this);
     this.image.src = image;
 
-}
+};
 
-    // This method returns the image object.
-    Background.prototype.GetImage = function() {
-        return this.image;
-    }
+// This method returns the image object.
+Background.prototype.GetImage = function () {
+    return this.image;
+};
 
-    Background.prototype.onLoad = function (that) {
-        // A closure stores the class' instance "this""
-        return (function() {
-            that.objectsLoaded += 1;
-            that.completed = true;
-            that.onCompletion();
-        });
-    }
+Background.prototype.onLoad = function (that) {
+    // A closure stores the class' instance "this""
+    return function () {
+        that.objectsLoaded += 1;
+        that.completed = true;
+        that.onCompletion();
+    };
+};
 
 
-    // This methods returns true if the point given belongs to this element.
-    Background.prototype.IsInROI = function(x, y) {
-        if ((x > this.xOrigin) && (y > this.yOrigin)) {
-                    if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-                        //console.log(this.name, " ROI Handler: ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
-                        return true;
-                    }
-                    //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
-                    return false;
+// This methods returns true if the point given belongs to this element.
+Background.prototype.IsInROI = function (x, y) {
+    if ((x > this.xOrigin) && (y > this.yOrigin)) {
+        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
+            //console.log(this.name, " ROI Handler: ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+            return true;
         }
+        //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+        return false;
     }
+};
 
-    Background.prototype.refresh = function () {
-        if (this.drawClass == undefined) {
-            throw new Error ("Error: drawClass is undefined!");
-        }
-        else {
-            // Draw yourself!
-            //console.log ("drawClass is drawing itself!");
-            this.drawClass.draw(this.image, this.xOrigin, this.yOrigin);
-        }
+Background.prototype.refresh = function () {
+    if (this.drawClass === undefined) {
+        throw new Error("Error: drawClass is undefined!");
     }
+    else {
+        // Draw yourself!
+        //console.log ("drawClass is drawing itself!");
+        this.drawClass.draw(this.image, this.xOrigin, this.yOrigin);
+    }
+};
 
-    Background.prototype.onCompletion = function () {
-        // Now, we can store width and height safely.
-        this.width = this.image.width;
-        this.height = this.image.height;
-    }
+Background.prototype.onCompletion = function () {
+    // Now, we can store width and height safely.
+    this.width = this.image.width;
+    this.height = this.image.height;
+};
