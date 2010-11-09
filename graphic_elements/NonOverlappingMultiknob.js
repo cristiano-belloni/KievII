@@ -1,7 +1,7 @@
 function NonOverlappingMultiknob(name, topleft, coordinates, images) {
-  if( arguments.length ) {
-      this.getready(name, topleft, coordinates, images);
-  }
+    if (arguments.length) {
+        this.getready(name, topleft, coordinates, images);
+    }
 }
 
 //inherit from the Element prototype
@@ -20,19 +20,25 @@ NonOverlappingMultiknob.prototype.getready = function (name, topleft, coordinate
     this.KnobArray = [];
     this.ROIKnob = undefined;
 
+    var nKnobs,
+        tempKnob,
+        knob,
+        valuename,
+        i;
+
     //Coordinates is an array of arrays. We infer the number of knobs from its
     //length. No alignment functions here, they must be provided outside of this
     //class.
-    var nKnobs = coordinates.length;
+    nKnobs = coordinates.length;
 
     // Set the status progress. TODO this can go.
     this.objectsTotal = nKnobs * images.length;
 
     // Fill the knob array. It contains, you know, knobs :)
-    for (var i = 0; i < nKnobs; i++) {
+    for (i = 0; i < nKnobs; i += 1) {
 
         // The knobs are named 1,2,3...n
-        var tempKnob = new Knob(i, coordinates[i], images);
+        tempKnob = new Knob(i, coordinates[i], images);
 
         //Set them undrawable, as we will explicitly refresh them.
         tempKnob.drawItself = false;
@@ -43,21 +49,24 @@ NonOverlappingMultiknob.prototype.getready = function (name, topleft, coordinate
     this.values = {};
 
     //Map our values to the corresponding knob
-    for (var knob in this.KnobArray) {
-        var valuename = "knobvalue" + knob;
-        this.values[valuename] = knob;
+    for (i = 0; i < this.KnobArray.length; i += 1) {
+        valuename = "knobvalue" + this.KnobArray[i];
+        this.values[valuename] = this.KnobArray[i];
     }
 
     //By default, a multiple knob always draws itself when value is set.
     this.drawItself = true;
-}
+};
 
-NonOverlappingMultiknob.prototype.IsInROI = function(x, y) {
+NonOverlappingMultiknob.prototype.isInROI = function (x, y) {
+
+    var nKnobs,
+        i;
 
     //Check all the "subknobs".
-    var nKnobs = this.KnobArray.length;
-    for (var i = 0; i < nKnobs; i++) {
-        if (this.KnobArray[i].IsInROI(x,y) == true) {
+    nKnobs = this.KnobArray.length;
+    for (i = 0; i < nKnobs; i += 1) {
+        if (this.KnobArray[i].isInROI(x, y) === true) {
             // Store the knob that responded true.
             this.ROIKnob = i;
             return true;
@@ -66,27 +75,33 @@ NonOverlappingMultiknob.prototype.IsInROI = function(x, y) {
 
     return false;
 
-}
+};
 
 NonOverlappingMultiknob.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
 
+    var knobret,
+        ret;
+
     //Pass it to the right "subknob"
-    var knobret = this.KnobArray[this.ROIKnob].onROI(start_x, start_y, curr_x, curr_y);
+    knobret = this.KnobArray[this.ROIKnob].onROI(start_x, start_y, curr_x, curr_y);
 
     // TODO define whatever :)
-    var ret = {"slot" : ("knobvalue" + this.ROIKnob), "value" : knobret["value"]};
+    ret = {"slot" : ("knobvalue" + this.ROIKnob), "value" : knobret.value};
 
     return ret;
-}
+};
 
-NonOverlappingMultiknob.prototype.setValue = function(slot, value) {
+NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
 
-    var temp_value = value;
+    var temp_value,
+        knobN;
+
+    temp_value = value;
 
     if ((temp_value < 0) || (temp_value > 1)) {
-             //Just do nothing.
-             //console.log("NonOverlappingMultiknob.prototype.setValue: VALUE INCORRECT!!");
-             return;
+        //Just do nothing.
+        //console.log("NonOverlappingMultiknob.prototype.setValue: VALUE INCORRECT!!");
+        return;
     }
 
     //Do the magic here. Knobs should not overlap.
@@ -95,38 +110,38 @@ NonOverlappingMultiknob.prototype.setValue = function(slot, value) {
     // <= 1.
 
     if ((value < 0) || (value > 1)) {
-             //Just do nothing.
-             //console.log("NonOverlappingMultiknob.prototype.setValue: VALUE INCORRECT!!");
-             return;
+        //Just do nothing.
+        //console.log("NonOverlappingMultiknob.prototype.setValue: VALUE INCORRECT!!");
+        return;
     }
 
     //Retrieve the knob numer here. Kind of an hack, mh?
-    var knobN = parseInt(this.values[slot]);
+    knobN = parseInt(this.values[slot], 10);
 
-    if (knobN == 0) {
+    if (knobN === 0) {
         if (value < 0) {
             value = 0;
         }
-        if (value > this.KnobArray[knobN].values["knobvalue"]) {
-            value = this.KnobArray[knobN].values["knobvalue"];
+        if (value > this.KnobArray[knobN].values.knobvalue) {
+            value = this.KnobArray[knobN].values.knobvalue;
         }
     }
 
-    else if (knobN == (this.KnobArray.length - 1)) {
+    else if (knobN === (this.KnobArray.length - 1)) {
         if (value > 1) {
             value = 1;
         }
-        if (value < this.KnobArray[knobN - 1].values["knobvalue"]) {
-            value = this.KnobArray[knobN - 1].values["knobvalue"];
+        if (value < this.KnobArray[knobN - 1].values.knobvalue) {
+            value = this.KnobArray[knobN - 1].values.knobvalue;
         }
     }
 
     else {
-        if (value < this.KnobArray[knobN - 1].values["knobvalue"]) {
-            value = this.KnobArray[knobN - 1].values["knobvalue"];
+        if (value < this.KnobArray[knobN - 1].values.knobvalue) {
+            value = this.KnobArray[knobN - 1].values.knobvalue;
         }
-        if (value > this.KnobArray[knobN + 1].values["knobvalue"]) {
-            value = this.KnobArray[knobN + 1].values["knobvalue"];
+        if (value > this.KnobArray[knobN + 1].values.knobvalue) {
+            value = this.KnobArray[knobN + 1].values.knobvalue;
         }
     }
 
@@ -136,69 +151,77 @@ NonOverlappingMultiknob.prototype.setValue = function(slot, value) {
 
     // Now, we don't need to call the superclass since we don't have any "real" value.
     // We must refresh by ourselves, though.
-    if (this.drawItself == true) {
+    if (this.drawItself === true) {
         this.refresh();
     }
-}
+};
 
 NonOverlappingMultiknob.prototype.refresh = function () {
-    if (this.drawClass == undefined) {
-        throw new Error ("Error: drawClass is undefined!");
+    
+    var i;
+
+    if (this.drawClass === undefined) {
+        throw new Error("Error: drawClass is undefined!");
     }
     else {
         //Refresh all the subknobs. TODO we might just want to refresh only the
         //knob that has been modified.
-        for (var knob in this.KnobArray) {
+        for (i = 0; i < this.KnobArray.length; i += 1) {
             //drawClasses must be lazily initialized here.
-            if (this.KnobArray[knob].drawClass == undefined) {
-                this.KnobArray[knob].drawClass = this.drawClass;
+            if (this.KnobArray[i].drawClass === undefined) {
+                this.KnobArray[i].drawClass = this.drawClass;
             }
-            this.KnobArray[knob].refresh();
+            this.KnobArray[i].refresh();
         }
     }
-}
+};
 
-NonOverlappingMultiknob.prototype.getValue = function(slot) {
+NonOverlappingMultiknob.prototype.getValue = function (slot) {
     //Retrieve the knob numer here. Kind of an hack, mh?
     var knobN = this.values[slot];
     //Get the values from the subknob. Same as setValue.
     this.KnobArray[knobN].getValue("knobvalue");
-}
+};
 
-NonOverlappingMultiknob.prototype.getStatus = function() {
+NonOverlappingMultiknob.prototype.getStatus = function () {
 
     // Calculate the status, based on knob status.
-     var total = 0
-     var loaded = 0;
+    var total = 0,
+        loaded = 0,
+        knobStatus,
+        tempStatus,
+        i;
 
-     for (var i in this.KnobArray) {
+    for (i = 0; i < this.KnobArray.length; i += 1) {
 
-        var knobStatus = this.KnobArray[i].getStatus();
+        knobStatus = this.KnobArray[i].getStatus();
 
-        total += knobStatus["ObjectTotal"];
-        loaded += knobStatus["ObjectLoaded"];
+        total += knobStatus.ObjectTotal;
+        loaded += knobStatus.ObjectLoaded;
 
     }
 
-    var tempStatus = {"ObjectTotal": total, "ObjectLoaded" : loaded};
+    tempStatus = {"ObjectTotal": total, "ObjectLoaded" : loaded};
     return tempStatus;
-}
+};
 
-NonOverlappingMultiknob.prototype.isComplete = function() {
+NonOverlappingMultiknob.prototype.isComplete = function () {
 
     // TODO:
     // This is ok as long as we call isComplete() every 100 ms.
     // But when we'll use callbacks, we won't set this.completed here.
 
-    if (this.completed == true) {
+    var temp, i;
+
+    if (this.completed === true) {
         return true;
     }
 
-    for (var i in this.KnobArray) {
+    for (i = 0; i < this.KnobArray.length; i += 1) {
 
-        var temp = this.KnobArray[i].isComplete();
+        temp = this.KnobArray[i].isComplete();
 
-        if (temp == false) {
+        if (temp === false) {
             return false;
         }
 
@@ -207,4 +230,4 @@ NonOverlappingMultiknob.prototype.isComplete = function() {
     this.completed = true;
     return true;
     
-}
+};
