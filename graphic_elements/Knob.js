@@ -61,7 +61,10 @@ Knob.prototype.onLoad = function (that) {
     };
 };
 
-Knob.prototype.getImageNum = function () {
+// This method returns an image index given the knob value.
+/*jslint nomen: false*/
+Knob.prototype._getImageNum = function () {
+/*jslint nomen: true*/
     if ((this.values.knobvalue < 0) || (this.values.knobvalue > 1)) {
         // Do nothing
         return undefined;
@@ -70,9 +73,14 @@ Knob.prototype.getImageNum = function () {
     return ret;
 };
 
-// This method returns an image object from the knob value.
-Knob.prototype.GetImage = function () {
-    var ret = this.getImageNum();
+// This method returns an image object given the knob value.
+/*jslint nomen: false*/
+Knob.prototype._getImage = function () {
+/*jslint nomen: true*/
+
+    /*jslint nomen: false*/
+    var ret = this._getImageNum();
+    /*jslint nomen: true*/
     return this.imagesArray[ret];
 };
 
@@ -141,7 +149,9 @@ Knob.prototype.refresh = function () {
         throw new Error("Error: drawClass is undefined!");
     }
     else {
-        var imageNum = this.GetImageNum();
+        /*jslint nomen: false*/
+        var imageNum = this._getImageNum();
+        /*jslint nomen: true*/
         this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
     }
 };
