@@ -36,9 +36,12 @@ Element.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
 };
 
 Element.prototype.getValues = function () {
-    var tempArray = [];
-    for (var i in this.values) {
-        tempArray.push(i);
+    var tempArray = [],
+        i;
+    for (i in this.values) {
+        if (this.values.hasOwnProperty(i)) {
+            tempArray.push(i);
+        }
     }
     // Returns the keys.
     return tempArray;
