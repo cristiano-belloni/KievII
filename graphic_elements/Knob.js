@@ -85,7 +85,7 @@ Knob.prototype._getImage = function () {
 };
 
 // This method returns true if the point given belongs to this knob.
-Knob.prototype.IsInROI = function (x, y) {
+Knob.prototype.isInROI = function (x, y) {
     if ((x > this.xOrigin) && (y > this.yOrigin)) {
         if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
             //console.log(this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);

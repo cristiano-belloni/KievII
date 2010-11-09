@@ -28,7 +28,7 @@ Label.prototype.getready = function (name, topleft, wh) {
 };
 
 // This methods returns true if the point given belongs to this element.
-Label.prototype.IsInROI = function (x, y) {
+Label.prototype.isInROI = function (x, y) {
     if ((x > this.xOrigin) && (y > this.yOrigin)) {
         if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
             //console.log(this.name, "point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);

@@ -24,7 +24,7 @@ Element.prototype.getready = function (name, topleft) {
     this.completed = false;
 };
 
-Element.prototype.IsInROI = function (x, y) {
+Element.prototype.isInROI = function (x, y) {
     // This is the abstract class.
     return false;
 };

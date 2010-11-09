@@ -80,7 +80,7 @@ Multiband.prototype.calculateSidebands = function () {
 
 };
 
-Multiband.prototype.IsInROI = function (x, y) {
+Multiband.prototype.isInROI = function (x, y) {
     var proximity,
         i,
         curSB;

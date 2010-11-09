@@ -34,7 +34,7 @@ function UI() {
     this.elementsROI = function (x, y) {
         for (var name in this.elements) {
             if (this.elements[name].isClickable === true) {
-                if (this.elements[name].IsInROI(x, y) === true) {
+                if (this.elements[name].isInROI(x, y) === true) {
                     //console.log("click ROI in ", name);
                     return name;
                 }

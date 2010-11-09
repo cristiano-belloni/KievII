@@ -45,7 +45,7 @@ Background.prototype.onLoad = function (that) {
 
 
 // This methods returns true if the point given belongs to this element.
-Background.prototype.IsInROI = function (x, y) {
+Background.prototype.isInROI = function (x, y) {
     if ((x > this.xOrigin) && (y > this.yOrigin)) {
         if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
             //console.log(this.name, " ROI Handler: ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
