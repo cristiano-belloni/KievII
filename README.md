@@ -3,7 +3,7 @@
 KievII
 ------
 
-KievII is a Javascript library to build audio apps for the Web.
+KievII is a Javascript library you can use to build audio apps for the Web.
 For now, KievII implements some GUI element (ie labels, knobs, multiknobs, multi-band displays) and uses HTML5 canvas to draw them (but you can extend it to use whatever you want).
 
 Graphic elements chaining is supported in a seminal way (i.e. one element can change the value of one or more elements).
