@@ -2,9 +2,9 @@
 //noSlotError = new Error ("Slot not present");
 
 function Knob(name, topleft, images) {
-  if( arguments.length ) {
-      this.getready(name, topleft, images);
-  }
+    if (arguments.length) {
+        this.getready(name, topleft, images);
+    }
 }
 
 //inherit from the Element prototype
@@ -31,7 +31,7 @@ Knob.prototype.getready = function (name, topleft, images) {
     this.nKnobs = images.length;
 
     if (this.nKnobs < 1) {
-        throw new Error ("Invalid images array length, " + this.nKnobs);
+        throw new Error("Invalid images array length, " + this.nKnobs);
     }
 
     // Set the status progress.
@@ -40,7 +40,7 @@ Knob.prototype.getready = function (name, topleft, images) {
     this.imagesArray = new Array (this.nKnobs);
 
     // Load images from names
-    for (i = 0; i < this.nKnobs; i++) {
+    for (var i = 0; i < this.nKnobs; i += 1) {
         this.imagesArray[i] = new Image();
         this.imagesArray[i].onload = this.onLoad(this);
         this.imagesArray[i].src = images[i];
@@ -49,101 +49,107 @@ Knob.prototype.getready = function (name, topleft, images) {
     //console.log("Width = ", this.width);
     //console.log("Height = ", this.height);
 
-}
+};
 
 Knob.prototype.onLoad = function (that) {
-  return (function() {
-    that.objectsLoaded += 1;
-    if (that.objectsLoaded == that.objectsTotal) {
-        that.onCompletion();
-        that.completed = true;
-    }
-  });
-}
+    return function () {
+        that.objectsLoaded += 1;
+        if (that.objectsLoaded === that.objectsTotal) {
+            that.onCompletion();
+            that.completed = true;
+        }
+    };
+};
 
-// This method returns an image object from the knob value.
-
-Knob.prototype.GetImage = function() {
-    var ret = GetImageNum();
-    return this.imagesArray[ret];
-}
-
-Knob.prototype.GetImageNum = function() {
-    if ((this.values["knobvalue"] < 0) || (this.values["knobvalue"] > 1)) {
+Knob.prototype.getImageNum = function () {
+    if ((this.values.knobvalue < 0) || (this.values.knobvalue > 1)) {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values["knobvalue"] * (this.nKnobs - 1));
+    var ret = Math.round(this.values.knobvalue * (this.nKnobs - 1));
     return ret;
-}
+};
+
+// This method returns an image object from the knob value.
+Knob.prototype.GetImage = function () {
+    var ret = this.getImageNum();
+    return this.imagesArray[ret];
+};
 
 // This method returns true if the point given belongs to this knob.
-Knob.prototype.IsInROI = function(x, y) {
+Knob.prototype.IsInROI = function (x, y) {
     if ((x > this.xOrigin) && (y > this.yOrigin)) {
-                if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-                    //console.log(this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
-                    return true;
-                }
+        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
+            //console.log(this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+            return true;
+        }
+        /*jsl:pass*/
     }
     //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
     //console.log ("Returning false");
     return false;
-}
+};
 
 Knob.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
 
-            var deltaY = 0;
-            deltaY = curr_y - start_y;
+    var deltaY = 0,
+        temp_value,
+        to_set,
+        ret;
 
-            var temp_value = this.values["knobvalue"];
+    deltaY = curr_y - start_y;
 
-            var to_set = temp_value - deltaY / 2000;
+    temp_value = this.values.knobvalue;
 
-            if (to_set > 1) {
-                to_set = 1;
-            }
-            if (to_set < 0) {
-                to_set = 0;
-            }
+    // Todo set sensivity.
+    to_set = temp_value - deltaY / 2000;
 
-            var ret = {"slot" : "knobvalue", "value" : to_set};
+    if (to_set > 1) {
+        to_set = 1;
+    }
+    if (to_set < 0) {
+        to_set = 0;
+    }
 
-            return ret;
-}
+    ret = {"slot" : "knobvalue", "value" : to_set};
 
-Knob.prototype.getDefaultValue = function() {
-    return this.values["knobvalue"];
-}
+    return ret;
+};
+
+Knob.prototype.getDefaultValue = function () {
+    return this.values.knobvalue;
+};
 
 // Setters
-Knob.prototype.setValue = function(slot, value) {
+Knob.prototype.setValue = function (slot, value) {
     var temp_value = value;
 
     if ((temp_value < 0) || (temp_value > 1)) {
-             //Just do nothing.
-             //console.log("Knob.prototype.setValue: VALUE INCORRECT!!");
-             return;
+        //Just do nothing.
+        //console.log("Knob.prototype.setValue: VALUE INCORRECT!!");
+        return;
     }
 
     // Now, we call the superclass
     this.tempsetValue = Element.prototype.setValue;
-    this.tempsetValue (slot, value);
+    this.tempsetValue(slot, value);
 
-}
+};
         
 Knob.prototype.refresh = function () {
-    if (this.drawClass == undefined) {
-        throw new Error ("Error: drawClass is undefined!");
+    if (this.drawClass === undefined) {
+        throw new Error("Error: drawClass is undefined!");
     }
     else {
         var imageNum = this.GetImageNum();
         this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
     }
-}
+};
 
 Knob.prototype.onCompletion = function () {
     // Now, we've loaded every image. We can calculate max width and height now.
-    for (var i in this.imagesArray) {
+    var i;
+    for (i = 0; i < this.imagesArray.length; i += 1) {
         if (this.imagesArray[i].width > this.width) {
             this.width = this.imagesArray[i].width;
         }
@@ -151,4 +157,4 @@ Knob.prototype.onCompletion = function () {
             this.height = this.imagesArray[i].height;
         }
     }
-}
+};
