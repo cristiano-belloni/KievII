@@ -1,8 +1,3 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 function Pitchshift(fftFrameSize, sampleRate) {
   if( arguments.length ) { this.getready(fftFrameSize, sampleRate); }
 }
@@ -11,47 +6,70 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     this.fftFrameSize_ = fftFrameSize;
     this.sampleRate_= sampleRate;
     this.hannWindow_ = []
-    this.gRover_ = 0;
+    this.gRover_ = false;
+    this.MAX_FRAME_LENGTH = 8192
+
+    function newFilledArray(length, val) {
+        var array = [];
+        for (var i = 0; i < length; i++) {
+            array[i] = val;
+        }
+        return array;
+    }
+
 
     /* TODO subscript them!
-     * TODO they must be 0! */
-    this.gInFIFO = [];
-    this.gOutFIFO = [];
-    this.gLastPhase = [];
-    this.gSumPhase = [];
-    this.gOutputAccum = [];
-    this.gAnaFreq = [];
-    this.gAnaMagn = [];
-    this.gSynFreq = [];
-    this.gSynMagn = [];
-    // Only the signal, multiplied for the window. (TODO dsp.js has windowing funcs).
-    this.gFFTworksp = [];
+     * They must be set to 0. */
+
+    this.gInFIFO = newFilledArray(MAX_FRAME_LENGTH, 0);
+    this.gOutFIFO = newFilledArray(MAX_FRAME_LENGTH, 0);
+    this.gLastPhase = newFilledArray(MAX_FRAME_LENGTH/2+1, 0);
+    this.gSumPhase = newFilledArray(MAX_FRAME_LENGTH/2+1, 0);
+    this.gOutputAccum = newFilledArray(2*MAX_FRAME_LENGTH, 0);
+    this.gAnaFreq = newFilledArray(MAX_FRAME_LENGTH, 0);
+    this.gAnaMagn = newFilledArray(MAX_FRAME_LENGTH, 0);
+    this.gSynFreq = newFilledArray(MAX_FRAME_LENGTH, 0);
+    this.gSynMagn = newFilledArray(MAX_FRAME_LENGTH, 0);
+    this.gFFTworksp = newFilledArray(2*MAX_FRAME_LENGTH, 0);
+
     // Real and imaginary parts of the resynthesized signal
     this.real_ = [];
     this.imag_ = [];
+    
+    // Output data.
+    // TODO how long is outdata for the caller?? Maybe osamp??
+    this.outdata = [];
+
 
     for (k = 0; k < fftFrameSize; k++) {
         //Pre-generating Hann wavetable
         this.hanWindow_[k]= WindowFunction.Hann(fftFrameSize, k);
     }
+
+    // Init once, use always.
+    this.fft = new FFT(this.fftFrameSize_, this.sampleRate_);
+
 };
 
-Pitchshift.prototype.getready = function (pitchShift, numSampsToProcess, osamp, indata) {
+Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, indata) {
 
-	var fftFrameSize2 = this.fftFrameSize_/2;
-	var stepSize = this.fftFrameSize_/osamp;
-	var freqPerBin = this.sampleRate_ / this.fftFrameSize_;
-	var expct = 2.* Math.PI * stepSize / this.fftFrameSize_
-	var inFifoLatency = this.fftFrameSize_ - stepSize;
-	if (this.gRover_ == 0) this.gRover_ = inFifoLatency;
+        /* These could be members? They won't be recalculated everytime */
+	var fftFrameSize2 = this.fftFrameSize_/2,
+	    stepSize = this.fftFrameSize_/osamp,
+	    freqPerBin = this.sampleRate_ / this.fftFrameSize_,
+	    expct = 2.* Math.PI * stepSize / this.fftFrameSize_,
+	    inFifoLatency = this.fftFrameSize_ - stepSize,
+            k, i;
 
-        var outdata = [];
+	if (this.gRover_ === false) {
+            this.gRover_ = inFifoLatency;
+        }
 
         /* main processing loop */
 	for (i = 0; i < numSampsToProcess; i++){
             /* As long as we have not yet collected enough data just read in */
 		this.gInFIFO[this.gRover_] = indata[i];
-		outdata[i] = this.gOutFIFO[this.gRover_ - inFifoLatency];
+		this.outdata[i] = this.gOutFIFO[this.gRover_ - inFifoLatency];
 		this.gRover_++;
 
 		/* now we have enough data for processing */
@@ -74,9 +92,8 @@ Pitchshift.prototype.getready = function (pitchShift, numSampsToProcess, osamp, 
 
                        //FFT(bufferSize, sampleRate): Fast Fourier Transform
 
-                       var fft = new FFT(this.fftFrameSize_, this.sampleRate_);
-                       fft.forward(this.gFFTworksp);
-                       //this.gFFTworksp = fft.spectrum;
+                       this.fft.forward(this.gFFTworksp);
+                       // Maybe! this.gFFTworksp = this.fft.spectrum;
 
 
                        /* this is the analysis step */
@@ -167,7 +184,7 @@ Pitchshift.prototype.getready = function (pitchShift, numSampsToProcess, osamp, 
                         }
 
 			// Do the Inverse transform
-                       var signal = fft.inverse(this.real_, this.imag_);
+                       var signal = this.fft.inverse(this.real_, this.imag_);
 
 			// Do windowing and add to output accumulator
 			for(k=0; k < this.fftFrameSize_; k++) {
