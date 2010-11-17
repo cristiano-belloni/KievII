@@ -1,0 +1,53 @@
+<!--
+Read/write data with audiodata.js
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--
+    Shit I don't like this.
+    -->
+    <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+    <script src="https://github.com/corbanbrook/dsp.js/raw/master/dsp.js"></script>
+    <script src="AD_DSP_DelayFilter.js"></script>
+    <script>
+
+    function initialize() {
+        console.log ("initialize");
+        var audio = document.getElementById("a1"),
+            source = new AudioDataSource(audio),
+            delayParams = {},
+            delay_filter,
+            outputDestination = new AudioDataDestination();
+
+        //Set auto latency.
+        outputDestination.autoLatency = true;
+
+        //Otherwise you hear the first signal, too.
+        audio.volume = 0;
+        console.log ("volume 0");
+
+        // maxDelayInSamplesSize, delayInSamples, masterVolume, delayVolume
+
+        delayParams.maxDelayInSamplesSize = 15000;
+        delayParams.delayInSamples = 10000;
+        delayParams.masterVolume = 0.8;
+        delayParams.delayVolume = 0.7;
+
+        delay_filter = new AudioDataDelayFilter (outputDestination, delayParams);
+
+        console.log ("added the filter ", delay_filter);
+        source.readAsync(delay_filter);
+    }
+
+    if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+    window.addEventListener("load", initialize, false);
+
+      </script>
+  </head>
+  <body>
+      <audio id="a1" src="sound_files/german_numbers.ogg" controls></audio>
+  </body>
+</html>
