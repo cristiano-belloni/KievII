@@ -10,35 +10,33 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     this.MAX_FRAME_LENGTH = 8192
 
     function newFilledArray(length, val) {
+        var intLength = Math.floor(length);
         var array = [];
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < intLength; i++) {
             array[i] = val;
         }
         return array;
     }
 
-
-    /* TODO subscript them!
-     * They must be set to 0. */
-
-    this.gInFIFO = newFilledArray(MAX_FRAME_LENGTH, 0);
-    this.gOutFIFO = newFilledArray(MAX_FRAME_LENGTH, 0);
-    this.gLastPhase = newFilledArray(MAX_FRAME_LENGTH/2+1, 0);
-    this.gSumPhase = newFilledArray(MAX_FRAME_LENGTH/2+1, 0);
-    this.gOutputAccum = newFilledArray(2*MAX_FRAME_LENGTH, 0);
-    this.gAnaFreq = newFilledArray(MAX_FRAME_LENGTH, 0);
-    this.gAnaMagn = newFilledArray(MAX_FRAME_LENGTH, 0);
-    this.gSynFreq = newFilledArray(MAX_FRAME_LENGTH, 0);
-    this.gSynMagn = newFilledArray(MAX_FRAME_LENGTH, 0);
-    this.gFFTworksp = newFilledArray(2*MAX_FRAME_LENGTH, 0);
+    this.gInFIFO = newFilledArray(this.MAX_FRAME_LENGTH, 0);
+    this.gOutFIFO = newFilledArray(this.MAX_FRAME_LENGTH, 0);
+    this.gLastPhase = newFilledArray(this.MAX_FRAME_LENGTH / 2 + 1, 0);
+    this.gSumPhase = newFilledArray(this.MAX_FRAME_LENGTH / 2 + 1, 0);
+    this.gOutputAccum = newFilledArray(2 * this.MAX_FRAME_LENGTH, 0);
+    this.gAnaFreq = newFilledArray(this.MAX_FRAME_LENGTH, 0);
+    this.gAnaMagn = newFilledArray(this.MAX_FRAME_LENGTH, 0);
+    this.gSynFreq = newFilledArray(this.MAX_FRAME_LENGTH, 0);
+    this.gSynMagn = newFilledArray(this.MAX_FRAME_LENGTH, 0);
+    this.gFFTworksp = newFilledArray(2 * this.MAX_FRAME_LENGTH, 0);
 
     // Real and imaginary parts of the resynthesized signal
     this.real_ = [];
     this.imag_ = [];
     
     // Output data.
-    // TODO how long is outdata for the caller?? Maybe osamp??
+    // TODO how long is outdata for the caller??
     this.outdata = [];
+    this.hanWindow_ = [];
 
 
     for (k = 0; k < fftFrameSize; k++) {
@@ -49,9 +47,15 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     // Init once, use always.
     this.fft = new FFT(this.fftFrameSize_, this.sampleRate_);
 
+    console.log ("Pitchshift.prototype.getready returns back");
+
 };
 
 Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, indata) {
+
+    console.log ("We got some shit to process; seem " + numSampsToProcess + " samples, pitchShift factor is " +  pitchShift + " und indata.length is " + indata.length);
+
+    /* pitchShift: factor value which is between 0.5 (one octave down) and 2. (one octave up). */
 
         /* These could be members? They won't be recalculated everytime */
 	var fftFrameSize2 = this.fftFrameSize_/2,
@@ -59,21 +63,24 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 	    freqPerBin = this.sampleRate_ / this.fftFrameSize_,
 	    expct = 2.* Math.PI * stepSize / this.fftFrameSize_,
 	    inFifoLatency = this.fftFrameSize_ - stepSize,
-            k, i;
+            j, k = 0;
 
 	if (this.gRover_ === false) {
             this.gRover_ = inFifoLatency;
         }
 
         /* main processing loop */
-	for (i = 0; i < numSampsToProcess; i++){
+	for (j = 0; j < numSampsToProcess; j++){
             /* As long as we have not yet collected enough data just read in */
-		this.gInFIFO[this.gRover_] = indata[i];
-		this.outdata[i] = this.gOutFIFO[this.gRover_ - inFifoLatency];
+		this.gInFIFO[this.gRover_] = indata[j];
+		this.outdata[j] = this.gOutFIFO[this.gRover_ - inFifoLatency];
 		this.gRover_++;
 
 		/* now we have enough data for processing */
 		if (this.gRover_ >= this.fftFrameSize_) {
+
+                        console.log ("Enough data to process now!");
+
 			this.gRover_ = inFifoLatency;
 
 			/* Do the windowing */
@@ -83,18 +90,14 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                             //this.gFFTworksp[k][1] = 0.;
                         }
 
-                        /*
-                        Do the forward dft here.
-			p = fftw_plan_dft_1d(fftFrameSize, gFFTworksp, gFFTworksp, FFTW_FORWARD, FFTW_MEASURE);
-			q = fftw_plan_dft_1d(fftFrameSize, gFFTworksp, gFFTworksp, FFTW_BACKWARD, FFTW_MEASURE);
-			fftw_execute(p);
-                        */
+                       console.log ("Windowing done!");
+                       //So far, so good.
 
-                       //FFT(bufferSize, sampleRate): Fast Fourier Transform
-
+                       // BUG! It never logs "this.fft.forward done!". It never comes to the break.
                        this.fft.forward(this.gFFTworksp);
                        // Maybe! this.gFFTworksp = this.fft.spectrum;
-
+                       console.log ("this.fft.forward done!");
+                       break;
 
                        /* this is the analysis step */
                        for (k = 0; k <= fftFrameSize2; k++) {
@@ -132,6 +135,8 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 				this.gAnaFreq[k] = tmp;
 
 			}
+
+                        console.log ("Analysis done!");
                         
                         /* ***************** PROCESSING ******************* */
 			/* this does the actual pitch shifting */
@@ -145,6 +150,8 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 					this.gSynFreq[k] = this.gAnaFreq[index] * pitchShift;
                                     }
                             }
+
+                            console.log ("Processing done!");
 
                         /* ***************** SYNTHESIS ******************* */
 			/* this is the synthesis step */
@@ -175,6 +182,8 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 				this.imag_[k] = magn*sin(phase);
 			}
 
+                        console.log ("Synthesis done!");
+
                         // zero negative frequencies
 			for (k = ((fftFrameSize2)+1); (k < this.fftFrameSize_); k++) {
 
@@ -182,6 +191,8 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 			    this.imag_[k] = 0;
 
                         }
+
+                        console.log ("Negatives done!");
 
 			// Do the Inverse transform
                        var signal = this.fft.inverse(this.real_, this.imag_);
@@ -197,11 +208,23 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 
 			/* shift accumulator TODO
 			memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float)); */
+                        //void *memmove(void *dest, const void *src, size_t n);
+                        // gOutputAccum+stepSize --> gOutputAccum for fftFrameSize samples
+
+                        var tempArray = this.gOutputAccum.slice(0, stepSize);
+                        var tempArray2 = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
+                        var tempArray3 = tempArray.concat(tempArray2);
+                        //var tempArray3 = this.gOutputAccum.slice(0, stepSize).concat(this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_));
+                        this.gOutputAccum = tempArray3;
 
 			/* move input FIFO */
 			for (k = 0; k < inFifoLatency; k++) {
                             this.gInFIFO[k] = this.gInFIFO[k + stepSize];
                         }
+
+                        console.log ("Moved input FIFO done!");
                     }
+                    console.log ("After enough data! done!");
                 }
+                console.log ("Ok, fuck you, I'm outta here");
             }
