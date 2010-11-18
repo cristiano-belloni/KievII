@@ -7,6 +7,7 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     this.sampleRate_= sampleRate;
     this.hannWindow_ = []
     this.gRover_ = false;
+    // This has to go.
     this.MAX_FRAME_LENGTH = 8192
 
     function newFilledArray(length, val) {
@@ -63,11 +64,8 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
         }
     }
 
-    //console.log ("We got some shit to process; seem " + numSampsToProcess + " samples, pitchShift factor is " +  pitchShift + " und indata.length is " + indata.length);
-
-    /* pitchShift: factor value which is between 0.5 (one octave down) and 2. (one octave up). */
-
-        /* These could be members? They won't be recalculated everytime */
+        /* pitchShift: factor value which is between 0.5 (one octave down) and 2. (one octave up). */
+        /* These could be members? Check if they must be recalculated everytime */
 	var fftFrameSize2 = this.fftFrameSize_/2,
 	    stepSize = this.fftFrameSize_/osamp,
 	    freqPerBin = this.sampleRate_ / this.fftFrameSize_,
@@ -100,9 +98,6 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                             this.gFFTworksp[k] = this.gInFIFO[k] * this.hannWindow_[k];
                             //this.gFFTworksp[k][1] = 0.;
                         }
-
-                       //console.log ("Windowing done, k is " + k + " and this.gFFTworksp is " +  this.gFFTworksp.length);
-                       //So far, so good.
 
                        this.fft.forward(this.gFFTworksp);
 
@@ -158,12 +153,11 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 				index = k * pitchShift;
 				
 				if (index <= fftFrameSize2) {
-                                    	this.gSynMagn[k] += this.gAnaMagn[index];
-					this.gSynFreq[k] = this.gAnaFreq[index] * pitchShift;
+                                    	this.gSynMagn[index] += this.gAnaMagn[k];
+					this.gSynFreq[index] = this.gAnaFreq[k] * pitchShift;
                                     }
                             }
 
-                            //console.log ("Processing done!");
 
                         /* ***************** SYNTHESIS ******************* */
 			/* this is the synthesis step */
@@ -199,48 +193,50 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                         // zero negative frequencies
 			for (k = ((fftFrameSize2)+1); (k < this.fftFrameSize_); k++) {
 
+                            //WARNING!
+                            /*for (k = fftFrameSize+2; k < 2*fftFrameSize; k++) gFFTworksp[k] = 0.;*/
                             this.real_[k] = 0;
 			    this.imag_[k] = 0;
 
                         }
                         
-                        //console.log ("Negatives done!");
-
-                        //console.log ("before inverse trasform, real is " + this.real_.slice(0,10) + " imag is " + this.imag_.slice(0,10));
-
 			// Do the Inverse transform
                        signal = this.fft.inverse(this.real_, this.imag_);
 
-                       //console.log ("after inverse trasform, signal is " + signal.slice(0,10));
-
 			// Do windowing and add to output accumulator
+                        // WARNING:
+                        /* for(k=0; k < fftFrameSize; k++) {
+				window = -.5*cos(2.*M_PI*(double)k/(double)fftFrameSize)+.5;
+				gOutputAccum[k] += 2.*window*gFFTworksp[2*k]/(fftFrameSize2*osamp);
+			} */
+
 			for(k=0; k < this.fftFrameSize_; k++) {
 
-				this.gOutputAccum[k] += this.hannWindow_[k] * signal[k];
+				this.gOutputAccum[k] += 2 * this.hannWindow_[k] * this.gFFTworksp[k] / (fftFrameSize2*osamp) ;
 
 			}
 
-                        for (k = 0; k < stepSize; k++) this.gOutFIFO[k] = this.gOutputAccum[k];
+                        for (k = 0; k < stepSize; k++) {
+                            this.gOutFIFO[k] = this.gOutputAccum[k];
+                        }
 
-			/* shift accumulator TODO
-			memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float)); */
-                        //void *memmove(void *dest, const void *src, size_t n);
+			// Shift accumulator was: memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float));
+                        // void *memmove(void *dest, const void *src, size_t n);
                         // gOutputAccum+stepSize --> gOutputAccum for fftFrameSize samples
 
                         var tempArray = this.gOutputAccum.slice(0, stepSize);
                         var tempArray2 = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
                         var tempArray3 = tempArray.concat(tempArray2);
-                        //var tempArray3 = this.gOutputAccum.slice(0, stepSize).concat(this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_));
+                        //Or: var tempArray3 = this.gOutputAccum.slice(0, stepSize).concat(this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_));
                         this.gOutputAccum = tempArray3;
 
 			/* move input FIFO */
 			for (k = 0; k < inFifoLatency; k++) {
                             this.gInFIFO[k] = this.gInFIFO[k + stepSize];
                         }
-
-                        //console.log ("Moved input FIFO done!");
+                        
                     }
-                    //console.log ("After enough data! done!");
+
                 }
-                //console.log ("Ok, fuck you, I'm outta here");
+                
             }
