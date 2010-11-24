@@ -117,11 +117,22 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 				tmp -= k * expct;
 
 				/* map delta phase into +/- Pi interval */
+
+                                /* Floor and ceil should emulate the behaviour
+                                 * of a C float -> long int conversion
+                                 * "Truncating conversion means that any
+                                 * fractional part is discarded, so that e.g.
+                                 * 3.9 is converted to 3".
+                                 * (http://www.cs.tut.fi/~jkorpela/round.html)*/
+
 				qpd = tmp / Math.PI;
 				if (qpd >= 0) {
+                                    qpd = Math.floor(qpd);
+                                    /* This probably won't work like in C */
                                     qpd += qpd & 1;
                                 }
 				else {
+                                    qpd = Math.ceil(qpd);
                                     qpd -= qpd & 1;
                                 }
 				
