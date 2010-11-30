@@ -49,6 +49,7 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
 
     // Init once, use always.
     this.fft = new FFT(this.fftFrameSize_, this.sampleRate_);
+    this.invFFT = new FFT(this.fftFrameSize_, this.sampleRate_);
 
     console.log ("Pitchshift.prototype.getready returns back");
 
@@ -212,7 +213,7 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                         }
                         
 			// Do the Inverse transform
-                       signal = this.fft.inverse(this.real_, this.imag_);
+                       signal = this.invFFT.inverse(this.real_, this.imag_);
 
 			// Do windowing and add to output accumulator
                         // WARNING:
