@@ -49,6 +49,7 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
 
     // Init once, use always.
     this.fft = new FFT(this.fftFrameSize_, this.sampleRate_);
+    //Probably we don't need this.
     this.invFFT = new FFT(this.fftFrameSize_, this.sampleRate_);
 
     console.log ("Pitchshift.prototype.getready returns back");
@@ -88,9 +89,6 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 		/* now we have enough data for processing */
 		if (this.gRover_ >= this.fftFrameSize_) {
 
-                        //console.log ("this.outdata seems " + this.outdata);
-                        //console.log ("Enough data to process now!");
-
 			this.gRover_ = inFifoLatency;
 
 			/* Do the windowing */
@@ -107,7 +105,7 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 
                                 //Mmmmh. Taking some "private" member out of fft here.
                                 magn = 2 * Math.sqrt (this.fft.real[k] * this.fft.real[k] + this.fft.imag[k] * this.fft.imag[k]);
-                                //magn = spectrum[k];
+                                //aka magn = spectrum[k];
                                 phase = Math.atan2 (this.fft.imag[k], this.fft.real[k]);
 
 				/* compute phase difference */
@@ -200,13 +198,13 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 				this.imag_[k] = magn* Math.sin(phase);
 			}
 
-                        //console.log ("Synthesis done!");
-
                         // zero negative frequencies
 			for (k = ((fftFrameSize2)+1); (k < this.fftFrameSize_); k++) {
 
                             //WARNING!
                             /*for (k = fftFrameSize+2; k < 2*fftFrameSize; k++) gFFTworksp[k] = 0.;*/
+
+                            //That's ok, otherwise inverse fft has a fit.
                             this.real_[k] = 0;
 			    this.imag_[k] = 0;
 
@@ -216,7 +214,7 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                        signal = this.invFFT.inverse(this.real_, this.imag_);
 
 			// Do windowing and add to output accumulator
-                        // WARNING:
+                        // c++ code was:
                         /* for(k=0; k < fftFrameSize; k++) {
 				window = -.5*cos(2.*M_PI*(double)k/(double)fftFrameSize)+.5;
 				gOutputAccum[k] += 2.*window*gFFTworksp[2*k]/(fftFrameSize2*osamp);
@@ -224,7 +222,7 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 
 			for(k=0; k < this.fftFrameSize_; k++) {
 
-				this.gOutputAccum[k] += 2 * this.hannWindow_[k] * this.gFFTworksp[k] / (fftFrameSize2*osamp) ;
+				this.gOutputAccum[k] += this.hannWindow_[k] * signal[k];
 
 			}
 
@@ -232,15 +230,15 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                             this.gOutFIFO[k] = this.gOutputAccum[k];
                         }
 
-			// Shift accumulator was: memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float));
+			// Shift accumulator. c++ version: memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float));
                         // void *memmove(void *dest, const void *src, size_t n);
                         // gOutputAccum+stepSize --> gOutputAccum for fftFrameSize samples
 
-                        var tempArray = this.gOutputAccum.slice(0, stepSize);
-                        var tempArray2 = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
-                        var tempArray3 = tempArray.concat(tempArray2);
-                        //Or: var tempArray3 = this.gOutputAccum.slice(0, stepSize).concat(this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_));
-                        this.gOutputAccum = tempArray3;
+                        // This goes to the start of the array. Not sure of my memmove implementation.
+                        var tempArray = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
+                        //var temp_len = this.gOutputAccum.length;
+                        this.gOutputAccum = tempArray;
+                        //this.gOutputAccum = temp_len;
 
 			/* move input FIFO */
 			for (k = 0; k < inFifoLatency; k++) {
