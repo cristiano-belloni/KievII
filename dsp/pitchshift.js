@@ -230,17 +230,19 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                             this.gOutFIFO[k] = this.gOutputAccum[k];
                         }
 
-			// Shift accumulator. c++ version: memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float));
+			// Shift the output accumulator.
+                        // c++ version: memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float));
                         // void *memmove(void *dest, const void *src, size_t n);
                         // gOutputAccum+stepSize --> gOutputAccum for fftFrameSize samples
-
-                        // This goes to the start of the array. Not sure of my memmove implementation.
+                        // This slice goes to the start of the array. Rough memmove implementation.
                         var tempArray = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
-                        //var temp_len = this.gOutputAccum.length;
-                        this.gOutputAccum = tempArray;
-                        //this.gOutputAccum = temp_len;
 
-			/* move input FIFO */
+                        // Can't do this.gOutputAccum = tempArray: it would shorten the accumulator
+                        for (k = 0; k < this.fftFrameSize_; k++) {
+                            this.gOutputAccum[k] = tempArray[k];
+                        }
+			// Shift the input FIFO
+                        // These memory shifts have to be optimized.
 			for (k = 0; k < inFifoLatency; k++) {
                             this.gInFIFO[k] = this.gInFIFO[k + stepSize];
                         }

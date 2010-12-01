@@ -28,17 +28,25 @@ ShifterFilterTest.prototype.init = function () {
  */
 ShifterFilterTest.prototype.test = function () {
     var length = 2048,
-        data_buf = [],
+        data_buf,
         data = this.signal.slice(0,2048);
 
     this.__shifter.process (this.shiftAmount, length, this.osamp, data);
 
-    data = this.signal.slice(2048,4096);
+    data_buf = this.__shifter.outdata.slice(0,2048);
 
-    data_buf = this.__shifter.outdata;
+    console.log ("data that is long " + data_buf.length + " first 10 samples are: " + data_buf[0] + data_buf[1] + data_buf[2] + data_buf[3] + data_buf[4] + data_buf[5] + data_buf[6] + data_buf[7] + data_buf[8] + data_buf[9]);
+    console.log ("data that is long " + data_buf.length + " last 10 samples are: " + data_buf[2038] + data_buf[2039] + data_buf[2040] + data_buf[2041] + data_buf[2042] + data_buf[2043] + data_buf[2044] + data_buf[2045] + data_buf[2046] + data_buf[2047]);
+    
+    //Second iteration.
+
+    data = this.signal.slice(2048,4096);
 
     this.__shifter.process (this.shiftAmount, length, this.osamp, data);
 
-    data_buf = this.__shifter.outdata;
+    data_buf = this.__shifter.outdata.slice(0,2048);
+
+    console.log ("data that is long " + data_buf.length + " first 10 samples are: " + data_buf[0] + data_buf[1] + data_buf[2] + data_buf[3] + data_buf[4] + data_buf[5] + data_buf[6] + data_buf[7] + data_buf[8] + data_buf[9]);
+    console.log ("data that is long " + data_buf.length + " last 10 samples are: " + data_buf[2038] + data_buf[2039] + data_buf[2040] + data_buf[2041] + data_buf[2042] + data_buf[2043] + data_buf[2044] + data_buf[2045] + data_buf[2046] + data_buf[2047]);
 
 };
