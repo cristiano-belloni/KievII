@@ -48,15 +48,11 @@ AudioDataShifterFilter.prototype.process = function (data, length) {
     //var channels = this.audioParameters.channels;
     this.__shifter.process (this.shiftAmount, length, this.osamp, data);
 
-    data_buf = this.__shifter.outdata;
-
     //console.log ("After processing, we got an outData that is long " + this.__shifter.outdata.length + " first 10 samples are: " + this.__shifter.outdata.slice (0,10));
-    console.log ("Copying " + data_buf.length + " worth of samples");
-    for (i = 0; i < data_buf.length; i +=1) {
-        data[i] = data_buf[i];
-    }
 
-    console.log ("data that is long " + data.length + " first 10 samples are: " + data.slice (0,10));
+    data = this.__shifter.outdata.slice(0,length);
+
+    console.log ("data that is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
 
 };
 
