@@ -30,14 +30,13 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     this.gSynMagn = newFilledArray(this.MAX_FRAME_LENGTH, 0);
     //this.gFFTworksp = newFilledArray(2 * this.MAX_FRAME_LENGTH, 0);
     // Not two, 'cos we haven't to fill phases with 0's.
-    this.gFFTworksp = newFilledArray(this.fftFrameSize_);
+    this.gFFTworksp = newFilledArray(this.fftFrameSize_,0);
 
     // Real and imaginary parts of the resynthesized signal
     this.real_ = [];
     this.imag_ = [];
     
     // Output data.
-    // TODO how long is outdata for the caller??
     this.outdata = [];
     this.hannWindow_ = [];
 
@@ -67,7 +66,7 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
     }
 
         /* pitchShift: factor value which is between 0.5 (one octave down) and 2. (one octave up). */
-        /* These could be members? Check if they must be recalculated everytime */
+
 	var fftFrameSize2 = this.fftFrameSize_/2,
 	    stepSize = this.fftFrameSize_/osamp,
 	    freqPerBin = this.sampleRate_ / this.fftFrameSize_,
@@ -201,9 +200,6 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                         // zero negative frequencies
 			for (k = ((fftFrameSize2)+1); (k < this.fftFrameSize_); k++) {
 
-                            //WARNING!
-                            /*for (k = fftFrameSize+2; k < 2*fftFrameSize; k++) gFFTworksp[k] = 0.;*/
-
                             //That's ok, otherwise inverse fft has a fit.
                             this.real_[k] = 0;
 			    this.imag_[k] = 0;
@@ -211,15 +207,10 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                         }
                         
 			// Do the Inverse transform
-                       signal = this.invFFT.inverse(this.real_, this.imag_);
+                        signal = this.invFFT.inverse(this.real_, this.imag_);
 
-			// Do windowing and add to output accumulator
-                        // c++ code was:
-                        /* for(k=0; k < fftFrameSize; k++) {
-				window = -.5*cos(2.*M_PI*(double)k/(double)fftFrameSize)+.5;
-				gOutputAccum[k] += 2.*window*gFFTworksp[2*k]/(fftFrameSize2*osamp);
-			} */
-
+			// Do inverse windowing and add to output accumulator
+                        
 			for(k=0; k < this.fftFrameSize_; k++) {
 
 				this.gOutputAccum[k] += this.hannWindow_[k] * signal[k];
@@ -231,18 +222,16 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                         }
 
 			// Shift the output accumulator.
-                        // c++ version: memmove(gOutputAccum, gOutputAccum+stepSize, fftFrameSize*sizeof(float));
-                        // void *memmove(void *dest, const void *src, size_t n);
-                        // gOutputAccum+stepSize --> gOutputAccum for fftFrameSize samples
-                        // This slice goes to the start of the array. Rough memmove implementation.
-                        var tempArray = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
+                        // Rough memmove implementation.
 
-                        // Can't do this.gOutputAccum = tempArray: it would shorten the accumulator
+                        var tempArray = this.gOutputAccum.slice (stepSize, stepSize + this.fftFrameSize_);
                         for (k = 0; k < this.fftFrameSize_; k++) {
                             this.gOutputAccum[k] = tempArray[k];
                         }
+
 			// Shift the input FIFO
                         // These memory shifts have to be optimized.
+
 			for (k = 0; k < inFifoLatency; k++) {
                             this.gInFIFO[k] = this.gInFIFO[k + stepSize];
                         }
