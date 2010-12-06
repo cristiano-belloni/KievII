@@ -15,7 +15,7 @@ ShifterFilterTest.prototype.init = function () {
 
   if (this.__shifter == undefined) {
       console.log ("Lazily initializing the pitchshifter");
-      this.__shifter = new Pitchshift(this.__shifterParams.fftFrameSize, 44100);
+      this.__shifter = new Pitchshift(this.__shifterParams.fftFrameSize, 44100, this.__shifterParams.algo);
   }
 
   //YAY!

@@ -1,12 +1,13 @@
-function Pitchshift(fftFrameSize, sampleRate) {
-  if( arguments.length ) { this.getready(fftFrameSize, sampleRate); }
+function Pitchshift(fftFrameSize, sampleRate, algo) {
+  if( arguments.length ) { this.getready(fftFrameSize, sampleRate, algo); }
 }
 
-Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
+Pitchshift.prototype.getready = function (fftFrameSize, sampleRate, algo) {
     this.fftFrameSize_ = fftFrameSize;
     this.sampleRate_= sampleRate;
     this.hannWindow_ = []
     this.gRover_ = false;
+    this.algo = algo || "FFT";
     // This has to go.
     this.MAX_FRAME_LENGTH = 8192
 
@@ -47,7 +48,15 @@ Pitchshift.prototype.getready = function (fftFrameSize, sampleRate) {
     }
 
     // Init once, use always.
-    this.fft = new FFT(this.fftFrameSize_, this.sampleRate_);
+    if (this.algo === "FFT") {
+        this.fft = new FFT(this.fftFrameSize_, this.sampleRate_);
+    }
+    else if (this.algo === "RFFT" ) {
+        this.fft = new RFFT(this.fftFrameSize_, this.sampleRate_);
+    }
+    else {
+        throw new Error("Invalid DFT algorithm selected " + this.algo);
+    }
     //Probably we don't need this.
     this.invFFT = new FFT(this.fftFrameSize_, this.sampleRate_);
 
@@ -102,10 +111,51 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
                        /* this is the analysis step */
                        for (k = 0; k <= fftFrameSize2; k++) {
 
-                                //Mmmmh. Taking some "private" member out of fft here.
-                                magn = 2 * Math.sqrt (this.fft.real[k] * this.fft.real[k] + this.fft.imag[k] * this.fft.imag[k]);
-                                //aka magn = spectrum[k];
-                                phase = Math.atan2 (this.fft.imag[k], this.fft.real[k]);
+                                //These ifs make the pitchshifter code dependent on the DFT implementation; we should decorate DFTs instead.
+                                if (this.algo === "FFT") {
+                                    //Taking some "private" member out of fft here.
+                                    magn = 2 * Math.sqrt (this.fft.real[k] * this.fft.real[k] + this.fft.imag[k] * this.fft.imag[k]);
+                                    //aka magn = spectrum[k];
+                                    phase = Math.atan2 (this.fft.imag[k], this.fft.real[k]);
+                                }
+
+                                else if (this.algo === "RFFT") {
+                                    //Because having the same interface but a different output schema
+                                    //in the same library is a great fucking idea!
+
+                                    // Ordering of output:
+                                    //
+                                    // trans[0] = re[0] (==zero frequency, purely real)
+                                    // trans[1] = re[1]
+                                    // ...
+                                    // trans[n/2-1] = re[n/2-1]
+                                    // trans[n/2] = re[n/2] (==nyquist frequency, purely real)
+                                    //
+                                    // trans[n/2+1] = im[n/2-1]
+                                    // trans[n/2+2] = im[n/2-2]
+                                    // ...
+                                    // trans[n-1] = im[1]
+
+                                    var imaginary, real;
+
+                                    real = this.fft.trans[k];
+
+                                    if (k == 0) {
+                                        imaginary = 0;
+                                    }
+                                    else {
+                                        imaginary = this.fft.trans[this.fftFrameSize_ - k];
+                                    }
+
+                                    magn = 2 * Math.sqrt (real * real + imaginary * imaginary);
+                                    phase = Math.atan2 (imaginary, real);
+                                    
+                                }
+
+                                else {
+                                    //If we used the constructor, we can't be here.
+                                    throw new Error("Invalid DFT algorithm selected " + this.algo);
+                                }
 
 				/* compute phase difference */
 				tmp = phase - this.gLastPhase[k];

@@ -26,13 +26,14 @@ Read/write data with audiodata.js
         outputDestination.autoLatency = true;
 
         //Otherwise you hear the first signal, too.
-        audio.volume = 0;
+        audio.volume = 1;
         console.log ("volume 0");
 
 
         shifterParams.fftFrameSize = 2048;
-        shifterParams.shiftAmount = 2;
+        shifterParams.shiftAmount = 0.6;
         shifterParams.osamp = 4;
+        shifterParams.algo = "RFFT";
         var filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
 
         console.log ("added the filter ", filter_shifter);
@@ -45,6 +46,6 @@ Read/write data with audiodata.js
       </script>
   </head>
   <body>
-      <audio id="a1" src="sound_files/german_numbers.ogg" controls></audio>
+      <audio id="a1" src="sound_files/ein.ogg" controls></audio>
   </body>
 </html>
