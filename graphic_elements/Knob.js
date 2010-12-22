@@ -1,9 +1,9 @@
 //TODO this can be another way to handle exceptions.
 //noSlotError = new Error ("Slot not present");
 
-function Knob(name, topleft, images) {
+function Knob(name, topleft, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, images);
+        this.getready(name, topleft, specArgs);
     }
 }
 
@@ -12,7 +12,12 @@ Knob.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Knob.prototype.constructor = Knob;
 
-Knob.prototype.getready = function (name, topleft, images) {
+Knob.prototype.getready = function (name, topleft, specArgs) {
+
+    if (specArgs === undefined) {
+        throw new Error("Error: specArgs is undefined!");
+    }
+    
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
@@ -28,7 +33,8 @@ Knob.prototype.getready = function (name, topleft, images) {
     this.width = 0;
     this.height = 0;
 
-    this.nKnobs = images.length;
+    this.nKnobs = specArgs.images.length;
+    this.sensivity = specArgs.sensivity || 2000;
 
     if (this.nKnobs < 1) {
         throw new Error("Invalid images array length, " + this.nKnobs);
@@ -43,7 +49,7 @@ Knob.prototype.getready = function (name, topleft, images) {
     for (var i = 0; i < this.nKnobs; i += 1) {
         this.imagesArray[i] = new Image();
         this.imagesArray[i].onload = this.onLoad(this);
-        this.imagesArray[i].src = images[i];
+        this.imagesArray[i].src = specArgs.images[i];
     }
 
     //console.log("Width = ", this.width);
@@ -58,6 +64,7 @@ Knob.prototype.onLoad = function (that) {
             that.onCompletion();
             that.completed = true;
         }
+        console.log("name = ", that.name, " Objects = ", that.objectsLoaded);
     };
 };
 
@@ -110,7 +117,7 @@ Knob.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
     temp_value = this.values.knobvalue;
 
     // Todo set sensivity.
-    to_set = temp_value - deltaY / 2000;
+    to_set = temp_value - deltaY / this.sensivity;
 
     if (to_set > 1) {
         to_set = 1;

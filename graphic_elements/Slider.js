@@ -10,7 +10,12 @@ Slider.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Slider.prototype.constructor = Slider;
 
-Slider.prototype.getready = function (name, topleft, sliderImg, knobImg) {
+Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobImg*/) {
+
+    if (specArgs === undefined) {
+        throw new Error("Error: specArgs is undefined!");
+    }
+
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
@@ -31,11 +36,11 @@ Slider.prototype.getready = function (name, topleft, sliderImg, knobImg) {
 
     this.sliderImage = new Image();
     this.sliderImage.onload = this.onLoad(this);
-    this.sliderImage.src = sliderImg;
+    this.sliderImage.src = specArgs.sliderImg;
 
     this.knobImage = new Image();
     this.knobImage.onload = this.onLoad(this);
-    this.knobImage.src = knobImg;
+    this.knobImage.src = specArgs.knobImg;
 
 };
 

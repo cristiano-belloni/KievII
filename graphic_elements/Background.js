@@ -1,6 +1,6 @@
-function Background(name, topleft, image) {
+function Background(name, topleft, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, image);
+        this.getready(name, topleft, specArgs);
     }
 }
 
@@ -9,7 +9,7 @@ Background.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Background.prototype.constructor = Background;
 
-Background.prototype.getready = function (name, topleft, image) {
+Background.prototype.getready = function (name, topleft, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
@@ -25,7 +25,7 @@ Background.prototype.getready = function (name, topleft, image) {
     this.image = new Image();
     // Set the onload function.
     this.image.onload = this.onLoad(this);
-    this.image.src = image;
+    this.image.src = specArgs.image;
 
 };
 

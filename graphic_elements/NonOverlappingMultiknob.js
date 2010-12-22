@@ -1,6 +1,6 @@
-function NonOverlappingMultiknob(name, topleft, coordinates, images) {
+function NonOverlappingMultiknob(name, topleft, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, coordinates, images);
+        this.getready(name, topleft, specArgs);
     }
 }
 
@@ -10,7 +10,7 @@ NonOverlappingMultiknob.prototype = new Element();
 NonOverlappingMultiknob.prototype.constructor = NonOverlappingMultiknob;
 
 
-NonOverlappingMultiknob.prototype.getready = function (name, topleft, coordinates, images) {
+NonOverlappingMultiknob.prototype.getready = function (name, topleft, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
@@ -29,16 +29,19 @@ NonOverlappingMultiknob.prototype.getready = function (name, topleft, coordinate
     //Coordinates is an array of arrays. We infer the number of knobs from its
     //length. No alignment functions here, they must be provided outside of this
     //class.
-    nKnobs = coordinates.length;
+    nKnobs = specArgs.coordinates.length;
 
     // Set the status progress. TODO this can go.
-    this.objectsTotal = nKnobs * images.length;
+    this.objectsTotal = nKnobs * specArgs.images.length;
 
     // Fill the knob array. It contains, you know, knobs :)
     for (i = 0; i < nKnobs; i += 1) {
 
+        var knobSpecArgs = {
+            images: specArgs.images
+        };
         // The knobs are named 1,2,3...n
-        tempKnob = new Knob(i, coordinates[i], images);
+        tempKnob = new Knob(i, specArgs.coordinates[i], knobSpecArgs);
 
         //Set them undrawable, as we will explicitly refresh them.
         tempKnob.drawItself = false;
@@ -50,8 +53,8 @@ NonOverlappingMultiknob.prototype.getready = function (name, topleft, coordinate
 
     //Map our values to the corresponding knob
     for (i = 0; i < this.KnobArray.length; i += 1) {
-        valuename = "knobvalue" + this.KnobArray[i];
-        this.values[valuename] = this.KnobArray[i];
+        valuename = "knobvalue" + this.KnobArray[i].name;
+        this.values[valuename] = i;
     }
 
     //By default, a multiple knob always draws itself when value is set.
@@ -115,7 +118,7 @@ NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
         return;
     }
 
-    //Retrieve the knob numer here. Kind of an hack, mh?
+    //Retrieve the knob number here. Kind of an hack, mh?
     knobN = parseInt(this.values[slot], 10);
 
     if (knobN === 0) {

@@ -1,6 +1,6 @@
-function Multiband(name, topleft, nBands, wh, color_range) {
+function Multiband(name, topleft, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, nBands, wh, color_range);
+        this.getready(name, topleft, specArgs);
     }
 }
 
@@ -10,7 +10,11 @@ Multiband.prototype = new Element();
 Multiband.prototype.constructor = Multiband;
 
 
-Multiband.prototype.getready = function (name, topleft, nBands, wh, color_range) {
+Multiband.prototype.getready = function (name, topleft, specArgs) {
+
+    if (specArgs === undefined) {
+        throw new Error("Error: specArgs is undefined!");
+    }
 
     var valueName,
         i;
@@ -20,19 +24,19 @@ Multiband.prototype.getready = function (name, topleft, nBands, wh, color_range)
     //and run it as if it were part of this object
     this.tempReady(name, topleft);
     
-    this.nBands = nBands;
+    this.nBands = specArgs.nBands;
     this.sideBands = new Array (this.nBands);
 
     // The values. Every band has its starting point, height, width, hight and color.
-    // TODO they should be Nan.
+
     this.values = {};
 
-    for (i = 0; i < nBands; i += 1) {
+    for (i = 0; i < specArgs.nBands; i += 1) {
         valueName = i + "sp";
         this.values[valueName] = 0;
         valueName = i + "ep";
         this.values[valueName] = 0;
-        valueName = i + "height";
+        valueName = i + "width";
         this.values[valueName] = 0;
         valueName = i + "height";
         this.values[valueName] = 0;
@@ -40,11 +44,11 @@ Multiband.prototype.getready = function (name, topleft, nBands, wh, color_range)
         this.values[valueName] = 0;
     }
 
-    this.values.color_range = color_range;
+    this.values.colorRange = specArgs.colorRange;
 
     // The multiband display has a fixed width and height.
-    this.width = wh[0];
-    this.height = wh[1];
+    this.width = specArgs.wh[0];
+    this.height = specArgs.wh[1];
 
     this.drawClass = undefined;
 
@@ -341,7 +345,7 @@ Multiband.prototype.refresh = function (clear) {
     for (i = 0; i < this.nBands; i += 1) {
 
         height = (1 - this.values[i + "height"]) * this.height;
-        range = this.values.color_range;
+        range = this.values.colorRange;
         colValue = this.values[i + "color"];
         color_shade = (colValue - 0.5) * range;
         this.drawClass.draw(this.sideBands[i].startXPoint,

@@ -1,6 +1,6 @@
-function Label(name, topleft, wh) {
+function Label(name, topleft, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, wh);
+        this.getready(name, topleft, specArgs);
     }
 }
 
@@ -9,7 +9,7 @@ Label.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Label.prototype.constructor = Label;
 
-Label.prototype.getready = function (name, topleft, wh) {
+Label.prototype.getready = function (name, topleft, specArgs) {
     //Reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
@@ -20,8 +20,8 @@ Label.prototype.getready = function (name, topleft, wh) {
     //By default, a label always draws itself when value is set.
     this.drawItself = true;
     
-    this.width = wh[0];
-    this.height = wh[1];
+    this.width = specArgs.wh[0];
+    this.height = specArgs.wh[1];
 
     this.completed = true;
 
