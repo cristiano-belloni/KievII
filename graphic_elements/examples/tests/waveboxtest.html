@@ -1,0 +1,86 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Wavebox Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../Element.js"></script>
+    <script type="text/javascript" src="../../UI.js"></script>
+    <script type="text/javascript" src="../../Wavebox.js"></script>
+    <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+    <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+  </head>
+  <body>
+    <audio id="a1"
+           src="../../../audio/sound_files/german_numbers.ogg"
+           controls>
+    </audio>
+    <canvas id="plugin" width="800" height="800"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var mouseUp = true;
+        var ui;
+
+         function onMouseDown(evt) {
+            ui.onMouseDownFunc(evt);
+        }
+
+        function onMouseUp(evt) {
+            ui.onMouseUpFunc(evt);
+        }
+
+        function onMouseMove(evt) {
+            ui.onMouseMoveFunc(evt);
+        }
+
+        /* INIT */
+
+        var plugin_canvas = document.getElementById("plugin");
+        plugin_context = plugin_canvas.getContext("2d");
+
+        ui = new UI (plugin_context);
+
+        //Wave box.
+        var waveboxArgs = {
+            wh: [800,600]
+        };
+
+        var waveBox = new Wavebox("test_wavebox", [0, 0], waveboxArgs);
+        var pointDrawer = new CanvasDrawPath (plugin_context, '#000', 3);
+        
+        ui.addElement(waveBox, pointDrawer);
+
+        /* Load something */
+        var a1 = document.getElementById('a1'),
+        buffer = [];
+
+        function loadedMetadata() {
+          // Mute a1 audio.
+          a1.volume = 0;
+          a1.addEventListener("MozAudioAvailable", audioAvailable, false);
+        }
+
+        function audioAvailable(event) {
+          //setTimeout("throw new Error('Error: " + "audioAvailable called: " + frameBuffer.length + "')",0);
+          var length_now = buffer.length;
+          // It isn't the best way to concatenate Float32Arrays, I'm afraid.
+          for (var i = 0; i < event.frameBuffer.length; i += 1) {
+              buffer [length_now + i] = event.frameBuffer[i];
+          }
+          console.log(buffer.length, " ", event.time, " to ", event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels, " seconds of ", a1.duration);
+          //This isn't precise and I don't know why
+          if (a1.duration <= (event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels)) {
+                  waveBox.setValue ("waveboxsignal", buffer);
+              }
+        }
+
+        a1.addEventListener('loadedmetadata', loadedMetadata, false);
+
+    </script>
+  </body>
+</html>

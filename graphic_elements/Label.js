@@ -40,7 +40,7 @@ Label.prototype.isInROI = function (x, y) {
 };
 
 Label.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
-    var ret = {"slot" : "labelvalue", "value" : this.value.labelvalue};
+    var ret = {"slot" : "labelvalue", "value" : this.values.labelvalue};
     return ret;
 };
 
@@ -62,7 +62,9 @@ Label.prototype.getFont = function (font) {
 // Setters
 Label.prototype.setValue = function (slot, value) {
 
-    var temp_value = this.textFilter(value);
+    if (this.textfilter !== undefined) {
+        var temp_value = this.textFilter(value);
+    }
 
     this.tempsetValue = Element.prototype.setValue;
     this.tempsetValue(slot, temp_value);

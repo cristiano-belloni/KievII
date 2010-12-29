@@ -172,3 +172,63 @@ function CanvasDrawRect (canvas) {
         this.canvasC.fillStyle = tempfillStyle;
     }
 }
+
+function CanvasDrawPoint (canvas, color, dimension) {
+
+    this.canvasC = canvas;
+    this.fillStyle = color;
+    this.dimension = dimension;
+
+    this.draw = function (x, y) {
+        //Save fillStyle.
+        var tempfillStyle = this.canvasC.fillStyle;
+        this.canvasC.fillStyle = this.fillStyle;
+
+        this.canvasC.fillRect(x, y, this.dimension, this.dimension);
+        
+        // Restore fillStyle
+        this.canvasC.fillStyle = tempfillStyle;
+
+    }
+}
+
+function CanvasDrawPath (canvas, color, dimension) {
+
+    this.canvasC = canvas;
+    this.inited = false;
+    this.fillStyle = color;
+    // To be implemented
+    this.dimension = dimension;
+
+    this.draw = function (x, y) {
+
+        //Save fillStyle.
+        var tempfillStyle = this.canvasC.fillStyle;
+        this.canvasC.fillStyle = this.fillStyle;
+
+        if (this.inited === false) {
+            this.canvasC.moveTo(x, y);
+            this.inited = true;
+        }
+        else {
+            this.canvasC.lineTo(x, y);
+        }
+
+        // Restore fillStyle
+        this.canvasC.fillStyle = tempfillStyle;
+    }
+
+    this.endDraw = function () {
+
+        this.inited = false;
+        //Save fillStyle.
+        var tempfillStyle = this.canvasC.fillStyle;
+        this.canvasC.fillStyle = this.fillStyle;
+
+        this.canvasC.stroke();
+
+        // Restore fillStyle
+        this.canvasC.fillStyle = tempfillStyle;
+    }
+
+}
