@@ -207,6 +207,8 @@ function CanvasDrawPath (canvas, color, dimension) {
         this.canvasC.fillStyle = this.fillStyle;
 
         if (this.inited === false) {
+            console.log ("Beginning path");
+            this.canvasC.beginPath();
             this.canvasC.moveTo(x, y);
             this.inited = true;
         }
@@ -216,6 +218,11 @@ function CanvasDrawPath (canvas, color, dimension) {
 
         // Restore fillStyle
         this.canvasC.fillStyle = tempfillStyle;
+    }
+
+    // Redundant.
+    this.beginDraw = function () {
+        this.inited = false;
     }
 
     this.endDraw = function () {
@@ -229,6 +236,20 @@ function CanvasDrawPath (canvas, color, dimension) {
 
         // Restore fillStyle
         this.canvasC.fillStyle = tempfillStyle;
+    }
+
+    // These should be in the wrappers interface.
+    this.saveBackground = function (left, top, width, height) {
+        this.backgroundPixels = this.canvasC.getImageData(left, top, width, height);
+        this.bgX = left;
+        this.bgY = top;
+        console.log ("this.bgX ", this.bgX, "this.bgY ", this.bgY)
+        console.log ("Saved the background, from (", left, ",", top, ") to (", left + width, ",", top + height, ")");
+    }
+
+    this.restoreBackground = function () {
+        this.canvasC.putImageData(this.backgroundPixels, this.bgX, this.bgY);
+        console.log ("Restored the background in (", this.bgX, ",", this.bgY,")");
     }
 
 }
