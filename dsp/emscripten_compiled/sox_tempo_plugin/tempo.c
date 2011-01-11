@@ -151,7 +151,8 @@ static float * tempo_input(tempo_t * t, float const * samples, size_t n)
 
 static float const * tempo_output(tempo_t * t, float * samples, size_t * n)
 {
-  t->samples_out += *n = min(*n, fifo_occupancy(&t->output_fifo));
+  *n = min(*n, fifo_occupancy(&t->output_fifo));
+  t->samples_out += *n;
   return fifo_read(&t->output_fifo, *n, samples);
 }
 

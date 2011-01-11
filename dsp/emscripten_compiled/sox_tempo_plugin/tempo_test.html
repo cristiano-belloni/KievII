@@ -72,20 +72,51 @@
             _tempo_setup (tempo_instance, a1.mozSampleRate, 0, 1.5, 82, 14.68, 12);
             console.log ("Tempo instance is set up");
 
-            var buffer_pointer = Pointer_make (buffer);
-            var input_res = _tempo_input(tempo_instance, buffer_pointer, buffer.length);
-            console.log ("Tempo input called, returned", input_res);
+            var k = 0;
+            var BUFSIZE = 4096;
 
-            _tempo_process(tempo_instance);
-            console.log ("Tempo processed");
+            while ( k < buffer.length) {
 
-            /*static float const * tempo_output(tempo_t * t, float * samples, size_t * n)*/
-            /*var samplesBuffer = 0;
-            var samplesSize = 0;
-            var arrayOut = _tempo_output(tempo_instance, samplesBuffer, samplesSize);
-            console.log ("Output array seems ", arrayOut);*/
-            
+                // tempo_input.
+                // input_res is a pointer where to store the float values.
+                // Second parameter is always NULL
+                // Third parameter is the number of samples in input
 
+                var input_res = _tempo_input(tempo_instance, null, BUFSIZE);
+                console.log ("Tempo input called, returned pointer where to store the samples@ HEAP[", input_res,"]");
+
+                // Now we got to store buffer.length worth of samples in HEAP[input_res]
+                for (var i = 0; i < BUFSIZE; i+=1) {
+                    HEAP[input_res+i] = buffer[k + i];
+                }
+
+                // Now we can process the values.
+                _tempo_process(tempo_instance);
+                console.log ("Tempo processed");
+
+                // tempo_output
+                // arrayOut is a pointer from where we take the samples
+                // Second parameter is always NULL
+                // third parameters gives us the number of samples to take.
+                // but, it must be == to buffer.length
+
+                var samplesSize = 0;
+                var ptr_to_size = Pointer_make([0]) //, null, ALLOC_STACK);
+                HEAP[ptr_to_size] = BUFSIZE;
+
+                var arrayOut = _tempo_output(tempo_instance, null, ptr_to_size);
+
+                samplesSize = HEAP[ptr_to_size];
+
+                console.log ("Size seems ", samplesSize);
+
+                var samplesBuffer = HEAP.slice(arrayOut, samplesSize);
+
+                console.log ("Output array seems ", arrayOut);
+
+                k += BUFSIZE;
+
+            }
         }
 
     </script>
