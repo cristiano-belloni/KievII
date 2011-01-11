@@ -1,3 +1,4 @@
+var arguments = [];
 // LLVM_STYLE: old
 
 // Capture the output of this into a variable, if you want
@@ -7,9 +8,12 @@
 
 // Runs much faster, for some reason
 this['Module'] = {};
-var arguments = [];
 var args = arguments;
     // === Auto-generated preamble library stuff ===
+  
+  //========================================
+  // Runtime code shared with compiler
+  //========================================
   
   Runtime = {
     stackAlloc: function stackAlloc(size) { var ret = STACKTOP; assert(size > 0); for (var i = 0; i < size; i++) HEAP[STACKTOP+i] = 0; STACKTOP += size;STACKTOP = Math.ceil(STACKTOP/4)*4;; assert(STACKTOP < STACK_ROOT + STACK_MAX); return ret; },
@@ -114,6 +118,14 @@ var args = arguments;
   }
   
   
+  
+  
+  
+  
+  //========================================
+  // Runtime essentials
+  //========================================
+  
   function __globalConstructor__() {
   }
   
@@ -124,10 +136,6 @@ var args = arguments;
   var __THREW__ = false; // Used in checking for thrown exceptions.
   
   var __ATEXIT__ = [];
-  
-  
-  
-  
   
   var ABORT = false;
   
@@ -258,113 +266,6 @@ var args = arguments;
   
   // stdio.h
   
-  function __formatString() {
-    function isFloatArg(type) {
-      return String.fromCharCode(type) in Runtime.set('f', 'e', 'g');
-    }
-    var cStyle = false;
-    var textIndex = arguments[0];
-    var argIndex = 1;
-    if (textIndex < 0) {
-      cStyle = true;
-      textIndex = -textIndex;
-      slab = null;
-      argIndex = arguments[1];
-    } else {
-      var _arguments = arguments;
-    }
-    function getNextArg(type) {
-      var ret;
-      if (!cStyle) {
-        ret = _arguments[argIndex];
-        argIndex++;
-      } else {
-        if (isFloatArg(type)) {
-          ret = HEAP[argIndex];
-        } else {
-          ret = HEAP[argIndex];
-        }
-        argIndex += type === 'l'.charCodeAt(0) ? 8 : 4; // XXX hardcoded native sizes
-      }
-      return ret;
-    }
-  
-    var ret = [];
-    var curr, next, currArg;
-    while(1) {
-      curr = HEAP[textIndex];
-      if (curr === 0) break;
-      next = HEAP[textIndex+1];
-      if (curr == '%'.charCodeAt(0)) {
-        // Handle very very simply formatting, namely only %.X[f|d|u|etc.]
-        var precision = -1;
-        if (next == '.'.charCodeAt(0)) {
-          textIndex++;
-          precision = 0;
-          while(1) {
-            var precisionChr = HEAP[textIndex+1];
-            if (!(precisionChr >= '0'.charCodeAt(0) && precisionChr <= '9'.charCodeAt(0))) break;
-            precision *= 10;
-            precision += precisionChr - '0'.charCodeAt(0);
-            textIndex++;
-          }
-          next = HEAP[textIndex+1];
-        }
-        if (next == 'l'.charCodeAt(0)) {
-          textIndex++;
-          next = HEAP[textIndex+1];
-        }
-        if (isFloatArg(next)) {
-          next = 'f'.charCodeAt(0); // no support for 'e'
-        }
-        if (['d', 'i', 'u', 'p', 'f'].indexOf(String.fromCharCode(next)) != -1) {
-          var currArg;
-          var argText;
-          currArg = getNextArg(next);
-          argText = String(+currArg); // +: boolean=>int
-          if (next == 'u'.charCodeAt(0)) {
-            argText = String(unSign(currArg, 32));
-          } else if (next == 'p'.charCodeAt(0)) {
-            argText = '0x' + currArg.toString(16);
-          } else {
-            argText = String(+currArg); // +: boolean=>int
-          }
-          if (precision >= 0) {
-            if (isFloatArg(next)) {
-              var dotIndex = argText.indexOf('.');
-              if (dotIndex == -1 && next == 'f'.charCodeAt(0)) {
-                dotIndex = argText.length;
-                argText += '.';
-              }
-              argText += '00000000000'; // padding
-              argText = argText.substr(0, dotIndex+1+precision);
-            } else {
-              while (argText.length < precision) {
-                argText = '0' + argText;
-              }
-            }
-          }
-          argText.split('').forEach(function(chr) {
-            ret.push(chr.charCodeAt(0));
-          });
-          textIndex += 2;
-        } else if (next == 's'.charCodeAt(0)) {
-          ret = ret.concat(String_copy(getNextArg(next)));
-          textIndex += 2;
-        } else if (next == 'c'.charCodeAt(0)) {
-          ret = ret.concat(getNextArg(next));
-          textIndex += 2;
-        } else {
-          ret.push(next);
-          textIndex += 2; // not sure what to do with this %, so print it
-        }
-      } else {
-        ret.push(curr);
-        textIndex += 1;
-      }
-    }
-    return Pointer_make(ret.concat(0), 0, ALLOC_STACK); // NB: Stored on the stack
-  }
   
   // Copies a list of num items on the HEAP into a
   // a normal JavaScript array of numbers
@@ -373,50 +274,16 @@ var args = arguments;
     return IHEAP.slice(ptr, ptr+num);
   }
   
-  // Copies a C-style string, terminated by a zero, from the HEAP into
-  // a normal JavaScript array of numbers
-  function String_copy(ptr, addZero) {
-    return Array_copy(ptr, _strlen(ptr)).concat(addZero ? [0] : []);
-  }
-  
-  // stdlib.h
-  
-  // Get a pointer, return int value of the string it points to
-  function _atoi(s) {
-    return Math.floor(Number(Pointer_stringify(s)));
-  }
-  
-  function _llvm_memcpy_i32(dest, src, num, idunno) {
-    var curr;
-    for (var i = 0; i < num; i++) {
-      // TODO: optimize for the typed arrays case
-      // || 0, since memcpy sometimes copies uninitialized areas XXX: Investigate why initializing alloc'ed memory does not fix that too
-      IHEAP[dest+i] = IHEAP[src+i]; FHEAP[dest+i] = FHEAP[src+i]; ;
-    }
-  }
-  _memcpy = _llvm_memcpy_i64 = _llvm_memcpy_p0i8_p0i8_i32 = _llvm_memcpy_p0i8_p0i8_i64 = _llvm_memcpy_i32;
-  
-  function _llvm_memmove_i32(dest, src, num, idunno) {
-    // not optimized!
-    if (num === 0) return; // will confuse malloc if 0
-    var tmp = _malloc(num);
-    _memcpy(tmp, src, num);
-    _memcpy(dest, tmp, num);
-    _free(tmp);
-  }
-  _memmove = _llvm_memmove_i64 = _llvm_memmove_p0i8_p0i8_i32 = _llvm_memmove_p0i8_p0i8_i64 = _llvm_memmove_i32;
-  
-  function llvm_memset_i32(ptr, value, num) {
-    for (var i = 0; i < num; i++) {
-      HEAP[ptr+i] = value;
-    }
-  }
-  _memset = _llvm_memset_p0i8_i64 = _llvm_memset_p0i8_i32 = llvm_memset_i32;
-  
-  function _strlen(ptr) {
+  function String_len(ptr) {
     var i = 0;
     while (HEAP[ptr+i]) i++; // Note: should be |!= 0|, technically. But this helps catch bugs with undefineds
     return i;
+  }
+  
+  // Copies a C-style string, terminated by a zero, from the HEAP into
+  // a normal JavaScript array of numbers
+  function String_copy(ptr, addZero) {
+    return Array_copy(ptr, String_len(ptr)).concat(addZero ? [0] : []);
   }
   
   // Tools
@@ -485,7 +352,14 @@ var args = arguments;
   var $struct_tempo_t___SIZE = 96; // %struct.tempo_t
   var $struct_tempo_t___FLATTENER = [0,4,8,16,20,24,28,32,52,56,76,80,84,88];
   
-  // stub for _llvm_memmove_p0i8_p0i8_i32
+  _llvm_memmove_p0i8_p0i8_i32 = function (dest, src, num, idunno) {
+      // not optimized!
+      if (num === 0) return; // will confuse malloc if 0
+      var tmp = _malloc(num);
+      _memcpy(tmp, src, num);
+      _memcpy(dest, tmp, num);
+      _free(tmp);
+    }
   _realloc = function (ptr, size) {
       // Very simple, inefficient implementation - if you use a real malloc, best to use
       // a real realloc with it
@@ -500,12 +374,31 @@ var args = arguments;
       }
       return ret;
     }
-  // stub for _llvm_memcpy_p0i8_p0i8_i32
+  _memcpy = function (dest, src, num, idunno) {
+      var curr;
+      for (var i = 0; i < num; i++) {
+        // TODO: optimize for the typed arrays case
+        // || 0, since memcpy sometimes copies uninitialized areas XXX: Investigate why initializing alloc'ed memory does not fix that too
+        IHEAP[dest+i] = IHEAP[src+i]; FHEAP[dest+i] = FHEAP[src+i]; ;
+      }
+    }
+  _llvm_memcpy_p0i8_p0i8_i32 = function (dest, src, num, idunno) {
+      var curr;
+      for (var i = 0; i < num; i++) {
+        // TODO: optimize for the typed arrays case
+        // || 0, since memcpy sometimes copies uninitialized areas XXX: Investigate why initializing alloc'ed memory does not fix that too
+        IHEAP[dest+i] = IHEAP[src+i]; FHEAP[dest+i] = FHEAP[src+i]; ;
+      }
+    }
   // stub for _free
   // stub for _malloc
   // stub for _calloc
-  // stub for _ceil
-  // stub for _llvm_memset_p0i8_i32
+  _ceil = Math.ceil
+  _llvm_memset_p0i8_i32 = function (ptr, value, num) {
+      for (var i = 0; i < num; i++) {
+        HEAP[ptr+i] = value;
+      }
+    }
   
   
   function _fifo_clear($f) {
@@ -2032,7 +1925,7 @@ var args = arguments;
         var $76 = unSign($75, 32);
         var $77 = HEAP[$factor_addr];
         var $78 = $76 * $77;
-        var $79 = Math.ceil($78);
+        var $79 = _ceil($78);
         var $80 = Math.floor($79);
         HEAP[$max_skip] = $80;;
         var $81 = HEAP[$t_addr];
