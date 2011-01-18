@@ -46,17 +46,6 @@ Wavebox.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Wavebox.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
-    var ret = {"slot" : "waveboxposition", "value" : this.values.waveboxposition};
-    return ret;
-};
-
-//This has to go, it makes no sense at all.
-Wavebox.prototype.getDefaultValue = function () {
-    return this.values.waveboxposition;
-};
-
-
 Wavebox.prototype.setValue = function (slot, value) {
 
     // Won't call the parent: this element has a custom way to set values.
