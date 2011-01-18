@@ -24,6 +24,10 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
     this.values = {"knobvalue" : 0};
     this.objectsLoaded = 0;
 
+    //TODO this is redundant.
+    this.start_x = undefined;
+    this.start_y = undefined;
+
     //By default, a knob always draws itself when value is set.
     this.drawItself = true;
 
@@ -49,8 +53,8 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
         this.imagesArray[i].src = specArgs.images[i];
     }
 
-    //console.log("Width = ", this.width);
-    //console.log("Height = ", this.height);
+    // console.log("Knob: Width = ", this.width);
+    // console.log("Knob: Height = ", this.height);
 
 };
 
@@ -92,44 +96,71 @@ Knob.prototype._getImage = function () {
 Knob.prototype.isInROI = function (x, y) {
     if ((x > this.xOrigin) && (y > this.yOrigin)) {
         if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-            //console.log(this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+            //console.log("Knob: ", this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
             return true;
         }
         /*jsl:pass*/
     }
-    //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
-    //console.log ("Returning false");
+    //console.log ("Knob: ", this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
     return false;
 };
 
-Knob.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
+Knob.prototype.onMouseDown = function (x, y) {
 
-    var deltaY = 0,
-        temp_value,
-        to_set,
-        ret;
-
-    deltaY = curr_y - start_y;
-
-    temp_value = this.values.knobvalue;
-
-    // Todo set sensivity.
-    to_set = temp_value - deltaY / this.sensivity;
-
-    if (to_set > 1) {
-        to_set = 1;
-    }
-    if (to_set < 0) {
-        to_set = 0;
+    var inROI = this.isInROI(x, y);
+    // Save the starting point if event happened in our ROI.
+    if (inROI) {
+        this.start_x = x;
+        this.start_y = y;
     }
 
-    ret = {"slot" : "knobvalue", "value" : to_set};
-
-    return ret;
+    // No value has been changed.
+    return undefined;
 };
 
-Knob.prototype.getDefaultValue = function () {
-    return this.values.knobvalue;
+Knob.prototype.onMouseUp = function (x, y) {
+
+    // Reset the starting point.
+    this.start_x = undefined;
+    this.start_y = undefined;
+
+    // No value has been changed
+    return undefined;
+
+};
+
+Knob.prototype.onMouseMove = function (curr_x, curr_y) {
+
+    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
+
+        // This means that the mouse is currently down.
+        var deltaY = 0,
+            temp_value,
+            to_set,
+            ret;
+
+        deltaY = curr_y - this.start_y;
+
+        temp_value = this.values.knobvalue;
+
+        // Todo set sensivity.
+        to_set = temp_value - deltaY / this.sensivity;
+
+        if (to_set > 1) {
+            to_set = 1;
+        }
+        if (to_set < 0) {
+            to_set = 0;
+        }
+
+        ret = {"slot" : "knobvalue", "value" : to_set};
+
+        return ret;
+    }
+
+    // The mouse is currently up; ignore the event notify.
+    return undefined;
+
 };
 
 // Setters

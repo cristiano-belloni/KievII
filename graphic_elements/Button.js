@@ -19,10 +19,13 @@ Button.prototype.getready = function (name, topleft, specArgs) {
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
     this.tempReady(name, topleft);
-    //now that all required properties have been inherited
-    //from the parent class, define extra ones from this class
+
+    // Now that all required properties have been inherited
+    // from the parent class, define extra ones from this class
     this.values = {"buttonvalue" : 0};
     this.objectsLoaded = 0;
+
+    this.triggered = false;
 
     //By default, a Button always draws itself when value is set.
     this.drawItself = true;
@@ -49,9 +52,6 @@ Button.prototype.getready = function (name, topleft, specArgs) {
         this.imagesArray[i].src = specArgs.images[i];
     }
 
-    //console.log("Width = ", this.width);
-    //console.log("Height = ", this.height);
-
 };
 
 Button.prototype.onLoad = function (that) {
@@ -61,11 +61,11 @@ Button.prototype.onLoad = function (that) {
             that.onCompletion();
             that.completed = true;
         }
-        console.log("name = ", that.name, " Objects = ", that.objectsLoaded);
+        console.log("Button: name = ", that.name, " Objects loaded = ", that.objectsLoaded, " of ", that.objectsTotal);
     };
 };
 
-// This method returns an image index given the Button value.
+// This method returns an image index given the value.
 /*jslint nomen: false*/
 Button.prototype._getImageNum = function () {
 /*jslint nomen: true*/
@@ -78,7 +78,7 @@ Button.prototype._getImageNum = function () {
     return ret;
 };
 
-// This method returns an image object given the button value.
+// This method returns an image object given the value.
 /*jslint nomen: false*/
 Button.prototype._getImage = function () {
 /*jslint nomen: true*/
@@ -86,6 +86,7 @@ Button.prototype._getImage = function () {
     /*jslint nomen: false*/
     var ret = this._getImageNum();
     /*jslint nomen: true*/
+
     return this.imagesArray[ret];
 };
 
@@ -98,33 +99,42 @@ Button.prototype.isInROI = function (x, y) {
         }
         /*jsl:pass*/
     }
-    //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
-    //console.log ("Returning false");
+    // console.log ("Button: ", this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
     return false;
 };
 
-Button.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
+Button.prototype.onMouseDown = function (x, y) {
+
+    if (this.isInROI(x, y)) {
+        this.triggered = true;
+    }
+    return undefined;
+};
+
+Button.prototype.onMouseUp = function (curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
 
-    // Button is activated when cursor is still in the element ROI, otherwise action is void.
-    if (this.isInROI(curr_x, curr_y)) {
-        // This holds for the simple 2-value button, while we need to do some
-        // more calculation for n-valued buttons. TODO.
-        to_set = 1 - this.values.buttonvalue;
-        ret = {"slot" : "buttonvalue", "value" : to_set};
-        return ret;
+    if (this.triggered) {
+        // Button is activated when cursor is still in the element ROI, otherwise action is void.
+        if (this.isInROI(curr_x, curr_y)) {
+            // This holds for the simple 2-value button, while we need to do some
+            // more calculation for n-valued buttons. TODO.
+            to_set = 1 - this.values.buttonvalue;
+            ret = {"slot" : "buttonvalue", "value" : to_set};
+
+            // Click on button is completed, the button is no more triggered.
+            this.triggered = false;
+            
+            return ret;
+        }
     }
     
-    // Action is void, button was upclicked outside its ROI.
-    // No need to trigger anything.
+    // Action is void, button was upclicked outside its ROI or never downclicked
+    // No need to trigger anything, ignore this event.
     return undefined;
     
-};
-
-Button.prototype.getDefaultValue = function () {
-    return this.values.buttonvalue;
 };
 
 // Setters

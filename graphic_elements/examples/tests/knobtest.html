@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Button Test</title>
+    <title>Knob Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../Element.js"></script>
     <script type="text/javascript" src="../../UI.js"></script>
-    <script type="text/javascript" src="../../Button.js"></script>
+    <script type="text/javascript" src="../../Knob.js"></script>
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
   </head>
   <body>
@@ -43,20 +43,43 @@
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
 
-        var button_img_array = ["../images/button_sm_01.png", "../images/button_sm_02.png"];
 
-        //Button
-        var buttonArgs = {
-            images : button_img_array
+        // Knob
+        function knob_name (basename, knob_n) {
+            // Not general
+            if (knob_n < 10) {
+                knob_n = "0" + knob_n ;
+            }
+            var name = basename + knob_n;
+            return name;
+        }
+
+        //This is the array of image names
+        var medknob_img_array = [];
+
+        // Number of medium knob image frames.
+        var medium_knobs_images = 39;
+
+        var images_location = "../images/"
+
+        //Generate all the medium knob image names
+        for (i = 0; i <= medium_knobs_images; i++) {
+            var filename = images_location + knob_name ("knob_med_", i + 1) + ".png";
+            medknob_img_array[i] = filename;
+        }
+
+        var knobArgs = {
+            images : medknob_img_array,
+            sensivity : 2000
         };
 
-        var button = new Button("test_button", [90, 90], buttonArgs);
-        // Shouldn't a button be clickable by default? TODO
-        button.setClickable(true);
+        var knob = new Knob("test_knob", [90, 90], knobArgs);
+        // Shouldn't a knob be clickable by default? TODO
+        knob.setClickable(true);
 
-        ui.addElement(button, imageDisplayer);
+        ui.addElement(knob, imageDisplayer);
 
-        button.setValue("buttonvalue", 0.9);
+        knob.setValue("knobvalue", 0.7);
 
 
     </script>
