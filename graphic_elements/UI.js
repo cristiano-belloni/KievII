@@ -55,7 +55,13 @@ function UI() {
                                                                   this.start_y,
                                                                   evt.pageX, evt.pageY);
 
-                this.setValue(this.startedonknob, ret.slot, ret.value);
+                // An onROI can return "undefined" to signal the action has no
+                // consequences. So, we can avoid to call an useless setValue
+                // (see Button example)
+
+                if (ret != undefined) {
+                    this.setValue(this.startedonknob, ret.slot, ret.value);
+                }
             }
         }
     };

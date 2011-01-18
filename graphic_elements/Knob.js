@@ -1,6 +1,3 @@
-//TODO this can be another way to handle exceptions.
-//noSlotError = new Error ("Slot not present");
-
 function Knob(name, topleft, specArgs) {
     if (arguments.length) {
         this.getready(name, topleft, specArgs);
