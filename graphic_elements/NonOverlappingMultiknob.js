@@ -80,19 +80,50 @@ NonOverlappingMultiknob.prototype.isInROI = function (x, y) {
 
 };
 
-NonOverlappingMultiknob.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
+NonOverlappingMultiknob.prototype.onMouseDown = function (x, y) {
 
     var knobret,
-        ret;
+        inROI;
 
-    //Pass it to the right "subknob"
-    knobret = this.KnobArray[this.ROIKnob].onROI(start_x, start_y, curr_x, curr_y);
+    inROI = this.isInROI(x, y);
 
-    // TODO define whatever :)
-    ret = {"slot" : ("knobvalue" + this.ROIKnob), "value" : knobret.value};
+    if (inROI === true) {
+        knobret = this.KnobArray[this.ROIKnob].onMouseDown(x,y);
+    }
 
-    return ret;
+    //assert (knobret === undefined) TODO
+    return knobret;
+    
 };
+
+NonOverlappingMultiknob.prototype.onMouseUp = function (x, y) {
+
+    var knobret;
+
+    if (this.ROIKnob !== undefined) {
+        knobret = this.KnobArray[this.ROIKnob].onMouseUp(x,y);
+    }
+    this.ROIKnob = undefined;
+    //assert (knobret === undefined) TODO
+    return knobret;
+}
+
+NonOverlappingMultiknob.prototype.onMouseMove = function (x, y) {
+
+    var knobret;
+
+    if (this.ROIKnob !== undefined) {
+        //Pass it to the right subknob
+        knobret = this.KnobArray[this.ROIKnob].onMouseMove(x,y);
+
+        if (knobret !== undefined) {
+            var ret = {"slot" : ("knobvalue" + this.ROIKnob), "value" : knobret.value};
+            return ret;
+        }
+    }
+    // else
+    return undefined;
+}
 
 NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
 
@@ -125,8 +156,8 @@ NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
         if (value < 0) {
             value = 0;
         }
-        if (value > this.KnobArray[knobN].values.knobvalue) {
-            value = this.KnobArray[knobN].values.knobvalue;
+        if (value > this.KnobArray[knobN + 1].values.knobvalue) {
+            value = this.KnobArray[knobN + 1].values.knobvalue;
         }
     }
 
