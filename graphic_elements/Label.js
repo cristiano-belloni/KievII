@@ -46,10 +46,6 @@ Label.prototype.textFilter = function (value) {
     return value.toFixed(3);
 };
 
-Label.prototype.getDefaultValue = function () {
-    return this.values.labelvalue;
-};
-
 // Setters
 Label.prototype.setValue = function (slot, value) {
 
