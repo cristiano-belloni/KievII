@@ -10,6 +10,20 @@ function CanvasDrawImage (canvas) {
             this.canvasC.drawImage(image, x, y);
 
         }
+
+    // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
+    this.saveBackground = function (left, top, width, height) {
+        this.backgroundPixels = this.canvasC.getImageData(left, top, width, height);
+        this.bgX = left;
+        this.bgY = top;
+        console.log ("this.bgX ", this.bgX, "this.bgY ", this.bgY)
+        console.log ("Saved the background, from (", left, ",", top, ") to (", left + width, ",", top + height, ")");
+    }
+
+    this.restoreBackground = function () {
+        this.canvasC.putImageData(this.backgroundPixels, this.bgX, this.bgY);
+        console.log ("Restored the background in (", this.bgX, ",", this.bgY,")");
+    }
 }
 
 function CanvasDrawText (canvas) {
