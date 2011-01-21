@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>slider Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../Element.js"></script>
+    <script type="text/javascript" src="../../UI.js"></script>
+    <script type="text/javascript" src="../../Slider.js"></script>
+    <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+  </head>
+  <body>
+    <canvas id="plugin" width="600" height="600"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var ui;
+
+        // This crap should be automatized.
+        function onMouseDown(evt) {
+            ui.onMouseDownFunc(evt);
+        }
+
+        function onMouseUp(evt) {
+            ui.onMouseUpFunc(evt);
+        }
+
+        function onMouseMove(evt) {
+            ui.onMouseMoveFunc(evt);
+        }
+
+        /* INIT */
+
+        var plugin_canvas = document.getElementById("plugin"),
+            plugin_context = plugin_canvas.getContext("2d");
+
+        ui = new UI (plugin_context);
+
+        // This crap should be automatized.
+        document.addEventListener("mousedown", onMouseDown, true);
+        document.addEventListener("mouseup", onMouseUp, true);
+        document.addEventListener("mousemove", onMouseMove, true);
+
+        //slider
+        var sliderArgs = {"sliderImg":"../images/h_slider_slit.png", "knobImg":"../images/h_slider_handle.png"};
+
+        var slider = new Slider("test_slider", [100, 219], sliderArgs);
+
+        splashScreen();
+        
+        function splashScreen () {
+            console.log("Executing Initializer");
+
+            var slider_complete = slider.isComplete();
+
+            console.log("SLIDER completeness: ", slider_complete);
+
+
+            if (slider_complete == true) {
+                console.log ("Everything complete. Keeping on");
+                keepON();
+            }
+
+            else {
+                console.log ("Not Everything is complete. Setting another timeout");
+                setTimeout(splashScreen, 100);
+             }
+         }
+
+        function keepON () {
+
+            // Shouldn't a slider be clickable by default? TODO
+            slider.setClickable(true);
+            var imageDisplayer = new CanvasDrawImage (plugin_context);
+            ui.addElement(slider, imageDisplayer);
+            slider.setValue("slidervalue", 0.9);
+        }
+
+
+    </script>
+  </body>
+</html>

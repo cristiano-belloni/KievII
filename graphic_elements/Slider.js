@@ -22,7 +22,7 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     this.tempReady(name, topleft);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
-    this.values = {"Slidervalue" : 0};
+    this.values = {"slidervalue" : 0};
     this.objectsLoaded = 0;
 
     //By default, a Slider always draws itself when value is set.
@@ -42,6 +42,11 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     this.knobImage.onload = this.onLoad(this);
     this.knobImage.src = specArgs.knobImg;
 
+    this.completed = false;
+
+    // As soon as we can, we want to save our background.
+    this.backgroundSavePending = true;
+
 };
 
 Slider.prototype.onLoad = function (that) {
@@ -58,18 +63,21 @@ Slider.prototype.onLoad = function (that) {
 /*jslint nomen: false*/
 Slider.prototype._getKnobPosition = function () {
 /*jslint nomen: true*/
-    if ((this.values.Slidervalue < 0) || (this.values.Slidervalue > 1)) {
+    if ((this.values.slidervalue < 0) || (this.values.slidervalue > 1)) {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.Slidervalue * this.width) + this.xOrigin;
+    // We must take in account the half-knob thing, here.
+    var ret = Math.round(this.values.slidervalue * this.width + this.zeroLimit);
+
     return ret;
 };
 
 // This method returns true if the point given belongs to this Slider.
 Slider.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
+    // Slider is in ROI if and only if we drag the knob.
+    if ((x > this._getKnobPosition()) && (y > this.yOrigin)) {
+        if ((x < (this._getKnobPosition() + this.kWidth)) && (y < (this.yOrigin + this.kHeight))) {
             return true;
         }
         /*jsl:pass*/
@@ -77,28 +85,46 @@ Slider.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Slider.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
-
-    var to_set,
-        ret;
-
-    to_set = (curr_x - this.xOrigin) / (this.width);
-
-    if (to_set > 1) {
-        to_set = 1;
+Slider.prototype.onMouseDown = function (x, y) {
+    if (this.isInROI(x, y)) {
+        this.triggered = true;
+        // This remembers the difference between the current knob start and
+        // the point where we started dragging.
+        this.drag_offset = x - this._getKnobPosition();
     }
-    if (to_set < 0) {
-        to_set = 0;
-    }
-
-    ret = {"slot" : "Slidervalue", "value" : to_set};
-
-    return ret;
+    return undefined;
 };
 
-Slider.prototype.getDefaultValue = function () {
-    return this.values.Slidervalue;
+Slider.prototype.onMouseUp = function (x, y) {
+    this.triggered = false;
+    this.drag_offset = undefined;
+    return undefined;
 };
+
+Slider.prototype.onMouseMove = function (curr_x, curr_y) {
+
+        if (this.triggered === true) {
+            var to_set,
+                ret;
+
+            // We must compensate for the point where we started to drag if
+            // we want a seamless drag animation.
+            to_set = (curr_x - this.xOrigin - this.drag_offset) / (this.width);
+
+            if (to_set > 1) {
+                to_set = 1;
+            }
+            if (to_set < 0) {
+                to_set = 0;
+            }
+
+            ret = {"slot" : "slidervalue", "value" : to_set};
+
+            return ret;
+        }
+        
+        return undefined;
+    };
 
 // Setters
 Slider.prototype.setValue = function (slot, value) {
@@ -124,6 +150,18 @@ Slider.prototype.refresh = function () {
         throw new Error("Error: drawClass is undefined!");
     }
     else {
+
+        if (this.backgroundSavePending === true) {
+                        console.log ("Saving background inside Wavebox.js");
+            this.drawClass.saveBackground (this.xOrigin - this.additionalEndSpace, this.yOrigin, this.totalStride, this.height);
+            this.backgroundSavePending = false;
+        }
+
+        else {
+            // We want drawClass to refresh the saved background.
+            this.drawClass.restoreBackground();
+        }
+
         this.drawClass.draw(this.sliderImage, this.xOrigin, this.yOrigin);
         /*jslint nomen: false*/
         this.drawClass.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
@@ -135,4 +173,13 @@ Slider.prototype.onCompletion = function () {
     // Images were loaded, we can take their width and height.
     this.width = this.sliderImage.width;
     this.height = this.sliderImage.height;
+    // The length of the slider knob.
+    this.kWidth = this.knobImage.width;
+    this.kHeight = this.knobImage.height;
+    // The knob can stick out by an half of its length at the two extremes of the
+    // slider. Let's store some useful variables.
+    this.totalStride = this.width + this.kWidth;
+    this.additionalEndSpace = Math.round (this.kWidth / 2);
+    this.zeroLimit = this.xOrigin - this.additionalEndSpace;
+    this.oneLimit =  this.xOrigin + this.width + this.additionalEndSpace;
 };
