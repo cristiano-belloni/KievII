@@ -109,7 +109,7 @@ Slider.prototype.onMouseMove = function (curr_x, curr_y) {
 
             // We must compensate for the point where we started to drag if
             // we want a seamless drag animation.
-            to_set = (curr_x - this.xOrigin - this.drag_offset) / (this.width);
+            to_set = (curr_x - this.zeroLimit - this.drag_offset) / (this.width);
 
             if (to_set > 1) {
                 to_set = 1;
