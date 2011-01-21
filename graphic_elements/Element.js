@@ -24,15 +24,10 @@ Element.prototype.getready = function (name, topleft) {
     this.completed = false;
 };
 
+// Private function
 Element.prototype.isInROI = function (x, y) {
     // This is the abstract class.
     return false;
-};
-
-Element.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
-    // This is the abstract class.
-    var ret = {"slot" : undefined, "value" : undefined};
-    return ret;
 };
 
 Element.prototype.getValues = function () {
@@ -127,3 +122,14 @@ Element.prototype.setDrawClass = function (drawClass) {
     this.drawClass = drawClass;
 };
 
+Element.prototype.onMouseMove = function (x,y) {
+    return undefined;
+};
+
+Element.prototype.onMouseDown = function (x,y) {
+    return undefined;
+};
+
+Element.prototype.onMouseUp = function (x,y) {
+    return undefined;
+};

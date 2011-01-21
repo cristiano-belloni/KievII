@@ -105,6 +105,7 @@ and open the template in the editor.
         a1.addEventListener('loadedmetadata', loadedMetadata, false);
 
         // Utility, thanks to Frédéric Hamidi
+        // This destroys performance, maybe due to memory collection.
 
         function Float32Concat(first, second)
             {

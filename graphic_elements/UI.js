@@ -1,12 +1,17 @@
 function UI() {
 
+    // <CONSTRUCTOR>
+
     this.mouseUp = true;
-    this.startedonknob = undefined;
-    this.start_x = undefined;
-    this.start_y = undefined;
+    // TODO hmmm, ret could be changed asynchronously.
+    var ret;
 
     this.elements = {};
     this.connections = {};
+
+    // </CONSTRUCTOR>
+
+    // <ELEMENT HANDLING>
 
     // *** Add an UI element **** //
     this.addElement = function (element, drawClass) {
@@ -29,57 +34,13 @@ function UI() {
             this.connections[element.name][slots[slot]] = [];
         }
     };
+    
+    // </ELEMENT HANDLING>
 
-    // *** Call all the ROI on clickable elements to get the slots they're locked to *** //
-    this.elementsROI = function (x, y) {
-        for (var name in this.elements) {
-            if (this.elements[name].isClickable === true) {
-                if (this.elements[name].isInROI(x, y) === true) {
-                    //console.log("click ROI in ", name);
-                    return name;
-                }
-            }
-        }
-        //console.log("click ROI is undefined. x is ", x, " y is ", y , " elements are ", this.elements);
-        return undefined;
-    };
 
-    // *** Some ROI was triggered, perform the proper action *** //
-    this.onMouseMoveFunc = function (evt) {
+    // <CONNECTION HANDLING>
 
-        if (this.mouseUp === false) {
-
-            if (this.startedonknob !== undefined) {
-
-                var ret = this.elements[this.startedonknob].onROI(this.start_x,
-                                                                  this.start_y,
-                                                                  evt.pageX, evt.pageY);
-
-                this.setValue(this.startedonknob, ret.slot, ret.value);
-            }
-        }
-    };
-
-    // *** Does mouse down triggers some element? *** //
-    this.onMouseDownFunc = function (evt) {
-        this.mouseUp = false;
-        // Did it start on a clickable element?
-        this.startedonknob = this.elementsROI(evt.pageX, evt.pageY);
-        this.start_x = evt.pageX;
-        this.start_y = evt.pageY;
-    };
-
-    // *** Mouse is up *** //
-    this.onMouseUpFunc = function (evt) {
-
-        this.mouseUp = true;
-        this.start_x = undefined;
-        this.start_y = undefined;
-        this.startedonknob = undefined;
-
-    };
-
-    // *** Connect slots, so that one element can "listen" to the other *** //
+    // Connect slots, so that one element can "listen" to the other
     this.connectSlots  = function (senderElement, senderSlot, receiverElement, receiverSlot) {
 
         //Check for the elements.
@@ -102,7 +63,12 @@ function UI() {
         }
     };
 
-    // *** This handles one set value event and propagates it in the connections matrix *** //
+    //</CONNECTION HANDLING>
+
+
+    // <VALUE HANDLING>
+
+    // This method handles one set value event and propagates it in the connections matrix
     this.setValue = function (elementName, slot, value) {
         var receiverHash,
             recvHash,
@@ -129,6 +95,45 @@ function UI() {
             }
         }
     };
+    // </VALUE HANDLING>
+    
+    // <EVENT HANDLING>
+
+    // Notify every element about the event.
+    this.elementsNotifyEvent = function (x, y, event) {
+        // For every element
+        for (var name in this.elements) {
+            // Notify the element
+            ret = this.elements[name][event](x, y);
+            // See if the element changed its value
+            if (ret !== undefined) {
+                // console.log("UI: Element ", name, " changed its value on event ", event);
+                this.setValue(name, ret.slot, ret.value);
+            }
+        }
+    };
+
+    // On mouseMove event
+    this.onMouseMoveFunc = function (evt) {
+        // Only if the mouse button is still down (This could be useless TODO).
+        if (this.mouseUp === false) {
+            this.elementsNotifyEvent(evt.pageX, evt.pageY, "onMouseMove");
+        }
+    };
+
+    // On mouseDown event
+    this.onMouseDownFunc = function (evt) {
+        this.mouseUp = false;
+        this.elementsNotifyEvent(evt.pageX, evt.pageY, "onMouseDown");
+    };
+
+    // On mouseUp event
+    this.onMouseUpFunc = function (evt) {
+        this.mouseUp = true;
+        this.elementsNotifyEvent(evt.pageX, evt.pageY, "onMouseUp");
+    };
+
+    // </EVENT HANDLING>
 
 }
 
