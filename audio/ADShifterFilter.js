@@ -45,14 +45,18 @@ AudioDataShifterFilter.prototype.process = function (data, length) {
         return;
     }
 
-    //var i, data_buf;
+    var i;
     //var channels = this.audioParameters.channels;
 
     console.log ("Before process, iteration " + this.iter_number + " data is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
     console.log ("Before process, last 10 samples are: " + data[2038] + data[2039] + data[2040] + data[2041] + data[2042] + data[2043] + data[2044] + data[2045] + data[2046] + data[2047]);
 
     this.__shifter.process (this.shiftAmount, length, this.osamp, data);
-    data = this.__shifter.outdata.slice(0,length);
+    //data = this.__shifter.outdata.slice(0,length);
+
+    for (i = 0; i < length; ++i) {
+        data[i] = this.__shifter.outdata[i];
+    }
 
     console.log ("After process, data is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
     console.log ("After process, last 10 samples are: " + data[2038] + data[2039] + data[2040] + data[2041] + data[2042] + data[2043] + data[2044] + data[2045] + data[2046] + data[2047]);

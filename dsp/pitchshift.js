@@ -209,7 +209,8 @@ Pitchshift.prototype.process = function (pitchShift, numSampsToProcess, osamp, i
 			
 			for (k = 0; k <= fftFrameSize2; k++) {
 
-				index = k * pitchShift;
+                                //This is an int multiplication in C.
+				index = Math.floor(k * pitchShift);
 				
 				if (index <= fftFrameSize2) {
                                     	this.gSynMagn[index] += this.gAnaMagn[k];

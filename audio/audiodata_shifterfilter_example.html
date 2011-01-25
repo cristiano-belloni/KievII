@@ -31,9 +31,9 @@ Read/write data with audiodata.js
 
 
         shifterParams.fftFrameSize = 2048;
-        shifterParams.shiftAmount = 0.6;
+        shifterParams.shiftAmount = 0.7;
         shifterParams.osamp = 4;
-        shifterParams.algo = "RFFT";
+        shifterParams.algo = "FFT";
         var filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
 
         console.log ("added the filter ", filter_shifter);
@@ -46,6 +46,6 @@ Read/write data with audiodata.js
       </script>
   </head>
   <body>
-      <audio id="a1" src="sound_files/ein.ogg" controls></audio>
+      <audio id="a1" src="sound_files/german_numbers.ogg" controls></audio>
   </body>
 </html>
