@@ -13,16 +13,11 @@ function CanvasDrawImage (canvas) {
 
     // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
     this.saveBackground = function (left, top, width, height) {
-        this.backgroundPixels = this.canvasC.getImageData(left, top, width, height);
-        this.bgX = left;
-        this.bgY = top;
-        console.log ("this.bgX ", this.bgX, "this.bgY ", this.bgY)
-        console.log ("Saved the background, from (", left, ",", top, ") to (", left + width, ",", top + height, ")");
+        save2d (this, left, top, width, height);
     }
 
     this.restoreBackground = function () {
-        this.canvasC.putImageData(this.backgroundPixels, this.bgX, this.bgY);
-        console.log ("Restored the background in (", this.bgX, ",", this.bgY,")");
+        restore2d (this);
     }
 }
 
@@ -252,18 +247,27 @@ function CanvasDrawPath (canvas, color, dimension) {
         this.canvasC.fillStyle = tempfillStyle;
     }
 
-    // These should be in the wrappers interface.
+    // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
     this.saveBackground = function (left, top, width, height) {
-        this.backgroundPixels = this.canvasC.getImageData(left, top, width, height);
-        this.bgX = left;
-        this.bgY = top;
-        console.log ("this.bgX ", this.bgX, "this.bgY ", this.bgY)
-        console.log ("Saved the background, from (", left, ",", top, ") to (", left + width, ",", top + height, ")");
+        save2d (this, left, top, width, height);
     }
 
     this.restoreBackground = function () {
-        this.canvasC.putImageData(this.backgroundPixels, this.bgX, this.bgY);
-        console.log ("Restored the background in (", this.bgX, ",", this.bgY,")");
+        restore2d (this);
     }
+}
 
+
+// General purpose 2d saver/restorer.
+function save2d (that, left, top, width, height) {
+    that.backgroundPixels = that.canvasC.getImageData(left, top, width, height);
+    that.bgX = left;
+    that.bgY = top;
+    console.log ("this.bgX ", that.bgX, "this.bgY ", that.bgY)
+    console.log ("Saved the background, from (", left, ",", top, ") to (", left + width, ",", top + height, ")");
+}
+
+function restore2d (that) {
+    that.canvasC.putImageData(that.backgroundPixels, that.bgX, that.bgY);
+    console.log ("Restored the background in (", that.bgX, ",", that.bgY,")");
 }
