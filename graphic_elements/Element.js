@@ -4,7 +4,7 @@ function Element(name, topleft) {
     }
 }
 
-Element.prototype.getready = function (name, topleft) {
+Element.prototype.getready = function (name, topleft, specArgs) {
     this.drawClass = undefined;
     this.isClickable = false;
     this.name = name;
@@ -22,6 +22,12 @@ Element.prototype.getready = function (name, topleft) {
     this.objectsTotal = 0;
     this.objectsLoaded = 0;
     this.completed = false;
+    // See if there is a callback to call when the value is set
+    if (specArgs !== undefined) {
+        if (typeof (specArgs.onValueSet) === "function") {
+            this.onValueSet = specArgs.onValueSet;
+        }
+    }
 };
 
 // Private function
@@ -95,8 +101,14 @@ Element.prototype.setValue = function (slot, value) {
 
     this.values[slot] = temp_value;
 
+    // If the element needs to be refreshed, refresh it now.
     if (this.drawItself === true) {
         this.refresh();
+    }
+
+    // Finally, call the callback if there's one.
+    if (typeof (this.onValueSet) === "function") {
+        this.onValueSet (slot, this.values[slot]);
     }
 
 };

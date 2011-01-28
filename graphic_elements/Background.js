@@ -13,7 +13,7 @@ Background.prototype.getready = function (name, topleft, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft);
+    this.tempReady(name, topleft, specArgs);
 
     // Set the status progress.
     this.objectsTotal = 1;

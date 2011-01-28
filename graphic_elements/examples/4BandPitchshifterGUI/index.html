@@ -94,18 +94,6 @@
             return name;
         }
 
-        function onMouseDown(evt) {
-            ui.onMouseDownFunc(evt);
-        }
-
-        function onMouseUp(evt) {
-            ui.onMouseUpFunc(evt);
-        }
-
-        function onMouseMove(evt) {
-            ui.onMouseMoveFunc(evt);
-        }
-
         //This is the array of image names
         var medknob_img_array = [];
 
@@ -130,7 +118,7 @@
         var plugin_canvas = document.getElementById("plugin");
         plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_context);
+        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
 
         /* CONSTRUCTORS */
 
@@ -326,9 +314,9 @@ function keepON () {
         ui.connectSlots("bandsknob", "knobvalue6", "multiband", "3sp");
         ui.connectSlots("bandsknob", "knobvalue7", "multiband", "3ep");
 
-        document.addEventListener("mousedown", onMouseDown, true);
-        document.addEventListener("mouseup", onMouseUp, true);
-        document.addEventListener("mousemove", onMouseMove, true);
+        document.addEventListener("mousedown", ui.onMouseDownFunc(), true);
+        document.addEventListener("mouseup", ui.onMouseUpFunc(), true);
+        document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
 
 }
 

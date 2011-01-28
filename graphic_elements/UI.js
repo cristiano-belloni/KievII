@@ -1,6 +1,10 @@
-function UI() {
+function UI(offsetTop, offsetLeft) {
 
     // <CONSTRUCTOR>
+
+    // The drawing context can be offset.
+    this.offsetTop = offsetTop;
+    this.offsetLeft = offsetLeft;
 
     this.mouseUp = true;
     // TODO hmmm, ret could be changed asynchronously.
@@ -113,25 +117,64 @@ function UI() {
         }
     };
 
+    // Event handlers: we need closures here, because they will be called as callbacks.
+
     // On mouseMove event
-    this.onMouseMoveFunc = function (evt) {
-        // Only if the mouse button is still down (This could be useless TODO).
-        if (this.mouseUp === false) {
-            this.elementsNotifyEvent(evt.pageX, evt.pageY, "onMouseMove");
-        }
+    this.onMouseMoveFunc = function () {
+        var that = this;
+            return function (evt) {
+
+            var realCoords = that.calculateOffset(evt);
+
+            // Only if the mouse button is still down (This could be useless TODO).
+            if (that.mouseUp === false) {
+                that.elementsNotifyEvent(realCoords.pageX, realCoords.pageY, "onMouseMove");
+            }
+        };
     };
 
     // On mouseDown event
-    this.onMouseDownFunc = function (evt) {
-        this.mouseUp = false;
-        this.elementsNotifyEvent(evt.pageX, evt.pageY, "onMouseDown");
+    this.onMouseDownFunc = function () {
+        var that = this;
+            return function (evt) {
+
+            var realCoords = that.calculateOffset(evt);
+
+            that.mouseUp = false;
+            that.elementsNotifyEvent(realCoords.pageX, realCoords.pageY, "onMouseDown");
+        };
     };
 
     // On mouseUp event
-    this.onMouseUpFunc = function (evt) {
-        this.mouseUp = true;
-        this.elementsNotifyEvent(evt.pageX, evt.pageY, "onMouseUp");
+    this.onMouseUpFunc = function () {
+        var that = this;
+            return function (evt) {
+
+            var realCoords = that.calculateOffset(evt);
+
+            that.mouseUp = true;
+            that.elementsNotifyEvent(realCoords.pageX, realCoords.pageY, "onMouseUp");
+
+        };
     };
+
+    this.calculateOffset = function (evt) {
+
+            var obj = {};
+
+            obj.pageX = evt.pageX;
+            obj.pageY = evt.pageY;
+
+            if (this.offsetTop !== undefined) {
+                obj.pageY -= this.offsetTop;
+            }
+
+            if (this.offsetLeft !== undefined) {
+                obj.pageX -= this.offsetLeft;
+            }
+
+            return obj;
+    }
 
     // </EVENT HANDLING>
 

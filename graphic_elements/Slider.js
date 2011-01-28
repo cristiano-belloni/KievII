@@ -19,7 +19,7 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft);
+    this.tempReady(name, topleft, specArgs);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"slidervalue" : 0};

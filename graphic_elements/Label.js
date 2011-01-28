@@ -13,7 +13,7 @@ Label.prototype.getready = function (name, topleft, specArgs) {
     //Reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft);
+    this.tempReady(name, topleft, specArgs);
 
     this.values = {"labelvalue" : 0};
 

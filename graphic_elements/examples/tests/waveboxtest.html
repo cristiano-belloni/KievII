@@ -24,27 +24,14 @@ and open the template in the editor.
 
         // This should fix "console not defined" problem.
         if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
-        var mouseUp = true;
         var ui;
-
-         function onMouseDown(evt) {
-            ui.onMouseDownFunc(evt);
-        }
-
-        function onMouseUp(evt) {
-            ui.onMouseUpFunc(evt);
-        }
-
-        function onMouseMove(evt) {
-            ui.onMouseMoveFunc(evt);
-        }
 
         /* INIT */
 
         var plugin_canvas = document.getElementById("plugin");
         plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_context);
+        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
 
         //Background
 

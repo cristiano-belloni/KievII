@@ -16,30 +16,17 @@
         if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
         var ui;
 
-        // This crap should be automatized.
-        function onMouseDown(evt) {
-            ui.onMouseDownFunc(evt);
-        }
-
-        function onMouseUp(evt) {
-            ui.onMouseUpFunc(evt);
-        }
-
-        function onMouseMove(evt) {
-            ui.onMouseMoveFunc(evt);
-        }
-
         /* INIT */
 
         var plugin_canvas = document.getElementById("plugin"),
             plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_context);
+        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
 
         // This crap should be automatized.
-        document.addEventListener("mousedown", onMouseDown, true);
-        document.addEventListener("mouseup", onMouseUp, true);
-        document.addEventListener("mousemove", onMouseMove, true);
+        document.addEventListener("mousedown", ui.onMouseDownFunc(), true);
+        document.addEventListener("mouseup", ui.onMouseUpFunc(), true);
+        document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
 
@@ -72,6 +59,13 @@
             images : medknob_img_array,
             sensivity : 2000
         };
+
+        knobArgs.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }();
 
         var knob = new Knob("test_knob", [90, 90], knobArgs);
         // Shouldn't a knob be clickable by default? TODO

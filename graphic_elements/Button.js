@@ -18,7 +18,7 @@ Button.prototype.getready = function (name, topleft, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft);
+    this.tempReady(name, topleft, specArgs);
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
@@ -51,6 +51,8 @@ Button.prototype.getready = function (name, topleft, specArgs) {
         this.imagesArray[i].onload = this.onLoad(this);
         this.imagesArray[i].src = specArgs.images[i];
     }
+
+    console.log ("Origin is ", this.xOrigin, this.yOrigin);
 
 };
 
@@ -92,8 +94,8 @@ Button.prototype._getImage = function () {
 
 // This method returns true if the point given belongs to this button.
 Button.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
+    if ((x >= this.xOrigin) && (y >= this.yOrigin)) {
+        if ((x <= (this.xOrigin + this.width)) && (y <= (this.yOrigin + this.height))) {
             //console.log(this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
             return true;
         }
@@ -104,6 +106,8 @@ Button.prototype.isInROI = function (x, y) {
 };
 
 Button.prototype.onMouseDown = function (x, y) {
+
+    console.log ("Click down on ", x, y);
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -176,4 +180,5 @@ Button.prototype.onCompletion = function () {
             this.height = this.imagesArray[i].height;
         }
     }
+    console.log ("Image starts at ", this.xOrigin, this.yOrigin, " width and height are ", this.width, this.height);
 };
