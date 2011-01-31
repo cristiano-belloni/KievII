@@ -40,7 +40,7 @@ AudioDataShifterFilter.prototype.init = function (audioParameters) {
  * @param {int} length The signal data to be processed starting from the beginning.
  */
 AudioDataShifterFilter.prototype.process = function (data, length) {
-    //console.log ("We got some shit to pass to process; seem " + length + " samples, pitchShift factor is " +  this.shiftAmount + " und indata.length is " + data.length);
+    //console.log ("We got some stuff to pass to process(); seem " + length + " samples, pitchShift factor is " +  this.shiftAmount + " und indata.length is " + data.length);
     if (length === 0) {
         return;
     }
@@ -48,8 +48,8 @@ AudioDataShifterFilter.prototype.process = function (data, length) {
     var i;
     //var channels = this.audioParameters.channels;
 
-    console.log ("Before process, iteration " + this.iter_number + " data is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
-    console.log ("Before process, last 10 samples are: " + data[2038] + data[2039] + data[2040] + data[2041] + data[2042] + data[2043] + data[2044] + data[2045] + data[2046] + data[2047]);
+    //console.log ("Before process, iteration " + this.iter_number + " data is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
+    //console.log ("Before process, last 10 samples are: " + data[2038] + data[2039] + data[2040] + data[2041] + data[2042] + data[2043] + data[2044] + data[2045] + data[2046] + data[2047]);
 
     this.__shifter.process (this.shiftAmount, length, this.osamp, data);
     //data = this.__shifter.outdata.slice(0,length);
@@ -58,12 +58,19 @@ AudioDataShifterFilter.prototype.process = function (data, length) {
         data[i] = this.__shifter.outdata[i];
     }
 
-    console.log ("After process, data is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
-    console.log ("After process, last 10 samples are: " + data[2038] + data[2039] + data[2040] + data[2041] + data[2042] + data[2043] + data[2044] + data[2045] + data[2046] + data[2047]);
+    //console.log ("After process, data is long " + data.length + " first 10 samples are: " + data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]);
+    //console.log ("After process, last 10 samples are: " + data[2038] + data[2039] + data[2040] + data[2041] + data[2042] + data[2043] + data[2044] + data[2045] + data[2046] + data[2047]);
 
     this.iter_number += 1;
 
 };
 
+AudioDataShifterFilter.prototype.getShift = function () {
+    console.log ("getShift: returning ", this.shiftAmount);
+    return this.shiftAmount;
+}
 
+AudioDataShifterFilter.prototype.setShift = function (shiftAmount) {
+   this.shiftAmount = shiftAmount;
+}
 
