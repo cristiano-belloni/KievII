@@ -1,25 +1,20 @@
 <!--
-Shifter filter with an LFO.
+Lowpass filter with an LFO
 -->
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!--
-    Shit I don't like this.
-    -->
     <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
     <script src="https://github.com/corbanbrook/dsp.js/raw/master/dsp.js"></script>
-    <script src="../dsp/pitchshift.js"></script>
-    <script src="ADShifterFilter.js"></script>
+    <script src="ADLowPassFilter.js"></script>
     <script>
 
     function initialize() {
         console.log ("initialize");
         var audio = document.getElementById("a1"),
             source = new AudioDataSource(audio),
-            shifterParams = {},
             outputDestination = new AudioDataDestination();
 
         //Set auto latency.
@@ -29,9 +24,9 @@ Shifter filter with an LFO.
         audio.volume = 0;
         console.log ("volume 0");
 
-        
+
         var amplitude = 1;
-        var lfoFreq = 0.5;
+        var lfoFreq = 2;
 
         // We need these for a smooth wavetable (wavetable length must be
         // at least samplerate / min LFO frequency, since we use < 1
@@ -43,29 +38,25 @@ Shifter filter with an LFO.
         var lfo = new Oscillator(DSP.SINE, lfoFreq, amplitude, waveTableLen, audio.mozSampleRate);
         var wavetable = lfo.generate();
 
-        shifterParams.fftFrameSize = 2048;
-        shifterParams.shiftAmount = 1;
-        shifterParams.osamp = 4;
-        shifterParams.algo = "RFFT";
-        var filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
-        console.log ("added the filter ", filter_shifter);
+        var lowpassFilter = new AudioDataLowpassFilter(outputDestination, 20, 200, audio.mozSampleRate);
+        console.log ("added the filter ", lowpassFilter);
 
         var timeInterval = 100;
         var lfoInterval = setInterval ( function () { lfoChange(); }, timeInterval);
         var lfo_index = 0;
         console.log ("added the interval ", lfoInterval);
 
-        source.readAsync(filter_shifter);
+        source.readAsync(lowpassFilter);
 
         //clearInterval (lfoInterval);
 
         var lfoChange = function () {
             lfo_index = (lfo_index + audio.mozSampleRate / timeInterval) % waveTableLen;
             // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
-            // a = -amplitude; b = amplitude; y = 0.5; z = 2
-            var shift_value = (wavetable[lfo_index] - (-amplitude)) * (2 - 0.5) / (amplitude - (-amplitude)) + 0.5;
-            console.log ("Changing shift value to ", shift_value, " lfo_index is ", lfo_index);
-            filter_shifter.setShift (shift_value);
+            // a = -amplitude; b = amplitude; y = 20; z = 2000
+            var cutoff_value = (wavetable[lfo_index] - (-amplitude)) * (300 - 20) / (amplitude - (-amplitude)) + 20;
+            console.log ("Changing cutoff value to ", cutoff_value, " lfo_index is ", lfo_index);
+            lowpassFilter.setCutoff(cutoff_value, 50);
         }
 
     }
