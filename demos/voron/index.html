@@ -6,6 +6,7 @@
     <script type="text/javascript" src="../../graphic_elements/Element.js"></script>
     <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/Slider.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Background.js"></script>
     <script type="text/javascript" src="../../graphic_elements/wrappers/CanvasDraw.js"></script>
   </head>
@@ -45,6 +46,7 @@
         document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
+        var volImageDisplayer = new CanvasDrawImage (plugin_context);
 
         var loadCallback = loadingManager();
         /* END OF CONTEXT INIT */
@@ -69,6 +71,7 @@
             prefix = "",
             knobImgArray = [],
             knobArgs,
+            volSliderArgs,
             knobImgLocation = "./images/BigKnob/" ;
 
         for (i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
@@ -105,6 +108,20 @@
 
         /* END OF KNOB INIT */
 
+        /* FADER INIT */
+
+        //VOL FADER
+        volSliderArgs = {
+            sliderImg:"./images/Fader/slider_slot.png", knobImg:"./images/Fader/slider_handle.png",
+            type:"vertical",
+            onComplete: loadCallback
+        };
+
+        volSliderArgs.onValueSet = volCallback();
+        var volSlider = new Slider("volSlider", [646, 136], volSliderArgs);
+
+        /* END OF FADER INIT */
+
         /* KEEP ON */
         
         function keepON () {
@@ -112,6 +129,7 @@
             ui.addElement(pitchKnob, imageDisplayer);
             ui.addElement(freqKnob, imageDisplayer);
             ui.addElement(qKnob, imageDisplayer);
+            ui.addElement(volSlider, volImageDisplayer);
             // TODO Something like ui.refresh() would be more appropriate, I guess.
             gui.refresh();
             // TODO if drawClass is undefined, just exit. This should be in the
@@ -119,6 +137,7 @@
             // repaint everything (in order).
             pitchKnob.setValue("knobvalue", 0.5);
             freqKnob.setValue("knobvalue", 1);
+            volSlider.setValue("slidervalue", 0.5);
             // TODO qKnob.setValue("knobvalue", 0) fails (does not display image)
             // because the initial value is 0 (why?). with ui.refresh() this does
             // not happen.
@@ -135,7 +154,7 @@
         function loadingManager (elementName) {
             // Closure persistent variables.
             var that = this,
-                loadStatus = {pitchKnob: false, freqKnob: false, qKnob: false, background: false};
+                loadStatus = {pitchKnob: false, freqKnob: false, qKnob: false, background: false, volSlider: false};
 
                 // Actual callback
                 return function (elementName) {
@@ -182,6 +201,13 @@
             var that = this;
             return function (slot, value) {
                 console.log ("q callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }
+
+        function volCallback () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("vol callback called: slot is ", slot, " and value is ", value, " while that is ", that);
             };
         }
 
