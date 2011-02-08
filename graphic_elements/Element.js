@@ -5,27 +5,42 @@ function Element(name, topleft) {
 }
 
 Element.prototype.getready = function (name, topleft, specArgs) {
-    this.drawClass = undefined;
-    this.isClickable = false;
+
+    if (specArgs.isClickable !== true) {
+        this.isClickable = false;
+    }
+
     this.name = name;
+
     // These are arrays of 2
     this.xOrigin = topleft[0];
     this.yOrigin = topleft[1];
+
     // This is the bounding box. Element has no dimension.
     this.width = 0;
     this.height = 0;
+
     // Element never draws itself.
     this.drawItself = false;
+
     // These are to be set later
     this.values = {};
+
     // Completion
     this.objectsTotal = 0;
     this.objectsLoaded = 0;
     this.completed = false;
+
     // See if there is a callback to call when the value is set
     if (specArgs !== undefined) {
         if (typeof (specArgs.onValueSet) === "function") {
             this.onValueSet = specArgs.onValueSet;
+        }
+    }
+    // See if there is a callback on load completion
+    if (specArgs !== undefined) {
+        if (typeof (specArgs.onComplete) === "function") {
+            this.onComplete = specArgs.onComplete;
         }
     }
 };
@@ -82,6 +97,12 @@ Element.prototype.isComplete = function () {
 };
 
 Element.prototype.onCompletion = function () {
+
+    // Call the callback if there's one.
+    if (typeof (this.onComplete) === "function") {
+        this.onComplete (this.name);
+    }
+
     return;
 };
 
