@@ -21,7 +21,7 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
     this.tempReady(name, topleft, specArgs);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
-    this.values = {"knobvalue" : 0};
+    this.values = {"knobvalue" : NaN};
     this.objectsLoaded = 0;
 
     //TODO this is redundant.
