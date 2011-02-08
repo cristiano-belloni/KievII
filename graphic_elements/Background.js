@@ -71,4 +71,9 @@ Background.prototype.onCompletion = function () {
     // Now, we can store width and height safely.
     this.width = this.image.width;
     this.height = this.image.height;
+
+    // Now, we call the superclass
+    this.tempCompletion = Element.prototype.onCompletion;
+    this.tempCompletion();
+
 };

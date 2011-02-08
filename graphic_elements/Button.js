@@ -181,4 +181,8 @@ Button.prototype.onCompletion = function () {
         }
     }
     console.log ("Image starts at ", this.xOrigin, this.yOrigin, " width and height are ", this.width, this.height);
+
+    // Now, we call the superclass
+    this.tempCompletion = Element.prototype.onCompletion;
+    this.tempCompletion();
 };

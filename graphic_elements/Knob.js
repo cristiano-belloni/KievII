@@ -53,9 +53,6 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
         this.imagesArray[i].src = specArgs.images[i];
     }
 
-    // console.log("Knob: Width = ", this.width);
-    // console.log("Knob: Height = ", this.height);
-
 };
 
 Knob.prototype.onLoad = function (that) {
@@ -202,4 +199,8 @@ Knob.prototype.onCompletion = function () {
             this.height = this.imagesArray[i].height;
         }
     }
+
+    // Now, we call the superclass
+    this.tempCompletion = Element.prototype.onCompletion;
+    this.tempCompletion();
 };
