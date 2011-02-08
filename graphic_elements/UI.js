@@ -35,7 +35,9 @@ function UI(offsetTop, offsetLeft) {
 
         // Insert all possible elements in the connection matrix TODO ARRAY
         for (slot in slots) {
-            this.connections[element.name][slots[slot]] = [];
+            if (slots.hasOwnProperty(slot)) {
+                this.connections[element.name][slots[slot]] = [];
+            }
         }
     };
     
@@ -67,6 +69,21 @@ function UI(offsetTop, offsetLeft) {
         }
     };
 
+    this.checkInfiniteLoops = function () {
+        for (var element in this.connections) {
+            if (this.connections.hasOwnProperty(element)) {
+                for (var slot in element) {
+                    if (element.hasOwnProperty(slot)) {
+                        var alreadySaw = [];
+                        // Here traverse the chain TODO.
+                        // slot.recvElement;
+                        // slot.recvSlot;
+                    }
+                }
+            }
+        }
+    };
+
     //</CONNECTION HANDLING>
 
 
@@ -88,14 +105,16 @@ function UI(offsetTop, offsetLeft) {
 
         if (this.connections[elementName][slot] !== undefined) {
             for (i in this.connections[elementName][slot]) {
-                receiverHash = this.connections[elementName][slot][i];
-                //console.log("Listener number ", i, " of ", elementName, ":", slot, " seems ", receiverHash);
-                /* Whew. */
-                // This should be always correct, as we checked when we inserted the connection.
-                // TODO Should recursively call the setValues
-                recvHash = receiverHash.recvElement;
-                recvSlot = receiverHash.recvSlot;
-                this.elements[recvHash].setValue(recvSlot, value);
+                if (this.connections[elementName][slot].hasOwnProperty(i)){
+                    receiverHash = this.connections[elementName][slot][i];
+                    //console.log("Listener number ", i, " of ", elementName, ":", slot, " seems ", receiverHash);
+                    /* Whew. */
+                    // This should be always correct, as we checked when we inserted the connection.
+                    // TODO Should recursively call the setValues
+                    recvHash = receiverHash.recvElement;
+                    recvSlot = receiverHash.recvSlot;
+                    this.elements[recvHash].setValue(recvSlot, value);
+                }
             }
         }
     };
@@ -107,12 +126,14 @@ function UI(offsetTop, offsetLeft) {
     this.elementsNotifyEvent = function (x, y, event) {
         // For every element
         for (var name in this.elements) {
-            // Notify the element
-            ret = this.elements[name][event](x, y);
-            // See if the element changed its value
-            if (ret !== undefined) {
-                // console.log("UI: Element ", name, " changed its value on event ", event);
-                this.setValue(name, ret.slot, ret.value);
+            if (this.elements.hasOwnProperty(name)){
+                // Notify the element
+                ret = this.elements[name][event](x, y);
+                // See if the element changed its value
+                if (ret !== undefined) {
+                    // console.log("UI: Element ", name, " changed its value on event ", event);
+                    this.setValue(name, ret.slot, ret.value);
+                }
             }
         }
     };
