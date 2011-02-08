@@ -9,7 +9,7 @@
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
   </head>
   <body>
-    <canvas id="plugin" width="600" height="600"></canvas>
+    <canvas id="plugin" width="800" height="800"></canvas>
     <script type="text/javascript">
 
         // This should fix "console not defined" problem.
@@ -28,29 +28,42 @@
         document.addEventListener("mouseup", ui.onMouseUpFunc(), true);
         document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
 
-        //slider
-        var sliderArgs = {"sliderImg":"../images/h_slider_slit.png", "knobImg":"../images/h_slider_handle.png"};
+        // h slider
+        var hSliderArgs = {"sliderImg":"../images/h_slider_slit.png", "knobImg":"../images/h_slider_handle.png", type:"horizontal"};
 
-        sliderArgs.onValueSet = function () {
+        hSliderArgs.onValueSet = function () {
             var that = this;
             return function (slot, value) {
                 console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             };
         }();
         
-        var slider = new Slider("test_slider", [100, 219], sliderArgs);
+        var hSlider = new Slider("hTestSlider", [100, 219], hSliderArgs);
+
+        // v slider
+        var vSliderArgs = {"sliderImg":"../images/v_slider_slit.png", "knobImg":"../images/v_slider_handle.png", type:"vertical"};
+
+        vSliderArgs.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }();
+
+        var vSlider = new Slider("vTestSlider", [650, 70], vSliderArgs);
 
         splashScreen();
         
         function splashScreen () {
             console.log("Executing Initializer");
 
-            var slider_complete = slider.isComplete();
+            var hSliderComplete = hSlider.isComplete();
+            var vSliderComplete = vSlider.isComplete();
 
-            console.log("SLIDER completeness: ", slider_complete);
+            console.log("Sliders images fully loaded: ", hSliderComplete, vSliderComplete);
 
 
-            if (slider_complete == true) {
+            if ((hSliderComplete == true) && (vSliderComplete === true)) {
                 console.log ("Everything complete. Keeping on");
                 keepON();
             }
@@ -62,12 +75,16 @@
          }
 
         function keepON () {
-
-            // Shouldn't a slider be clickable by default? TODO
-            slider.setClickable(true);
-            var imageDisplayer = new CanvasDrawImage (plugin_context);
-            ui.addElement(slider, imageDisplayer);
-            slider.setValue("slidervalue", 0.9);
+            // We need two separate image displayers that save two separate
+            // pieces of background data.
+            hSlider.setClickable(true);
+            vSlider.setClickable(true);
+            var hImageDisplayer = new CanvasDrawImage (plugin_context);
+            var vImageDisplayer = new CanvasDrawImage (plugin_context);
+            ui.addElement(hSlider, hImageDisplayer);
+            ui.addElement(vSlider, vImageDisplayer);
+            hSlider.setValue("slidervalue", 0.9);
+            vSlider.setValue("slidervalue", 0.5);
         }
 
 
