@@ -46,16 +46,18 @@
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
 
+        var loadCallback = loadingManager();
         /* END OF CONTEXT INIT */
 
 
         /* BACKGROUND INIT */
 
         var bgArgs = {
-            image: "./images/Voron_bg1.png"
+            image: "./images/Voron_bg1.png",
+            onComplete: loadCallback
         };
 
-        var gui = new Background("BackgroundGUI", [0,0], bgArgs);
+        var gui = new Background("background", [0,0], bgArgs);
 
         /* END OF BACKGROUND INIT */
 
@@ -80,83 +82,28 @@
         // Shared arguments to the constructor
         knobArgs = {
             images : knobImgArray,
-            sensivity : 5000
+            sensivity : 5000,
+            onComplete: loadCallback
         };
 
-        // Create the three knob objects
+        // Create the knob objects.
 
         // PITCH KNOB
         var pitchArgs = knobArgs.clone();
-        // Callback
-        pitchArgs.onValueSet = function () {
-            var that = this;
-            return function (slot, value) {
-                console.log ("onValueSet for Pitch callback: slot is ", slot, " and value is ", value, " while that is ", that);
-            };
-        }();
+        pitchArgs.onValueSet = pitchCallback();
         var pitchKnob = new Knob("pitchKnob", [39, 120], pitchArgs);
-        pitchKnob.setClickable(true);
 
         // FREQ KNOB
         var freqArgs = knobArgs.clone();
-        // Callback
-        freqArgs.onValueSet = function () {
-            var that = this;
-            return function (slot, value) {
-                console.log ("onValueSet for Freq callback: slot is ", slot, " and value is ", value, " while that is ", that);
-            };
-        }();
+        freqArgs.onValueSet = freqCallback();
         var freqKnob = new Knob("freqKnob", [240, 120], freqArgs);
-        freqKnob.setClickable(true);
 
         // Q KNOB
         var qArgs = knobArgs.clone();
-        // Callback
-        qArgs.onValueSet = function () {
-            var that = this;
-            return function (slot, value) {
-                console.log ("onValueSet for Q callback: slot is ", slot, " and value is ", value, " while that is ", that);
-            };
-        }();
+        qArgs.onValueSet = qCallback();
         var qKnob = new Knob("qKnob", [395, 120], qArgs);
-        qKnob.setClickable(true);
 
         /* END OF KNOB INIT */
-
-        /* LOADER */
-
-        var knob_complete,
-            bg_complete;
-
-        setTimeout(loader, 100);
-
-        function loader () {
-            console.log("Executing Initializer");
-
-            knob_complete = true;
-            if ((pitchKnob.isComplete() === false) || (freqKnob.isComplete() === false) || (qKnob.isComplete() === false)) {
-                console.log("Knobs are not complete.");
-                knob_complete = false;
-            }
-            else {
-                console.log("Knobs not complete.");
-            }
-
-            bg_complete = gui.isComplete();
-            console.log("Background completeness: ", bg_complete);
-
-            if ((knob_complete === true) && (bg_complete === true)) {
-                console.log ("Everything complete. Keeping on");
-                keepON();
-            }
-
-            else {
-                console.log ("Not Everything is complete. Setting another timeout");
-                setTimeout(loader, 100);
-             }
-         }
-
-        /* END OF LOADER */
 
         /* KEEP ON */
         
@@ -179,7 +126,66 @@
             qKnob.setValue("knobvalue", 0);
         }
 
-        /* END KEEP ON */
+        /* --END */
+
+        /*** CALLBACKS ***/
+
+        /* LOADING MANAGER */
+
+        function loadingManager (elementName) {
+            // Closure persistent variables.
+            var that = this,
+                loadStatus = {pitchKnob: false, freqKnob: false, qKnob: false, background: false};
+
+                // Actual callback
+                return function (elementName) {
+                    console.log (elementName, " called back to say everything is loaded.");
+
+                    // Update the element status
+                    if (loadStatus[elementName] !== undefined) {
+                        loadStatus[elementName] = true;
+                    }
+
+                    // Check if every registered element is complete.
+                    for (var element in loadStatus) {
+                        if (loadStatus.hasOwnProperty(element)) {
+                            if (loadStatus[element] !== true) {
+                                console.log ("status of element ", element, " is not true: ", loadStatus[element]);
+                                return;
+                            }
+                        }
+                    }
+                    console.log ("Everything loaded, time to keep on!");
+                    that.keepON();
+                }
+
+        }
+        /* END OF LOADING MANAGER */
+
+        /* KNOB CALLBACKS */
+
+        function pitchCallback () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("pitch callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }
+
+        function freqCallback () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("freq callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }
+
+        function qCallback () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("q callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }
+
+        /* END OF KNOB CALLBACKS */
 
     </script>
   </body>
