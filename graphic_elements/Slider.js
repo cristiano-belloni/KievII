@@ -1,7 +1,7 @@
 // Ok, this Slider is an horizontal one. Must implement the vertical one as well.
-function Slider(name, topleft, sliderImg, knobImg) {
+function Slider(name, topleft, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, sliderImg, knobImg);
+        this.getready(name, topleft, specArgs);
     }
 }
 
@@ -42,6 +42,8 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     this.knobImage.onload = this.onLoad(this);
     this.knobImage.src = specArgs.knobImg;
 
+    this.type = specArgs.type;
+
     this.completed = false;
 
     // As soon as we can, we want to save our background.
@@ -53,8 +55,8 @@ Slider.prototype.onLoad = function (that) {
     return function () {
         that.objectsLoaded += 1;
         if (that.objectsLoaded === that.objectsTotal) {
-            that.onCompletion();
             that.completed = true;
+            that.onCompletion();
         }
     };
 };
@@ -63,25 +65,54 @@ Slider.prototype.onLoad = function (that) {
 /*jslint nomen: false*/
 Slider.prototype._getKnobPosition = function () {
 /*jslint nomen: true*/
+    var ret;
+
     if ((this.values.slidervalue < 0) || (this.values.slidervalue > 1)) {
         // Do nothing
         return undefined;
     }
     // We must take in account the half-knob thing, here.
-    var ret = Math.round(this.values.slidervalue * this.width + this.zeroLimit);
+    switch(this.type) {
+
+      case "horizontal":
+          ret = Math.round(this.values.slidervalue * this.width + this.zeroLimit);
+      break;
+
+      case "vertical":
+          ret = Math.round(this.values.slidervalue * this.height + this.zeroLimit);
+      break;
+
+      default:
+          throw new Error("Error: Slider orientation is undefined!");
+      }
 
     return ret;
 };
 
 // This method returns true if the point given belongs to this Slider.
 Slider.prototype.isInROI = function (x, y) {
+    switch(this.type) {
+        case "horizontal":
+            if ((x > this._getKnobPosition()) && (y > this.yOrigin)) {
+                if ((x < (this._getKnobPosition() + this.kWidth)) && (y < (this.yOrigin + this.kHeight))) {
+                    return true;
+                }
+            }
+        break;
+
+        case "vertical":
+            if ((y > this._getKnobPosition()) && (x > this.xOrigin)) {
+                if ((y < (this._getKnobPosition() + this.kHeight)) && (x < (this.xOrigin + this.kWidth))) {
+                    return true;
+                }
+            }
+        break;
+
+        default:
+          throw new Error("Error: Slider orientation is undefined!");
+      }
+
     // Slider is in ROI if and only if we drag the knob.
-    if ((x > this._getKnobPosition()) && (y > this.yOrigin)) {
-        if ((x < (this._getKnobPosition() + this.kWidth)) && (y < (this.yOrigin + this.kHeight))) {
-            return true;
-        }
-        /*jsl:pass*/
-    }
     return false;
 };
 
@@ -90,7 +121,19 @@ Slider.prototype.onMouseDown = function (x, y) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
         // the point where we started dragging.
-        this.drag_offset = x - this._getKnobPosition();
+        switch(this.type) {
+
+            case "horizontal":
+                this.drag_offset = x - this._getKnobPosition();
+            break;
+
+            case "vertical":
+                this.drag_offset = y - this._getKnobPosition();
+            break;
+
+            default:
+              throw new Error("Error: Slider orientation is undefined!");
+          }
     }
     return undefined;
 };
@@ -109,7 +152,18 @@ Slider.prototype.onMouseMove = function (curr_x, curr_y) {
 
             // We must compensate for the point where we started to drag if
             // we want a seamless drag animation.
-            to_set = (curr_x - this.zeroLimit - this.drag_offset) / (this.width);
+            switch(this.type) {
+                case "horizontal":
+                    to_set = (curr_x - this.zeroLimit - this.drag_offset) / (this.width);
+                break;
+
+                case "vertical":
+                    to_set = (curr_y - this.zeroLimit - this.drag_offset) / (this.height);
+                break;
+
+                default:
+                  throw new Error("Error: Slider orientation is undefined!");
+              }
 
             if (to_set > 1) {
                 to_set = 1;
@@ -152,8 +206,19 @@ Slider.prototype.refresh = function () {
     else {
 
         if (this.backgroundSavePending === true) {
-                        console.log ("Saving background inside Wavebox.js");
-            this.drawClass.saveBackground (this.xOrigin - this.additionalEndSpace, this.yOrigin, this.totalStride, this.height);
+            switch(this.type) {
+                case "horizontal":
+                    this.drawClass.saveBackground (this.xOrigin - this.additionalEndSpace, this.yOrigin, this.totalStride, this.height);
+                break;
+
+                case "vertical":
+                    this.drawClass.saveBackground (this.xOrigin, this.yOrigin - this.additionalEndSpace, this.width, this.totalStride);
+                break;
+
+                default:
+                  throw new Error("Error: Slider orientation is undefined!");
+              }
+            
             this.backgroundSavePending = false;
         }
 
@@ -164,7 +229,20 @@ Slider.prototype.refresh = function () {
 
         this.drawClass.draw(this.sliderImage, this.xOrigin, this.yOrigin);
         /*jslint nomen: false*/
-        this.drawClass.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
+
+        switch(this.type) {
+            case "horizontal":
+                this.drawClass.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
+            break;
+
+            case "vertical":
+                this.drawClass.draw(this.knobImage, this.xOrigin, this._getKnobPosition());
+            break;
+
+            default:
+              throw new Error("Error: Slider orientation is undefined!");
+          }
+        
         /*jslint nomen: true*/
     }
 };
@@ -178,8 +256,27 @@ Slider.prototype.onCompletion = function () {
     this.kHeight = this.knobImage.height;
     // The knob can stick out by an half of its length at the two extremes of the
     // slider. Let's store some useful variables.
-    this.totalStride = this.width + this.kWidth;
-    this.additionalEndSpace = Math.round (this.kWidth / 2);
-    this.zeroLimit = this.xOrigin - this.additionalEndSpace;
-    this.oneLimit =  this.xOrigin + this.width + this.additionalEndSpace;
+
+    switch(this.type) {
+        case "horizontal":
+            this.totalStride = this.width + this.kWidth;
+            this.additionalEndSpace = Math.round (this.kWidth / 2);
+            this.zeroLimit = this.xOrigin - this.additionalEndSpace;
+            this.oneLimit =  this.xOrigin + this.width + this.additionalEndSpace;
+        break;
+
+        case "vertical":
+            this.totalStride = this.height + this.kHeight;
+            this.additionalEndSpace = Math.round (this.kHeight / 2);
+            this.zeroLimit = this.yOrigin - this.additionalEndSpace;
+            this.oneLimit =  this.yOrigin + this.height + this.additionalEndSpace;
+        break;
+
+        default:
+          throw new Error("Error: Slider orientation is undefined!");
+      }
+    
+    // Now, we call the superclass
+    this.tempCompletion = Element.prototype.onCompletion;
+    this.tempCompletion();
 };
