@@ -22,7 +22,7 @@ Button.prototype.getready = function (name, topleft, specArgs) {
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
-    this.values = {"buttonvalue" : 0};
+    this.values = {"buttonvalue" : NaN};
     this.objectsLoaded = 0;
 
     this.triggered = false;
