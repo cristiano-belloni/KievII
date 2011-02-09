@@ -7,6 +7,7 @@
     <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Slider.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/Button.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Background.js"></script>
     <script type="text/javascript" src="../../graphic_elements/wrappers/CanvasDraw.js"></script>
   </head>
@@ -47,6 +48,7 @@
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
         var volImageDisplayer = new CanvasDrawImage (plugin_context);
+        var switchImageDisplayer = new CanvasDrawImage (plugin_context);
 
         var loadCallback = loadingManager();
         /* END OF CONTEXT INIT */
@@ -82,7 +84,7 @@
             knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
         }
 
-        // Shared arguments to the constructor
+        // Shared arguments to the Knob constructor.
         knobArgs = {
             images : knobImgArray,
             sensivity : 5000,
@@ -122,27 +124,61 @@
 
         /* END OF FADER INIT */
 
+        /* SWITCHES INIT */
+
+        // This time, we use an single callback for all switch buttons.
+        var switchCallbackManager = switchCallback();
+
+        // Shared arguments to the Button constructor.
+        switchArgs = {
+            images : ["./images/Switch/SwitchLeft.png","./images/Switch/SwitchRight.png"],
+            onComplete: loadCallback,
+            onValueSet: switchCallbackManager
+        };
+
+        // Create the switch objects TODO the x,y values are not coherent.
+        var pitchOnSwitch = new Button("pitchOnSwitch", [89,107], switchArgs);
+        var pitchDiscSwitch = new Button("pitchDiscSwitch", [89,339], switchArgs);
+        var freqSwitch = new Button("freqSwitch", [365,107], switchArgs);
+        var invertSwitch = new Button("invertSwitch", [638,415], switchArgs);
+
+        /* END OF SWITCHES INIT */
+
         /* KEEP ON */
         
         function keepON () {
+
+            // Here we add the elements to the UI, optionally add
+            // connections between them and set the initial values.
+
             ui.addElement(gui, imageDisplayer);
             ui.addElement(pitchKnob, imageDisplayer);
             ui.addElement(freqKnob, imageDisplayer);
             ui.addElement(qKnob, imageDisplayer);
             ui.addElement(volSlider, volImageDisplayer);
+            ui.addElement(pitchOnSwitch, switchImageDisplayer);
+            ui.addElement(pitchDiscSwitch, switchImageDisplayer);
+            ui.addElement(freqSwitch, switchImageDisplayer);
+            ui.addElement(invertSwitch, switchImageDisplayer);
+
             // TODO Something like ui.refresh() would be more appropriate, I guess.
             gui.refresh();
+
             // TODO if drawClass is undefined, just exit. This should be in the
             // initialize section, not here. keepON should do a ui.refresh() to
             // repaint everything (in order).
             pitchKnob.setValue("knobvalue", 0.5);
             freqKnob.setValue("knobvalue", 1);
-            volSlider.setValue("slidervalue", 0.5);
             // TODO qKnob.setValue("knobvalue", 0) fails (does not display image)
             // because the initial value is 0 (why?). with ui.refresh() this does
             // not happen.
             // Quick-fixed setting default knob value to NaN.
             qKnob.setValue("knobvalue", 0);
+            volSlider.setValue("slidervalue", 0.5);
+            pitchOnSwitch.setValue ("buttonvalue", 1);
+            pitchDiscSwitch.setValue ("buttonvalue", 0);
+            freqSwitch.setValue ("buttonvalue", 1);
+            invertSwitch.setValue ("buttonvalue", 0);
         }
 
         /* --END */
@@ -154,7 +190,12 @@
         function loadingManager (elementName) {
             // Closure persistent variables.
             var that = this,
-                loadStatus = {pitchKnob: false, freqKnob: false, qKnob: false, background: false, volSlider: false};
+                loadStatus = {
+                    pitchKnob: false, freqKnob: false, qKnob: false,
+                    background: false, volSlider: false,
+                    pitchOnSwitch: false, pitchDiscSwitch : false,
+                    freqSwitch: false, invertSwitch: false
+                };
 
                 // Actual callback
                 return function (elementName) {
@@ -181,7 +222,7 @@
         }
         /* END OF LOADING MANAGER */
 
-        /* KNOB CALLBACKS */
+        /* ELEMENT CALLBACKS */
 
         function pitchCallback () {
             var that = this;
@@ -211,7 +252,14 @@
             };
         }
 
-        /* END OF KNOB CALLBACKS */
+        function switchCallback () {
+            var that = this;
+            return function (slot, value, elName) {
+                console.log ("switch callback called: element is ", elName, " slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }
+
+        /* END OF ELEMENT CALLBACKS */
 
     </script>
   </body>
