@@ -25,6 +25,11 @@ function UI(offsetTop, offsetLeft) {
         // This encapsulates the drawing class into the GUI element.
         element.setDrawClass(drawClass);
 
+        if (this.elements[element.name] !== undefined) {
+            throw new Error("Conflicting / Duplicated name in UI: " + element.name + " (names are identifiers and should be unique)");
+            return;
+        }
+
         this.elements[element.name] = element;
 
         // Insert the element in the connection keys.
