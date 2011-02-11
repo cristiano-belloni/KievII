@@ -1,0 +1,7 @@
+---
+layout: post
+title: "404: Page not found!"
+hide_meta: true
+hide_analytics: true
+---
+The page you're looking for couldn't be found.  Sorry about that.  I'm sure it's my fault, not yours.

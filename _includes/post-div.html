@@ -1,0 +1,13 @@
+{% if page.post-type %}<article class="{{ page.post-type }}">{% else %}<article class="post">{% endif %}
+  <div class="content">
+    <h2 class="title"><a href="{{ page.url }}">{{ page.title }}</a></h2>
+    {{ body }}
+  </div>{% unless page.hide_meta %}
+  <div class="meta">
+  <span class="author"><a href="http://bitterspring.net">Janes's Conference</a></span> &middot; 
+  <span class="date"><a href="{{ page.date | date: "%Y" }}/{{ page.date | date: "%m" }}">{{ page.date | date: "%e" | ordinalize }} {{ page.date | date: "%B"}} {{ page.date | date: "%Y"}}</a></span>
+  <span class="tags">{% for tag in page.categories %} &middot; <a href="tags/{{tag}}.html" rel="tag">{{tag}}</a>{% endfor %}</span> 
+  <!-- <span class="tags">{% for tag in page.categories %} &middot; <a href="categories.html#{{tag}}" rel="tag">{{tag}}</a>{% endfor %}</span> -->
+  
+  </div>{% endunless %}
+</article>

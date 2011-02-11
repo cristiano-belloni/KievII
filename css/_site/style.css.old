@@ -1,0 +1,176 @@
+body {
+	margin: 0;
+	padding: 0;
+	font: 18px  "Cantarell";
+	line-height: 1.7em;
+	color: black;
+	background: white;
+}
+
+#container {
+	width: 42em;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.menubar {
+  color: #aaa;
+  line-height: 1.3em;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.menubar a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.menubar a:hover {
+  color: #004491;
+}
+
+#header {
+  margin-bottom: 3em;
+  padding-top: 0.3em;
+}
+
+#footer {
+  margin-top: 3em;
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  font-size: 1.8em;
+  font-family: "ff-tisa-web-pro-1","ff-tisa-web-pro-2";
+  font-weight: 100;
+  line-height: 1.2em;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.3em;
+  margin-top: 0;
+}
+
+h3 {
+  font-size: 1.3em;
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: normal;
+	border-bottom: 1px solid #ddd;
+}
+
+h1, .post, .link-post {
+  padding-bottom: 8px;
+	margin-bottom: 48px;
+}
+
+
+.link-post h2 {
+  font-size: 1.4em;
+}
+
+code {
+  font-size: 0.9em;
+  background: #f0f0f0;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 0.2em;
+  -webkit-border-radius: 0.2em;
+}
+
+.highlight {
+  background: yellow;
+  margin-top: -0.3em;
+}
+
+.osx-shortcut {
+	background: #f0f0f0;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 0.2em;
+  -webkit-border-radius: 0.2em;	
+}
+
+.meta {
+  font-family: "ff-tisa-web-pro-1","ff-tisa-web-pro-2";
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #999;
+  border-top: 1px solid #ddd;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  margin-top: -0.6em;
+}
+
+.meta a, .content a, .related a {
+  color: #004491;
+  text-decoration: none;
+  border-bottom: 1px dotted #d3dfee;
+}
+
+.meta a {
+  font-weight: normal;
+  
+}
+
+.meta a:hover, .content a:hover, .related a:hover {
+  border-bottom: 1px solid #d3dfee;
+}
+
+.title a {
+  color: black;
+  text-decoration: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: white;
+}
+
+.title a:hover {
+  border: none;
+}
+
+.video {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-bottom: 0;
+  text-align: center;
+}
+
+pre {
+  font: 0.7em Monaco, monospace;
+  line-height: 1.4em;
+  display: block;
+  color: white;
+  background: #222;
+  -moz-border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+  padding: 0.6em;
+}
+		
+.related {
+  padding-top: 1em;
+  color: #aaa;
+  font-family: "ff-tisa-web-pro-1","ff-tisa-web-pro-2";
+  font-size: 0.9em;
+  line-height: 1.7em;
+}
+
+.related h3 {
+  font-size: 1.2em;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.related p {
+  margin-top: 0.4em;
+}
+
+.content p {
+  margin-bottom: 1.3em;
+}
