@@ -2,4 +2,4 @@
 layout: default
 title: Postings tagged "completion"
 ---
-[ZSH Completion for gem and gem open](http://janesconference.github.com/KievII//2009/08/zsh-completion-for-gem-and-gem-open)<br />
+[ZSH Completion for gem and gem open](http://janesconference.github.com/KievII/2009/08/zsh-completion-for-gem-and-gem-open)<br />
