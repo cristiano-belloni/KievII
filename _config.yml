@@ -6,7 +6,7 @@ maruku:
   use_tex: false
   use_divs: false
 lsi: false
-base-url: http://janesconference.github.com/KievII/
+base-url: http://janesconference.github.com/KievII
 minutes: "    5986.6"
 destination: ./_site
 days: "       4.2"
