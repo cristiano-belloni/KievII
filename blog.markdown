@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Tom Ward's blog"
-description: "Personal blog of Tom Ward, in which he writes about ruby, rails and web development, as well as other random ephemera"
+title: "Jane's Conference KievII's blog"
+description: "News about KievII lib development."
 ---
 {% for page in site.posts limit:5 %}
 {% assign body = page.content %}

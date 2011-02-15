@@ -1,5 +1,0 @@
----
-layout: default
-title: Postings tagged "return"
----
-[The cost of explicit returns in ruby](http://janesconference.github.com/KievII/2009/08/the-cost-of-explicit-returns-in-ruby)<br />
