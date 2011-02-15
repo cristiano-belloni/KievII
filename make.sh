@@ -1,7 +1,5 @@
 #!/bin/bash
 rm -fr _site/
 rm -fr tags/
-mkdir -p tags/css
-cp css/style.css tags/css/style.css
+mkdir tags
 rake tags
-jekyll
