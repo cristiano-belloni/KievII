@@ -3,6 +3,10 @@
   <head>
     <title>Voron demo for KievII</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+    <script src="https://github.com/corbanbrook/dsp.js/raw/master/dsp.js"></script>
+    <script src="../../dsp/pitchshift.js"></script>
+    <script src="../../audio/ADShifterFilter.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Element.js"></script>
     <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
@@ -12,6 +16,7 @@
     <script type="text/javascript" src="../../graphic_elements/wrappers/CanvasDraw.js"></script>
   </head>
   <body>
+    <audio id="a1" src="../../audio/sound_files/german_numbers.ogg" controls></audio>
     <canvas id="plugin" width="800" height="800"></canvas>
     <script type="text/javascript">
         // This should fix "console not defined" problem.
@@ -39,12 +44,7 @@
         var plugin_canvas = document.getElementById("plugin"),
             plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
-
-        // This crap should be automatized.
-        document.addEventListener("mousedown", ui.onMouseDownFunc(), true);
-        document.addEventListener("mouseup", ui.onMouseUpFunc(), true);
-        document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
+        ui = new UI (plugin_canvas);
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
         var freqKnobImageDisplayer = new CanvasDrawImage (plugin_context);
@@ -152,6 +152,8 @@
         
         function keepON () {
 
+            audioInit();
+
             // Here we add the elements to the UI, optionally add
             // connections between them and set the initial values.
 
@@ -183,6 +185,39 @@
             pitchDiscSwitch.setValue ("buttonvalue", 0);
             freqSwitch.setValue ("buttonvalue", 1);
             invertSwitch.setValue ("buttonvalue", 0);
+
+            /* AUDIO INIT FUNCTION */
+            function audioInit() {
+
+                // AUDIO SOURCE INIT
+                var audio = document.getElementById("a1"),
+                    source = new AudioDataSource(audio),
+                    shifterParams = {},
+                    outputDestination = new AudioDataDestination();
+
+                //Set auto latency.
+                outputDestination.autoLatency = true;
+
+                //The original signal must not be played back.
+                audio.volume = 0;
+                
+                // END OF AUDIO SOURCE INIT
+
+                // PITCH SHIFTER INIT
+
+                shifterParams.fftFrameSize = 2048;
+                shifterParams.shiftAmount = 1.0;
+                shifterParams.osamp = 4;
+                shifterParams.algo = "FFT";
+                this.filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
+
+                // END OF PITCH SHIFTER INIT
+
+                source.readAsync(filter_shifter);
+            }
+
+            /* END OF AUDIO INIT FUNCTION */
+
         }
 
         /* --END */
@@ -231,7 +266,12 @@
         function pitchCallback () {
             var that = this;
             return function (slot, value) {
-                console.log ("pitch callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+                // TODO: this interpolation should really not be linear.
+                // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+                // c = value; a = 0; b = 1; y = 0.5; z = 2
+                var shift_value = value * (1.5) + 0.5;
+                that.filter_shifter.setShift(shift_value);
+                console.log ("pitch callback finished: slot is ", slot, " and value is ", value, " while shifting ratio is ", shift_value);
             };
         }
 
@@ -264,6 +304,8 @@
         }
 
         /* END OF ELEMENT CALLBACKS */
+
+        
 
     </script>
   </body>
