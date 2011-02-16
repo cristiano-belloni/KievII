@@ -100,17 +100,17 @@
         // PITCH KNOB
         var pitchArgs = knobArgs.clone();
         pitchArgs.onValueSet = pitchCallback();
-        var pitchKnob = new Knob("pitchKnob", [39, 120], pitchArgs);
+        var pitchKnob = new Knob("pitchKnob", [67, 150], pitchArgs);
 
         // FREQ KNOB
         var freqArgs = knobArgs.clone();
         freqArgs.onValueSet = freqCallback();
-        var freqKnob = new Knob("freqKnob", [240, 120], freqArgs);
+        var freqKnob = new Knob("freqKnob", [268, 150], freqArgs);
 
         // Q KNOB
         var qArgs = knobArgs.clone();
         qArgs.onValueSet = qCallback();
-        var qKnob = new Knob("qKnob", [395, 120], qArgs);
+        var qKnob = new Knob("qKnob", [421, 150], qArgs);
 
         /* END OF KNOB INIT */
 
