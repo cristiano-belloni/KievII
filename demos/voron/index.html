@@ -208,7 +208,7 @@
                 shifterParams.fftFrameSize = 2048;
                 shifterParams.shiftAmount = 1.0;
                 shifterParams.osamp = 4;
-                shifterParams.algo = "FFT";
+                shifterParams.algo = "RFFT";
                 this.filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
 
                 // END OF PITCH SHIFTER INIT
@@ -300,6 +300,24 @@
             var that = this;
             return function (slot, value, elName) {
                 console.log ("switch callback called: element is ", elName, " slot is ", slot, " and value is ", value, " while that is ", that);
+                switch (elName) {
+                    case "pitchOnSwitch":
+                        if (value === 1) {
+                            that.filter_shifter.setOnOff(false);
+                            console.log ("Setting pitch off: ", value);
+                            break;
+                        }
+                        if (value === 0) {
+                            that.filter_shifter.setOnOff(true);
+                            console.log ("Setting pitch on: ", value);
+                            break;
+                        }
+                        console.log ("pitchswitch has a strange value: ", value);
+                    break;
+
+                    default:
+                    //nothing to be done
+                }
             };
         }
 
