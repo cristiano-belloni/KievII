@@ -47,6 +47,9 @@
         document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
+        var freqKnobImageDisplayer = new CanvasDrawImage (plugin_context);
+        var qKnobImageDisplayer = new CanvasDrawImage (plugin_context);
+        var pitchKnobImageDisplayer = new CanvasDrawImage (plugin_context);
         var volImageDisplayer = new CanvasDrawImage (plugin_context);
         var switchImageDisplayer = new CanvasDrawImage (plugin_context);
 
@@ -88,7 +91,8 @@
         knobArgs = {
             images : knobImgArray,
             sensivity : 5000,
-            onComplete: loadCallback
+            onComplete: loadCallback,
+            preserveBg: true
         };
 
         // Create the knob objects.
@@ -152,9 +156,9 @@
             // connections between them and set the initial values.
 
             ui.addElement(gui, imageDisplayer);
-            ui.addElement(pitchKnob, imageDisplayer);
-            ui.addElement(freqKnob, imageDisplayer);
-            ui.addElement(qKnob, imageDisplayer);
+            ui.addElement(pitchKnob, pitchKnobImageDisplayer);
+            ui.addElement(freqKnob, freqKnobImageDisplayer);
+            ui.addElement(qKnob, qKnobImageDisplayer);
             ui.addElement(volSlider, volImageDisplayer);
             ui.addElement(pitchOnSwitch, switchImageDisplayer);
             ui.addElement(pitchDiscSwitch, switchImageDisplayer);

@@ -53,6 +53,13 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
         this.imagesArray[i].src = specArgs.images[i];
     }
 
+    // Background saving is optional.
+    if (specArgs.preserveBg !== undefined) {
+        this.preserveBg = true;
+        // As soon as we can, we want to save our background.
+        this.backgroundSavePending = true;
+    }
+
 };
 
 Knob.prototype.onLoad = function (that) {
@@ -177,15 +184,31 @@ Knob.prototype.setValue = function (slot, value) {
 };
         
 Knob.prototype.refresh = function () {
+
     if (this.drawClass === undefined) {
         throw new Error("Error: drawClass is undefined!");
     }
-    else {
-        /*jslint nomen: false*/
-        var imageNum = this._getImageNum();
-        /*jslint nomen: true*/
-        this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+    
+    if (this.preserveBg === true) {
+        if (this.backgroundSavePending === true) {
+
+            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
+            this.backgroundSavePending = false;
+        }
+
+        else {
+            // We want drawClass to refresh the saved background.
+            this.drawClass.restoreBackground();
+        }
     }
+
+    /* Normally draw */
+
+    /*jslint nomen: false*/
+    var imageNum = this._getImageNum();
+    /*jslint nomen: true*/
+    this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+    
 };
 
 Knob.prototype.onCompletion = function () {

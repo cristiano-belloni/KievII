@@ -55,7 +55,7 @@ function CanvasDrawText (canvas) {
 
             //Save the font
             var tempFont = this.canvasC.font;
-            if (this.font != undefined) {
+            if (this.font !== undefined) {
                 this.canvasC.font = this.font;
             }
 
