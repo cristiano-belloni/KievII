@@ -1,10 +1,111 @@
-function UI(offsetTop, offsetLeft) {
+function UI(domElement) {
+
+    // <EVENT HANDLING>
+
+    // Thanks for these two functions to the noVNC project. You are great.
+    // https://github.com/kanaka/noVNC/blob/master/include/util.js#L121
+    
+    // Get DOM element position on page
+    this.getPosition = function (obj) {
+        var x = 0, y = 0;
+        if (obj.offsetParent) {
+            do {
+                x += obj.offsetLeft;
+                y += obj.offsetTop;
+                obj = obj.offsetParent;
+            } while (obj);
+        }
+        return {'x': x, 'y': y};
+    };
+
+    // Get mouse event position in DOM element (don't know how to use scale yet).
+    this.getEventPosition = function (e, obj, scale) {
+        var evt, docX, docY, pos;
+        //if (!e) evt = window.event;
+        evt = (e ? e : window.event);
+        if (evt.pageX || evt.pageY) {
+            docX = evt.pageX;
+            docY = evt.pageY;
+        } else if (evt.clientX || evt.clientY) {
+            docX = evt.clientX + document.body.scrollLeft +
+                document.documentElement.scrollLeft;
+            docY = evt.clientY + document.body.scrollTop +
+                document.documentElement.scrollTop;
+        }
+        pos = this.getPosition(obj);
+        if (typeof scale === "undefined") {
+            scale = 1;
+        }
+        return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
+    };
+
+    // Event handlers: we need closures here, because they will be called as callbacks.
+
+    // On mouseMove event
+    this.onMouseMoveFunc = function () {
+        var that = this;
+            return function (evt) {
+
+            //var realCoords = that.calculateOffset(evt);
+            var realCoords = that.getEventPosition (evt, that.domElement);
+
+            // Only if the mouse button is still down (This could be useless TODO).
+            if (that.mouseUp === false) {
+                that.elementsNotifyEvent(realCoords.x, realCoords.y, "onMouseMove");
+            }
+        };
+    };
+
+    // On mouseDown event
+    this.onMouseDownFunc = function () {
+        var that = this;
+            return function (evt) {
+
+            var realCoords = that.getEventPosition (evt, that.domElement);
+
+            that.mouseUp = false;
+            that.elementsNotifyEvent(realCoords.x, realCoords.y, "onMouseDown");
+        };
+    };
+
+    // On mouseUp event
+    this.onMouseUpFunc = function () {
+        var that = this;
+            return function (evt) {
+
+            var realCoords = that.getEventPosition (evt, that.domElement);
+
+            that.mouseUp = true;
+            that.elementsNotifyEvent(realCoords.x, realCoords.y, "onMouseUp");
+
+        };
+    };
+
+    // Notify every element about the event.
+    this.elementsNotifyEvent = function (x, y, event) {
+        // For every element
+        for (var name in this.elements) {
+            if (this.elements.hasOwnProperty(name)){
+                // Notify the element
+                ret = this.elements[name][event](x, y);
+                // See if the element changed its value
+                if (ret !== undefined) {
+                    // console.log("UI: Element ", name, " changed its value on event ", event);
+                    this.setValue(name, ret.slot, ret.value);
+                }
+            }
+        }
+    };
+
+    // <END OF EVENT HANDLING>
+
 
     // <CONSTRUCTOR>
+    this.domElement = domElement;
 
-    // The drawing context can be offset.
-    this.offsetTop = offsetTop;
-    this.offsetLeft = offsetLeft;
+    this.domElement.addEventListener("mousedown", this.onMouseDownFunc(), true);
+    this.domElement.addEventListener("mouseup", this.onMouseUpFunc(), true);
+    this.domElement.addEventListener("mousemove", this.onMouseMoveFunc(), true);
 
     this.mouseUp = true;
     // TODO hmmm, ret could be changed asynchronously.
@@ -125,84 +226,4 @@ function UI(offsetTop, offsetLeft) {
     };
     // </VALUE HANDLING>
     
-    // <EVENT HANDLING>
-
-    // Notify every element about the event.
-    this.elementsNotifyEvent = function (x, y, event) {
-        // For every element
-        for (var name in this.elements) {
-            if (this.elements.hasOwnProperty(name)){
-                // Notify the element
-                ret = this.elements[name][event](x, y);
-                // See if the element changed its value
-                if (ret !== undefined) {
-                    // console.log("UI: Element ", name, " changed its value on event ", event);
-                    this.setValue(name, ret.slot, ret.value);
-                }
-            }
-        }
-    };
-
-    // Event handlers: we need closures here, because they will be called as callbacks.
-
-    // On mouseMove event
-    this.onMouseMoveFunc = function () {
-        var that = this;
-            return function (evt) {
-
-            var realCoords = that.calculateOffset(evt);
-
-            // Only if the mouse button is still down (This could be useless TODO).
-            if (that.mouseUp === false) {
-                that.elementsNotifyEvent(realCoords.pageX, realCoords.pageY, "onMouseMove");
-            }
-        };
-    };
-
-    // On mouseDown event
-    this.onMouseDownFunc = function () {
-        var that = this;
-            return function (evt) {
-
-            var realCoords = that.calculateOffset(evt);
-
-            that.mouseUp = false;
-            that.elementsNotifyEvent(realCoords.pageX, realCoords.pageY, "onMouseDown");
-        };
-    };
-
-    // On mouseUp event
-    this.onMouseUpFunc = function () {
-        var that = this;
-            return function (evt) {
-
-            var realCoords = that.calculateOffset(evt);
-
-            that.mouseUp = true;
-            that.elementsNotifyEvent(realCoords.pageX, realCoords.pageY, "onMouseUp");
-
-        };
-    };
-
-    this.calculateOffset = function (evt) {
-
-            var obj = {};
-
-            obj.pageX = evt.pageX;
-            obj.pageY = evt.pageY;
-
-            if (this.offsetTop !== undefined) {
-                obj.pageY -= this.offsetTop;
-            }
-
-            if (this.offsetLeft !== undefined) {
-                obj.pageX -= this.offsetLeft;
-            }
-
-            return obj;
-    }
-
-    // </EVENT HANDLING>
-
 }
-
