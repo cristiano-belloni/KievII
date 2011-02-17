@@ -7,6 +7,7 @@
     <script src="https://github.com/corbanbrook/dsp.js/raw/master/dsp.js"></script>
     <script src="../../dsp/pitchshift.js"></script>
     <script src="../../audio/ADShifterFilter.js"></script>
+    <script src="../../audio/ADLowPassFilter.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Element.js"></script>
     <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
@@ -181,9 +182,11 @@
             // Quick-fixed setting default knob value to NaN.
             qKnob.setValue("knobvalue", 0);
             volSlider.setValue("slidervalue", 0.5);
-            pitchOnSwitch.setValue ("buttonvalue", 1);
+            // These buttons have 0 = on and 1 = off.
+            // TODO set NaN or null as the default value also in Button class.
+            pitchOnSwitch.setValue ("buttonvalue", 0);
             pitchDiscSwitch.setValue ("buttonvalue", 0);
-            freqSwitch.setValue ("buttonvalue", 1);
+            freqSwitch.setValue ("buttonvalue", 0);
             invertSwitch.setValue ("buttonvalue", 0);
 
             /* AUDIO INIT FUNCTION */
@@ -210,10 +213,19 @@
                 shifterParams.osamp = 4;
                 shifterParams.algo = "RFFT";
                 this.filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
+                //source.readAsync(this.filter_shifter);
 
                 // END OF PITCH SHIFTER INIT
 
-                source.readAsync(filter_shifter);
+                // LOWPASS FILTER INIT
+
+                this.filter_lowpass = new ADLowPassFilter(this.filter_shifter, 2000, 10, 44100);
+
+                // END OF LOWPASS FILTER INIT
+
+                // This sets the chain.
+                source.readAsync(this.filter_lowpass);
+             
             }
 
             /* END OF AUDIO INIT FUNCTION */
@@ -278,14 +290,22 @@
         function freqCallback () {
             var that = this;
             return function (slot, value) {
-                console.log ("freq callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+                // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+                // c = value; a = 0; b = 1; y = 20; z = 2000
+                var cutoff_value = value  * (2000 - 20) + 20;
+                that.filter_lowpass.setCutoff(cutoff_value);
+                console.log ("freq callback finished: slot is ", slot, " and value is ", value, " while cutoff is ", cutoff_value);
             };
         }
 
         function qCallback () {
             var that = this;
             return function (slot, value) {
-                console.log ("q callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+                // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+                // c = value; a = 0; b = 1; y = 1; z = 50
+                var q_value = value  * (50 - 1) + 1;
+                that.filter_lowpass.setResonance(q_value);
+                console.log ("q callback finished: slot is ", slot, " and value is ", value, " while res is ", q_value);
             };
         }
 
@@ -310,6 +330,20 @@
                         if (value === 0) {
                             that.filter_shifter.setOnOff(true);
                             console.log ("Setting pitch on: ", value);
+                            break;
+                        }
+                        console.log ("pitchswitch has a strange value: ", value);
+                    break;
+
+                    case "freqSwitch":
+                        if (value === 1) {
+                            that.filter_lowpass.setOnOff(false);
+                            console.log ("Setting freq off: ", value);
+                            break;
+                        }
+                        if (value === 0) {
+                            that.filter_lowpass.setOnOff(true);
+                            console.log ("Setting freq on: ", value);
                             break;
                         }
                         console.log ("pitchswitch has a strange value: ", value);
