@@ -8,6 +8,7 @@
     <script src="../../dsp/pitchshift.js"></script>
     <script src="../../audio/ADShifterFilter.js"></script>
     <script src="../../audio/ADLowPassFilter.js"></script>
+    <script src="../../audio/ADSimpleVolume.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Element.js"></script>
     <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
@@ -223,8 +224,14 @@
 
                 // END OF LOWPASS FILTER INIT
 
-                // This sets the chain.
-                source.readAsync(this.filter_lowpass);
+                // VOLUME FILTER INIT
+
+                this.filter_volume = new ADSimpleVolume (this.filter_lowpass, 0.5);
+
+                // END OF VOLUME FILTER INIT
+
+                // This sets the chain end.
+                source.readAsync(this.filter_volume);
              
             }
 
@@ -312,7 +319,8 @@
         function volCallback () {
             var that = this;
             return function (slot, value) {
-                console.log ("vol callback called: slot is ", slot, " and value is ", value, " while that is ", that);
+                that.filter_volume.setVolume (value);
+                console.log ("vol callback finished: slot is ", slot, " and value is ", value);
             };
         }
 

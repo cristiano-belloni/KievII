@@ -4,10 +4,6 @@
 function ADLowPassFilter(next, cutoff, resonance, sampleRate) {
   AudioDataFilter.call(this, next);
 
-  /**
-   * Gets shift parameters.
-   * @type object
-   */
   this.iter_number = 0;
   this.cutoff = cutoff;
   this.resonance = resonance;
