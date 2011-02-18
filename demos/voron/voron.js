@@ -32,7 +32,7 @@ VORON.audioInit = function() {
     this.shifterParams.shiftAmount = 1.0;
     this.shifterParams.osamp = 4;
     this.shifterParams.algo = "RFFT";
-    this.filter_shifter = new AudioDataShifterFilter (outputDestination, shifterParams);
+    this.filter_shifter = new AudioDataShifterFilter (this.outputDestination, this.shifterParams);
     //source.readAsync(this.filter_shifter);
 
     // END OF PITCH SHIFTER INIT
@@ -49,10 +49,10 @@ VORON.audioInit = function() {
 
     // END OF VOLUME FILTER INIT
 
+    this.audioOk = true;
+
     // This sets the chain end.
     this.source.readAsync(this.filter_volume);
-
-    this.audioOk = true;
 
 }
 
@@ -146,7 +146,7 @@ VORON.loadingManager = function (elementName) {
 VORON.pitchCallback = function () {
     var that = this;
     return function (slot, value) {
-        if (this.audioOk === true) {
+        if (that.audioOk === true) {
             // TODO: this interpolation should really not be linear.
             // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
             // c = value; a = 0; b = 1; y = 0.5; z = 2
@@ -164,7 +164,7 @@ VORON.pitchCallback = function () {
 VORON.freqCallback = function () {
     var that = this;
     return function (slot, value) {
-        if (this.audioOk === true) {
+        if (that.audioOk === true) {
             // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
             // c = value; a = 0; b = 1; y = 20; z = 2000
             var cutoff_value = value  * (2000 - 20) + 20;
@@ -182,7 +182,7 @@ VORON.qCallback = function () {
     var that = this;
     return function (slot, value) {
 
-        if (this.audioOk === true) {
+        if (that.audioOk === true) {
             // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
             // c = value; a = 0; b = 1; y = 1; z = 50
             var q_value = value  * (50 - 1) + 1;
@@ -201,7 +201,7 @@ VORON.volCallback =function () {
     var that = this;
     return function (slot, value) {
 
-        if (this.audioOk === true) {
+        if (that.audioOk === true) {
             that.filter_volume.setVolume (value);
             console.log ("vol callback finished: slot is ", slot, " and value is ", value);
         }
@@ -217,7 +217,7 @@ VORON.switchCallback = function () {
     var that = this;
     return function (slot, value, elName) {
 
-        if (this.audioOk === true) {
+        if (that.audioOk === true) {
 
             console.log ("switch callback called: element is ", elName, " slot is ", slot, " and value is ", value, " while that is ", that);
             switch (elName) {
