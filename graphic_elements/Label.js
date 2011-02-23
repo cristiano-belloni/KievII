@@ -19,6 +19,10 @@ Label.prototype.getready = function (name, topleft, specArgs) {
 
     //By default, a label always draws itself when value is set.
     this.drawItself = true;
+
+    //By default, a label always refreshes the background. TODO?
+    this.preserveBg = true;
+    this.backgroundSavePending = true;
     
     this.width = specArgs.wh[0];
     this.height = specArgs.wh[1];
@@ -40,10 +44,10 @@ Label.prototype.isInROI = function (x, y) {
 };
 
 // Text filter automatically parses and translates the value.
-// This one does nothing but round value. TODO this should be overridden
+// This one does nothing. TODO this should be overridden
 // and definitely NOT here.
 Label.prototype.textFilter = function (value) {
-    return value.toFixed(3);
+    return value;
 };
 
 // Setters
@@ -58,15 +62,30 @@ Label.prototype.setValue = function (slot, value) {
 };
  
 Label.prototype.refresh = function () {
+    
     var text;
+
     if (this.drawClass === undefined) {
         throw new Error("Error: drawClass is undefined!");
     }
-    else {
+
+    if (this.preserveBg === true) {
+        if (this.backgroundSavePending === true) {
+
+            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
+            this.backgroundSavePending = false;
+        }
+
+        else {
+            // We want drawClass to refresh the saved background.
+            this.drawClass.restoreBackground();
+        }
+    }
+
         // Maybe the filtering should be done here?
         text = this.values.labelvalue;
         // Draw yourself! This is per-class behaviour.
         //console.log (this.name, "'s drawClass is drawing itself!");
         this.drawClass.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
-    }
+
 };
