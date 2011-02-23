@@ -1,6 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style type="text/css">
+        
+    @font-face {
+        font-family: "embedded_font";
+        src: url(SFDigitalReadoutHeavy.ttf);
+    }
+    .embed {
+        font-family: "embedded_font";
+    }
+    </style>
+
+      <script type="text/javascript">
+          //See http://paulirish.com/2009/fighting-the-font-face-fout/
+          (function(){
+            // if firefox 3.5+, hide content till load (or 3 seconds) to prevent FOUT
+            var d = document, e = d.documentElement, s = d.createElement('style');
+            if (e.style.MozTransform === ''){ // gecko 1.9.1 inference
+            s.textContent = 'body{visibility:hidden}';
+            var r = document.getElementsByTagName('script')[0];
+            r.parentNode.insertBefore(s, r);
+            function f(){ s.parentNode && s.parentNode.removeChild(s); }
+            addEventListener('load',f,false);
+            setTimeout(f,3000);
+            }
+        })();
+      </script>
+
     <title>Voron demo for KievII</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
@@ -10,6 +37,7 @@
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Slider.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Button.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/Label.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Background.js"></script>
     <script type="text/javascript" src="../../graphic_elements/wrappers/CanvasDraw.js"></script>
     <script type="text/javascript" src="../../dsp/pitchshift.js"></script>
@@ -19,6 +47,8 @@
     <script type="text/javascript" src="voron.js"></script>
   </head>
   <body>
+    <!-- Hack to load the embedded font -->
+    <p class="embed"></p>
     <audio id="a1" src="../../audio/sound_files/german_numbers.ogg" controls></audio>
     <canvas id="plugin" width="800" height="800"></canvas>
     <script type="text/javascript">

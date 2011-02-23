@@ -64,21 +64,9 @@ VORON.keepON = function () {
 
     this.audioInit();
 
-    // Here we add the elements to the UI, optionally add
-    // connections between them and set the initial values.
-
-    this.ui.addElement(this.gui, this.imageDisplayer);
-    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer);
-    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer);
-    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer);
-    this.ui.addElement(this.volSlider, this.volImageDisplayer);
-    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.invertSwitch, this.switchImageDisplayer);
-
     // TODO Something like ui.refresh() would be more appropriate, I guess.
     this.gui.refresh();
+    
 
     // TODO if drawClass is undefined, just exit. This should be in the
     // initialize section, not here. keepON should do a ui.refresh() to
@@ -97,6 +85,14 @@ VORON.keepON = function () {
     this.pitchDiscSwitch.setValue ("buttonvalue", 0);
     this.freqSwitch.setValue ("buttonvalue", 0);
     this.invertSwitch.setValue ("buttonvalue", 0);
+
+    if (this.audioOk !== true) {
+        this.label.setValue("labelvalue", "Audio *NOT* supported by browser.");
+    }
+
+    else {
+        this.label.setValue ("labelvalue", "Audio support OK");
+    }
 
 }
 
@@ -146,11 +142,13 @@ VORON.loadingManager = function (elementName) {
 VORON.pitchCallback = function () {
     var that = this;
     return function (slot, value) {
+
+        // TODO: this interpolation should really not be linear.
+        // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+        // c = value; a = 0; b = 1; y = 0.5; z = 2
+        var shift_value = value * (1.5) + 0.5;
+
         if (that.audioOk === true) {
-            // TODO: this interpolation should really not be linear.
-            // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
-            // c = value; a = 0; b = 1; y = 0.5; z = 2
-            var shift_value = value * (1.5) + 0.5;
             that.filter_shifter.setShift(shift_value);
             console.log ("pitch callback finished: slot is ", slot, " and value is ", value, " while shifting ratio is ", shift_value);
         }
@@ -158,16 +156,19 @@ VORON.pitchCallback = function () {
         else {
             console.log ("No moz-audio, just skipping");
         }
+        that.label.setValue("labelvalue", "Pitch Ratio_ " + shift_value.toFixed(3));
     };
 }
 
 VORON.freqCallback = function () {
     var that = this;
     return function (slot, value) {
+
+        // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+        // c = value; a = 0; b = 1; y = 20; z = 2000
+        var cutoff_value = value  * (2000 - 20) + 20;
+
         if (that.audioOk === true) {
-            // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
-            // c = value; a = 0; b = 1; y = 20; z = 2000
-            var cutoff_value = value  * (2000 - 20) + 20;
             that.filter_lowpass.setCutoff(cutoff_value);
             console.log ("freq callback finished: slot is ", slot, " and value is ", value, " while cutoff is ", cutoff_value);
         }
@@ -175,6 +176,7 @@ VORON.freqCallback = function () {
         else {
             console.log ("No moz-audio, just skipping");
         }
+        that.label.setValue("labelvalue", "LPF Cutoff_ " + cutoff_value.toFixed() + " Hz");
     };
 }
 
@@ -182,10 +184,11 @@ VORON.qCallback = function () {
     var that = this;
     return function (slot, value) {
 
+        // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+        // c = value; a = 0; b = 1; y = 1; z = 50
+        var q_value = value  * (50 - 1) + 1;
+
         if (that.audioOk === true) {
-            // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
-            // c = value; a = 0; b = 1; y = 1; z = 50
-            var q_value = value  * (50 - 1) + 1;
             that.filter_lowpass.setResonance(q_value);
             console.log ("q callback finished: slot is ", slot, " and value is ", value, " while res is ", q_value);
         }
@@ -193,7 +196,7 @@ VORON.qCallback = function () {
         else {
             console.log ("No moz-audio, just skipping");
         }
-
+        that.label.setValue("labelvalue", "LPF Resonance_ " + q_value.toFixed());
     };
 }
 
@@ -201,15 +204,17 @@ VORON.volCallback =function () {
     var that = this;
     return function (slot, value) {
 
+        var vol_value = 1 - value;
+
         if (that.audioOk === true) {
-            that.filter_volume.setVolume (value);
-            console.log ("vol callback finished: slot is ", slot, " and value is ", value);
+            that.filter_volume.setVolume (vol_value);
+            console.log ("vol callback finished: slot is ", slot, " and value is ", value, " while volume is ", vol_value);
         }
 
         else {
             console.log ("No moz-audio, just skipping");
         }
-
+        that.label.setValue("labelvalue", "Volume_ " + vol_value.toFixed(3));
     };
 }
 
@@ -217,19 +222,31 @@ VORON.switchCallback = function () {
     var that = this;
     return function (slot, value, elName) {
 
-        if (that.audioOk === true) {
+        
 
             console.log ("switch callback called: element is ", elName, " slot is ", slot, " and value is ", value, " while that is ", that);
             switch (elName) {
                 case "pitchOnSwitch":
                     if (value === 1) {
-                        that.filter_shifter.setOnOff(false);
-                        console.log ("Setting pitch off: ", value);
+
+                        if (that.audioOk === true) {
+                            console.log ("Setting pitch off: ", value);
+                            that.filter_shifter.setOnOff(false);
+                        }
+
+                        that.label.setValue("labelvalue", "Pitch_ OFF" );
+
                         break;
                     }
                     if (value === 0) {
-                        that.filter_shifter.setOnOff(true);
-                        console.log ("Setting pitch on: ", value);
+
+                        if (that.audioOk === true) {
+                            console.log ("Setting pitch on: ", value);
+                            that.filter_shifter.setOnOff(true);
+                        }
+
+                        that.label.setValue("labelvalue", "Pitch_ ON" );
+
                         break;
                     }
                     console.log ("pitchswitch has a strange value: ", value);
@@ -237,13 +254,25 @@ VORON.switchCallback = function () {
 
                 case "freqSwitch":
                     if (value === 1) {
-                        that.filter_lowpass.setOnOff(false);
-                        console.log ("Setting freq off: ", value);
+
+                        if (that.audioOk === true) {
+                            console.log ("Setting freq off: ", value);
+                            that.filter_lowpass.setOnOff(false);
+                        }
+
+                        that.label.setValue("labelvalue", "LP Filter_ OFF" );
+
                         break;
                     }
                     if (value === 0) {
-                        that.filter_lowpass.setOnOff(true);
-                        console.log ("Setting freq on: ", value);
+
+                        if (that.audioOk === true) {
+                            console.log ("Setting freq on: ", value);
+                            that.filter_lowpass.setOnOff(true);
+                        }
+
+                        that.label.setValue("labelvalue", "LP Filter_ ON" );
+
                         break;
                     }
                     console.log ("pitchswitch has a strange value: ", value);
@@ -252,11 +281,11 @@ VORON.switchCallback = function () {
                 default:
                 //nothing to be done
             }
-        }
+        
 
-        else {
-            console.log ("No moz-audio, just skipping");
-        }
+        //else {
+            //console//.log ("No moz-audio, just skipping");
+        //}
 
     };
 }
@@ -279,6 +308,7 @@ VORON.init = function () {
         pitchArgs,
         freqArgs,
         qArgs,
+        labelArgs,
         switchCallbackManager;
 
     /* END OF HOISTED VARs */
@@ -295,6 +325,12 @@ VORON.init = function () {
     this.pitchKnobImageDisplayer = new CanvasDrawImage (this.plugin_context);
     this.volImageDisplayer = new CanvasDrawImage (this.plugin_context);
     this.switchImageDisplayer = new CanvasDrawImage (this.plugin_context);
+    this.labelDisplayer = new CanvasDrawImage (this.plugin_context);
+    this.labelDisplayer = new CanvasDrawText (this.plugin_context);
+
+    this.labelDisplayer.setFont ("28px embedded_font");
+    this.labelDisplayer.setFillStyle('#3b6038');
+    this.labelDisplayer.setTextStyle('#000');
 
     this.loadCallback = this.loadingManager();
     /* END OF CONTEXT INIT */
@@ -384,4 +420,26 @@ VORON.init = function () {
 
     /* END OF SWITCHES INIT */
 
+    /* LABEL INIT */
+    labelArgs = {
+            wh : [320,29]
+        };
+
+    this.label = new Label("status", [224, 332], labelArgs);
+    /* END OF LABEL INIT */
+
+    // Here we add the elements to the UI, optionally add
+    // connections between them and set the initial values.
+
+    this.ui.addElement(this.gui, this.imageDisplayer);
+    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer);
+    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer);
+    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer);
+    this.ui.addElement(this.volSlider, this.volImageDisplayer);
+    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer);
+    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer);
+    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer);
+    this.ui.addElement(this.invertSwitch, this.switchImageDisplayer);
+    this.ui.addElement(this.label, this.labelDisplayer);
+    
 }
