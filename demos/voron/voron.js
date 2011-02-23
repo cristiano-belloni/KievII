@@ -148,7 +148,12 @@ VORON.pitchCallback = function () {
         // c = value; a = 0; b = 1; y = 0.5; z = 2
         var shift_value = value * (1.5) + 0.5;
 
+        if (that.discretePitch === true) {
+            shift_value = parseFloat(shift_value.toFixed(1));
+        }
+
         if (that.audioOk === true) {
+
             that.filter_shifter.setShift(shift_value);
             console.log ("pitch callback finished: slot is ", slot, " and value is ", value, " while shifting ratio is ", shift_value);
         }
@@ -156,6 +161,7 @@ VORON.pitchCallback = function () {
         else {
             console.log ("No moz-audio, just skipping");
         }
+
         that.label.setValue("labelvalue", "Pitch Ratio_ " + shift_value.toFixed(3));
     };
 }
@@ -272,6 +278,26 @@ VORON.switchCallback = function () {
                         }
 
                         that.label.setValue("labelvalue", "LP Filter_ ON" );
+
+                        break;
+                    }
+                    console.log ("pitchswitch has a strange value: ", value);
+                break;
+
+                case "pitchDiscSwitch":
+                    if (value === 1) {
+
+                        console.log ("Setting pitch Discrete off: ", value);
+                        that.discretePitch = false;
+                        that.label.setValue("labelvalue", "Pitch Disc_ OFF" );
+
+                        break;
+                    }
+                    if (value === 0) {
+
+                        console.log ("Setting pitch Discrete on: ", value);
+                        that.discretePitch = true;
+                        that.label.setValue("labelvalue", "Pitch Disc_ ON" );
 
                         break;
                     }
