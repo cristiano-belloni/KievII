@@ -62,13 +62,13 @@ function CanvasDrawText (canvas) {
             //Save the bg color.
             var tempfillStyle = this.canvasC.fillStyle;
 
-            if (this.fillStyle != undefined) {
+            /*if (this.fillStyle != undefined) {
                 this.canvasC.fillStyle = this.fillStyle;
-            }
+            }*/
             //console.log ("fillStyle set to ", this.fillStyle);
             
             //Fill the label
-            this.canvasC.fillRect (x, y,  width, length);
+            //this.canvasC.fillRect (x, y,  width, length);
 
             if (this.textStyle != undefined) {
                 this.canvasC.fillStyle = this.textStyle;
@@ -90,6 +90,15 @@ function CanvasDrawText (canvas) {
             // Restore the font
             this.canvasC.fillStyle = tempfillStyle;
 
+        }
+
+        // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
+        this.saveBackground = function (left, top, width, height) {
+            save2d (this, left, top, width, height);
+        }
+
+        this.restoreBackground = function () {
+            restore2d (this);
         }
 }
 
