@@ -12,6 +12,33 @@
     }
     </style>
 
+    <style>
+      body
+        {
+            background-image:url('images/bg5d.gif');
+            background-repeat:repeat;
+        }
+    </style>
+
+    <style>
+    #div-1 {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin-top: -290px;
+      margin-left: -408px;
+    }
+    </style>
+
+    <style>
+    #div-2 {
+         position: absolute;
+         top: -45px;
+         left: 34%;
+    }
+    </style>
+
+
       <script type="text/javascript">
           //See http://paulirish.com/2009/fighting-the-font-face-fout/
           (function(){
@@ -47,10 +74,16 @@
     <script type="text/javascript" src="voron.js"></script>
   </head>
   <body>
-    <!-- Hack to load the embedded font -->
-    <p class="embed"></p>
-    <audio id="a1" src="../../audio/sound_files/german_numbers.ogg" controls></audio>
-    <canvas id="plugin" width="800" height="800"></canvas>
+    <div ID="div-1">
+        <canvas id="plugin" width="816" height="580"></canvas>
+        <div ID="div-2">
+            <audio id="a1" src="../../audio/sound_files/german_numbers.ogg" controls></audio>
+        </div>
+        <!-- Hack to load the embedded font -->
+        <p class="embed"></p>
+    </div>
+
+    
     <script type="text/javascript">
         // This should fix "console not defined" problem.
         if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}

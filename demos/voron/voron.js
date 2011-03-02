@@ -29,7 +29,7 @@ VORON.audioInit = function() {
     // PITCH SHIFTER INIT
 
     this.shifterParams.fftFrameSize = 2048;
-    this.shifterParams.shiftAmount = 1.0;
+    this.shifterParams.shiftAmount = 0.333; // about 1, with linear interpolation
     this.shifterParams.osamp = 4;
     this.shifterParams.algo = "RFFT";
     this.filter_shifter = new AudioDataShifterFilter (this.outputDestination, this.shifterParams);
@@ -71,7 +71,7 @@ VORON.keepON = function () {
     // TODO if drawClass is undefined, just exit. This should be in the
     // initialize section, not here. keepON should do a ui.refresh() to
     // repaint everything (in order).
-    this.pitchKnob.setValue("knobvalue", 0.5);
+    this.pitchKnob.setValue("knobvalue", 0.333);
     this.freqKnob.setValue("knobvalue", 1);
     // TODO qKnob.setValue("knobvalue", 0) fails (does not display image)
     // because the initial value is 0 (why?). with ui.refresh() this does
@@ -84,7 +84,6 @@ VORON.keepON = function () {
     this.pitchOnSwitch.setValue ("buttonvalue", 0);
     this.pitchDiscSwitch.setValue ("buttonvalue", 0);
     this.freqSwitch.setValue ("buttonvalue", 0);
-    this.invertSwitch.setValue ("buttonvalue", 0);
 
     if (this.audioOk !== true) {
         this.label.setValue("labelvalue", "Audio *NOT* supported by browser.");
@@ -109,7 +108,7 @@ VORON.loadingManager = function (elementName) {
             pitchKnob: false, freqKnob: false, qKnob: false,
             background: false, volSlider: false,
             pitchOnSwitch: false, pitchDiscSwitch : false,
-            freqSwitch: false, invertSwitch: false
+            freqSwitch: false
         };
 
         // Actual callback
@@ -301,18 +300,12 @@ VORON.switchCallback = function () {
 
                         break;
                     }
-                    console.log ("pitchswitch has a strange value: ", value);
+                    console.log ("pitchDiscSwitch has a strange value: ", value);
                 break;
 
                 default:
                 //nothing to be done
             }
-        
-
-        //else {
-            //console//.log ("No moz-audio, just skipping");
-        //}
-
     };
 }
 
@@ -398,17 +391,17 @@ VORON.init = function () {
     // PITCH KNOB
     pitchArgs = knobArgs.clone();
     pitchArgs.onValueSet = this.pitchCallback();
-    this.pitchKnob = new Knob("pitchKnob", [67, 150], pitchArgs);
+    this.pitchKnob = new Knob("pitchKnob", [118, 150], pitchArgs);
 
     // FREQ KNOB
     freqArgs = knobArgs.clone();
     freqArgs.onValueSet = this.freqCallback();
-    this.freqKnob = new Knob("freqKnob", [268, 150], freqArgs);
+    this.freqKnob = new Knob("freqKnob", [319, 150], freqArgs);
 
     // Q KNOB
     qArgs = knobArgs.clone();
     qArgs.onValueSet = this.qCallback();
-    this.qKnob = new Knob("qKnob", [421, 150], qArgs);
+    this.qKnob = new Knob("qKnob", [472, 150], qArgs);
 
     /* END OF KNOB INIT */
 
@@ -422,7 +415,7 @@ VORON.init = function () {
     };
 
     volSliderArgs.onValueSet = this.volCallback();
-    this.volSlider = new Slider("volSlider", [646, 136], volSliderArgs);
+    this.volSlider = new Slider("volSlider", [697, 136], volSliderArgs);
 
     /* END OF FADER INIT */
 
@@ -439,10 +432,9 @@ VORON.init = function () {
     };
 
     // Create the switch objects TODO the x,y values are not coherent.
-    this.pitchOnSwitch = new Button("pitchOnSwitch", [89,107], switchArgs);
-    this.pitchDiscSwitch = new Button("pitchDiscSwitch", [89,339], switchArgs);
-    this.freqSwitch = new Button("freqSwitch", [365,107], switchArgs);
-    this.invertSwitch = new Button("invertSwitch", [638,415], switchArgs);
+    this.pitchOnSwitch = new Button("pitchOnSwitch", [140,107], switchArgs);
+    this.pitchDiscSwitch = new Button("pitchDiscSwitch", [140,339], switchArgs);
+    this.freqSwitch = new Button("freqSwitch", [416,107], switchArgs);
 
     /* END OF SWITCHES INIT */
 
@@ -451,7 +443,7 @@ VORON.init = function () {
             wh : [320,29]
         };
 
-    this.label = new Label("status", [224, 332], labelArgs);
+    this.label = new Label("status", [275, 332], labelArgs);
     /* END OF LABEL INIT */
 
     // Here we add the elements to the UI, optionally add
@@ -465,7 +457,6 @@ VORON.init = function () {
     this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer);
     this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer);
     this.ui.addElement(this.freqSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.invertSwitch, this.switchImageDisplayer);
     this.ui.addElement(this.label, this.labelDisplayer);
     
 }
