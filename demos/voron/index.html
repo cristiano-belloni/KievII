@@ -1,43 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style type="text/css">
-        
-    @font-face {
-        font-family: "embedded_font";
-        src: url(SFDigitalReadoutHeavy.ttf);
-    }
-    .embed {
-        font-family: "embedded_font";
-    }
-    </style>
 
-    <style>
-      body
-        {
-            background-image:url('images/bg5d.gif');
-            background-repeat:repeat;
-        }
-    </style>
-
-    <style>
-    #div-1 {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      margin-top: -290px;
-      margin-left: -408px;
-    }
-    </style>
-
-    <style>
-    #div-2 {
-         position: absolute;
-         top: -45px;
-         left: 34%;
-    }
-    </style>
-
+      <link rel=StyleSheet href="voron.css" type="text/css" media=screen>
 
       <script type="text/javascript">
           //See http://paulirish.com/2009/fighting-the-font-face-fout/
@@ -85,28 +50,29 @@
 
     
     <script type="text/javascript">
-        // This should fix "console not defined" problem.
-        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
-        var ui;
+        window.onload = function() {
+            // This should fix "console not defined" problem.
+            if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
 
-        /* GENERAL PURPOSE FUNCTIONS */
+            /* GENERAL PURPOSE FUNCTIONS */
 
-        // Object clone; see http://my.opera.com/GreyWyvern/blog/show.dml/1725165
-        Object.prototype.clone = function() {
-            var newObj = (this instanceof Array) ? [] : {};
-            for (i in this) {
-                if (i == 'clone') continue;
-                if (this[i] && typeof this[i] == "object") {
-                    newObj[i] = this[i].clone();
-                } else newObj[i] = this[i];
-            }
-            return newObj;
-        };
+            // Object clone; see http://my.opera.com/GreyWyvern/blog/show.dml/1725165
+            Object.prototype.clone = function() {
+                var newObj = (this instanceof Array) ? [] : {};
+                for (i in this) {
+                    if (i == 'clone') continue;
+                    if (this[i] && typeof this[i] == "object") {
+                        newObj[i] = this[i].clone();
+                    } else newObj[i] = this[i];
+                }
+                return newObj;
+            };
 
-        /* END OF GENERAL PURPOSE FUNCTIONS */
+            /* END OF GENERAL PURPOSE FUNCTIONS */
 
-        //Call the VORON app
-        VORON.init();
+            //Call the VORON app
+            VORON.init();
+        }
         
 
     </script>

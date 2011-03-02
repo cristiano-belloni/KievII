@@ -1,0 +1,34 @@
+/* 
+    Document   : voron
+    Created on : 2-mar-2011, 23.00.06
+    Author     : janesconference
+    
+*/
+
+    @font-face {
+        font-family: "embedded_font";
+        src: url(SFDigitalReadoutHeavy.ttf);
+    }
+    .embed {
+        font-family: "embedded_font";
+    }
+
+      body
+        {
+            background-image:url('images/bg5d.gif');
+            background-repeat:repeat;
+        }
+
+    #div-1 {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin-top: -290px;
+      margin-left: -408px;
+    }
+
+    #div-2 {
+         position: absolute;
+         top: -45px;
+         left: 34%;
+    }
