@@ -415,7 +415,7 @@ VORON.init = function () {
     };
 
     volSliderArgs.onValueSet = this.volCallback();
-    this.volSlider = new Slider("volSlider", [697, 136], volSliderArgs);
+    this.volSlider = new Slider("volSlider", [695, 136], volSliderArgs);
 
     /* END OF FADER INIT */
 
