@@ -24,7 +24,7 @@ git clone git://github.com/janesconference/KievII
 
 or download it in either [ZIP](http://github.com/janesconference/KievII/zipball/master) or [TAR](http://github.com/janesconference/KievII/tarball/master) format.
 
-<h1>About the author</h1>
+<h3>About the author</h3>
 KievII is a project started by Jane's Conference (Cristiano Belloni), a developer based in [Bologna](http://en.wikipedia.org/wiki/Bologna).  
 
 If you're interested in contacting me, my email is <a href="mailto:janesconference@bittespring.net">janesconference@bitterspring.net</a>.
