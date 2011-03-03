@@ -11,9 +11,9 @@ Elements chaining is supported through the UI object (i.e. one element can autom
 Audio is work in progress. Demos in KievII aims to be compatible with Mozilla Audio API + audiodata.js and to provide homebrew DSP algorithms (for example, pitchshifting) on top of [dsp.js][dsp.js_address]
 KievII uses Emscripten to translate C/C++ DSP algorithms in javascript (see [here][emscripten_address])
 
-Look at a working demo -- works with FireFox4 (audio and GUI) and Chrome (GUI Only) [here](http://bitterspring.net/KievII_site/demos/voron/index.html)
+Look at a working demo -- works with Mozilla Firefox 4 (audio and GUI) and Mozilla Firefox 3.6 and Google Chrome (GUI Only) [here](http://bitterspring.net/KievII_site/demos/voron/index.html).
 
-You can find a discussion group for developers [here][group_address]
+You can find a discussion group for developers [here][group_address].
 
 ![Demo screenshot][dscreen]
 
