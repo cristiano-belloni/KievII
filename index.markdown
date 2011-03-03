@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: KievII Home Page
 description: KievII - Javascript library for Web audio apps
 ---
