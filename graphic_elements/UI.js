@@ -85,13 +85,17 @@ function UI(domElement) {
     this.elementsNotifyEvent = function (x, y, event) {
         // For every element
         for (var name in this.elements) {
+            // If it is a real element
             if (this.elements.hasOwnProperty(name)){
-                // Notify the element
-                ret = this.elements[name][event](x, y);
-                // See if the element changed its value
-                if (ret !== undefined) {
-                    // console.log("UI: Element ", name, " changed its value on event ", event);
-                    this.setValue(name, ret.slot, ret.value);
+                // If the element wants to be bothered with events
+                if (this.elements[name].getClickable()) {
+                    // Notify the element
+                    ret = this.elements[name][event](x, y);
+                    // See if the element changed its value
+                    if (ret !== undefined) {
+                        // console.log("UI: Element ", name, " changed its value on event ", event);
+                        this.setValue(name, ret.slot, ret.value);
+                    }
                 }
             }
         }

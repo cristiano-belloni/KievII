@@ -12,6 +12,9 @@ Element.prototype.getready = function (name, topleft, specArgs) {
 
     this.name = name;
 
+    //By default, we want to be notified if some event occurs.
+    this.isClickable = specArgs.isClickable || true;
+
     // These are arrays of 2
     this.xOrigin = topleft[0];
     this.yOrigin = topleft[1];
@@ -20,8 +23,8 @@ Element.prototype.getready = function (name, topleft, specArgs) {
     this.width = 0;
     this.height = 0;
 
-    // Element never draws itself.
-    this.drawItself = false;
+    // Element never draws itself by default
+    this.drawItself = specArgs.drawItself || false;
 
     // These are to be set later
     this.values = {};
@@ -134,8 +137,13 @@ Element.prototype.setValue = function (slot, value) {
 
 };
 
+//TODO this should be changed in isListening, for example
 Element.prototype.setClickable = function (isClickable) {
     this.isClickable = isClickable;
+};
+
+Element.prototype.getClickable = function () {
+    return this.isClickable;
 };
 
 Element.prototype.setDrawsItself = function (value) {
