@@ -179,21 +179,6 @@ function UI(domElement) {
         }
     };
 
-    this.checkInfiniteLoops = function () {
-        for (var element in this.connections) {
-            if (this.connections.hasOwnProperty(element)) {
-                for (var slot in element) {
-                    if (element.hasOwnProperty(slot)) {
-                        var alreadySaw = [];
-                        // Here traverse the chain TODO.
-                        // slot.recvElement;
-                        // slot.recvSlot;
-                    }
-                }
-            }
-        }
-    };
-
     //</CONNECTION HANDLING>
 
 
