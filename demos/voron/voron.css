@@ -13,22 +13,43 @@
         font-family: "embedded_font";
     }
 
-      body
-        {
-            background-image:url('images/bg5d.gif');
-            background-repeat:repeat;
-        }
+    .embed_msg {
+        font-family: "embedded_font";
+        font-size: 20px;
+    }
+
+    body {
+        background-image:url('images/bg5d.gif');
+        background-repeat:repeat;
+    }
 
     #div-1 {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      margin-top: -290px;
-      margin-left: -408px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -290px;
+        margin-left: -408px;
     }
 
     #div-2 {
-         position: absolute;
-         top: -45px;
-         left: 34%;
+        position: absolute;
+        top: -45px;
+        left: 34%;
+    }
+
+    #div-message {
+        background: #220000;
+        color: #ffffff;
+        width:400px;
+        /*padding: 2px;*/
+        margin-top: -15px;
+        margin-bottom: 1em;
+        /* Compensate for the width*/
+        margin-left: 200px;
+        -moz-border-radius: 0.3em;
+        -webkit-border-radius: 0.3em;
+        border-radius: 0.3em;
+        text-align: center;
+        opacity:0.4;
+        /*visibility: hidden;*/
     }

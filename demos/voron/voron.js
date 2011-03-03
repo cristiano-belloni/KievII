@@ -3,7 +3,7 @@ var VORON = {};
 /* AUDIO INIT FUNCTION */
 VORON.audioInit = function() {
 
-    // TODO is it right to initialize this here?
+    // This is initialized here for the first time.
     this.audioOk = false;
 
     // AUDIO SOURCE INIT
@@ -29,7 +29,9 @@ VORON.audioInit = function() {
     // PITCH SHIFTER INIT
 
     this.shifterParams.fftFrameSize = 2048;
-    this.shifterParams.shiftAmount = 0.333; // about 1, with linear interpolation
+    // This member will be set again when shifter knob's setValue is called.
+    // We need to initialize it to something, though.
+    this.shifterParams.shiftAmount = 0.333; //about 1, with linear interpolation
     this.shifterParams.osamp = 4;
     this.shifterParams.algo = "RFFT";
     this.filter_shifter = new AudioDataShifterFilter (this.outputDestination, this.shifterParams);
@@ -45,6 +47,7 @@ VORON.audioInit = function() {
 
     // VOLUME FILTER INIT
 
+    // Lowpass filter is chained after the pitch filter, and so on.
     this.filter_volume = new ADSimpleVolume (this.filter_lowpass, 0.5);
 
     // END OF VOLUME FILTER INIT
@@ -64,29 +67,25 @@ VORON.keepON = function () {
 
     this.audioInit();
 
-    // TODO Something like ui.refresh() would be more appropriate, I guess.
+    // Here Alpha 0.01 is a bit chaotic: something like ui.refresh()
+    // would be more appropriate, I guess. This statement refreshes the deck.
     this.gui.refresh();
     
-
-    // TODO if drawClass is undefined, just exit. This should be in the
-    // initialize section, not here. keepON should do a ui.refresh() to
-    // repaint everything (in order).
+    // Element.refresh() is useless; these elements are autorefreshed when their
+    // value is set.
     this.pitchKnob.setValue("knobvalue", 0.333);
     this.freqKnob.setValue("knobvalue", 1);
-    // TODO qKnob.setValue("knobvalue", 0) fails (does not display image)
-    // because the initial value is 0 (why?). with ui.refresh() this does
-    // not happen.
-    // Quick-fixed setting default knob value to NaN.
     this.qKnob.setValue("knobvalue", 0);
     this.volSlider.setValue("slidervalue", 0.5);
+
     // These buttons have 0 = on and 1 = off.
-    // TODO set NaN or null as the default value also in Button class.
     this.pitchOnSwitch.setValue ("buttonvalue", 0);
     this.pitchDiscSwitch.setValue ("buttonvalue", 0);
     this.freqSwitch.setValue ("buttonvalue", 0);
 
     if (this.audioOk !== true) {
-        this.label.setValue("labelvalue", "Audio *NOT* supported by browser.");
+        this.label.setValue("labelvalue", "Audio *NOT* supported by browser");
+        this.message.innerHTML = "Your browser lacks support for AudioDataSource.";
     }
 
     else {
@@ -118,7 +117,10 @@ VORON.loadingManager = function (elementName) {
             // Update the element status
             if (loadStatus[elementName] !== undefined) {
                 loadStatus[elementName] = true;
-            }
+
+            // Update the message bar
+            that.message.innerHTML = elementName + " loaded...";
+        }
 
             // Check if every registered element is complete.
             for (var element in loadStatus) {
@@ -129,7 +131,9 @@ VORON.loadingManager = function (elementName) {
                     }
                 }
             }
-            console.log ("Everything loaded, time to keep on!");
+
+            // Update the message bar
+            that.message.innerHTML = "Everything loaded, ready.";
             that.keepON();
         }
 
@@ -142,7 +146,9 @@ VORON.pitchCallback = function () {
     var that = this;
     return function (slot, value) {
 
-        // TODO: this interpolation should really not be linear.
+        // Interpolation is linear here. Maybe this could be enhanced with a
+        // more sophisticated kind of interpolation.
+        
         // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
         // c = value; a = 0; b = 1; y = 0.5; z = 2
         var shift_value = value * (1.5) + 0.5;
@@ -152,7 +158,6 @@ VORON.pitchCallback = function () {
         }
 
         if (that.audioOk === true) {
-
             that.filter_shifter.setShift(shift_value);
             console.log ("pitch callback finished: slot is ", slot, " and value is ", value, " while shifting ratio is ", shift_value);
         }
@@ -186,6 +191,7 @@ VORON.freqCallback = function () {
 }
 
 VORON.qCallback = function () {
+    // Closure: callbacks return a function. One could use bind() alternatively.
     var that = this;
     return function (slot, value) {
 
@@ -205,10 +211,9 @@ VORON.qCallback = function () {
     };
 }
 
-VORON.volCallback =function () {
+VORON.volCallback = function () {
     var that = this;
     return function (slot, value) {
-
         var vol_value = 1 - value;
 
         if (that.audioOk === true) {
@@ -226,8 +231,6 @@ VORON.volCallback =function () {
 VORON.switchCallback = function () {
     var that = this;
     return function (slot, value, elName) {
-
-        
 
             console.log ("switch callback called: element is ", elName, " slot is ", slot, " and value is ", value, " while that is ", that);
             switch (elName) {
@@ -316,8 +319,6 @@ VORON.init = function () {
     /* HOISTED VARs */
 
     var MAX_KNOB_IMAGE_NUM = 60,
-        i = 0,
-        prefix,
         knobImgLocation = "./images/BigKnob/",
         knobImgArray = [],
         knobArgs,
@@ -335,6 +336,8 @@ VORON.init = function () {
     /* CONTEXT INIT */
     this.plugin_canvas = document.getElementById("plugin"),
     this.plugin_context = this.plugin_canvas.getContext("2d");
+    this.message = document.getElementById("message");
+    this.message.innerHTML = "Loading elements...";
 
     this.ui = new UI (this.plugin_canvas);
 
@@ -367,16 +370,17 @@ VORON.init = function () {
 
     /* KNOB INIT */
 
-    // Generate knob image names
-    // Todo use an immediate funtion.
-
-    for (i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
-        prefix = "";
-        if (i < 10) {
-            prefix = "0";
+    // Generate knob image names with an immediate funtion.
+    (function () {
+        for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
+            var prefix = "";
+            if (i < 10) {
+                prefix = "0";
+            }
+            knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
         }
-        knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
-    }
+    }());
+
 
     // Shared arguments to the Knob constructor.
     knobArgs = {
@@ -431,7 +435,7 @@ VORON.init = function () {
         onValueSet: switchCallbackManager
     };
 
-    // Create the switch objects TODO the x,y values are not coherent.
+    // Create the switch objects.
     this.pitchOnSwitch = new Button("pitchOnSwitch", [140,107], switchArgs);
     this.pitchDiscSwitch = new Button("pitchDiscSwitch", [140,339], switchArgs);
     this.freqSwitch = new Button("freqSwitch", [416,107], switchArgs);
@@ -446,8 +450,8 @@ VORON.init = function () {
     this.label = new Label("status", [275, 332], labelArgs);
     /* END OF LABEL INIT */
 
-    // Here we add the elements to the UI, optionally add
-    // connections between them and set the initial values.
+    // Here we add the elements to the UI [optionally we could add
+    // connections between them].
 
     this.ui.addElement(this.gui, this.imageDisplayer);
     this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer);
