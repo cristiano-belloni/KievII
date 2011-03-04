@@ -230,15 +230,34 @@ function UI(domElement) {
     // <VALUE HANDLING>
 
     // This method handles one set value event and propagates it in the connections matrix
-    this.setValue = function (elementName, slot, value) {
-        var receiverHash,
+    this.setValue = function (elementName, slot, value, history) {
+        var hist = [],
+            receiverHash,
             recvHash,
             recvSlot,
             i;
 
         if (this.elements[elementName] !== undefined) {
+
+            // First of all, check history if it is present.
+            if (history !== undefined) {
+                hist = history;
+                // Is this an infinite loop?
+                for(var k = 0; k < hist.length ; k += 1) {
+                    if(hist[k] === elementName) {
+                        // Loop is infinite; bail out!
+                        return;
+                    }
+                }
+            }
+            // Element is present an there's no need to break a loop
+            // really set value.
             this.elements[elementName].setValue(slot, value);
+
+            // This element has been already set: update history
+            hist.push(elementName);
         }
+
         else {
             throw new Error("Element " + elementName + " not present.");
         }
@@ -254,7 +273,7 @@ function UI(domElement) {
 
                 if (this.connections[elementName][slot].hasOwnProperty(i)){
 
-                    // Retrieve the other connection end an the connection parameters.
+                    // Retrieve the other connection end and the connection parameters.
                     receiverHash = this.connections[elementName][slot][i];
                  
                     recvHash = receiverHash.recvElement;
@@ -267,8 +286,9 @@ function UI(domElement) {
                         value = receiverHash.callback (value);
                     }
 
-                    // TODO Should recursively call itself
-                    this.elements[recvHash].setValue(recvSlot, value);
+                    // Recursively calls itself, keeping an history in the stack
+                    // this.elements[recvHash].setValue(recvSlot, value);
+                    this.elements[recvHash].setValue(recvSlot, value, hist);
                 }
             }
         }
