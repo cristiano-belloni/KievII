@@ -117,13 +117,14 @@ function UI(domElement) {
 
     this.elements = {};
     this.connections = {};
+    this.zArray = [];
 
     // </CONSTRUCTOR>
 
     // <ELEMENT HANDLING>
 
     // *** Add an UI element **** //
-    this.addElement = function (element, drawClass) {
+    this.addElement = function (element, drawClass, elementParameters) {
         var slot,
             slots;
 
@@ -149,6 +150,20 @@ function UI(domElement) {
                 this.connections[element.name][slots[slot]] = [];
             }
         }
+
+        if (elementParameters !== undefined) {
+            if (typeof(elementParameters.zIndex) === "number") {
+                // Insert the element's z-index
+                this.elements[element.name].zIndex = elementParameters.zIndex;
+                // if it's the first of its kind, initialize the array.
+                if (this.zArray[elementParameters.zIndex] === undefined) {
+                    this.zArray[elementParameters.zIndex] = [];
+                }
+                this.zArray[elementParameters.zIndex].push(this.elements[element.name]);
+            }
+        }
+
+        else this.elements[element.name].zIndex = undefined;
     };
     
     // </ELEMENT HANDLING>
@@ -198,6 +213,9 @@ function UI(domElement) {
             throw new Error("Element " + elementName + " not present.");
         }
 
+        // Z-Index handling: refresh every >z element
+        this.refreshZ(this.elements[elementName].zIndex);
+
         if (this.connections[elementName][slot] !== undefined) {
             for (i in this.connections[elementName][slot]) {
                 if (this.connections[elementName][slot].hasOwnProperty(i)){
@@ -214,5 +232,17 @@ function UI(domElement) {
         }
     };
     // </VALUE HANDLING>
-    
+
+
+    this.refreshZ = function (z) {
+        for (var i = z, length =  this.zArray.length; i < length; i += 1) {
+            if (typeof(this.zArray[i]) === "array") {
+                for (var k = 0, z_length = this.zArray[i]; k < z_length; k += 1) {
+                    this.zArray[i][k].setPreserveBg();
+                    this.zArray[i][k].refresh();
+                }
+            }
+        }
+    }
+
 }

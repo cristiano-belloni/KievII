@@ -34,6 +34,9 @@ Element.prototype.getready = function (name, topleft, specArgs) {
     this.objectsLoaded = 0;
     this.completed = false;
 
+    // Set this if the element needs to preserve its background.
+    this.preserveBg = false;
+
     // See if there is a callback to call when the value is set
     if (specArgs !== undefined) {
         if (typeof (specArgs.onValueSet) === "function") {
@@ -149,6 +152,10 @@ Element.prototype.getClickable = function () {
 Element.prototype.setDrawsItself = function (value) {
     this.drawItself = value;
 };
+
+Element.prototype.setPreserveBg = function (value) {
+    this.preserveBg = value;
+}
 
 // Refresh. This is the basic action.
 Element.prototype.refresh = function () {
