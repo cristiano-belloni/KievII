@@ -73,7 +73,6 @@ Background.prototype.onCompletion = function () {
     this.height = this.image.height;
 
     // Now, we call the superclass
-    this.tempCompletion = Element.prototype.onCompletion;
-    this.tempCompletion();
+    Element.prototype.onCompletion.apply(this);
 
 };

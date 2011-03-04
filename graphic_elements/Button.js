@@ -152,8 +152,7 @@ Button.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    this.tempsetValue = Element.prototype.setValue;
-    this.tempsetValue(slot, value);
+    Element.prototype.setValue.call(this, slot, value);
 
 };
 
@@ -184,6 +183,5 @@ Button.prototype.onCompletion = function () {
     console.log ("Image starts at ", this.xOrigin, this.yOrigin, " width and height are ", this.width, this.height);
 
     // Now, we call the superclass
-    this.tempCompletion = Element.prototype.onCompletion;
-    this.tempCompletion();
+    Element.prototype.onCompletion.apply(this);
 };

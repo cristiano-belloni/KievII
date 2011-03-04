@@ -272,6 +272,5 @@ NonOverlappingMultiknob.prototype.isComplete = function () {
 
 NonOverlappingMultiknob.prototype.onCompletion = function () {
     // Now, we call the superclass
-    this.tempCompletion = Element.prototype.onCompletion;
-    this.tempCompletion();
+    Element.prototype.refresh.onCompletion(this);
 }

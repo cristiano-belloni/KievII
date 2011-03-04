@@ -194,8 +194,7 @@ Slider.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    this.tempsetValue = Element.prototype.setValue;
-    this.tempsetValue(slot, value);
+    Element.prototype.setValue.call(this, slot, value);
 
 };
 
@@ -282,6 +281,5 @@ Slider.prototype.onCompletion = function () {
       }
     
     // Now, we call the superclass
-    this.tempCompletion = Element.prototype.onCompletion;
-    this.tempCompletion();
+    Element.prototype.onCompletion.apply(this);
 };

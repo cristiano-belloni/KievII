@@ -57,8 +57,7 @@ Label.prototype.setValue = function (slot, value) {
         var temp_value = this.textFilter(value);
     }
 
-    this.tempsetValue = Element.prototype.setValue;
-    this.tempsetValue(slot, temp_value);
+    Element.prototype.setValue.call(this, slot, value);
 };
  
 Label.prototype.refresh = function () {
