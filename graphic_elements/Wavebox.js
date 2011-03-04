@@ -97,26 +97,15 @@ Wavebox.prototype.setValue = function (slot, value) {
 };
 
 Wavebox.prototype.refresh = function () {
-    if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
-    }
-    else {
+    // Call the superclass.
+    Element.prototype.refresh.apply(this);
 
-        // Is there a save background pending?
-        if (this.backgroundSavePending === true) {
-                        console.log ("Saving background inside Wavebox.js");
-            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
-            this.backgroundSavePending = false;
-        }
-
-        else {
-            // We want drawClass to refresh the saved background.
-            this.drawClass.restoreBackground();
-        }
+    // Draw, if our draw class is already set.
+    if (this.drawClass !== undefined) {
 
         var oldpoint = 0;
-
         this.drawClass.beginDraw();
+
         for (var i = 0; i < this.width; i += 1) {
             var point = this.calculateSampleCoord(i);
             if (point !== oldpoint) {

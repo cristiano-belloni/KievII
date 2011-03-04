@@ -158,10 +158,11 @@ Button.prototype.setValue = function (slot, value) {
 };
 
 Button.prototype.refresh = function () {
-    if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
-    }
-    else {
+    // Call the superclass.
+    Element.prototype.refresh.apply(this);
+
+    // Draw, if our draw class is already set.
+    if (this.drawClass !== undefined) {
         /*jslint nomen: false*/
         var imageNum = this._getImageNum();
         /*jslint nomen: true*/

@@ -1,3 +1,6 @@
+// This kind of knob can be easily emulated with callbacks and so on. Not sure
+// if I really need to mantain it.
+
 function NonOverlappingMultiknob(name, topleft, specArgs) {
     if (arguments.length) {
         this.getready(name, topleft, specArgs);
@@ -198,8 +201,9 @@ NonOverlappingMultiknob.prototype.refresh = function () {
         throw new Error("Error: drawClass is undefined!");
     }
     else {
-        //Refresh all the subknobs. TODO we might just want to refresh only the
-        //knob that has been modified.
+        // Refresh all the subknobs. TODO THIS IS NOT RIGHT!
+        // If we want to preserve the background, we have to have different
+        // drawing contexts.
         for (i = 0; i < this.KnobArray.length; i += 1) {
             //drawClasses must be lazily initialized here.
             if (this.KnobArray[i].drawClass === undefined) {

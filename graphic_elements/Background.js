@@ -62,7 +62,7 @@ Background.prototype.refresh = function () {
     }
     else {
         // Draw yourself!
-        //console.log ("drawClass is drawing itself!");
+        // console.log ("drawClass is drawing itself!");
         this.drawClass.draw(this.image, this.xOrigin, this.yOrigin);
     }
 };

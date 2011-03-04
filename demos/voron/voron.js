@@ -31,7 +31,7 @@ VORON.audioInit = function() {
     this.shifterParams.fftFrameSize = 2048;
     // This member will be set again when shifter knob's setValue is called.
     // We need to initialize it to something, though.
-    this.shifterParams.shiftAmount = 0.333; //about 1, with linear interpolation
+    this.shifterParams.shiftAmount = this.pitchKnob.getValue("knobvalue");
     this.shifterParams.osamp = 4;
     this.shifterParams.algo = "RFFT";
     this.filter_shifter = new AudioDataShifterFilter (this.outputDestination, this.shifterParams);
@@ -67,21 +67,7 @@ VORON.keepON = function () {
 
     this.audioInit();
 
-    // Here Alpha 0.01 is a bit chaotic: something like ui.refresh()
-    // would be more appropriate, I guess. This statement refreshes the deck.
-    this.gui.refresh();
-    
-    // Element.refresh() is useless; these elements are autorefreshed when their
-    // value is set.
-    this.pitchKnob.setValue("knobvalue", 0.333);
-    this.freqKnob.setValue("knobvalue", 1);
-    this.qKnob.setValue("knobvalue", 0);
-    this.volSlider.setValue("slidervalue", 0.5);
-
-    // These buttons have 0 = on and 1 = off.
-    this.pitchOnSwitch.setValue ("buttonvalue", 0);
-    this.pitchDiscSwitch.setValue ("buttonvalue", 0);
-    this.freqSwitch.setValue ("buttonvalue", 0);
+    this.ui.refresh();
 
     if (this.audioOk !== true) {
         this.label.setValue("labelvalue", "Audio *NOT* supported by browser");
@@ -365,8 +351,22 @@ VORON.init = function () {
     };
 
     this.gui = new Background("background", [0,0], bgArgs);
+    this.ui.addElement(this.gui, this.imageDisplayer, {zIndex: 0});
 
     /* END OF BACKGROUND INIT */
+
+    /* LABEL INIT */
+
+    // Every element calls label's setValue in the callback, so let's make sure
+    // that label is declared first.
+
+    labelArgs = {
+            wh : [320,29]
+        };
+
+    this.label = new Label("status", [275, 332], labelArgs);
+    
+    /* END OF LABEL INIT */
 
     /* KNOB INIT */
 
@@ -396,16 +396,22 @@ VORON.init = function () {
     pitchArgs = knobArgs.clone();
     pitchArgs.onValueSet = this.pitchCallback();
     this.pitchKnob = new Knob("pitchKnob", [118, 150], pitchArgs);
+    this.pitchKnob.setValue("knobvalue", 0.333);
+    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer, {zIndex: 5});
 
     // FREQ KNOB
     freqArgs = knobArgs.clone();
     freqArgs.onValueSet = this.freqCallback();
     this.freqKnob = new Knob("freqKnob", [319, 150], freqArgs);
+    this.freqKnob.setValue("knobvalue", 1);
+    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer, {zIndex: 5});
 
     // Q KNOB
     qArgs = knobArgs.clone();
     qArgs.onValueSet = this.qCallback();
     this.qKnob = new Knob("qKnob", [472, 150], qArgs);
+    this.qKnob.setValue("knobvalue", 0);
+    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer, {zIndex: 5});
 
     /* END OF KNOB INIT */
 
@@ -420,6 +426,8 @@ VORON.init = function () {
 
     volSliderArgs.onValueSet = this.volCallback();
     this.volSlider = new Slider("volSlider", [695, 136], volSliderArgs);
+    this.volSlider.setValue("slidervalue", 0.5);
+    this.ui.addElement(this.volSlider, this.volImageDisplayer, {zIndex: 5});
 
     /* END OF FADER INIT */
 
@@ -440,27 +448,19 @@ VORON.init = function () {
     this.pitchDiscSwitch = new Button("pitchDiscSwitch", [140,339], switchArgs);
     this.freqSwitch = new Button("freqSwitch", [416,107], switchArgs);
 
+    // These buttons have 0 = on and 1 = off.
+    this.pitchOnSwitch.setValue ("buttonvalue", 0);
+    this.pitchDiscSwitch.setValue ("buttonvalue", 0);
+    this.freqSwitch.setValue ("buttonvalue", 0);
+
+    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer, {zIndex: 5});
+
     /* END OF SWITCHES INIT */
 
-    /* LABEL INIT */
-    labelArgs = {
-            wh : [320,29]
-        };
-
-    this.label = new Label("status", [275, 332], labelArgs);
-    /* END OF LABEL INIT */
-
-    // Here we add the elements to the UI [optionally we could add
-    // connections between them].
-
-    this.ui.addElement(this.gui, this.imageDisplayer);
-    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer);
-    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer);
-    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer);
-    this.ui.addElement(this.volSlider, this.volImageDisplayer);
-    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.label, this.labelDisplayer);
-    
+    // Label is added at the end, because otherwise it displays garbage when
+    // its value is set.
+    this.ui.addElement(this.label, this.labelDisplayer, {zIndex: 5});
+      
 }

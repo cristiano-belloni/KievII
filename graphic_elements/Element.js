@@ -34,6 +34,11 @@ Element.prototype.getready = function (name, topleft, specArgs) {
     this.objectsLoaded = 0;
     this.completed = false;
 
+    // Set this if the element needs to preserve its background.
+    this.preserveBg = false;
+    // Set this if the element has to save the background now.
+    this.backgroundSavePending = true;
+
     // See if there is a callback to call when the value is set
     if (specArgs !== undefined) {
         if (typeof (specArgs.onValueSet) === "function") {
@@ -150,9 +155,31 @@ Element.prototype.setDrawsItself = function (value) {
     this.drawItself = value;
 };
 
+Element.prototype.setPreserveBg = function (value) {
+    this.preserveBg = value;
+}
+
+Element.prototype.setTainted = function (value) {
+    this.backgroundSavePending = value || true;
+}
+
 // Refresh. This is the basic action.
 Element.prototype.refresh = function () {
-    this.drawFunc();
+    if (this.drawClass === undefined) {
+        return;
+    }
+
+    if (this.preserveBg === true) {
+        if (this.backgroundSavePending === true) {
+            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
+            this.backgroundSavePending = false;
+        }
+
+        else {
+            // We want drawClass to refresh the saved background.
+            this.drawClass.restoreBackground();
+        }
+    }
 };
 
 Element.prototype.getName = function () {

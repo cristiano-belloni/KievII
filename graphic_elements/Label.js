@@ -65,27 +65,16 @@ Label.prototype.refresh = function () {
     
     var text;
 
-    if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
-    }
+    // Call the superclass.
+    Element.prototype.refresh.apply(this);
 
-    if (this.preserveBg === true) {
-        if (this.backgroundSavePending === true) {
-
-            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
-            this.backgroundSavePending = false;
-        }
-
-        else {
-            // We want drawClass to refresh the saved background.
-            this.drawClass.restoreBackground();
-        }
-    }
+    // Draw, if our draw class is already set.
+    if (this.drawClass !== undefined) {
 
         // Maybe the filtering should be done here?
         text = this.values.labelvalue;
-        // Draw yourself! This is per-class behaviour.
-        //console.log (this.name, "'s drawClass is drawing itself!");
         this.drawClass.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
+
+    }
 
 };

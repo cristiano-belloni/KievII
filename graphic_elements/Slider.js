@@ -200,8 +200,13 @@ Slider.prototype.setValue = function (slot, value) {
 };
 
 Slider.prototype.refresh = function () {
+
+    // Completely override the superclass, because the mechanism is different.
+    // Maybe this function could be polymorphic and also accept areas, so we
+    // could call the superclass with parameters.
+
     if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
+        return;
     }
     else {
 

@@ -324,35 +324,27 @@ Multiband.prototype.refresh = function (clear) {
         color_shade,
         i;
 
-    if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
-    }
-    // Draw yourself! This is per-class behaviour.
-    //console.log (this.name, "'s drawClass is drawing itself!");
+    // Call the superclass.
+    Element.prototype.refresh.apply(this);
+    
+    // Draw, if our draw class is already set.
+    if (this.drawClass !== undefined) {
 
-    //If we clear, we clear the whole background.
-    if (clear === true) {
-        this.drawClass.clear(this.xOrigin,
-                             this.yOrigin,
-                             this.width,
-                             this.height);
-        return;
-    }
+        // Here we do the math and draw ourselves
+        this.calculateSidebands();
 
-    // Here we do the math and draw ourselves
-    this.calculateSidebands();
+        for (i = 0; i < this.nBands; i += 1) {
 
-    for (i = 0; i < this.nBands; i += 1) {
-
-        height = (1 - this.values[i + "height"]) * this.height;
-        range = this.values.colorRange;
-        colValue = this.values[i + "color"];
-        color_shade = (colValue - 0.5) * range;
-        this.drawClass.draw(this.sideBands[i].startXPoint,
-                        this.yOrigin + height,
-                        this.sideBands[i].endXPoint - this.sideBands[i].startXPoint,
-                        this.height - height,
-                        color_shade);
+            height = (1 - this.values[i + "height"]) * this.height;
+            range = this.values.colorRange;
+            colValue = this.values[i + "color"];
+            color_shade = (colValue - 0.5) * range;
+            this.drawClass.draw(this.sideBands[i].startXPoint,
+                                this.yOrigin + height,
+                                this.sideBands[i].endXPoint - this.sideBands[i].startXPoint,
+                                this.height - height,
+                                color_shade);
+        }
     }
 };
                     
