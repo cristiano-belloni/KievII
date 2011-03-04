@@ -236,8 +236,8 @@ function UI(domElement) {
 
     this.refreshZ = function (z) {
         for (var i = z, length =  this.zArray.length; i < length; i += 1) {
-            if (typeof(this.zArray[i]) === "array") {
-                for (var k = 0, z_length = this.zArray[i]; k < z_length; k += 1) {
+            if (typeof(this.zArray[i]) === "object") {
+                for (var k = 0, z_length = this.zArray[i].length; k < z_length; k += 1) {
                     this.zArray[i][k].setPreserveBg();
                     this.zArray[i][k].refresh();
                 }
