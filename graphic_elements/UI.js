@@ -157,6 +157,9 @@ function UI(domElement) {
             }
         }
 
+        // Store the parameters
+
+        // Z Index.
         if (elementParameters !== undefined) {
             if (typeof(elementParameters.zIndex) === "number") {
                 // Insert the element's z-index
@@ -190,16 +193,25 @@ function UI(domElement) {
     // <CONNECTION HANDLING>
 
     // Connect slots, so that one element can "listen" to the other
-    this.connectSlots  = function (senderElement, senderSlot, receiverElement, receiverSlot) {
+    this.connectSlots  = function (senderElement, senderSlot, receiverElement, receiverSlot, connectParameters) {
 
         //Check for the elements.
         if ((this.elements[senderElement] !== undefined) && (this.elements[receiverElement] !== undefined)) {
             // //Check for the slots.
             if ((this.elements[senderElement].values[senderSlot] !== undefined) &&
                 (this.elements[receiverElement].values[receiverSlot] !== undefined)) {
+
                 //The sender & receiver element & slot exist. Do the connection.
-                // Beware of infinite loops here.
                 var receiverHash = {"recvElement" : receiverElement, "recvSlot": receiverSlot};
+
+                //Check if there are optional parameters
+                if (connectParameters !== undefined) {
+                    // Is there a callback?
+                    if (typeof(connectParameters.callback) === "function") {
+                        receiverHash.callback = connectParameters.callback;
+                    }
+                }
+
                 // Push the destination element/slot in the connections matrix.
                 this.connections[senderElement][senderSlot].push(receiverHash);
             }
@@ -234,16 +246,28 @@ function UI(domElement) {
         // Z-Index handling: refresh every >z element, starting with z+1
         this.refreshZ(this.elements[elementName].zIndex + 1);
 
+        // Check if this element has connections
         if (this.connections[elementName][slot] !== undefined) {
+
+            // For every connection the element has
             for (i in this.connections[elementName][slot]) {
+
                 if (this.connections[elementName][slot].hasOwnProperty(i)){
+
+                    // Retrieve the other connection end an the connection parameters.
                     receiverHash = this.connections[elementName][slot][i];
-                    //console.log("Listener number ", i, " of ", elementName, ":", slot, " seems ", receiverHash);
-                    /* Whew. */
-                    // This should be always correct, as we checked when we inserted the connection.
-                    // TODO Should recursively call the setValues
+                 
                     recvHash = receiverHash.recvElement;
                     recvSlot = receiverHash.recvSlot;
+
+                    //Check the callback here.
+                    if (typeof(receiverHash.callback) === "function") {
+                        // We have a callback to call. This is typically
+                        // used as a filter to translate the values.
+                        value = receiverHash.callback (value);
+                    }
+
+                    // TODO Should recursively call itself
                     this.elements[recvHash].setValue(recvSlot, value);
                 }
             }
