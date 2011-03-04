@@ -185,29 +185,18 @@ Knob.prototype.setValue = function (slot, value) {
         
 Knob.prototype.refresh = function () {
 
-    if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
-    }
-    
-    if (this.preserveBg === true) {
-        if (this.backgroundSavePending === true) {
+    // Call the superclass.
+    Element.prototype.refresh.apply(this);
 
-            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
-            this.backgroundSavePending = false;
-        }
-
-        else {
-            // We want drawClass to refresh the saved background.
-            this.drawClass.restoreBackground();
-        }
+    // Draw, if our draw class is already set.
+    if (this.drawClass !== undefined) {
+        /*jslint nomen: false*/
+        var imageNum = this._getImageNum();
+        /*jslint nomen: true*/
+        this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        
     }
 
-    /* Normally draw */
-
-    /*jslint nomen: false*/
-    var imageNum = this._getImageNum();
-    /*jslint nomen: true*/
-    this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
     
 };
 

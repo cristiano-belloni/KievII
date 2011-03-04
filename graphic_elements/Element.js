@@ -165,7 +165,21 @@ Element.prototype.setTainted = function (value) {
 
 // Refresh. This is the basic action.
 Element.prototype.refresh = function () {
-    this.drawFunc();
+    if (this.drawClass === undefined) {
+        return;
+    }
+
+    if (this.preserveBg === true) {
+        if (this.backgroundSavePending === true) {
+            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
+            this.backgroundSavePending = false;
+        }
+
+        else {
+            // We want drawClass to refresh the saved background.
+            this.drawClass.restoreBackground();
+        }
+    }
 };
 
 Element.prototype.getName = function () {
