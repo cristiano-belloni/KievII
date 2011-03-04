@@ -29,9 +29,9 @@ and open the template in the editor.
         /* INIT */
 
         var plugin_canvas = document.getElementById("plugin");
-        plugin_context = plugin_canvas.getContext("2d");
+        var plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
+        ui = new UI (plugin_canvas);
 
         //Background
 

@@ -18,15 +18,10 @@
 
         /* INIT */
 
-        var plugin_canvas = document.getElementById("plugin"),
-            plugin_context = plugin_canvas.getContext("2d");
+        var plugin_canvas = document.getElementById("plugin");
+        var plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
-
-        // This crap should be automatized.
-        document.addEventListener("mousedown", ui.onMouseDownFunc(), true);
-        document.addEventListener("mouseup", ui.onMouseUpFunc(), true);
-        document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
+        ui = new UI (plugin_canvas);
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
 
