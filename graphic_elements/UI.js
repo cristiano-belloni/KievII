@@ -112,12 +112,18 @@ function UI(domElement) {
     this.domElement.addEventListener("mousemove", this.onMouseMoveFunc(), true);
 
     this.mouseUp = true;
-    // TODO hmmm, ret could be changed asynchronously.
+   
     var ret;
 
+    //Elements in this UI.
     this.elements = {};
+
+    //Connection between elements
     this.connections = {};
+
+    // Z-index lists.
     this.zArray = [];
+    this.zArrayUndefined = [];
 
     // </CONSTRUCTOR>
 
@@ -159,11 +165,23 @@ function UI(domElement) {
                 if (this.zArray[elementParameters.zIndex] === undefined) {
                     this.zArray[elementParameters.zIndex] = [];
                 }
+                // Update the maximum and minimum z index.
                 this.zArray[elementParameters.zIndex].push(this.elements[element.name]);
+                if ((this.zMin === undefined) || (this.zMin >  elementParameters.zIndex)) {
+                    this.zMin = elementParameters.zIndex;
+                }
+                if ((this.zMax === undefined) || (this.zMax <  elementParameters.zIndex)) {
+                    this.zMax = elementParameters.zIndex;
+                }
             }
         }
 
-        else this.elements[element.name].zIndex = undefined;
+        else {
+            //We store the "undefined" as the lowest z-indexed layers.
+            this.elements[element.name].zIndex = undefined;
+            this.zArrayUndefined.push(this.elements[element.name]);
+        }
+
     };
     
     // </ELEMENT HANDLING>
@@ -213,8 +231,8 @@ function UI(domElement) {
             throw new Error("Element " + elementName + " not present.");
         }
 
-        // Z-Index handling: refresh every >z element
-        this.refreshZ(this.elements[elementName].zIndex);
+        // Z-Index handling: refresh every >z element, starting with z+1
+        this.refreshZ(this.elements[elementName].zIndex + 1);
 
         if (this.connections[elementName][slot] !== undefined) {
             for (i in this.connections[elementName][slot]) {
@@ -233,16 +251,31 @@ function UI(domElement) {
     };
     // </VALUE HANDLING>
 
-
+    // <REFRESH HANDLING>
     this.refreshZ = function (z) {
+        //Refresh every layer, starting from z to the last one.
         for (var i = z, length =  this.zArray.length; i < length; i += 1) {
             if (typeof(this.zArray[i]) === "object") {
                 for (var k = 0, z_length = this.zArray[i].length; k < z_length; k += 1) {
-                    this.zArray[i][k].setPreserveBg();
+                    this.zArray[i][k].setTainted(true);
                     this.zArray[i][k].refresh();
                 }
             }
         }
     }
+
+    this.refresh = function () {
+        // Refresh the undefined z-index elements.
+        for (var k = 0, z_length = this.zArrayUndefined.length; k < z_length; k += 1) {
+            this.zArrayUndefined[k].setTainted(true);
+            this.zArrayUndefined[k].refresh();
+        }
+        // Then refresh everything from the smallest z-value, if there is one.
+        if (this.zMin !== undefined) {
+            this.refreshZ(this.zMin);
+        }
+    }
+
+    // </REFRESH HANDLING>
 
 }

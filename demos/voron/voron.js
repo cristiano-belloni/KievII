@@ -69,7 +69,7 @@ VORON.keepON = function () {
 
     // Here Alpha 0.01 is a bit chaotic: something like ui.refresh()
     // would be more appropriate, I guess. This statement refreshes the deck.
-    this.gui.refresh();
+    // this.gui.refresh();
     
     // Element.refresh() is useless; these elements are autorefreshed when their
     // value is set.
@@ -82,6 +82,8 @@ VORON.keepON = function () {
     this.pitchOnSwitch.setValue ("buttonvalue", 0);
     this.pitchDiscSwitch.setValue ("buttonvalue", 0);
     this.freqSwitch.setValue ("buttonvalue", 0);
+
+    this.ui.refresh();
 
     if (this.audioOk !== true) {
         this.label.setValue("labelvalue", "Audio *NOT* supported by browser");
@@ -453,14 +455,14 @@ VORON.init = function () {
     // Here we add the elements to the UI [optionally we could add
     // connections between them].
 
-    this.ui.addElement(this.gui, this.imageDisplayer);
-    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer);
-    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer);
-    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer);
-    this.ui.addElement(this.volSlider, this.volImageDisplayer);
-    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer);
-    this.ui.addElement(this.label, this.labelDisplayer);
+    this.ui.addElement(this.gui, this.imageDisplayer, {zIndex: 0});
+    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.volSlider, this.volImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer, {zIndex: 5});
+    this.ui.addElement(this.label, this.labelDisplayer, {zIndex: 5});
     
 }

@@ -36,6 +36,8 @@ Element.prototype.getready = function (name, topleft, specArgs) {
 
     // Set this if the element needs to preserve its background.
     this.preserveBg = false;
+    // Set this if the element has to save the background now.
+    this.backgroundSavePending = true;
 
     // See if there is a callback to call when the value is set
     if (specArgs !== undefined) {
@@ -155,6 +157,10 @@ Element.prototype.setDrawsItself = function (value) {
 
 Element.prototype.setPreserveBg = function (value) {
     this.preserveBg = value;
+}
+
+Element.prototype.setTainted = function (value) {
+    this.backgroundSavePending = value || true;
 }
 
 // Refresh. This is the basic action.
