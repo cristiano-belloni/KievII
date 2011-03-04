@@ -198,8 +198,12 @@ function UI(domElement) {
         //Check for the elements.
         if ((this.elements[senderElement] !== undefined) && (this.elements[receiverElement] !== undefined)) {
             // //Check for the slots.
-            if ((this.elements[senderElement].values[senderSlot] !== undefined) &&
-                (this.elements[receiverElement].values[receiverSlot] !== undefined)) {
+            if ((this.elements[senderElement].values[senderSlot] === undefined) ||
+                (this.elements[receiverElement].values[receiverSlot] === undefined))  {
+                throw new Error("Slot " + senderSlot + " or " + receiverSlot + " not present.");
+            }
+
+            else {
 
                 //The sender & receiver element & slot exist. Do the connection.
                 var receiverHash = {"recvElement" : receiverElement, "recvSlot": receiverSlot};
@@ -215,9 +219,7 @@ function UI(domElement) {
                 // Push the destination element/slot in the connections matrix.
                 this.connections[senderElement][senderSlot].push(receiverHash);
             }
-            else {
-                throw new Error("Slot " + senderSlot + " or " + receiverSlot + " not present.");
-            }
+            
         }
         else {
             throw new Error("Element " + senderElement + " or " + receiverElement + " not present.");
@@ -233,7 +235,7 @@ function UI(domElement) {
     this.setValue = function (elementName, slot, value, history) {
         var hist = [],
             receiverHash,
-            recvHash,
+            recvElementName,
             recvSlot,
             i;
 
@@ -246,6 +248,7 @@ function UI(domElement) {
                 for(var k = 0; k < hist.length ; k += 1) {
                     if(hist[k] === elementName) {
                         // Loop is infinite; bail out!
+                        console.log ("Broke recursion!");
                         return;
                     }
                 }
@@ -276,7 +279,7 @@ function UI(domElement) {
                     // Retrieve the other connection end and the connection parameters.
                     receiverHash = this.connections[elementName][slot][i];
                  
-                    recvHash = receiverHash.recvElement;
+                    recvElementName = receiverHash.recvElement;
                     recvSlot = receiverHash.recvSlot;
 
                     //Check the callback here.
@@ -288,7 +291,7 @@ function UI(domElement) {
 
                     // Recursively calls itself, keeping an history in the stack
                     // this.elements[recvHash].setValue(recvSlot, value);
-                    this.elements[recvHash].setValue(recvSlot, value, hist);
+                    this.setValue(recvElementName, recvSlot, value, hist);
                 }
             }
         }
