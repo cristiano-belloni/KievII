@@ -237,7 +237,8 @@ function UI(domElement) {
             receiverHash,
             recvElementName,
             recvSlot,
-            i;
+            i
+            RECURSIONMAX = 1000;
 
         if (this.elements[elementName] !== undefined) {
 
@@ -246,7 +247,12 @@ function UI(domElement) {
                 hist = history;
                 // Is this an infinite loop?
                 for(var k = 0; k < hist.length ; k += 1) {
-                    if(hist[k] === elementName) {
+                    // This is for precaution.
+                    if (hist.length > RECURSIONMAX) {
+                        throw new Error ("Recursion exceeded");
+                        return;
+                    }
+                    if ((hist[k]["element"] === elementName) && (hist[k]["slot"] === slot)) {
                         // Loop is infinite; bail out!
                         console.log ("Broke recursion!");
                         return;
@@ -258,7 +264,7 @@ function UI(domElement) {
             this.elements[elementName].setValue(slot, value);
 
             // This element has been already set: update history
-            hist.push(elementName);
+            hist.push({"element" : elementName, "slot" : slot});
         }
 
         else {
