@@ -31,7 +31,7 @@ VORON.audioInit = function() {
     this.shifterParams.fftFrameSize = 2048;
     // This member will be set again when shifter knob's setValue is called.
     // We need to initialize it to something, though.
-    this.shifterParams.shiftAmount = this.pitchKnob.getValue("knobvalue");
+    this.shifterParams.shiftAmount = 1;
     this.shifterParams.osamp = 4;
     this.shifterParams.algo = "RFFT";
     this.filter_shifter = new AudioDataShifterFilter (this.outputDestination, this.shifterParams);
