@@ -37,6 +37,7 @@
 
     #div-message {
         background: #220000;
+        margin-top: -40px;
         margin-left: auto;
         margin-right: auto;
         color: #ffffff;
@@ -45,7 +46,7 @@
         -webkit-border-radius: 0.3em;
         border-radius: 0.3em;
         text-align: center;
-        opacity:0.4;
+        opacity:0.8;
         /* http://www.zann-marketing.com/developer/20050518/vertically-centering-text-using-css.html */
         height: 35px;
         line-height: 35px;
