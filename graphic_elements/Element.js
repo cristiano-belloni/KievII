@@ -6,10 +6,6 @@ function Element(name, topleft) {
 
 Element.prototype.getready = function (name, topleft, specArgs) {
 
-    if (specArgs.isClickable !== true) {
-        this.isClickable = false;
-    }
-
     this.name = name;
 
     //By default, we want to be notified if some event occurs.
@@ -28,12 +24,7 @@ Element.prototype.getready = function (name, topleft, specArgs) {
 
     // These are to be set later
     this.values = {};
-
-    // Completion
-    this.objectsTotal = 0;
-    this.objectsLoaded = 0;
-    this.completed = false;
-
+    
     // Set this if the element needs to preserve its background.
     this.preserveBg = false;
     // Set this if the element has to save the background now.
@@ -45,12 +36,7 @@ Element.prototype.getready = function (name, topleft, specArgs) {
             this.onValueSet = specArgs.onValueSet;
         }
     }
-    // See if there is a callback on load completion
-    if (specArgs !== undefined) {
-        if (typeof (specArgs.onComplete) === "function") {
-            this.onComplete = specArgs.onComplete;
-        }
-    }
+
 };
 
 // Private function
@@ -94,24 +80,6 @@ Element.prototype.getValue = function (slot) {
     else {
         return this.values[slot];
     }
-};
-
-Element.prototype.getStatus = function () {
-    return {"objectsTotal" : this.objectsTotal, "objectsLoaded" : this.objectsLoaded};
-};
-
-Element.prototype.isComplete = function () {
-    return this.completed;
-};
-
-Element.prototype.onCompletion = function () {
-
-    // Call the callback if there's one.
-    if (typeof (this.onComplete) === "function") {
-        this.onComplete (this.name);
-    }
-
-    return;
 };
 
 // Setters

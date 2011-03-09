@@ -24,6 +24,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
     <script type="text/javascript" src="https://github.com/corbanbrook/dsp.js/raw/master/dsp.js"></script>
+    <script type="text/javascript" src="../..//Utilities/Utilities.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Element.js"></script>
     <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
     <script type="text/javascript" src="../../graphic_elements/Knob.js"></script>
@@ -58,22 +59,6 @@
         window.onload = function() {
             // This should fix "console not defined" problem.
             if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
-
-            /* GENERAL PURPOSE FUNCTIONS */
-
-            // Object clone; see http://my.opera.com/GreyWyvern/blog/show.dml/1725165
-            Object.prototype.clone = function() {
-                var newObj = (this instanceof Array) ? [] : {};
-                for (i in this) {
-                    if (i == 'clone') continue;
-                    if (this[i] && typeof this[i] == "object") {
-                        newObj[i] = this[i].clone();
-                    } else newObj[i] = this[i];
-                }
-                return newObj;
-            };
-
-            /* END OF GENERAL PURPOSE FUNCTIONS */
 
             //Call the VORON app
             VORON.init();

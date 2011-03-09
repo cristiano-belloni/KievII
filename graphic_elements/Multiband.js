@@ -55,8 +55,6 @@ Multiband.prototype.getready = function (name, topleft, specArgs) {
     //By default, a Multiband always draws itself when value is set.
     this.drawItself = true;
 
-    this.completed = true;
-
 };
 
 Multiband.prototype.calculateSidebands = function () {

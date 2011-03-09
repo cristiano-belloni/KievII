@@ -23,48 +23,34 @@ Button.prototype.getready = function (name, topleft, specArgs) {
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
     this.values = {"buttonvalue" : NaN};
-    this.objectsLoaded = 0;
 
     this.triggered = false;
 
     //By default, a Button always draws itself when value is set.
     this.drawItself = true;
 
-    this.width = 0;
-    this.height = 0;
-
-    this.nButtons = specArgs.images.length;
+    this.imagesArray = specArgs.imagesArray;
+    this.nButtons = this.imagesArray.length;
 
     //This is a simple 2-state button
     if (this.nButtons != 2) {
         throw new Error("Invalid images array length, " + this.nButtons);
     }
 
-    // Set the status progress.
-    this.objectsTotal = this.nButtons;
+    // Calculate width and height
+    this.width = 0;
+    this.height = 0;
 
-    this.imagesArray = new Array (this.nButtons);
-
-    // Load images from names
-    for (var i = 0; i < this.nButtons; i += 1) {
-        this.imagesArray[i] = new Image();
-        this.imagesArray[i].onload = this.onLoad(this);
-        this.imagesArray[i].src = specArgs.images[i];
+    for (var i = 0; i < this.imagesArray.length; i += 1) {
+        if (this.imagesArray[i].width > this.width) {
+            this.width = this.imagesArray[i].width;
+        }
+        if (this.imagesArray[i].height > this.height) {
+            this.height = this.imagesArray[i].height;
+        }
     }
 
-    console.log ("Origin is ", this.xOrigin, this.yOrigin);
 
-};
-
-Button.prototype.onLoad = function (that) {
-    return function () {
-        that.objectsLoaded += 1;
-        if (that.objectsLoaded === that.objectsTotal) {
-            that.onCompletion();
-            that.completed = true;
-        }
-        console.log("Button: name = ", that.name, " Objects loaded = ", that.objectsLoaded, " of ", that.objectsTotal);
-    };
 };
 
 // This method returns an image index given the value.
@@ -167,21 +153,4 @@ Button.prototype.refresh = function () {
         /*jslint nomen: true*/
         this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
     }
-};
-
-Button.prototype.onCompletion = function () {
-    // Now, we've loaded every image. We can calculate max width and height now.
-    var i;
-    for (i = 0; i < this.imagesArray.length; i += 1) {
-        if (this.imagesArray[i].width > this.width) {
-            this.width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > this.height) {
-            this.height = this.imagesArray[i].height;
-        }
-    }
-    console.log ("Image starts at ", this.xOrigin, this.yOrigin, " width and height are ", this.width, this.height);
-
-    // Now, we call the superclass
-    Element.prototype.onCompletion.apply(this);
 };

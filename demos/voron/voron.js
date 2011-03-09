@@ -61,70 +61,82 @@ VORON.audioInit = function() {
 
 /* END OF AUDIO INIT FUNCTION */
 
-/* KEEP ON */
-
-VORON.keepON = function () {
-
-    this.audioInit();
-
-    this.ui.refresh();
-
-    if (this.audioOk !== true) {
-        this.label.setValue("labelvalue", "Audio *NOT* supported by browser");
-        this.message.innerHTML = "Your browser lacks support for AudioDataSource.";
-    }
-
-    else {
-        this.label.setValue ("labelvalue", "Audio support OK");
-    }
-
-}
-
-/* --END */
 
 /*** CALLBACKS ***/
 
 /* LOADING MANAGER */
 
-VORON.loadingManager = function (elementName) {
-    // Closure persistent variables.
+VORON.loadingManager = function () {
+    // Closure: persistent variables.
     var that = this,
         loadStatus = {
-            pitchKnob: false, freqKnob: false, qKnob: false,
-            background: false, volSlider: false,
-            pitchOnSwitch: false, pitchDiscSwitch : false,
-            freqSwitch: false
-        };
+            knobImageLoader: false, sliderImageLoader: false, bgImageLoader: false,
+            switchImageLoader: false
+        },
+        errorState = false;
 
         // Actual callback
-        return function (elementName) {
-            console.log (elementName, " called back to say everything is loaded.");
+        return function (loaderStatus) {
+            if (errorState === false) {
+                var ls = loaderStatus;
+                console.log (ls.status.id, " called back to say everything is loaded.");
 
-            // Update the element status
-            if (loadStatus[elementName] !== undefined) {
-                loadStatus[elementName] = true;
+                // Update the element status
+                if (loadStatus[ls.status.id] !== undefined) {
+                    loadStatus[ls.status.id] = true;
 
-            // Update the message bar
-            that.message.innerHTML = elementName + " loaded...";
-        }
+                    // Update the message bar
+                    that.message.innerHTML = ls.status.id + " loaded...";
+                }
 
-            // Check if every registered element is complete.
-            for (var element in loadStatus) {
-                if (loadStatus.hasOwnProperty(element)) {
-                    if (loadStatus[element] !== true) {
-                        console.log ("status of element ", element, " is not true: ", loadStatus[element]);
-                        return;
+                if (ls.status.error !== 0) {
+                    // Update the message bar
+                    that.message.innerHTML = ls.status.id + ": failed to load " + ls.status.error + " img";
+                    errorState = true;
+                    throw new Error(ls.status.error + " elements failed to load on loader " + ls.status.id);
+                    return;
+                }
+
+                that [ls.status.id + "_imageArray"] = ls.imagesArray;
+
+
+                // Check if every registered element is complete.
+                for (var element in loadStatus) {
+                    if (loadStatus.hasOwnProperty(element)) {
+                        if (loadStatus[element] !== true) {
+                            console.log ("status of element ", element, " is not true: ", loadStatus[element]);
+                            return;
+                        }
                     }
                 }
-            }
 
-            // Update the message bar
-            that.message.innerHTML = "Everything loaded, ready.";
-            that.keepON();
+                // Update the message bar
+                that.message.innerHTML = "Everything loaded, ready.";
+                that.keepON();
+                
+            }
         }
 
 }
 /* END OF LOADING MANAGER */
+
+VORON.imageLoaded = function () {
+    var that = this;
+    // Actual callback
+    return function (loaderStatus) {
+        var ls = loaderStatus;
+        // that.message.innerHTML =  ls.status.id  + " loaded image " + ls.status.loaded + " of " + ls.status.total;
+    }
+}
+
+VORON.imageError = function () {
+    var that = this;
+    // Actual callback
+    return function (loaderStatus) {
+        var ls = loaderStatus;
+        // that.message.innerHTML =  ls.status.id  + " ERROR loading " + ls.obj.src;
+    }
+}
 
 /* ELEMENT CALLBACKS */
 
@@ -300,6 +312,135 @@ VORON.switchCallback = function () {
 
 /* END OF ELEMENT CALLBACKS */
 
+
+VORON.keepON = function () {
+
+        var knobArgs,
+            bgArgs,
+            volSliderArgs,
+            switchArgs,
+            pitchArgs,
+            freqArgs,
+            qArgs,
+            labelArgs,
+            switchCallbackManager;
+
+        /* BACKGROUND INIT */
+
+        bgArgs = {
+            image: this.bgImageLoader_imageArray[0]
+        };
+
+        this.gui = new Background("background", [0,0], bgArgs);
+        this.ui.addElement(this.gui, this.imageDisplayer, {zIndex: 0});
+
+        /* END OF BACKGROUND INIT */
+
+        /* LABEL INIT */
+
+        // Every element calls label's setValue in the callback, so let's make sure
+        // that label is declared first.
+
+        labelArgs = {
+                wh : [320,29]
+            };
+
+        this.label = new Label("status", [275, 332], labelArgs);
+
+        /* END OF LABEL INIT */
+
+        /* KNOB INIT */
+
+
+        // Shared arguments to the Knob constructor.
+        knobArgs = {
+            imagesArray : this.knobImageLoader_imageArray,
+            sensivity : 5000,
+            preserveBg: true
+        };
+
+        // Create the knob objects.
+
+        // PITCH KNOB
+        knobArgs.onValueSet = this.pitchCallback();
+        this.pitchKnob = new Knob("pitchKnob", [118, 150], knobArgs);
+        this.pitchKnob.setValue("knobvalue", 0.333);
+        this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer, {zIndex: 5});
+
+        // FREQ KNOB
+        knobArgs.onValueSet = this.freqCallback();
+        this.freqKnob = new Knob("freqKnob", [319, 150], knobArgs);
+        this.freqKnob.setValue("knobvalue", 1);
+        this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer, {zIndex: 5});
+
+        // Q KNOB
+        knobArgs.onValueSet = this.qCallback();
+        this.qKnob = new Knob("qKnob", [472, 150], knobArgs);
+        this.qKnob.setValue("knobvalue", 0);
+        this.ui.addElement(this.qKnob, this.qKnobImageDisplayer, {zIndex: 5});
+
+        /* END OF KNOB INIT */
+
+        /* FADER INIT */
+
+        //VOL FADER
+        volSliderArgs = {
+            sliderImg:this.sliderImageLoader_imageArray[0], knobImg:this.sliderImageLoader_imageArray[1],
+            type:"vertical"
+        };
+
+        volSliderArgs.onValueSet = this.volCallback();
+        this.volSlider = new Slider("volSlider", [695, 136], volSliderArgs);
+        this.volSlider.setValue("slidervalue", 0.5);
+        this.ui.addElement(this.volSlider, this.volImageDisplayer, {zIndex: 5});
+
+        /* END OF FADER INIT */
+
+        /* SWITCHES INIT */
+
+        // This time, we use an single callback for all switch buttons.
+        switchCallbackManager = this.switchCallback();
+
+        // Shared arguments to the Button constructor.
+        switchArgs = {
+            imagesArray : this.switchImageLoader_imageArray,
+            onValueSet: switchCallbackManager
+        };
+
+        // Create the switch objects.
+        this.pitchOnSwitch = new Button("pitchOnSwitch", [140,107], switchArgs);
+        this.pitchDiscSwitch = new Button("pitchDiscSwitch", [140,339], switchArgs);
+        this.freqSwitch = new Button("freqSwitch", [416,107], switchArgs);
+
+        // These buttons have 0 = on and 1 = off.
+        this.pitchOnSwitch.setValue ("buttonvalue", 0);
+        this.pitchDiscSwitch.setValue ("buttonvalue", 0);
+        this.freqSwitch.setValue ("buttonvalue", 0);
+
+        this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer, {zIndex: 5});
+        this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer, {zIndex: 5});
+        this.ui.addElement(this.freqSwitch, this.switchImageDisplayer, {zIndex: 5});
+
+        /* END OF SWITCHES INIT */
+
+        // Label is added at the end, because otherwise it displays garbage when
+        // its value is set.
+        this.ui.addElement(this.label, this.labelDisplayer, {zIndex: 5});
+
+        this.audioInit();
+
+        this.ui.refresh();
+
+        if (this.audioOk !== true) {
+            this.label.setValue("labelvalue", "Audio *NOT* supported by browser");
+            this.message.innerHTML = "Your browser lacks support for AudioDataSource.";
+        }
+
+        else {
+            this.label.setValue ("labelvalue", "Audio support OK");
+        }
+    }
+
 VORON.init = function () {
 
     /* HOISTED VARs */
@@ -307,15 +448,10 @@ VORON.init = function () {
     var MAX_KNOB_IMAGE_NUM = 60,
         knobImgLocation = "./images/BigKnob/",
         knobImgArray = [],
-        knobArgs,
-        bgArgs,
-        volSliderArgs,
-        switchArgs,
-        pitchArgs,
-        freqArgs,
-        qArgs,
-        labelArgs,
-        switchCallbackManager;
+        knobImageLoader,
+        bgImageLoader,
+        sliderImageLoader,
+        switchImageLoader;
 
     /* END OF HOISTED VARs */
 
@@ -343,32 +479,7 @@ VORON.init = function () {
     this.loadCallback = this.loadingManager();
     /* END OF CONTEXT INIT */
 
-    /* BACKGROUND INIT */
-
-    bgArgs = {
-        image: "./images/Voron_bg1.png",
-        onComplete: this.loadCallback
-    };
-
-    this.gui = new Background("background", [0,0], bgArgs);
-    this.ui.addElement(this.gui, this.imageDisplayer, {zIndex: 0});
-
-    /* END OF BACKGROUND INIT */
-
-    /* LABEL INIT */
-
-    // Every element calls label's setValue in the callback, so let's make sure
-    // that label is declared first.
-
-    labelArgs = {
-            wh : [320,29]
-        };
-
-    this.label = new Label("status", [275, 332], labelArgs);
-    
-    /* END OF LABEL INIT */
-
-    /* KNOB INIT */
+    /* LOAD IMAGES */
 
     // Generate knob image names with an immediate funtion.
     (function () {
@@ -381,86 +492,36 @@ VORON.init = function () {
         }
     }());
 
+    // Knob images
+    knobImageLoader = new loadImageArray ({ID : "knobImageLoader",
+                                               imageNames: knobImgArray,
+                                               onComplete: this.loadCallback /*,
+                                               onSingle: this.imageSingle,
+                                               onError: this.imageError*/});
 
-    // Shared arguments to the Knob constructor.
-    knobArgs = {
-        images : knobImgArray,
-        sensivity : 5000,
-        onComplete: this.loadCallback,
-        preserveBg: true
-    };
+    // Background image
 
-    // Create the knob objects.
+    bgImageLoader = new loadImageArray ({ID : "bgImageLoader",
+                                               imageNames: ["./images/Voron_bg1.png"],
+                                               onComplete: this.loadCallback,
+                                               onSingle: this.imageLoaded(),
+                                               onError: this.imageError()});
 
-    // PITCH KNOB
-    pitchArgs = knobArgs.clone();
-    pitchArgs.onValueSet = this.pitchCallback();
-    this.pitchKnob = new Knob("pitchKnob", [118, 150], pitchArgs);
-    this.pitchKnob.setValue("knobvalue", 0.333);
-    this.ui.addElement(this.pitchKnob, this.pitchKnobImageDisplayer, {zIndex: 5});
+     // Slider images
 
-    // FREQ KNOB
-    freqArgs = knobArgs.clone();
-    freqArgs.onValueSet = this.freqCallback();
-    this.freqKnob = new Knob("freqKnob", [319, 150], freqArgs);
-    this.freqKnob.setValue("knobvalue", 1);
-    this.ui.addElement(this.freqKnob, this.freqKnobImageDisplayer, {zIndex: 5});
+     sliderImageLoader = new loadImageArray ({ID : "sliderImageLoader",
+                                               imageNames: ["./images/Fader/slider_slot.png", "./images/Fader/slider_handle.png"],
+                                               onComplete: this.loadCallback,
+                                               onSingle: this.imageLoaded(),
+                                               onError: this.imageError()});
 
-    // Q KNOB
-    qArgs = knobArgs.clone();
-    qArgs.onValueSet = this.qCallback();
-    this.qKnob = new Knob("qKnob", [472, 150], qArgs);
-    this.qKnob.setValue("knobvalue", 0);
-    this.ui.addElement(this.qKnob, this.qKnobImageDisplayer, {zIndex: 5});
+     // Button images
+     switchImageLoader = new loadImageArray ({ID : "switchImageLoader",
+                                               imageNames: ["./images/Switch/SwitchLeft.png","./images/Switch/SwitchRight.png"],
+                                               onComplete: this.loadCallback,
+                                               onSingle: this.imageLoaded(),
+                                               onError: this.imageError()});
+     /* END OF LOAD IMAGES */
 
-    /* END OF KNOB INIT */
+    }
 
-    /* FADER INIT */
-
-    //VOL FADER
-    volSliderArgs = {
-        sliderImg:"./images/Fader/slider_slot.png", knobImg:"./images/Fader/slider_handle.png",
-        type:"vertical",
-        onComplete: this.loadCallback
-    };
-
-    volSliderArgs.onValueSet = this.volCallback();
-    this.volSlider = new Slider("volSlider", [695, 136], volSliderArgs);
-    this.volSlider.setValue("slidervalue", 0.5);
-    this.ui.addElement(this.volSlider, this.volImageDisplayer, {zIndex: 5});
-
-    /* END OF FADER INIT */
-
-    /* SWITCHES INIT */
-
-    // This time, we use an single callback for all switch buttons.
-    switchCallbackManager = this.switchCallback();
-
-    // Shared arguments to the Button constructor.
-    switchArgs = {
-        images : ["./images/Switch/SwitchLeft.png","./images/Switch/SwitchRight.png"],
-        onComplete: this.loadCallback,
-        onValueSet: switchCallbackManager
-    };
-
-    // Create the switch objects.
-    this.pitchOnSwitch = new Button("pitchOnSwitch", [140,107], switchArgs);
-    this.pitchDiscSwitch = new Button("pitchDiscSwitch", [140,339], switchArgs);
-    this.freqSwitch = new Button("freqSwitch", [416,107], switchArgs);
-
-    // These buttons have 0 = on and 1 = off.
-    this.pitchOnSwitch.setValue ("buttonvalue", 0);
-    this.pitchDiscSwitch.setValue ("buttonvalue", 0);
-    this.freqSwitch.setValue ("buttonvalue", 0);
-
-    this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer, {zIndex: 5});
-    this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer, {zIndex: 5});
-    this.ui.addElement(this.freqSwitch, this.switchImageDisplayer, {zIndex: 5});
-
-    /* END OF SWITCHES INIT */
-
-    // Label is added at the end, because otherwise it displays garbage when
-    // its value is set.
-    this.ui.addElement(this.label, this.labelDisplayer, {zIndex: 5});
-      
-}

@@ -23,7 +23,6 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"slidervalue" : 0};
-    this.objectsLoaded = 0;
 
     //By default, a Slider always draws itself when value is set.
     this.drawItself = true;
@@ -31,35 +30,17 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     this.width = 0;
     this.height = 0;
 
-    // Set the status progress.
-    this.objectsTotal = 2;
-
-    this.sliderImage = new Image();
-    this.sliderImage.onload = this.onLoad(this);
-    this.sliderImage.src = specArgs.sliderImg;
-
-    this.knobImage = new Image();
-    this.knobImage.onload = this.onLoad(this);
-    this.knobImage.src = specArgs.knobImg;
-
+    this.sliderImage = specArgs.sliderImg;
+    this.knobImage = specArgs.knobImg;
     this.type = specArgs.type;
 
-    this.completed = false;
+    this.calculateDimensions();
 
     // As soon as we can, we want to save our background.
     this.backgroundSavePending = true;
 
 };
 
-Slider.prototype.onLoad = function (that) {
-    return function () {
-        that.objectsLoaded += 1;
-        if (that.objectsLoaded === that.objectsTotal) {
-            that.completed = true;
-            that.onCompletion();
-        }
-    };
-};
 
 // This method returns an x position given the Slider value.
 /*jslint nomen: false*/
@@ -251,7 +232,8 @@ Slider.prototype.refresh = function () {
     }
 };
 
-Slider.prototype.onCompletion = function () {
+Slider.prototype.calculateDimensions = function () {
+
     // Images were loaded, we can take their width and height.
     this.width = this.sliderImage.width;
     this.height = this.sliderImage.height;
@@ -280,6 +262,4 @@ Slider.prototype.onCompletion = function () {
           throw new Error("Error: Slider orientation is undefined!");
       }
     
-    // Now, we call the superclass
-    Element.prototype.onCompletion.apply(this);
 };

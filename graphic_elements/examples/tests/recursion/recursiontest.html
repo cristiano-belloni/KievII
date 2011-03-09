@@ -42,9 +42,27 @@
             }
         }());
 
-        var dummyvar = new loadImageArray (knobImgArray, imagesCompleted);
+        var imageLoader = new loadImageArray ({ID : "recursiontest_image_loader",
+                                               imageNames: knobImgArray,
+                                               onComplete: imagesCompleted,
+                                               onSingle: imageSingle,
+                                               onError: imageError});
+        function imageSingle (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
+        }
 
-        function imagesCompleted (imagesArrayReturned) {
+        function imageError (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.error, " on ", st.total," has errors, src is ", loaderStatus.obj.src);
+        }
+
+        function imagesCompleted (loaderStatus) {
+
+            if (loaderStatus.status.error !== 0) {
+                throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);
+            }
+
             // KNOBS
             var NKNOBS = 3
 
@@ -52,22 +70,23 @@
 
                 knobArgs[i] = {
                     // onValueSet = undefined,
-                    imagesArray : imagesArrayReturned,
+                    imagesArray : loaderStatus.imagesArray,
                     sensivity : 5000,
                     //onComplete: this.loadCallback,
                     preserveBg: true
                 };
 
                 //onValueSet = undefined
-                knob[i] = new Knob("knob" + i, [i*100 , 100], knobArgs[i]);
+                knob[i] = new Knob("knob" + i, [i * 100 , 100], knobArgs[i]);
                 imageDisplayer[i] = new CanvasDrawImage (plugin_context);
-
-                knob[i].setValue("knobvalue", 0);
+                
                 ui.addElement(knob[i], imageDisplayer[i] , {zIndex: 10});
+                knob[i].setValue("knobvalue", 0);
 
             }
 
-            ui.refresh();
+            // ui.refresh(); is not needed, because ve did the setValues() after
+            // the addElements.
 
             // Set the connections
             // 0 controls 1 and 1 controls 2. But when 2 "starts" the event, it
