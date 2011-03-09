@@ -3,6 +3,7 @@
   <head>
     <title>Knob Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../Utilities/Utilities.js"></script>
     <script type="text/javascript" src="../../Element.js"></script>
     <script type="text/javascript" src="../../UI.js"></script>
     <script type="text/javascript" src="../../Knob.js"></script>
@@ -50,25 +51,30 @@
             medknob_img_array[i] = filename;
         }
 
-        var knobArgs = {
-            images : medknob_img_array,
-            sensivity : 2000
-        };
+        var dummyvar = new loadImageArray (medknob_img_array, imagesCompleted);
 
-        knobArgs.onValueSet = function () {
-            var that = this;
-            return function (slot, value) {
-                console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+        function imagesCompleted (imagesArrayReturned) {
+
+            var knobArgs = {
+                imagesArray : imagesArrayReturned,
+                sensivity : 2000
             };
-        }();
 
-        var knob = new Knob("test_knob", [90, 90], knobArgs);
-        // Shouldn't a knob be clickable by default? TODO
-        knob.setClickable(true);
+            knobArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value) {
+                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                };
+            }();
 
-        ui.addElement(knob, imageDisplayer);
+            var knob = new Knob("test_knob", [90, 90], knobArgs);
+            // Shouldn't a knob be clickable by default? TODO
+            knob.setClickable(true);
 
-        knob.setValue("knobvalue", 0.7);
+            ui.addElement(knob, imageDisplayer);
+
+            knob.setValue("knobvalue", 0.7);
+        }
 
 
     </script>

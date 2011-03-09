@@ -22,35 +22,30 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"knobvalue" : NaN};
-    this.objectsLoaded = 0;
-
-    //TODO this is redundant.
-    this.start_x = undefined;
-    this.start_y = undefined;
 
     //By default, a knob always draws itself when value is set.
     this.drawItself = true;
 
+    this.sensivity = specArgs.sensivity || 2000;
+
+    //Images & width and height.
+
+    this.imagesArray = specArgs.imagesArray;
+    
+    if (this.imagesArray.length < 1) {
+        throw new Error("Invalid images array length, " + this.imagesArray.length);
+    }
+
     this.width = 0;
     this.height = 0;
 
-    this.nKnobs = specArgs.images.length;
-    this.sensivity = specArgs.sensivity || 2000;
-
-    if (this.nKnobs < 1) {
-        throw new Error("Invalid images array length, " + this.nKnobs);
-    }
-
-    // Set the status progress.
-    this.objectsTotal = this.nKnobs;
-
-    this.imagesArray = new Array (this.nKnobs);
-
-    // Load images from names
-    for (var i = 0; i < this.nKnobs; i += 1) {
-        this.imagesArray[i] = new Image();
-        this.imagesArray[i].onload = this.onLoad(this);
-        this.imagesArray[i].src = specArgs.images[i];
+    for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
+        if (this.imagesArray[i].width > this.width) {
+            this.width = this.imagesArray[i].width;
+        }
+        if (this.imagesArray[i].height > this.height) {
+            this.height = this.imagesArray[i].height;
+        }
     }
 
     // Background saving is optional.
@@ -62,16 +57,6 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
 
 };
 
-Knob.prototype.onLoad = function (that) {
-    return function () {
-        that.objectsLoaded += 1;
-        if (that.objectsLoaded === that.objectsTotal) {
-            that.onCompletion();
-            that.completed = true;
-        }
-        console.log("name = ", that.name, " Objects = ", that.objectsLoaded);
-    };
-};
 
 // This method returns an image index given the knob value.
 /*jslint nomen: false*/
@@ -81,7 +66,7 @@ Knob.prototype._getImageNum = function () {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.nKnobs - 1));
+    var ret = Math.round(this.values.knobvalue * (this.imagesArray.length - 1));
     return ret;
 };
 
@@ -197,20 +182,4 @@ Knob.prototype.refresh = function () {
     }
 
     
-};
-
-Knob.prototype.onCompletion = function () {
-    // Now, we've loaded every image. We can calculate max width and height now.
-    var i;
-    for (i = 0; i < this.imagesArray.length; i += 1) {
-        if (this.imagesArray[i].width > this.width) {
-            this.width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > this.height) {
-            this.height = this.imagesArray[i].height;
-        }
-    }
-
-    // Now, we call the superclass
-    Element.prototype.onCompletion.apply(this);
 };

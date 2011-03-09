@@ -3,6 +3,7 @@
   <head>
     <title>Recursion Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../Utilities/Utilities.js"></script>
     <script type="text/javascript" src="../../../Element.js"></script>
     <script type="text/javascript" src="../../../UI.js"></script>
     <script type="text/javascript" src="../../../Knob.js"></script>
@@ -41,40 +42,46 @@
             }
         }());
 
-        // KNOBS
-        var NKNOBS = 3
+        var dummyvar = new loadImageArray (knobImgArray, imagesCompleted);
 
-        for (var i=0; i < NKNOBS; i+=1) {
+        function imagesCompleted (imagesArrayReturned) {
+            // KNOBS
+            var NKNOBS = 3
 
-            knobArgs[i] = {
-                // onValueSet = undefined,
-                images : knobImgArray,
-                sensivity : 5000,
-                onComplete: this.loadCallback,
-                preserveBg: true
-            };
+            for (var i=0; i < NKNOBS; i+=1) {
 
-            //onValueSet = undefined
-            knob[i] = new Knob("knob" + i, [i*100 , 100], knobArgs[i]);
-            imageDisplayer[i] = new CanvasDrawImage (plugin_context);
+                knobArgs[i] = {
+                    // onValueSet = undefined,
+                    imagesArray : imagesArrayReturned,
+                    sensivity : 5000,
+                    //onComplete: this.loadCallback,
+                    preserveBg: true
+                };
 
-            knob[i].setValue("knobvalue", 0);
-            ui.addElement(knob[i], imageDisplayer[i] , {zIndex: 10});
-            
+                //onValueSet = undefined
+                knob[i] = new Knob("knob" + i, [i*100 , 100], knobArgs[i]);
+                imageDisplayer[i] = new CanvasDrawImage (plugin_context);
+
+                knob[i].setValue("knobvalue", 0);
+                ui.addElement(knob[i], imageDisplayer[i] , {zIndex: 10});
+
+            }
+
+            ui.refresh();
+
+            // Set the connections
+            // 0 controls 1 and 1 controls 2. But when 2 "starts" the event, it
+            // controls 0 (and thus 1), without entering in a feedback loop.
+
+            // 0 -> 1
+            ui.connectSlots("knob0", "knobvalue", "knob1", "knobvalue", {callback: function (value) {return 1-value;}});
+            // 1 -> 0
+            ui.connectSlots("knob1", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return 1-value;}});
+            // 1 -> 2
+            ui.connectSlots("knob1", "knobvalue", "knob2", "knobvalue", {callback: function (value) {return value * 0.5;}});
+            // 2 -> 0
+            ui.connectSlots("knob2", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return value;}});
         }
-
-        // Set the connections
-        // 0 controls 1 and 1 controls 2. But when 2 "starts" the event, it
-        // controls 0 (and thus 1), without entering in a feedback loop.
-
-        // 0 -> 1
-        ui.connectSlots("knob0", "knobvalue", "knob1", "knobvalue", {callback: function (value) {return 1-value;}});
-        // 1 -> 0
-        ui.connectSlots("knob1", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return 1-value;}});
-        // 1 -> 2
-        ui.connectSlots("knob1", "knobvalue", "knob2", "knobvalue", {callback: function (value) {return value * 0.5;}});
-        // 2 -> 0
-        ui.connectSlots("knob2", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return value;}});
 
     </script>
   </body>

@@ -1,10 +1,10 @@
-function loadImageArray (imageNames, onComplete) {
+function loadImageArray (imageNames, onComplete, onSingle) {
 
     this.onCompletion = function () {
 
         // Call the callback if there's one.
         if (typeof (this.onComplete) === "function") {
-            this.onComplete (this.name);
+            this.onComplete (this.imagesArray);
         }
 
         return;
@@ -13,6 +13,9 @@ function loadImageArray (imageNames, onComplete) {
     this.onLoad = function (that) {
         return function () {
             that.objectsLoaded += 1;
+            if (typeof(that.onSingle) === 'function') {
+                that.onSingle();
+            }
             if (that.objectsLoaded === that.objectsTotal) {
                 that.onCompletion();
             }
@@ -20,6 +23,7 @@ function loadImageArray (imageNames, onComplete) {
     };
 
     this.onComplete = onComplete;
+    this.onSingle = onSingle;
     this.objectsLoaded = 0;
     this.objectsTotal = imageNames.length;
     this.imagesArray = [];
