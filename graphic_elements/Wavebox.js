@@ -27,8 +27,8 @@ Wavebox.prototype.getready = function (name, topleft, specArgs) {
     this.width = specArgs.wh[0];
     this.height = specArgs.wh[1];
 
-    this.completed = false;
-
+    //By default, a wavebox always refreshes the background.
+    this.preserveBg = true;
     // As soon as we can, we want to save our background.
     this.backgroundSavePending = true;
 

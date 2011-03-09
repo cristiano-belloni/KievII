@@ -27,8 +27,6 @@ Label.prototype.getready = function (name, topleft, specArgs) {
     this.width = specArgs.wh[0];
     this.height = specArgs.wh[1];
 
-    this.completed = true;
-
 };
 
 // This methods returns true if the point given belongs to this element.

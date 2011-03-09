@@ -118,7 +118,6 @@ VORON.loadingManager = function () {
         }
 
 }
-/* END OF LOADING MANAGER */
 
 VORON.imageLoaded = function () {
     var that = this;
@@ -137,6 +136,8 @@ VORON.imageError = function () {
         // that.message.innerHTML =  ls.status.id  + " ERROR loading " + ls.obj.src;
     }
 }
+
+/* END OF LOADING MANAGER */
 
 /* ELEMENT CALLBACKS */
 
@@ -481,7 +482,7 @@ VORON.init = function () {
 
     /* LOAD IMAGES */
 
-    // Generate knob image names with an immediate funtion.
+    // Generate knob image names with an immediate function.
     (function () {
         for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
             var prefix = "";

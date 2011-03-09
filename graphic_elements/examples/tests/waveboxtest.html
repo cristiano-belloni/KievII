@@ -33,19 +33,6 @@ and open the template in the editor.
 
         ui = new UI (plugin_canvas);
 
-        //Background
-
-        var bgArgs = {
-            image: "background.png"
-        };
-
-        var background = new Background("Background", [0,0], bgArgs);
-        var imageDisplayer = new CanvasDrawImage (plugin_context);
-        ui.addElement(background, imageDisplayer, false);
-
-        //TODO find a serious method for refreshing things.
-        background.refresh();
-
         //Wave box.
         var waveboxArgs = {
             wh: [800,600]
