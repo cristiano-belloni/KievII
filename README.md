@@ -3,15 +3,19 @@
 KievII
 ------
 
-KievII is a Javascript library that gives you all the tools to build audio apps for the Web.
+KievII is a JavaScript Library that simplifies audio web-apps building, from the GUI to the underlying audio details.
+KievII supports [HTML5 Canvas](https://developer.mozilla.org/en/HTML/Canvas) and [MozAudio](https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension), but it aims to be completely agnostic to graphical and audio implementations.
 
-KievII has a collection of GUI elements (ie labels, knobs, multiknobs, sliders, buttons, wave display, multi-band displays) and uses HTML5 canvas to render them (but you can extend it to use whatever you want). Advanced control of these elements (recursive chaining, event-driven handling of events) is provided  through the UI object. GUI elements are cross-browser compatible on all browser that support HTML5.
+KievII has a collection of GUI elements (ie labels, knobs, multiknobs, sliders, buttons, wave display, multi-band displays).  
+Advanced control of these elements (recursive chaining, event-driven handling of events) is provided  through the UI object. GUI elements are cross-browser compatible on all browser that support HTML5.
 
-Audio is compatible with Mozilla Audio API + audiodata.js. When HTML5 real-time audio handling will be standardized, KievII Audio objects will support every browser. 
+Audio is compatible with Mozilla Audio API + audiodata.js. When HTML5 real-time audio will be standardized, KievII Audio objects will support every browser.  
 KievII provides its homebrew DSP algorithms (for example, pitchshifting and time-stretching) standalone or on top of [dsp.js][dsp.js_address]
 
-Look at a working demo -- works with Mozilla Firefox 4 (audio and GUI) and Mozilla Firefox 3.6 and Google Chrome (GUI Only) [here](http://bitterspring.net/KievII_site/demos/voron/index.html).
+Look at a [working demo](http://bitterspring.net/KievII_site/demos/voron/index.html)  
+[It works with Mozilla Firefox 4 (audio and GUI), Opera 11+, Mozilla Firefox 3.6+ and Google Chrome 9+ (GUI Only)]
 
+Look at the documentation [here](https://github.com/janesconference/KievII/wiki).  
 You can find a discussion group for developers [here][group_address].
 
 ![Demo screenshot][dscreen]
