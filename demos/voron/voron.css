@@ -52,3 +52,20 @@
         line-height: 35px;
         /*visibility: hidden;*/
     }
+
+    #div-info {
+        font: 0.7em "Droid Sans Mono", monospace;*/
+        margin-top: -40px;
+        margin-left: auto;
+        margin-right: auto;
+        color: #ffffff;
+        width:400px;
+        text-align: left;
+    }
+
+    #div-info a:link {
+            color: #ffffff;
+            text-decoration: underline; }
+    #div-info a:visited {
+            color: #ffffff;
+        }
