@@ -35,6 +35,7 @@ VORON.audioInit = function() {
     this.shifterParams.osamp = 4;
     this.shifterParams.algo = "RFFT";
     this.filter_shifter = new AudioDataShifterFilter (this.outputDestination, this.shifterParams);
+    this.filter_shifter.setOnOff(false);
     //source.readAsync(this.filter_shifter);
 
     // END OF PITCH SHIFTER INIT
@@ -42,6 +43,7 @@ VORON.audioInit = function() {
     // LOWPASS FILTER INIT
 
     this.filter_lowpass = new ADLowPassFilter(this.filter_shifter, 2000, 10, 44100);
+    this.filter_lowpass.setOnOff(false);
 
     // END OF LOWPASS FILTER INIT
 
@@ -346,7 +348,7 @@ VORON.keepON = function () {
                 wh : [320,29]
             };
 
-        this.label = new Label("status", [275, 332], labelArgs);
+        this.label = new Label("status", [278, 339], labelArgs);
 
         /* END OF LABEL INIT */
 
@@ -414,9 +416,9 @@ VORON.keepON = function () {
         this.freqSwitch = new Button("freqSwitch", [416,107], switchArgs);
 
         // These buttons have 0 = on and 1 = off.
-        this.pitchOnSwitch.setValue ("buttonvalue", 0);
-        this.pitchDiscSwitch.setValue ("buttonvalue", 0);
-        this.freqSwitch.setValue ("buttonvalue", 0);
+        this.pitchOnSwitch.setValue ("buttonvalue", 1);
+        this.pitchDiscSwitch.setValue ("buttonvalue", 1);
+        this.freqSwitch.setValue ("buttonvalue", 1);
 
         this.ui.addElement(this.pitchOnSwitch, this.switchImageDisplayer, {zIndex: 5});
         this.ui.addElement(this.pitchDiscSwitch, this.switchImageDisplayer, {zIndex: 5});

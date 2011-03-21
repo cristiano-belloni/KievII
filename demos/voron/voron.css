@@ -54,8 +54,8 @@
     }
 
     #div-info {
-        font: 0.7em "Droid Sans Mono", monospace;*/
-        margin-top: -40px;
+        font: 0.7em "Droid Sans Mono", monospace;
+        /*margin-top: -40px;*/
         margin-left: auto;
         margin-right: auto;
         color: #ffffff;
@@ -69,3 +69,8 @@
     #div-info a:visited {
             color: #ffffff;
         }
+
+    .darktext {
+      color: #140000;
+      font-weight: bold;
+    }
