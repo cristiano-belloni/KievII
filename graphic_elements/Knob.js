@@ -21,7 +21,7 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
     this.tempReady(name, topleft, specArgs);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
-    this.values = {"knobvalue" : NaN};
+    this.values = {"knobvalue" : null};
 
     //By default, a knob always draws itself when value is set.
     this.drawItself = true;

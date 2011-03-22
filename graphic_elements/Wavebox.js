@@ -17,7 +17,7 @@ Wavebox.prototype.getready = function (name, topleft, specArgs) {
 
     this.values = {"waveboxposition" : 0,
                    "startsample" : 0,
-                   "endsample" : NaN,
+                   "endsample" : null,
                    "waveboxsignal" : undefined
                };
 
@@ -123,7 +123,7 @@ Wavebox.prototype.refresh = function () {
 
 Wavebox.prototype.sampleindexToY = function (samplenum) {
     //Check boundaries
-    if ((samplenum >= this.values.endsample) || (this.values.waveboxsignal[samplenum] === undefined) || (this.values.waveboxsignal[samplenum] === NaN)) {
+    if ((samplenum >= this.values.endsample) || (this.values.waveboxsignal[samplenum] === undefined) || (this.values.waveboxsignal[samplenum] === null)) {
         throw new Error("Error: problem with sample index: ", samplenum, " or sample value: ", this.values.waveboxsignal[samplenum]);
     }
 
