@@ -93,8 +93,16 @@ function UI(domElement) {
                     ret = this.elements[name][event](x, y);
                     // See if the element changed its value
                     if (ret !== undefined) {
-                        // console.log("UI: Element ", name, " changed its value on event ", event);
-                        this.setValue(name, ret.slot, ret.value);
+                        if (ret instanceof Array) {
+                            // An element could change multiple slots of itself.
+                            for (var i = 0; i < ret.length; i+=1) {
+                                this.setValue(name, ret[i].slot, ret[i].value);
+                            }
+                        }
+                        else {
+                            // console.log("UI: Element ", name, " changed its value on event ", event);
+                            this.setValue(name, ret.slot, ret.value);
+                        }
                     }
                 }
             }
