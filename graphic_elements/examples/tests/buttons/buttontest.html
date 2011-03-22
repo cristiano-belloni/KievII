@@ -3,11 +3,11 @@
   <head>
     <title>Button Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../utilities/Utilities.js"></script>
-    <script type="text/javascript" src="../../Element.js"></script>
-    <script type="text/javascript" src="../../UI.js"></script>
-    <script type="text/javascript" src="../../Button.js"></script>
-    <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Button.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="200" height="200"></canvas>
@@ -26,7 +26,7 @@
 
         var imageDisplayer = new CanvasDrawImage (plugin_context);
 
-        var button_img_array = ["../images/button_sm_01.png", "../images/button_sm_02.png"];
+        var button_img_array = ["../../images/button_sm_01.png", "../../images/button_sm_02.png"];
 
         var imageLoader = new loadImageArray ({ID : "buttontest_image_loader",
                                                imageNames: button_img_array,
@@ -67,7 +67,7 @@
 
             ui.addElement(button, imageDisplayer);
 
-            button.setValue("buttonvalue", 0.9);
+            button.setValue("buttonvalue", 1);
 
         }
 

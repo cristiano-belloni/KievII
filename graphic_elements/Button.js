@@ -22,7 +22,7 @@ Button.prototype.getready = function (name, topleft, specArgs) {
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
-    this.values = {"buttonvalue" : NaN};
+    this.values = {"buttonvalue" : null};
 
     this.triggered = false;
 
@@ -32,16 +32,11 @@ Button.prototype.getready = function (name, topleft, specArgs) {
     this.imagesArray = specArgs.imagesArray;
     this.nButtons = this.imagesArray.length;
 
-    //This is a simple 2-state button
-    if (this.nButtons != 2) {
-        throw new Error("Invalid images array length, " + this.nButtons);
-    }
-
     // Calculate width and height
     this.width = 0;
     this.height = 0;
 
-    for (var i = 0; i < this.imagesArray.length; i += 1) {
+    for (var i = 0; i < this.nButtons; i += 1) {
         if (this.imagesArray[i].width > this.width) {
             this.width = this.imagesArray[i].width;
         }
@@ -51,31 +46,6 @@ Button.prototype.getready = function (name, topleft, specArgs) {
     }
 
 
-};
-
-// This method returns an image index given the value.
-/*jslint nomen: false*/
-Button.prototype._getImageNum = function () {
-/*jslint nomen: true*/
-    if ((this.values.buttonvalue < 0) || (this.values.buttonvalue > 1)) {
-        // Do nothing
-        return undefined;
-    }
-    // values from 0 to 0.5 are button OFF, values from 0.5 to 1 are button ON.
-    var ret = Math.round(this.values.buttonvalue * (this.nButtons - 1));
-    return ret;
-};
-
-// This method returns an image object given the value.
-/*jslint nomen: false*/
-Button.prototype._getImage = function () {
-/*jslint nomen: true*/
-
-    /*jslint nomen: false*/
-    var ret = this._getImageNum();
-    /*jslint nomen: true*/
-
-    return this.imagesArray[ret];
 };
 
 // This method returns true if the point given belongs to this button.
@@ -93,7 +63,7 @@ Button.prototype.isInROI = function (x, y) {
 
 Button.prototype.onMouseDown = function (x, y) {
 
-    console.log ("Click down on ", x, y);
+    //console.log ("Click down on ", x, y);
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -109,9 +79,9 @@ Button.prototype.onMouseUp = function (curr_x, curr_y) {
     if (this.triggered) {
         // Button is activated when cursor is still in the element ROI, otherwise action is void.
         if (this.isInROI(curr_x, curr_y)) {
-            // This holds for the simple 2-value button, while we need to do some
-            // more calculation for n-valued buttons. TODO.
-            to_set = 1 - this.values.buttonvalue;
+
+            //Simply add 1 to the button value until it rolls back.
+            to_set = (this.values.buttonvalue + 1) % this.nButtons;
             ret = {"slot" : "buttonvalue", "value" : to_set};
 
             // Click on button is completed, the button is no more triggered.
@@ -131,7 +101,7 @@ Button.prototype.onMouseUp = function (curr_x, curr_y) {
 Button.prototype.setValue = function (slot, value) {
     var temp_value = value;
 
-    if ((temp_value < 0) || (temp_value > 1)) {
+    if ((temp_value < 0) || (temp_value > this.nButtons)) {
         //Just do nothing.
         //console.log("Button.prototype.setValue: VALUE INCORRECT!!");
         return;
@@ -148,9 +118,6 @@ Button.prototype.refresh = function () {
 
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {
-        /*jslint nomen: false*/
-        var imageNum = this._getImageNum();
-        /*jslint nomen: true*/
-        this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        this.drawClass.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
     }
 };
