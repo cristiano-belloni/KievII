@@ -472,12 +472,7 @@ VORON.init = function () {
     this.pitchKnobImageDisplayer = new CanvasDrawImage (this.plugin_context);
     this.volImageDisplayer = new CanvasDrawImage (this.plugin_context);
     this.switchImageDisplayer = new CanvasDrawImage (this.plugin_context);
-    this.labelDisplayer = new CanvasDrawImage (this.plugin_context);
-    this.labelDisplayer = new CanvasDrawText (this.plugin_context);
-
-    this.labelDisplayer.setFont ("28px embedded_font");
-    this.labelDisplayer.setFillStyle('#3b6038');
-    this.labelDisplayer.setTextStyle('#000');
+    this.labelDisplayer = new CanvasDrawText (this.plugin_context, {font: "28px embedded_font", textColor: "#000", textBaseline: "top", textAlignment: "left"});
 
     this.loadCallback = this.loadingManager();
     /* END OF CONTEXT INIT */
