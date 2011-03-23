@@ -1,39 +1,40 @@
-function Element(name, xy) {
+function Element(args) {
     if (arguments.length) {
-        this.getready(name, xy);
+        this.getready(args);
     }
 }
 
-Element.prototype.getready = function (name, xy, specArgs) {
+Element.prototype.getready = function (args) {
 
-    this.name = name;
+    this.ID = args.ID;
 
     //By default, we want to be notified if some event occurs.
-    this.isClickable = specArgs.isClickable || true;
+    this.isClickable = args.isClickable || true;
 
     // These are arrays of 2
-    this.xOrigin = xy[0];
-    this.yOrigin = xy[1];
+    this.xOrigin = args.left;
+    this.yOrigin = args.top;
 
     // This is the bounding box. Element has no dimension.
-    this.width = 0;
-    this.height = 0;
+    this.width = args.width;
+    this.height = args.height;
 
     // Element never draws itself by default
-    this.drawItself = specArgs.drawItself || false;
+    this.drawItself = args.drawItself || false;
 
     // These are to be set later
     this.values = {};
     
     // Set this if the element needs to preserve its background.
-    this.preserveBg = false;
+    this.preserveBg = args.preserveBG || false;
+
     // Set this if the element has to save the background now.
     this.backgroundSavePending = true;
 
     // See if there is a callback to call when the value is set
-    if (specArgs !== undefined) {
-        if (typeof (specArgs.onValueSet) === "function") {
-            this.onValueSet = specArgs.onValueSet;
+    if (args !== undefined) {
+        if (typeof (args.onValueSet) === "function") {
+            this.onValueSet = args.onValueSet;
         }
     }
 
@@ -132,20 +133,17 @@ Element.prototype.setTainted = function (value) {
 }
 
 // Refresh. This is the basic action.
-Element.prototype.refresh = function () {
-    if (this.drawClass === undefined) {
-        return;
-    }
+Element.prototype.refresh = function (drawPrimitive) {
 
     if (this.preserveBg === true) {
         if (this.backgroundSavePending === true) {
-            this.drawClass.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
+            drawPrimitive.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
             this.backgroundSavePending = false;
         }
 
         else {
             // We want drawClass to refresh the saved background.
-            this.drawClass.restoreBackground();
+            drawPrimitive.restoreBackground();
         }
     }
 };

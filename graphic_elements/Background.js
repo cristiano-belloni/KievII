@@ -1,6 +1,6 @@
-function Background(name, xy, specArgs) {
+function Background(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
@@ -9,16 +9,21 @@ Background.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Background.prototype.constructor = Background;
 
-Background.prototype.getready = function (name, xy, specArgs) {
+Background.prototype.getready = function (args) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+    this.tempReady(args);
 
-    this.width = undefined;
-    this.height = undefined;
+    // Override width and height, they'll be specified by the image.
+    this.width = null;
+    this.height = null;
 
-    this.image = specArgs.image;
+    this.image = args.image;
+
+    /* Get the wrapper primitive functions, unique to label */
+    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
+                                           objParms: args.objParms}]);
 
 };
 
@@ -44,8 +49,6 @@ Background.prototype.refresh = function () {
         throw new Error("Error: drawClass is undefined!");
     }
     else {
-        // Draw yourself!
-        // console.log ("drawClass is drawing itself!");
-        this.drawClass.draw(this.image, this.xOrigin, this.yOrigin);
+        this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
     }
 };

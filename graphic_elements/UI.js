@@ -84,24 +84,24 @@ function UI(domElement) {
     // Notify every element about the event.
     this.elementsNotifyEvent = function (x, y, event) {
         // For every element
-        for (var name in this.elements) {
+        for (var ID in this.elements) {
             // If it is a real element
-            if (this.elements.hasOwnProperty(name)){
+            if (this.elements.hasOwnProperty(ID)){
                 // If the element wants to be bothered with events
-                if (this.elements[name].getClickable()) {
+                if (this.elements[ID].getClickable()) {
                     // Notify the element
-                    ret = this.elements[name][event](x, y);
+                    ret = this.elements[ID][event](x, y);
                     // See if the element changed its value
                     if (ret !== undefined) {
                         if (ret instanceof Array) {
                             // An element could change multiple slots of itself.
                             for (var i = 0; i < ret.length; i+=1) {
-                                this.setValue(name, ret[i].slot, ret[i].value);
+                                this.setValue(ID, ret[i].slot, ret[i].value);
                             }
                         }
                         else {
-                            // console.log("UI: Element ", name, " changed its value on event ", event);
-                            this.setValue(name, ret.slot, ret.value);
+                            // console.log("UI: Element ", ID, " changed its value on event ", event);
+                            this.setValue(ID, ret.slot, ret.value);
                         }
                     }
                 }
@@ -138,22 +138,19 @@ function UI(domElement) {
     // <ELEMENT HANDLING>
 
     // *** Add an UI element **** //
-    this.addElement = function (element, drawClass, elementParameters) {
+    this.addElement = function (element, elementParameters) {
         var slot,
             slots;
 
-        // This encapsulates the drawing class into the GUI element.
-        element.setDrawClass(drawClass);
-
-        if (this.elements[element.name] !== undefined) {
-            throw new Error("Conflicting / Duplicated name in UI: " + element.name + " (names are identifiers and should be unique)");
+        if (this.elements[element.ID] !== undefined) {
+            throw new Error("Conflicting / Duplicated ID in UI: " + element.ID + " (IDs are identifiers and should be unique)");
             return;
         }
 
-        this.elements[element.name] = element;
+        this.elements[element.ID] = element;
 
         // Insert the element in the connection keys.
-        this.connections[element.name] = {};
+        this.connections[element.ID] = {};
 
         // Get the slots available from the element.
         slots = element.getValues();
@@ -161,7 +158,7 @@ function UI(domElement) {
         // Insert all possible elements in the connection matrix TODO ARRAY
         for (slot in slots) {
             if (slots.hasOwnProperty(slot)) {
-                this.connections[element.name][slots[slot]] = [];
+                this.connections[element.ID][slots[slot]] = [];
             }
         }
 
@@ -171,13 +168,13 @@ function UI(domElement) {
         if (elementParameters !== undefined) {
             if (typeof(elementParameters.zIndex) === "number") {
                 // Insert the element's z-index
-                this.elements[element.name].zIndex = elementParameters.zIndex;
+                this.elements[element.ID].zIndex = elementParameters.zIndex;
                 // if it's the first of its kind, initialize the array.
                 if (this.zArray[elementParameters.zIndex] === undefined) {
                     this.zArray[elementParameters.zIndex] = [];
                 }
                 // Update the maximum and minimum z index.
-                this.zArray[elementParameters.zIndex].push(this.elements[element.name]);
+                this.zArray[elementParameters.zIndex].push(this.elements[element.ID]);
                 if ((this.zMin === undefined) || (this.zMin >  elementParameters.zIndex)) {
                     this.zMin = elementParameters.zIndex;
                 }
@@ -189,8 +186,8 @@ function UI(domElement) {
 
         else {
             //We store the "undefined" as the lowest z-indexed layers.
-            this.elements[element.name].zIndex = undefined;
-            this.zArrayUndefined.push(this.elements[element.name]);
+            this.elements[element.ID].zIndex = undefined;
+            this.zArrayUndefined.push(this.elements[element.ID]);
         }
 
     };
@@ -240,15 +237,15 @@ function UI(domElement) {
     // <VALUE HANDLING>
 
     // This method handles one set value event and propagates it in the connections matrix
-    this.setValue = function (elementName, slot, value, history) {
+    this.setValue = function (elementID, slot, value, history) {
         var hist = [],
             receiverHash,
-            recvElementName,
+            recvElementID,
             recvSlot,
             i
             RECURSIONMAX = 1000;
 
-        if (this.elements[elementName] !== undefined) {
+        if (this.elements[elementID] !== undefined) {
 
             // First of all, check history if it is present.
             if (history !== undefined) {
@@ -260,7 +257,7 @@ function UI(domElement) {
                         throw new Error ("Recursion exceeded");
                         return;
                     }
-                    if ((hist[k]["element"] === elementName) && (hist[k]["slot"] === slot)) {
+                    if ((hist[k]["element"] === elementID) && (hist[k]["slot"] === slot)) {
                         // Loop is infinite; bail out!
                         console.log ("Broke recursion!");
                         return;
@@ -269,31 +266,31 @@ function UI(domElement) {
             }
             // Element is present an there's no need to break a loop
             // really set value.
-            this.elements[elementName].setValue(slot, value);
+            this.elements[elementID].setValue(slot, value);
 
             // This element has been already set: update history
-            hist.push({"element" : elementName, "slot" : slot});
+            hist.push({"element" : elementID, "slot" : slot});
         }
 
         else {
-            throw new Error("Element " + elementName + " not present.");
+            throw new Error("Element " + elementID + " not present.");
         }
 
         // Z-Index handling: refresh every >z element, starting with z+1
-        this.refreshZ(this.elements[elementName].zIndex + 1);
+        this.refreshZ(this.elements[elementID].zIndex + 1);
 
         // Check if this element has connections
-        if (this.connections[elementName][slot] !== undefined) {
+        if (this.connections[elementID][slot] !== undefined) {
 
             // For every connection the element has
-            for (i in this.connections[elementName][slot]) {
+            for (i in this.connections[elementID][slot]) {
 
-                if (this.connections[elementName][slot].hasOwnProperty(i)){
+                if (this.connections[elementID][slot].hasOwnProperty(i)){
 
                     // Retrieve the other connection end and the connection parameters.
-                    receiverHash = this.connections[elementName][slot][i];
+                    receiverHash = this.connections[elementID][slot][i];
                  
-                    recvElementName = receiverHash.recvElement;
+                    recvElementID = receiverHash.recvElement;
                     recvSlot = receiverHash.recvSlot;
 
                     //Check the callback here.
@@ -305,7 +302,7 @@ function UI(domElement) {
 
                     // Recursively calls itself, keeping an history in the stack
                     // this.elements[recvHash].setValue(recvSlot, value);
-                    this.setValue(recvElementName, recvSlot, value, hist);
+                    this.setValue(recvElementID, recvSlot, value, hist);
                 }
             }
         }

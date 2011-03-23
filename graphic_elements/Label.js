@@ -1,6 +1,6 @@
-function Label(name, xy, specArgs) {
+function Label(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
@@ -9,11 +9,17 @@ Label.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Label.prototype.constructor = Label;
 
-Label.prototype.getready = function (name, xy, specArgs) {
+Label.prototype.getready = function (args) {
     //Reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+    this.tempReady(args);
+
+    /* Get the wrapper primitive functions, unique to label */
+    if (args.wrapper.initObject !== undefined) {
+        this.drawClass = args.wrapper.initObject ([{objName: "drawText",
+                                                    objParms: args.objParms}]);
+    }
 
     this.values = {"labelvalue" : 0};
 
@@ -21,11 +27,8 @@ Label.prototype.getready = function (name, xy, specArgs) {
     this.drawItself = true;
 
     //By default, a label always refreshes the background. TODO?
-    this.preserveBg = true;
+    this.preserveBg = args.preserveBg || true;
     this.backgroundSavePending = true;
-    
-    this.width = specArgs.wh[0];
-    this.height = specArgs.wh[1];
 
 };
 
@@ -63,14 +66,14 @@ Label.prototype.refresh = function () {
     var text;
 
     // Call the superclass.
-    Element.prototype.refresh.apply(this);
+    Element.prototype.refresh.apply(this, [this.drawClass.drawText]);
 
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {
 
         // Maybe the filtering should be done here?
         text = this.values.labelvalue;
-        this.drawClass.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
+        this.drawClass.drawText.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
 
     }
 
