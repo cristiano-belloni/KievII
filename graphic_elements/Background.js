@@ -1,6 +1,6 @@
-function Background(name, topleft, specArgs) {
+function Background(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -9,11 +9,11 @@ Background.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Background.prototype.constructor = Background;
 
-Background.prototype.getready = function (name, topleft, specArgs) {
+Background.prototype.getready = function (name, xy, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft, specArgs);
+    this.tempReady(name, xy, specArgs);
 
     this.width = undefined;
     this.height = undefined;

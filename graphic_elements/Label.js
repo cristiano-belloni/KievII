@@ -1,6 +1,6 @@
-function Label(name, topleft, specArgs) {
+function Label(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -9,11 +9,11 @@ Label.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Label.prototype.constructor = Label;
 
-Label.prototype.getready = function (name, topleft, specArgs) {
+Label.prototype.getready = function (name, xy, specArgs) {
     //Reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft, specArgs);
+    this.tempReady(name, xy, specArgs);
 
     this.values = {"labelvalue" : 0};
 

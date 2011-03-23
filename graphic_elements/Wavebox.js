@@ -1,6 +1,6 @@
-function Wavebox(name, topleft, specArgs) {
+function Wavebox(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -9,11 +9,11 @@ Wavebox.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Wavebox.prototype.constructor = Wavebox;
 
-Wavebox.prototype.getready = function (name, topleft, specArgs) {
+Wavebox.prototype.getready = function (name, xy, specArgs) {
     //Reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft, specArgs);
+    this.tempReady(name, xy, specArgs);
 
     this.values = {"waveboxposition" : 0,
                    "startsample" : 0,

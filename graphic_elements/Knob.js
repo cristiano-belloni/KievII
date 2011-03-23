@@ -1,6 +1,6 @@
-function Knob(name, topleft, specArgs) {
+function Knob(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -9,7 +9,7 @@ Knob.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Knob.prototype.constructor = Knob;
 
-Knob.prototype.getready = function (name, topleft, specArgs) {
+Knob.prototype.getready = function (name, xy, specArgs) {
 
     if (specArgs === undefined) {
         throw new Error("Error: specArgs is undefined!");
@@ -18,7 +18,7 @@ Knob.prototype.getready = function (name, topleft, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft, specArgs);
+    this.tempReady(name, xy, specArgs);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"knobvalue" : null};

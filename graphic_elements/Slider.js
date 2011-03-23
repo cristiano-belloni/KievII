@@ -1,7 +1,7 @@
 // Ok, this Slider is an horizontal one. Must implement the vertical one as well.
-function Slider(name, topleft, specArgs) {
+function Slider(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -10,7 +10,7 @@ Slider.prototype = new Element();
 //put the correct constructor reference back (not essential)
 Slider.prototype.constructor = Slider;
 
-Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobImg*/) {
+Slider.prototype.getready = function (name, xy, specArgs /*sliderImg, knobImg*/) {
 
     if (specArgs === undefined) {
         throw new Error("Error: specArgs is undefined!");
@@ -19,7 +19,7 @@ Slider.prototype.getready = function (name, topleft, specArgs /*sliderImg, knobI
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft, specArgs);
+    this.tempReady(name, xy, specArgs);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"slidervalue" : 0};

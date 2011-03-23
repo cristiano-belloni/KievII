@@ -1,10 +1,10 @@
-function Element(name, topleft) {
+function Element(name, xy) {
     if (arguments.length) {
-        this.getready(name, topleft);
+        this.getready(name, xy);
     }
 }
 
-Element.prototype.getready = function (name, topleft, specArgs) {
+Element.prototype.getready = function (name, xy, specArgs) {
 
     this.name = name;
 
@@ -12,8 +12,8 @@ Element.prototype.getready = function (name, topleft, specArgs) {
     this.isClickable = specArgs.isClickable || true;
 
     // These are arrays of 2
-    this.xOrigin = topleft[0];
-    this.yOrigin = topleft[1];
+    this.xOrigin = xy[0];
+    this.yOrigin = xy[1];
 
     // This is the bounding box. Element has no dimension.
     this.width = 0;

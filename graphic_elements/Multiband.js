@@ -1,6 +1,6 @@
-function Multiband(name, topleft, specArgs) {
+function Multiband(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -10,7 +10,7 @@ Multiband.prototype = new Element();
 Multiband.prototype.constructor = Multiband;
 
 
-Multiband.prototype.getready = function (name, topleft, specArgs) {
+Multiband.prototype.getready = function (name, xy, specArgs) {
 
     if (specArgs === undefined) {
         throw new Error("Error: specArgs is undefined!");
@@ -22,7 +22,7 @@ Multiband.prototype.getready = function (name, topleft, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft);
+    this.tempReady(name, xy);
     
     this.nBands = specArgs.nBands;
     this.sideBands = new Array (this.nBands);

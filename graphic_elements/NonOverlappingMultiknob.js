@@ -1,9 +1,9 @@
 // This kind of knob can be easily emulated with callbacks and so on. Not sure
 // if I really need to mantain it.
 
-function NonOverlappingMultiknob(name, topleft, specArgs) {
+function NonOverlappingMultiknob(name, xy, specArgs) {
     if (arguments.length) {
-        this.getready(name, topleft, specArgs);
+        this.getready(name, xy, specArgs);
     }
 }
 
@@ -13,11 +13,11 @@ NonOverlappingMultiknob.prototype = new Element();
 NonOverlappingMultiknob.prototype.constructor = NonOverlappingMultiknob;
 
 
-NonOverlappingMultiknob.prototype.getready = function (name, topleft, specArgs) {
+NonOverlappingMultiknob.prototype.getready = function (name, xy, specArgs) {
     //reference the getready method from the parent class
     this.tempReady = Element.prototype.getready;
     //and run it as if it were part of this object
-    this.tempReady(name, topleft, specArgs);
+    this.tempReady(name, xy, specArgs);
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.KnobArray = [];
