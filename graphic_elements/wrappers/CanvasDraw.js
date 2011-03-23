@@ -1,5 +1,3 @@
-//TODO do this with prototypes.
-
 function CanvasDrawImage (canvas) {
 
     this.canvasC = canvas
@@ -21,80 +19,84 @@ function CanvasDrawImage (canvas) {
     }
 }
 
-function CanvasDrawText (canvas) {
-
-    this.fillStyle = undefined;
-    this.textStyle = undefined;
+function CanvasDrawText (canvas, textParms) {
 
     this.canvasC = canvas;
-    this.font = undefined;
 
-    this.setFont = function (font) {
-        this.font = font;
-    }
+    var HTML5TextParameters = ['fillStyle', 'font', 'textAlign', 'textBaseline'];
+    var canvasPropStorage = {};
 
-    this.setFillStyle = function (fs) {
-        this.fillStyle = fs;
-        //console.log ("setFillStyle: fillStyle set to ", fs);
-    }
-
-    this.setTextStyle = function (ts) {
-        this.textStyle = ts;
-        //console.log ("setTextStyle: textStyle set to ", ts);
-    }
+    //{font: "28px embedded_font", textColor: "#000"}
+    this.font = textParms.font || null;
+    this.textColor = textParms.textColor || null;
+    this.textAlignment = textParms.textAlignment || null;
+    this.textBaseline = textParms.textBaseline || null;
     
     this.draw = function (text, x, y, width, length) {
 
-            //Save the baseline
-            var tempBaseline = this.canvasC.textBaseline;
-            this.canvasC.textBaseline = "top";
+            //Save the parameters.
+            canvasPropStorage.tempBaseline = this.canvasC.textBaseline;
+            canvasPropStorage.tempAlign = this.canvasC.textAlign;
+            canvasPropStorage.tempFont = this.canvasC.font;
+            canvasPropStorage.tempfillStyle = this.canvasC.fillStyle;
 
-            //Save the alignment
-            var tempAlign = this.canvasC.textAlign;
-            this.canvasC.textAlign = "left";
+            if (this.textBaseline !== null) {
+                this.canvasC.textBaseline = this.textBaseline;
+            }
 
-            //Save the font
-            var tempFont = this.canvasC.font;
-            if (this.font !== undefined) {
+            if (this.textAlignment!== null) {
+                this.canvasC.textAlign = this.textAlignment;
+            }
+
+            if (this.font !== null) {
                 this.canvasC.font = this.font;
             }
 
-            //Save the bg color.
-            var tempfillStyle = this.canvasC.fillStyle;
-
-            /*if (this.fillStyle != undefined) {
-                this.canvasC.fillStyle = this.fillStyle;
-            }*/
-            //console.log ("fillStyle set to ", this.fillStyle);
-            
-            //Fill the label
-            //this.canvasC.fillRect (x, y,  width, length);
-
-            if (this.textStyle != undefined) {
-                this.canvasC.fillStyle = this.textStyle;
+            if (this.textColor != null) {
+                this.canvasC.fillStyle = this.textColor;
             }
             //console.log ("textStyle set to ", this.textStyle);
 
             //Write the label
             this.canvasC.fillText(text, x, y);
             
-            //Restore the baseline
-            this.canvasC.textBaseline = tempBaseline;
-
-            //Restore the alignment
-            this.canvasC.textAlign = tempAlign;
-
-            // Restore the font
-            this.canvasC.font = tempFont;
-
-            // Restore the font
-            this.canvasC.fillStyle = tempfillStyle;
+            this.canvasC.textBaseline = canvasPropStorage.tempBaseline;
+            this.canvasC.textAlign = canvasPropStorage.tempAlign;
+            this.canvasC.font = canvasPropStorage.tempFont;
+            this.canvasC.fillStyle = canvasPropStorage.tempfillStyle;
 
         }
 
-        // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
         this.saveBackground = function (left, top, width, height) {
-            save2d (this, left, top, width, height);
+
+            var xcoord,
+                ycoord,
+                wd,
+                hg;
+
+                xcoord = left;
+                ycoord = top;
+                wd = width;
+                hg = height;
+
+            /* TODO check all the out of bounds
+             * and all the possibilities:
+             * https://developer.mozilla.org/en/drawing_text_using_a_canvas */
+            if (this.textBaseline === 'bottom') {
+                ycoord = top - height;
+            }
+            if (this.textBaseline === 'middle') {
+                ycoord = top - height / 2;
+            }
+            if (this.textAlignment === 'end') {
+                xcoord = xcoord - wd;
+                if (xcoord < 0) {
+                    xcoord = 0;
+                }
+            }
+
+            save2d (this, xcoord, ycoord, wd, hg);
+
         }
 
         this.restoreBackground = function () {
@@ -136,6 +138,7 @@ function CanvasDrawRect (canvas) {
         this.stroke = stroke;
     }
 
+    /* TODO Maybe opacity? */
     this.draw = function (x, y, width, length, shade) {
 
         //Trasform the base color in RGB
