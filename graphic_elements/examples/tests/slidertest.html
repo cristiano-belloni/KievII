@@ -8,6 +8,7 @@
     <script type="text/javascript" src="../../UI.js"></script>
     <script type="text/javascript" src="../../Slider.js"></script>
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../wrappers/Wrappers.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="800" height="800"></canvas>
@@ -15,15 +16,16 @@
 
         // This should fix "console not defined" problem.
         if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
-        var ui;
 
-        /* INIT */
+        var hSliderArgs,
+            vSliderArgs;
 
         var plugin_canvas = document.getElementById("plugin");
         var plugin_context = plugin_canvas.getContext("2d");
-
-        ui = new UI (plugin_canvas);
-
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_context}
+                                               );
+ 
         var imageLoader_h = new loadImageArray ({ID : "horiz_image_loader",
                                                imageNames: ["../images/h_slider_slit.png",
                                                             "../images/h_slider_handle.png"],
@@ -37,12 +39,10 @@
                                                onComplete: imagesCompleted,
                                                onSingle: imageSingle,
                                                onError: imageError});
-        var hSliderArgs
-        var vSliderArgs;
 
         function imageSingle (loaderStatus) {
-            var st = loaderStatus.status;
-            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
+                var st = loaderStatus.status;
+                console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
         }
 
         function imageError (loaderStatus) {
@@ -53,10 +53,26 @@
         function imagesCompleted (loaderStatus) {
 
             if (loaderStatus.status.id === "horiz_image_loader") {
-                hSliderArgs = {sliderImg: loaderStatus.imagesArray[0], knobImg: loaderStatus.imagesArray[1], type:"horizontal" };
+                hSliderArgs = {
+                    ID: "hTestSlider",
+                    left: 100,
+                    top: 219,
+                    sliderImg: loaderStatus.imagesArray[0],
+                    knobImg: loaderStatus.imagesArray[1],
+                    type: "horizontal",
+                    isClickable: true,
+                    wrapper: CWrapper };
             }
             else if (loaderStatus.status.id === "vert_image_loader") {
-                vSliderArgs = {sliderImg: loaderStatus.imagesArray[0], knobImg: loaderStatus.imagesArray[1], type:"vertical"};
+                vSliderArgs = {
+                    ID: "vTestSlider",
+                    left: 650,
+                    top: 70,
+                    sliderImg: loaderStatus.imagesArray[0],
+                    knobImg: loaderStatus.imagesArray[1],
+                    type:"vertical",
+                    isClickable: true,
+                    wrapper: CWrapper };
             }
 
             if ((hSliderArgs !== undefined) && (vSliderArgs !== undefined)) {
@@ -65,15 +81,18 @@
         }
 
         function keepON () {
+
+            var ui;
             
+            /* INIT */
+            ui = new UI (plugin_canvas);
+
             hSliderArgs.onValueSet = function () {
                 var that = this;
                 return function (slot, value) {
                     console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
                 };
             }();
-
-            var hSlider = new Slider("hTestSlider", [100, 219], hSliderArgs);
 
             vSliderArgs.onValueSet = function () {
                 var that = this;
@@ -82,18 +101,17 @@
                 };
             }();
 
-            var vSlider = new Slider("vTestSlider", [650, 70], vSliderArgs);            
+            var hSlider = new Slider(hSliderArgs);
+            var vSlider = new Slider(vSliderArgs);
 
-            // We need two separate image displayers that save two separate
-            // pieces of background data.
-            hSlider.setClickable(true);
-            vSlider.setClickable(true);
-            var hImageDisplayer = new CanvasDrawImage (plugin_context);
-            var vImageDisplayer = new CanvasDrawImage (plugin_context);
-            ui.addElement(hSlider, hImageDisplayer);
-            ui.addElement(vSlider, vImageDisplayer);
+            ui.addElement(hSlider);
+            ui.addElement(vSlider);
+            
             hSlider.setValue("slidervalue", 0.9);
-            vSlider.setValue("slidervalue", 0.5);           
+            vSlider.setValue("slidervalue", 0.5);
+
+            // this fucks up saveBackground _TODO_
+            ui.refresh();
 
         }
     </script>

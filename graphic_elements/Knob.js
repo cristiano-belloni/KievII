@@ -1,44 +1,42 @@
-function Knob(name, xy, specArgs) {
+function Knob(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
-//inherit from the Element prototype
-Knob.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Knob.prototype.constructor = Knob;
+extend(Knob, Element);
 
-Knob.prototype.getready = function (name, xy, specArgs) {
+Knob.prototype.getready = function (args) {
 
-    if (specArgs === undefined) {
+    if (args === undefined) {
         throw new Error("Error: specArgs is undefined!");
     }
     
-    //reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+    // Call the constructor from the superclass.
+    Knob.superclass.getready.call(this, args);
+    
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"knobvalue" : null};
 
     //By default, a knob always draws itself when value is set.
-    this.drawItself = true;
-
-    this.sensivity = specArgs.sensivity || 2000;
-
-    //Images & width and height.
-
-    this.imagesArray = specArgs.imagesArray;
+    this.drawItself = args.drawItself || true;
+    this.sensivity = args.sensivity || 2000;
+    this.imagesArray = args.imagesArray || null;
     
     if (this.imagesArray.length < 1) {
         throw new Error("Invalid images array length, " + this.imagesArray.length);
     }
 
+    /* Get the wrapper primitive functions, unique to label */
+    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
+                                           objParms: args.objParms}]);
+
+
     this.width = 0;
     this.height = 0;
 
+    // Calculate maximum width and height.
     for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
         if (this.imagesArray[i].width > this.width) {
             this.width = this.imagesArray[i].width;
@@ -49,7 +47,7 @@ Knob.prototype.getready = function (name, xy, specArgs) {
     }
 
     // Background saving is optional.
-    if (specArgs.preserveBg !== undefined) {
+    if ((args.preserveBg !== undefined) && (args.preserveBg === true)) {
         this.preserveBg = true;
         // As soon as we can, we want to save our background.
         this.backgroundSavePending = true;
@@ -163,21 +161,21 @@ Knob.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    Element.prototype.setValue.call(this, slot, value);
+    Knob.superclass.setValue.call(this, slot, value);
 
 };
         
 Knob.prototype.refresh = function () {
 
     // Call the superclass.
-    Element.prototype.refresh.apply(this);
+    Knob.superclass.refresh.call(this, this.drawClass.drawImage);
 
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {
         /*jslint nomen: false*/
         var imageNum = this._getImageNum();
         /*jslint nomen: true*/
-        this.drawClass.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
         
     }
 

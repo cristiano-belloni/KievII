@@ -4,16 +4,12 @@ function Label(args) {
     }
 }
 
-//inherit from the Element prototype
-Label.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Label.prototype.constructor = Label;
+extend(Label, Element);
 
 Label.prototype.getready = function (args) {
-    //Reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(args);
+
+    // Call the constructor from the superclass.
+    Label.superclass.getready.call(this, args);
 
     /* Get the wrapper primitive functions, unique to label */
     if (args.wrapper.initObject !== undefined) {
@@ -24,9 +20,9 @@ Label.prototype.getready = function (args) {
     this.values = {"labelvalue" : 0};
 
     //By default, a label always draws itself when value is set.
-    this.drawItself = true;
+    this.drawItself = args.drawItself || true;
 
-    //By default, a label always refreshes the background. TODO?
+    //By default, a label always refreshes the background.
     this.preserveBg = args.preserveBg || true;
     this.backgroundSavePending = true;
 
@@ -44,21 +40,9 @@ Label.prototype.isInROI = function (x, y) {
     return false;
 };
 
-// Text filter automatically parses and translates the value.
-// This one does nothing. TODO this should be overridden
-// and definitely NOT here.
-Label.prototype.textFilter = function (value) {
-    return value;
-};
-
 // Setters
 Label.prototype.setValue = function (slot, value) {
-
-    if (this.textFilter !== undefined) {
-        var temp_value = this.textFilter(value);
-    }
-
-    Element.prototype.setValue.call(this, slot, value);
+    Label.superclass.setValue.call(this, slot, value);
 };
  
 Label.prototype.refresh = function () {
@@ -66,7 +50,7 @@ Label.prototype.refresh = function () {
     var text;
 
     // Call the superclass.
-    Element.prototype.refresh.apply(this, [this.drawClass.drawText]);
+    Label.superclass.refresh.call(this, this.drawClass.drawText);
 
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {

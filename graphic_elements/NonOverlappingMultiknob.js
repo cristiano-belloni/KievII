@@ -1,23 +1,20 @@
 // This kind of knob can be easily emulated with callbacks and so on. Not sure
 // if I really need to mantain it.
 
-function NonOverlappingMultiknob(name, xy, specArgs) {
+function NonOverlappingMultiknob(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
-//inherit from the Element prototype
-NonOverlappingMultiknob.prototype = new Element();
-//put the correct constructor reference back (not essential)
-NonOverlappingMultiknob.prototype.constructor = NonOverlappingMultiknob;
+extend(NonOverlappingMultiknob, Element);
 
 
-NonOverlappingMultiknob.prototype.getready = function (name, xy, specArgs) {
-    //reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+NonOverlappingMultiknob.prototype.getready = function (args) {
+    
+     // Call the constructor from the superclass.
+    NonOverlappingMultiknob.superclass.getready.call(this, args);
+
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.KnobArray = [];
@@ -32,19 +29,19 @@ NonOverlappingMultiknob.prototype.getready = function (name, xy, specArgs) {
     //Coordinates is an array of arrays. We infer the number of knobs from its
     //length. No alignment functions here, they must be provided outside of this
     //class.
-    nKnobs = specArgs.coordinates.length;
+    nKnobs = args.coordinates.length;
 
     // Set the status progress. TODO this can go.
-    this.objectsTotal = nKnobs * specArgs.images.length;
+    this.objectsTotal = nKnobs * args.images.length;
 
     // Fill the knob array. It contains, you know, knobs :)
     for (i = 0; i < nKnobs; i += 1) {
 
         var knobSpecArgs = {
-            images: specArgs.images
+            images: args.images
         };
         // The knobs are named 1,2,3...n
-        tempKnob = new Knob(i, specArgs.coordinates[i], knobSpecArgs);
+        tempKnob = new Knob(i, args.coordinates[i], knobSpecArgs);
 
         //Set them undrawable, as we will explicitly refresh them.
         tempKnob.drawItself = false;

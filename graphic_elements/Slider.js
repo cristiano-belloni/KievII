@@ -1,25 +1,21 @@
 // Ok, this Slider is an horizontal one. Must implement the vertical one as well.
-function Slider(name, xy, specArgs) {
+function Slider(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
-//inherit from the Element prototype
-Slider.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Slider.prototype.constructor = Slider;
+extend(Slider, Element);
 
-Slider.prototype.getready = function (name, xy, specArgs /*sliderImg, knobImg*/) {
+Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
 
-    if (specArgs === undefined) {
+    if (args === undefined) {
         throw new Error("Error: specArgs is undefined!");
     }
 
-    //reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+    // Call the constructor from the superclass.
+    Slider.superclass.getready.call(this, args);
+
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
     this.values = {"slidervalue" : 0};
@@ -27,12 +23,16 @@ Slider.prototype.getready = function (name, xy, specArgs /*sliderImg, knobImg*/)
     //By default, a Slider always draws itself when value is set.
     this.drawItself = true;
 
+    /* Get the wrapper primitive functions, unique to label */
+    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
+                                           objParms: args.objParms}]);
+
     this.width = 0;
     this.height = 0;
 
-    this.sliderImage = specArgs.sliderImg;
-    this.knobImage = specArgs.knobImg;
-    this.type = specArgs.type;
+    this.sliderImage = args.sliderImg;
+    this.knobImage = args.knobImg;
+    this.type = args.type;
 
     this.calculateDimensions();
 
@@ -175,7 +175,7 @@ Slider.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    Element.prototype.setValue.call(this, slot, value);
+    Slider.superclass.setValue.call(this, slot, value);
 
 };
 
@@ -193,11 +193,11 @@ Slider.prototype.refresh = function () {
         if (this.backgroundSavePending === true) {
             switch(this.type) {
                 case "horizontal":
-                    this.drawClass.saveBackground (this.xOrigin - this.additionalEndSpace, this.yOrigin, this.totalStride, this.height);
+                    this.drawClass.drawImage.saveBackground (this.xOrigin - this.additionalEndSpace, this.yOrigin, this.totalStride, this.height);
                 break;
 
                 case "vertical":
-                    this.drawClass.saveBackground (this.xOrigin, this.yOrigin - this.additionalEndSpace, this.width, this.totalStride);
+                    this.drawClass.drawImage.saveBackground (this.xOrigin, this.yOrigin - this.additionalEndSpace, this.width, this.totalStride);
                 break;
 
                 default:
@@ -209,19 +209,19 @@ Slider.prototype.refresh = function () {
 
         else {
             // We want drawClass to refresh the saved background.
-            this.drawClass.restoreBackground();
+            this.drawClass.drawImage.restoreBackground();
         }
 
-        this.drawClass.draw(this.sliderImage, this.xOrigin, this.yOrigin);
+        this.drawClass.drawImage.draw(this.sliderImage, this.xOrigin, this.yOrigin);
         /*jslint nomen: false*/
 
         switch(this.type) {
             case "horizontal":
-                this.drawClass.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
+                this.drawClass.drawImage.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
             break;
 
             case "vertical":
-                this.drawClass.draw(this.knobImage, this.xOrigin, this._getKnobPosition());
+                this.drawClass.drawImage.draw(this.knobImage, this.xOrigin, this._getKnobPosition());
             break;
 
             default:

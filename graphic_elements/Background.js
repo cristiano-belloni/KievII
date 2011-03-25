@@ -4,16 +4,16 @@ function Background(args) {
     }
 }
 
-//inherit from the Element prototype
-Background.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Background.prototype.constructor = Background;
+extend(Background, Element);
 
 Background.prototype.getready = function (args) {
-    //reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(args);
+    
+    if (args === undefined) {
+        throw new Error("Error: args is undefined!");
+    }
+
+    // Call the constructor from the superclass.
+    Background.superclass.getready.call(this, args);
 
     // Override width and height, they'll be specified by the image.
     this.width = null;
@@ -46,9 +46,6 @@ Background.prototype.isInROI = function (x, y) {
 
 Background.prototype.refresh = function () {
     if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
-    }
-    else {
         this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
     }
 };

@@ -1,19 +1,15 @@
-function Wavebox(name, xy, specArgs) {
+function Wavebox(args) {
     if (arguments.length) {
         this.getready(name, xy, specArgs);
     }
 }
 
-//inherit from the Element prototype
-Wavebox.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Wavebox.prototype.constructor = Wavebox;
+extend(Wavebox, Element);
 
-Wavebox.prototype.getready = function (name, xy, specArgs) {
-    //Reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+Wavebox.prototype.getready = function (args) {
+
+    // Call the constructor from the superclass.
+    Wavebox.superclass.getready.call(this, args);
 
     this.values = {"waveboxposition" : 0,
                    "startsample" : 0,
@@ -22,15 +18,18 @@ Wavebox.prototype.getready = function (name, xy, specArgs) {
                };
 
     //By default, a Wavebox always draws itself when a value is set.
-    this.drawItself = true;
+    this.drawItself = args.drawItself || true;
 
-    this.width = specArgs.wh[0];
-    this.height = specArgs.wh[1];
+    this.width = args.width;
+    this.height = args.height;
 
     //By default, a wavebox always refreshes the background.
-    this.preserveBg = true;
-    // As soon as we can, we want to save our background.
-    this.backgroundSavePending = true;
+    this.preserveBg = args.preserveBg || true;
+
+    if (this.preserveBg === true) {
+        // As soon as we can, we want to save our background.
+        this.backgroundSavePending = true;
+    }
 
 };
 
@@ -98,7 +97,7 @@ Wavebox.prototype.setValue = function (slot, value) {
 
 Wavebox.prototype.refresh = function () {
     // Call the superclass.
-    Element.prototype.refresh.apply(this);
+    Wavebox.superclass.refresh.apply(this);
 
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {

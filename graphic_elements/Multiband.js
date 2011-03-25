@@ -1,37 +1,32 @@
-function Multiband(name, xy, specArgs) {
+function Multiband(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
-//inherit from the Element prototype
-Multiband.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Multiband.prototype.constructor = Multiband;
+extend(Multiband, Element);
 
 
-Multiband.prototype.getready = function (name, xy, specArgs) {
+Multiband.prototype.getready = function (args) {
 
-    if (specArgs === undefined) {
+    if (args === undefined) {
         throw new Error("Error: specArgs is undefined!");
     }
 
     var valueName,
         i;
 
-    //reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(name, xy);
+     // Call the constructor from the superclass.
+    Multiband.superclass.getready.call(this, args);
     
-    this.nBands = specArgs.nBands;
+    this.nBands = args.nBands;
     this.sideBands = new Array (this.nBands);
 
     // The values. Every band has its starting point, height, width, hight and color.
 
     this.values = {};
 
-    for (i = 0; i < specArgs.nBands; i += 1) {
+    for (i = 0; i < args.nBands; i += 1) {
         valueName = i + "sp";
         this.values[valueName] = 0;
         valueName = i + "ep";
@@ -44,16 +39,18 @@ Multiband.prototype.getready = function (name, xy, specArgs) {
         this.values[valueName] = 0;
     }
 
-    this.values.colorRange = specArgs.colorRange;
+    this.values.colorRange = args.colorRange;
+
+    /* Get the wrapper primitive functions, unique to label */
+    this.drawClass = args.wrapper.initObject ([{objName: "drawRect",
+                                           objParms: args.objParms}]);
 
     // The multiband display has a fixed width and height.
-    this.width = specArgs.wh[0];
-    this.height = specArgs.wh[1];
-
-    this.drawClass = undefined;
+    this.width = args.width;
+    this.height = args.height;
 
     //By default, a Multiband always draws itself when value is set.
-    this.drawItself = true;
+    this.drawItself = args.drawItself || true;
 
 };
 
@@ -297,13 +294,6 @@ Multiband.prototype.setValue = function (slot, value) {
         return;
     }
 
-    //Must refresh / clear here. TODO we MUST insert this behaviour in the
-    //canvasDraw class and call the superclass.
-    if (this.drawItself === true) {
-        // Refreshes the background
-        this.refresh(true);
-    }
-
     this.values[slot] = value;
 
     if (this.drawItself === true) {
@@ -314,7 +304,7 @@ Multiband.prototype.setValue = function (slot, value) {
 };
 
 
-Multiband.prototype.refresh = function (clear) {
+Multiband.prototype.refresh = function () {
 
     var height,
         range,
@@ -323,7 +313,7 @@ Multiband.prototype.refresh = function (clear) {
         i;
 
     // Call the superclass.
-    Element.prototype.refresh.apply(this);
+    Multiband.superclass.refresh.apply(this, [this.drawClass.drawRect]);
     
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {
@@ -337,11 +327,11 @@ Multiband.prototype.refresh = function (clear) {
             range = this.values.colorRange;
             colValue = this.values[i + "color"];
             color_shade = (colValue - 0.5) * range;
-            this.drawClass.draw(this.sideBands[i].startXPoint,
-                                this.yOrigin + height,
-                                this.sideBands[i].endXPoint - this.sideBands[i].startXPoint,
-                                this.height - height,
-                                color_shade);
+            this.drawClass.drawRect.draw(this.sideBands[i].startXPoint,
+                                         this.yOrigin + height,
+                                         this.sideBands[i].endXPoint - this.sideBands[i].startXPoint,
+                                         this.height - height,
+                                         color_shade);
         }
     }
 };

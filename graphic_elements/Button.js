@@ -1,24 +1,19 @@
-function Button(name, xy, specArgs) {
+function Button(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
-//inherit from the Element prototype
-Button.prototype = new Element();
-//put the correct constructor reference back (not essential)
-Button.prototype.constructor = Button;
+extend(Button, Element);
 
-Button.prototype.getready = function (name, xy, specArgs) {
+Button.prototype.getready = function (args) {
 
-    if (specArgs === undefined) {
-        throw new Error("Error: specArgs is undefined!");
+    if (args === undefined) {
+        throw new Error("Error: args is undefined!");
     }
 
-    //reference the getready method from the parent class
-    this.tempReady = Element.prototype.getready;
-    //and run it as if it were part of this object
-    this.tempReady(name, xy, specArgs);
+    // Call the constructor from the superclass.
+    Button.superclass.getready.call(this, args);
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
@@ -27,10 +22,19 @@ Button.prototype.getready = function (name, xy, specArgs) {
     this.triggered = false;
 
     //By default, a Button always draws itself when value is set.
-    this.drawItself = true;
+    this.drawItself = args.drawItself || true;
 
-    this.imagesArray = specArgs.imagesArray;
+    this.imagesArray = args.imagesArray;
+
+    if (this.imagesArray.length < 1) {
+        throw new Error("Invalid images array length, " + this.imagesArray.length);
+    }
+
     this.nButtons = this.imagesArray.length;
+
+    /* Get the wrapper primitive functions, unique to label */
+    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
+                                           objParms: args.objParms}]);
 
     // Calculate width and height
     this.width = 0;
@@ -102,22 +106,20 @@ Button.prototype.setValue = function (slot, value) {
     var temp_value = value;
 
     if ((temp_value < 0) || (temp_value > this.nButtons)) {
-        //Just do nothing.
-        //console.log("Button.prototype.setValue: VALUE INCORRECT!!");
         return;
     }
 
     // Now, we call the superclass
-    Element.prototype.setValue.call(this, slot, value);
+    Button.superclass.setValue.call(this, slot, value);
 
 };
 
 Button.prototype.refresh = function () {
     // Call the superclass.
-    Element.prototype.refresh.apply(this);
+    Button.superclass.refresh.apply(this, [this.drawClass.drawImage]);
 
     // Draw, if our draw class is already set.
     if (this.drawClass !== undefined) {
-        this.drawClass.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
+        this.drawClass.drawImage.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
     }
 };

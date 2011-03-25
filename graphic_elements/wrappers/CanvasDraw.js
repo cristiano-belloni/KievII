@@ -12,11 +12,15 @@ CANVAS_WRAPPER = {
             }
 
         this.saveBackground = function (left, top, width, height) {
-            save2d (this, left, top, width, height);
+
+
+            this.backgroundPixels = this.canvasC.getImageData(left, top, width, height);
+            this.bgX = left;
+            this.bgY = top;
         }
 
         this.restoreBackground = function () {
-            restore2d (this);
+            this.canvasC.putImageData(this.backgroundPixels, this.bgX, this.bgY);
         }
     },
 
@@ -28,8 +32,8 @@ CANVAS_WRAPPER = {
         var canvasPropStorage = {};
 
         //{font: "28px embedded_font", textColor: "#000"}
-        this.font = textParms.font || null;
-        this.textColor = textParms.textColor || null;
+        this.font = textParms.font || "verdana";        //Default
+        this.textColor = textParms.textColor || null;   // Use the canvas' value
         this.textAlignment = textParms.textAlignment || null;
         this.textBaseline = textParms.textBaseline || null;
 
@@ -180,18 +184,13 @@ CANVAS_WRAPPER = {
             this.reallyDraw (x,y, width, length, realColor);
         }
 
-        this.clear = function (x, y, width, length) {
-            //Clears the background.
-            this.reallyDraw (x, y, width, length, this.clearStyle);
-        }
-
-        this.reallyDraw = function (x, y, width, length, color) {
+        this.draw = function (x, y, width, length, color) {
 
             //Save fillStyle.
             var tempfillStyle = this.canvasC.fillStyle;
 
+            // draw
             this.canvasC.fillStyle = color;
-
             this.canvasC.fillRect (x, y,  width, length);
 
             // Restore fillStyle
