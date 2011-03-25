@@ -3,11 +3,13 @@
   <head>
     <title>Z-Index Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../utilities/utilities.js"></script>
     <script type="text/javascript" src="../../../Element.js"></script>
     <script type="text/javascript" src="../../../UI.js"></script>
     <script type="text/javascript" src="../../../Button.js"></script>
     <script type="text/javascript" src="../../../Knob.js"></script>
     <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="300" height="300"></canvas>
@@ -24,44 +26,11 @@
 
         ui = new UI (plugin_canvas);
 
-        var imageDisplayer1 = new CanvasDrawImage (plugin_context);
-        var imageDisplayer2 = new CanvasDrawImage (plugin_context);
-        var imageDisplayerKnob = new CanvasDrawImage (plugin_context);
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_context}
+                                               );
 
-        /* BUTTON 1 */
-
-        //var button1_img_array = ["button0_1.png", "button0_2.png"];
-
-        //Button
-        var button1Args = {
-            images : ["button1_1.png", "button1_2.png"]
-        };
-        button1Args.onValueSet = function () {
-            var that = this;
-            return function (slot, value) {
-                console.log ("onValueSet Button 1 callback: slot is ", slot, " and value is ", value, " while that is ", that);
-            };
-        }();
-        var button1 = new Button("test_button_1", [0, 0], button1Args);
-
-        /* BUTTON 2 */
-
-        //var button1_img_array = ["button0_1.png", "button0_2.png"];
-
-        //Button
-        var button2Args = {
-            images : ["button2_1.png", "button2_2.png"]
-        };
-        button2Args.onValueSet = function () {
-            var that = this;
-            return function (slot, value) {
-                console.log ("onValueSet Button 2 callback: slot is ", slot, " and value is ", value, " while that is ", that);
-            };
-        }();
-        var button2 = new Button("test_button_2", [50, 50], button2Args);
-
-
-        // KNOB
+        // LOAD IMAGES
 
         var MAX_KNOB_IMAGE_NUM = 60,
             knobImgLocation = "../../../../demos/voron/images/BigKnob/",
@@ -78,24 +47,79 @@
                 knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
             }
         }());
+                                               
+         var mulArgs = { multipleImages:
+                            [
+                                {ID: "ztest_button_image_loader", imageNames: ["button1_1.png", "button1_2.png"]},
+                                {ID : "ztest_knob_image_loader", imageNames: knobImgArray}
+                            ],
+                         onComplete: afterLoading
+                     }
+
+         var mImageLoader = new loadMultipleImages (mulArgs);
+                                           
+    function afterLoading (loaders) {
+
+        /* BUTTON 1 */
+
+        //Button
+        var button1Args = {
+            ID: "test_button_1",
+            top: 0,
+            left: 0,
+            wrapper: CWrapper,
+            imagesArray : loaders["ztest_button_image_loader"].images
+        };
+        button1Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 1 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }();
+        var button1 = new Button(button1Args);
+
+        /* BUTTON 2 */
+
+        //var button1_img_array = ["button0_1.png", "button0_2.png"];
+
+        //Button
+        var button2Args = {
+            ID: "test_button_2",
+            top: 50,
+            left: 50,
+            wrapper: CWrapper,
+            imagesArray : loaders["ztest_button_image_loader"].images
+        };
+        button2Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 2 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            };
+        }();
+        var button2 = new Button(button2Args);
 
         knobArgs = {
+            ID: "knob",
+            top: 30,
+            left: 30,
+            wrapper: CWrapper,
             // onValueSet = undefined,
-            images : knobImgArray,
+            imagesArray : loaders["ztest_knob_image_loader"].images,
             sensivity : 5000,
-            onComplete: this.loadCallback,
             preserveBg: true
         };
         //onValueSet = undefined
-        var knob = new Knob("knob", [30, 30], knobArgs);
+        var knob = new Knob(knobArgs);
 
         /* ADD UI */
-        ui.addElement(button1, imageDisplayer1, {zIndex: 0});
-        ui.addElement(button2, imageDisplayer2, {zIndex: 5});
-        ui.addElement(knob, imageDisplayerKnob , {zIndex: 10});
+        ui.addElement(button1,{zIndex: 0});
+        ui.addElement(button2,{zIndex: 5});
+        ui.addElement(knob, {zIndex: 10});
         button1.setValue("buttonvalue", 0);
         button2.setValue("buttonvalue", 0);
         knob.setValue("knobvalue", 0);
+
+        }
 
 
     </script>
