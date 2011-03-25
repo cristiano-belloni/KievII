@@ -31,7 +31,6 @@ CANVAS_WRAPPER = {
         var HTML5TextParameters = ['fillStyle', 'font', 'textAlign', 'textBaseline'];
         var canvasPropStorage = {};
 
-        //{font: "28px embedded_font", textColor: "#000"}
         this.font = textParms.font || "verdana";        //Default
         this.textColor = textParms.textColor || null;   // Use the canvas' value
         this.textAlignment = textParms.textAlignment || null;
@@ -217,19 +216,19 @@ CANVAS_WRAPPER = {
         }
     },
 
-    drawPath: function (canvas, color, dimension) {
+    drawPath: function (pathParms) {
 
-        this.canvasC = canvas;
+        this.canvasC = pathParms.canvas;
         this.inited = false;
-        this.fillStyle = color;
+        this.pathColor = pathParms.pathColor || null;
         // To be implemented
-        this.dimension = dimension;
+        this.pathDimension = pathParms.pathDimension;
 
         this.draw = function (x, y) {
 
             //Save fillStyle.
             var tempfillStyle = this.canvasC.fillStyle;
-            this.canvasC.fillStyle = this.fillStyle;
+            this.canvasC.fillStyle = this.pathColor;
 
             if (this.inited === false) {
                 this.canvasC.beginPath();

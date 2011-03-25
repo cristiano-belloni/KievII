@@ -12,6 +12,7 @@ and open the template in the editor.
     <script type="text/javascript" src="../../Wavebox.js"></script>
     <script type="text/javascript" src="../../Background.js"></script>
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../wrappers/Wrappers.js"></script>
     <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
   </head>
   <body>
@@ -31,17 +32,28 @@ and open the template in the editor.
         var plugin_canvas = document.getElementById("plugin");
         var plugin_context = plugin_canvas.getContext("2d");
 
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_context}
+                                               );
+
         ui = new UI (plugin_canvas);
 
         //Wave box.
         var waveboxArgs = {
-            wh: [800,600]
+            ID: "test_wavebox",
+            top: 0,
+            left: 0,
+            width: 800,
+            height:600,
+            wrapper: CWrapper,
+            objParms: {
+                    pathColor: '#000',
+                    pathDimension: 3
+                }
         };
 
-        var waveBox = new Wavebox("test_wavebox", [0, 0], waveboxArgs);
-        var pointDrawer = new CanvasDrawPath (plugin_context, '#000', 3);
-        
-        ui.addElement(waveBox, pointDrawer);
+        var waveBox = new Wavebox(waveboxArgs);
+        ui.addElement(waveBox);
 
         /* Load something */
         var a1 = document.getElementById('a1'),

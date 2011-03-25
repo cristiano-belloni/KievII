@@ -8,6 +8,7 @@
     <script type="text/javascript" src="../../UI.js"></script>
     <script type="text/javascript" src="../../Knob.js"></script>
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../wrappers/Wrappers.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="200" height="200"></canvas>
@@ -24,8 +25,9 @@
 
         ui = new UI (plugin_canvas);
 
-        var imageDisplayer = new CanvasDrawImage (plugin_context);
-
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_context}
+                                               );
 
         // Knob
         function knob_name (basename, knob_n) {
@@ -74,8 +76,13 @@
             }
 
             var knobArgs = {
+                ID: "test_knob",
+                top: 90,
+                left: 90,
+                wrapper: CWrapper,
                 imagesArray : loaderStatus.imagesArray,
-                sensivity : 2000
+                sensivity : 2000,
+                isClickable: true
             };
 
             knobArgs.onValueSet = function () {
@@ -85,11 +92,9 @@
                 };
             }();
 
-            var knob = new Knob("test_knob", [90, 90], knobArgs);
-            // Shouldn't a knob be clickable by default? TODO
-            knob.setClickable(true);
+            var knob = new Knob(knobArgs);
 
-            ui.addElement(knob, imageDisplayer);
+            ui.addElement(knob);
 
             knob.setValue("knobvalue", 0.7);
         }

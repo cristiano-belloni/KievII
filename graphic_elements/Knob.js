@@ -28,11 +28,10 @@ Knob.prototype.getready = function (args) {
         throw new Error("Invalid images array length, " + this.imagesArray.length);
     }
 
-    /* Get the wrapper primitive functions, unique to label */
+    /* Get the wrapper primitive functions */
     this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
                                            objParms: args.objParms}]);
-
-
+                                   
     this.width = 0;
     this.height = 0;
 

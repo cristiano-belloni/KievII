@@ -1,6 +1,6 @@
 function Wavebox(args) {
     if (arguments.length) {
-        this.getready(name, xy, specArgs);
+        this.getready(args);
     }
 }
 
@@ -19,6 +19,10 @@ Wavebox.prototype.getready = function (args) {
 
     //By default, a Wavebox always draws itself when a value is set.
     this.drawItself = args.drawItself || true;
+
+    /* Get the wrapper primitive functions */
+    this.drawClass = args.wrapper.initObject ([{objName: "drawPath",
+                                           objParms: args.objParms}]);
 
     this.width = args.width;
     this.height = args.height;
@@ -103,17 +107,18 @@ Wavebox.prototype.refresh = function () {
     if (this.drawClass !== undefined) {
 
         var oldpoint = 0;
-        this.drawClass.beginDraw();
+        this.drawClass.drawPath.beginDraw();
 
         for (var i = 0; i < this.width; i += 1) {
             var point = this.calculateSampleCoord(i);
             if (point !== oldpoint) {
                 //console.log ("Drawing a point, x is ", point.x, " y is ", point.y);
-                this.drawClass.draw (point.x, point.y);
+                //this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+                this.drawClass.drawPath.draw(point.x, point.y);
             }
             oldpoint = point;
         }
-        this.drawClass.endDraw();
+        this.drawClass.drawPath.endDraw();
         
     }
 };
