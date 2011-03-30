@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Visibility Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../utilities/utilities.js"></script>
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Button.js"></script>
+    <script type="text/javascript" src="../../../Knob.js"></script>
+    <script type="text/javascript" src="../../../Background.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+  </head>
+  <body>
+    <canvas id="plugin" width="800" height="800"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var ui;
+
+        /* INIT */
+
+        var plugin_canvas = document.getElementById("plugin");
+        var plugin_context = plugin_canvas.getContext("2d");
+
+        ui = new UI (plugin_canvas);
+
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_context}
+                                               );
+
+        // LOAD IMAGES
+
+        var MAX_KNOB_IMAGE_NUM = 60,
+            knobImgLocation = "../../../../demos/voron/images/BigKnob/",
+            knobImgArray = [],
+            knobArgs;
+
+        // Shared arguments to the Knob constructor.
+        (function () {
+            for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
+                var prefix = "";
+                if (i < 10) {
+                    prefix = "0";
+                }
+                knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
+            }
+        }());
+
+         var mulArgs = { multipleImages:
+                            [
+                                {ID: "vtest_button_image_loader", imageNames: ["../../images/button_sm_01.png", "../../images/button_sm_02.png"]},
+                                {ID : "vtest_knob_image_loader", imageNames: knobImgArray},
+                                {ID : "vtest_bg_image_loader", imageNames: ["coloredbg.png"]}
+                            ],
+                         onComplete: afterLoading
+                     }
+
+         var mImageLoader = new loadMultipleImages (mulArgs);
+
+    function afterLoading (loaders) {
+        console.log ("After loading");
+
+        /* BUTTON 1 */
+
+        var button1Args = {
+            ID: "test_button_1",
+            top: 50,
+            left: 0,
+            wrapper: CWrapper,
+            imagesArray : loaders["vtest_button_image_loader"].images
+        };
+        button1Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 1 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                if (value === 1) {
+                    ui.hideElement("knob");
+                }
+                else if (value === 0) {
+                    ui.unhideElement("knob");
+                }
+            };
+        }();
+        var button1 = new Button(button1Args);
+
+        /* BUTTON 2 */
+
+        var button2Args = {
+            ID: "test_button_2",
+            top: 50,
+            left: 50,
+            wrapper: CWrapper,
+            imagesArray : loaders["vtest_button_image_loader"].images
+        };
+        button2Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 2 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                if (value === 1) {
+                    ui.hideElement("knob2");
+                }
+                else if (value === 0) {
+                    ui.unhideElement("knob2");
+                }
+            };
+        }();
+        var button2 = new Button(button2Args);
+        
+        /* BUTTON 3 */
+
+        var button3Args = {
+            ID: "test_button_3",
+            top: 50,
+            left: 100,
+            wrapper: CWrapper,
+            imagesArray : loaders["vtest_button_image_loader"].images
+        };
+        button3Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 2 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                if (value === 1) {
+                    ui.hideElement("background");
+                }
+                else if (value === 0) {
+                    ui.unhideElement("background");
+                }
+            };
+        }();
+        var button3 = new Button(button3Args);
+
+        var knobArgs = {
+            ID: "knob",
+            top: 200,
+            left: 0,
+            wrapper: CWrapper,
+            // onValueSet = undefined,
+            imagesArray : loaders["vtest_knob_image_loader"].images,
+            sensivity : 5000,
+            preserveBg: true
+        };
+        //onValueSet = undefined
+        var knob1 = new Knob(knobArgs);
+        knobArgs.ID = "knob2";
+        knobArgs.left = 150;
+        var knob2 = new Knob(knobArgs);
+
+        /* BACKGROUND */
+        var backgroundArgs = {
+                ID: 'background',
+                top: 0,
+                left: 0,
+                image: loaders["vtest_bg_image_loader"].images[0],
+                wrapper: CWrapper,
+                preserveBg: true
+            }
+       var background = new Background (backgroundArgs);
+
+
+
+        /* ADD UI */
+        ui.addElement(background,{zIndex: 1});
+        ui.addElement(button1,{zIndex: 5});
+        ui.addElement(button2,{zIndex: 5});
+        ui.addElement(button3,{zIndex: 5});
+        ui.addElement(knob1, {zIndex: 10});
+        ui.addElement(knob2, {zIndex: 10});
+        /*button1.setValue("buttonvalue", 0);
+        button2.setValue("buttonvalue", 0);
+        button3.setValue("buttonvalue", 0);
+        knob1.setValue("knobvalue", 0);
+        knob2.setValue("knobvalue", 0);*/
+
+        ui.refresh();
+
+        }
+
+
+    </script>
+  </body>
+</html>

@@ -33,14 +33,19 @@ Element.prototype.getready = function (args) {
     // Element never draws itself by default
     this.drawItself = args.drawItself || false;
 
+    // Element is visible by default
+    this.isVisible = args.isVisible || true;
+
     // These are to be set later
     this.values = {};
     
     // Set this if the element needs to preserve its background.
-    this.preserveBg = args.preserveBG || false;
+    this.preserveBg = args.preserveBg || false;
 
-    // Set this if the element has to save the background now.
-    this.backgroundSavePending = true;
+    if (this.preserveBg === true) {
+        // Set this if the element has to save the background now.
+        this.backgroundSavePending = true;
+    }
 
     // See if there is a callback to call when the value is set
     if (args !== undefined) {
@@ -124,23 +129,25 @@ Element.prototype.setValue = function (slot, value) {
 
 //TODO this should be changed in isListening, for example
 Element.prototype.setClickable = function (isClickable) {
-    this.isClickable = isClickable;
+     if (typeof isClickable === "boolean") {
+        this.isClickable = isClickable;
+     }
 };
 
 Element.prototype.getClickable = function () {
     return this.isClickable;
 };
 
-Element.prototype.setDrawsItself = function (value) {
-    this.drawItself = value;
+Element.prototype.setDrawsItself = function (drawItself) {
+    if (typeof drawItself === "boolean") {
+        this.drawItself = drawItself;
+    }
 };
 
-Element.prototype.setPreserveBg = function (value) {
-    this.preserveBg = value;
-}
-
-Element.prototype.setTainted = function (value) {
-    this.backgroundSavePending = value || true;
+Element.prototype.setTainted = function (tainted) {
+    if (typeof tainted === "boolean") {
+        this.backgroundSavePending = tainted;
+    }
 }
 
 // Refresh. This is the basic action.
@@ -166,6 +173,16 @@ Element.prototype.getName = function () {
 Element.prototype.setDrawClass = function (drawClass) {
     this.drawClass = drawClass;
 };
+
+Element.prototype.setVisible = function (isVisible) {
+    if (typeof isVisible === "boolean") {
+        this.isVisible = isVisible;
+    }
+}
+
+Element.prototype.getVisible = function () {
+    return this.isVisible;
+}
 
 Element.prototype.onMouseMove = function (x,y) {
     return undefined;

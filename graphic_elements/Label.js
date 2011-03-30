@@ -53,7 +53,7 @@ Label.prototype.refresh = function () {
     Label.superclass.refresh.call(this, this.drawClass.drawText);
 
     // Draw, if our draw class is already set.
-    if (this.drawClass !== undefined) {
+    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
 
         // Maybe the filtering should be done here?
         text = this.values.labelvalue;

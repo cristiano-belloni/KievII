@@ -316,7 +316,7 @@ Multiband.prototype.refresh = function () {
     Multiband.superclass.refresh.apply(this, [this.drawClass.drawRect]);
     
     // Draw, if our draw class is already set.
-    if (this.drawClass !== undefined) {
+    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
 
         // Here we do the math and draw ourselves
         this.calculateSidebands();

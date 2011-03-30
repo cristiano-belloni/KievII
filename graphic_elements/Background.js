@@ -25,6 +25,16 @@ Background.prototype.getready = function (args) {
     this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
                                            objParms: args.objParms}]);
 
+    this.width = this.image.width;
+    this.height = this.image.height;
+    
+    // Background saving is on by default.
+    if ((args.preserveBg !== undefined) && (args.preserveBg === true)) {
+        this.preserveBg = true;
+        // As soon as we can, we want to save our background.
+        this.backgroundSavePending = true;
+    }
+
 };
 
 // This method returns the image object.
@@ -45,7 +55,12 @@ Background.prototype.isInROI = function (x, y) {
 };
 
 Background.prototype.refresh = function () {
-    if (this.drawClass === undefined) {
+
+    // Call the superclass.
+    Knob.superclass.refresh.call(this, this.drawClass.drawImage);
+
+    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
         this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
     }
+    
 };

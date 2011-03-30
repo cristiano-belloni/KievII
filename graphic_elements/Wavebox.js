@@ -104,7 +104,7 @@ Wavebox.prototype.refresh = function () {
     Wavebox.superclass.refresh.apply(this);
 
     // Draw, if our draw class is already set.
-    if (this.drawClass !== undefined) {
+    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
 
         var oldpoint = 0;
         this.drawClass.drawPath.beginDraw();

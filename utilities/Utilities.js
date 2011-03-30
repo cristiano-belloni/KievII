@@ -88,6 +88,7 @@ function loadMultipleImages (args) {
                     if (that.loaders[ls.status.id] !== undefined) {
                         that.loaders[ls.status.id].done = true;
                         that.loaders[ls.status.id].images = that.loaders[ls.status.id].imageArray.imagesArray;
+                        // Here we call this.singleArrayManager() TODO
                     }
                     else {
                         throw new Error("in loaders, " + ls.status.id + " is undefined");
@@ -107,27 +108,27 @@ function loadMultipleImages (args) {
                 }
             }
 
-    // Error & single; to be done
+    // Error & single; to be done TODO.
 
 
-    /*{ID : "ztest_button_image_loader",
-          imageNames: ["button1_1.png", "button1_2.png"],
-          onComplete: loadingManager() }*/
-    // {multipleImages: [{imageNames: [], id: ""}, {..}], onComplete: func, onError: func, onSingle: func};
-    //throw Error ("multipleImages is not defined");
     this.multipleImages = args.multipleImages;
     this.onComplete = args.onComplete;
     this.onError = args.onError;
     this.onSingle = args.onSingle;
+    this.onSingleArray = this.singleArrayManager;
     this.loaders = {};
 
-    //init the shit
+    // init as many loadImageArray as needed, by the mighty powers of object
+    // composition.
     for (var i = 0; i < this.multipleImages.length; i += 1) {
 
         var loader = {};
         loader.imageArray = new loadImageArray ({ID : this.multipleImages[i].ID,
                                                  imageNames: this.multipleImages[i].imageNames,
                                                  onComplete: this.loadingManager()
+                                                 /*onError: this.errorManager(),
+                                                 onSingle: this.singleManager(),
+                                                 onSingleArray: this.singleArrayManager()*/
                                                 });
         loader.done = false;
         this.loaders[this.multipleImages[i].ID] = loader;

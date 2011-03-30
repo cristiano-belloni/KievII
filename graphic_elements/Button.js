@@ -17,7 +17,8 @@ Button.prototype.getready = function (args) {
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
-    this.values = {"buttonvalue" : null};
+    // Value 0 by default
+    this.values = {"buttonvalue" : 0};
 
     this.triggered = false;
 
@@ -119,7 +120,7 @@ Button.prototype.refresh = function () {
     Button.superclass.refresh.apply(this, [this.drawClass.drawImage]);
 
     // Draw, if our draw class is already set.
-    if (this.drawClass !== undefined) {
+    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
         this.drawClass.drawImage.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
     }
 };

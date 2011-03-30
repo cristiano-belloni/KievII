@@ -18,6 +18,8 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
 
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
+
+    // Default value is 0
     this.values = {"slidervalue" : 0};
 
     //By default, a Slider always draws itself when value is set.
@@ -211,21 +213,22 @@ Slider.prototype.refresh = function () {
             // We want drawClass to refresh the saved background.
             this.drawClass.drawImage.restoreBackground();
         }
+        if ((this.drawClass !== undefined) && (this.isVisible === true)) {
+            this.drawClass.drawImage.draw(this.sliderImage, this.xOrigin, this.yOrigin);
+            /*jslint nomen: false*/
 
-        this.drawClass.drawImage.draw(this.sliderImage, this.xOrigin, this.yOrigin);
-        /*jslint nomen: false*/
+            switch(this.type) {
+                case "horizontal":
+                    this.drawClass.drawImage.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
+                break;
 
-        switch(this.type) {
-            case "horizontal":
-                this.drawClass.drawImage.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
-            break;
+                case "vertical":
+                    this.drawClass.drawImage.draw(this.knobImage, this.xOrigin, this._getKnobPosition());
+                break;
 
-            case "vertical":
-                this.drawClass.drawImage.draw(this.knobImage, this.xOrigin, this._getKnobPosition());
-            break;
-
-            default:
-              throw new Error("Error: Slider orientation is undefined!");
+                default:
+                  throw new Error("Error: Slider orientation is undefined!");
+              }
           }
         
         /*jslint nomen: true*/

@@ -277,7 +277,9 @@ function UI(domElement) {
         }
 
         // Z-Index handling: refresh every >z element, starting with z+1
-        this.refreshZ(this.elements[elementID].zIndex + 1);
+        if (this.elements[elementID].zIndex !== undefined) {
+            this.refreshZ(this.elements[elementID].zIndex + 1);
+        }
 
         // Check if this element has connections
         if (this.connections[elementID][slot] !== undefined) {
@@ -309,14 +311,76 @@ function UI(domElement) {
     };
     // </VALUE HANDLING>
 
+    // <VISIBILITY HANDLING>
+
+    // todo these two functions are complementary.
+
+    this.hideElement = function (elementID) {
+
+        var visibilityState;
+
+        if (this.elements[elementID] !== undefined) {
+            visibilityState = this.elements[elementID].getVisible();
+            if (visibilityState === true) {
+                // Set the element's visibility
+                this.elements[elementID].setVisible (false);
+                // When hidden, the element is also not listening to events
+                this.elements[elementID].setClickable (false);
+
+                // Reset the canvas (very wrong here, todo!)
+                this.domElement.width = this.domElement.width;
+
+                // Repaint everything, in order.
+                this.refresh();
+            }
+
+        }
+
+        else {
+            throw new Error("Element " + elementID + " not present.");
+        }
+
+    }
+
+    this.unhideElement = function (elementID) {
+
+        var visibilityState;
+
+        if (this.elements[elementID] !== undefined) {
+            visibilityState = this.elements[elementID].getVisible();
+            if (visibilityState === false) {
+
+                // Set the element's visibility
+                this.elements[elementID].setVisible (true);
+                // When unhidden, the element starts listening to events again.
+                this.elements[elementID].setClickable (true);
+
+                //Reset the DOM element
+                this.reset();
+
+                // Repaint everything, in order.
+                this.refresh();
+            }
+
+        }
+
+        else {
+            throw new Error("Element " + elementID + " not present.");
+        }
+    }
+
+    // </VISIBILITY HANDLING>
+
     // <REFRESH HANDLING>
     this.refreshZ = function (z) {
         //Refresh every layer, starting from z to the last one.
         for (var i = z, length =  this.zArray.length; i < length; i += 1) {
             if (typeof(this.zArray[i]) === "object") {
                 for (var k = 0, z_length = this.zArray[i].length; k < z_length; k += 1) {
-                    this.zArray[i][k].setTainted(true);
-                    this.zArray[i][k].refresh();
+                    if (this.zArray[i][k].getVisible() === true) {
+                        this.zArray[i][k].setTainted(true);
+                        this.zArray[i][k].refresh();
+                    }
                 }
             }
         }
@@ -334,6 +398,10 @@ function UI(domElement) {
         }
     }
 
+    this.reset = function () {
+        // Reset the canvas (very wrong here, todo!)
+        this.domElement.width = this.domElement.width;
+    }
     // </REFRESH HANDLING>
 
 }

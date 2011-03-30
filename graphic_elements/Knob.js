@@ -17,7 +17,9 @@ Knob.prototype.getready = function (args) {
     
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
-    this.values = {"knobvalue" : null};
+
+    //Default value is 0
+    this.values = {"knobvalue" : 0};
 
     //By default, a knob always draws itself when value is set.
     this.drawItself = args.drawItself || true;
@@ -170,7 +172,7 @@ Knob.prototype.refresh = function () {
     Knob.superclass.refresh.call(this, this.drawClass.drawImage);
 
     // Draw, if our draw class is already set.
-    if (this.drawClass !== undefined) {
+    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
         /*jslint nomen: false*/
         var imageNum = this._getImageNum();
         /*jslint nomen: true*/
