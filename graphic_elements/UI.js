@@ -1,4 +1,4 @@
-function UI(domElement) {
+function UI(domElement, wrapperFactory) {
 
     // <EVENT HANDLING>
 
@@ -123,15 +123,18 @@ function UI(domElement) {
    
     var ret;
 
-    //Elements in this UI.
+    // Elements in this UI.
     this.elements = {};
 
-    //Connection between elements
+    // Connection between elements
     this.connections = {};
 
     // Z-index lists.
     this.zArray = [];
     this.zArrayUndefined = [];
+
+    // Graphic frontend wrapper
+    this.graphicWrapper = wrapperFactory;
 
     // </CONSTRUCTOR>
 
@@ -148,6 +151,9 @@ function UI(domElement) {
         }
 
         this.elements[element.ID] = element;
+
+        // Set the element's graphic wrapper
+        element.setGraphicWrapper(this.graphicWrapper);
 
         // Insert the element in the connection keys.
         this.connections[element.ID] = {};
@@ -399,8 +405,8 @@ function UI(domElement) {
     }
 
     this.reset = function () {
-        // Reset the canvas (very wrong here, todo!)
-        this.domElement.width = this.domElement.width;
+        // Reset the graphic frontend
+        this.graphicWrapper.reset();
     }
     // </REFRESH HANDLING>
 

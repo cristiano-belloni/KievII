@@ -44,11 +44,11 @@
             var plugin_canvas = document.getElementById("plugin");
             var plugin_context = plugin_canvas.getContext("2d");
 
-            ui = new UI (plugin_canvas);
-
             var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
                                                     {canvas: plugin_context}
                                                     );
+
+            ui = new UI (plugin_canvas, CWrapper);
 
             if (loaderStatus.status.error !== 0) {
                 throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);
@@ -61,7 +61,6 @@
                 top: 90,
                 imagesArray : loaderStatus.imagesArray,
                 isClickable: true,
-                wrapper: CWrapper
             };
 
             buttonArgs.onValueSet = function () {
@@ -74,7 +73,7 @@
             var button = new Button(buttonArgs);
             ui.addElement(button);
 
-            button.setValue("buttonvalue", 0);
+            ui.refresh();
 
         }
 

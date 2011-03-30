@@ -11,12 +11,6 @@ Label.prototype.getready = function (args) {
     // Call the constructor from the superclass.
     Label.superclass.getready.call(this, args);
 
-    /* Get the wrapper primitive functions, unique to label */
-    if (args.wrapper.initObject !== undefined) {
-        this.drawClass = args.wrapper.initObject ([{objName: "drawText",
-                                                    objParms: args.objParms}]);
-    }
-
     this.values = {"labelvalue" : 0};
 
     //By default, a label always draws itself when value is set.
@@ -62,3 +56,13 @@ Label.prototype.refresh = function () {
     }
 
 };
+
+Label.prototype.setGraphicWrapper = function (wrapper) {
+
+    // Call the superclass.
+    Label.superclass.setGraphicWrapper.call(this, wrapper);
+
+    // Get the wrapper primitive functions
+    this.drawClass = wrapper.initObject ([{objName: "drawText",
+                                           objParms: this.objParms}]);
+}

@@ -42,9 +42,9 @@
             var plugin_canvas = document.getElementById("plugin");
             var plugin_context = plugin_canvas.getContext("2d");
 
-            ui = new UI (plugin_canvas);
+            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER", {canvas: plugin_context});
 
-            var Cwrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER", {canvas: plugin_context});
+            ui = new UI (plugin_canvas, CWrapper);
 
             var labelArgs = {
                 ID: 'label',
@@ -52,7 +52,6 @@
                 left: 20,
                 width: 100,
                 height: 24,
-                wrapper: Cwrapper,
                 objParms: {
                     font: "verdana bold",
                     textColor: "yellow",
@@ -65,8 +64,7 @@
                 ID: 'background',
                 top: 0,
                 left: 0,
-                image: loaderStatus.imagesArray[0],
-                wrapper: Cwrapper
+                image: loaderStatus.imagesArray[0]
             }
 
             var label = new Label (labelArgs);

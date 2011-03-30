@@ -23,11 +23,7 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
     this.values = {"slidervalue" : 0};
 
     //By default, a Slider always draws itself when value is set.
-    this.drawItself = true;
-
-    /* Get the wrapper primitive functions, unique to label */
-    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
-                                           objParms: args.objParms}]);
+    this.drawItself = args.drawItself || true;
 
     this.width = 0;
     this.height = 0;
@@ -265,4 +261,15 @@ Slider.prototype.calculateDimensions = function () {
           throw new Error("Error: Slider orientation is undefined!");
       }
     
+};
+
+Slider.prototype.setGraphicWrapper = function (wrapper) {
+
+    // Call the superclass.
+    Slider.superclass.setGraphicWrapper.call(this, wrapper);
+
+    // Get the wrapper primitive functions
+    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+                                           objParms: this.objParms}]);
+
 };

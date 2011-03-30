@@ -21,10 +21,6 @@ Background.prototype.getready = function (args) {
 
     this.image = args.image;
 
-    /* Get the wrapper primitive functions, unique to label */
-    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
-                                           objParms: args.objParms}]);
-
     this.width = this.image.width;
     this.height = this.image.height;
     
@@ -57,10 +53,21 @@ Background.prototype.isInROI = function (x, y) {
 Background.prototype.refresh = function () {
 
     // Call the superclass.
-    Knob.superclass.refresh.call(this, this.drawClass.drawImage);
+    Background.superclass.refresh.call(this, this.drawClass.drawImage);
 
     if ((this.drawClass !== undefined) && (this.isVisible === true)) {
         this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
     }
     
+};
+
+Background.prototype.setGraphicWrapper = function (wrapper) {
+
+    // Call the superclass.
+    Background.superclass.setGraphicWrapper.call(this, wrapper);
+
+    // Get the wrapper primitive functions
+    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+                                           objParms: this.objParms}]);
+
 };

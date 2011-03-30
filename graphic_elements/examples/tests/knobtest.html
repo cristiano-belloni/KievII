@@ -23,11 +23,11 @@
         var plugin_canvas = document.getElementById("plugin");
         var plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_canvas);
-
         var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
                                                {canvas: plugin_context}
                                                );
+
+        ui = new UI (plugin_canvas, CWrapper);
 
         // Knob
         function knob_name (basename, knob_n) {
@@ -79,7 +79,6 @@
                 ID: "test_knob",
                 top: 90,
                 left: 90,
-                wrapper: CWrapper,
                 imagesArray : loaderStatus.imagesArray,
                 sensivity : 2000,
                 isClickable: true

@@ -25,11 +25,11 @@
         var plugin_canvas = document.getElementById("plugin");
         var plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_canvas);
-
         var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
                                                {canvas: plugin_context}
                                                );
+
+        ui = new UI (plugin_canvas, CWrapper);
 
         // LOAD IMAGES
 
@@ -69,7 +69,6 @@
             ID: "test_button_1",
             top: 50,
             left: 0,
-            wrapper: CWrapper,
             imagesArray : loaders["vtest_button_image_loader"].images
         };
         button1Args.onValueSet = function () {
@@ -92,7 +91,6 @@
             ID: "test_button_2",
             top: 50,
             left: 50,
-            wrapper: CWrapper,
             imagesArray : loaders["vtest_button_image_loader"].images
         };
         button2Args.onValueSet = function () {
@@ -115,7 +113,6 @@
             ID: "test_button_3",
             top: 50,
             left: 100,
-            wrapper: CWrapper,
             imagesArray : loaders["vtest_button_image_loader"].images
         };
         button3Args.onValueSet = function () {
@@ -136,7 +133,6 @@
             ID: "knob",
             top: 200,
             left: 0,
-            wrapper: CWrapper,
             // onValueSet = undefined,
             imagesArray : loaders["vtest_knob_image_loader"].images,
             sensivity : 5000,
@@ -154,7 +150,6 @@
                 top: 0,
                 left: 0,
                 image: loaders["vtest_bg_image_loader"].images[0],
-                wrapper: CWrapper,
                 preserveBg: true
             }
        var background = new Background (backgroundArgs);
@@ -168,11 +163,6 @@
         ui.addElement(button3,{zIndex: 5});
         ui.addElement(knob1, {zIndex: 10});
         ui.addElement(knob2, {zIndex: 10});
-        /*button1.setValue("buttonvalue", 0);
-        button2.setValue("buttonvalue", 0);
-        button3.setValue("buttonvalue", 0);
-        knob1.setValue("knobvalue", 0);
-        knob2.setValue("knobvalue", 0);*/
 
         ui.refresh();
 

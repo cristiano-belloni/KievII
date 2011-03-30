@@ -15,6 +15,14 @@ K2WRAPPER.createWrapper = function (type, args) {
     }
 
     function canvasWrapperCreator (canvas) {
+        
+        // Utility functions
+        // Resets the canvas
+        this.reset = function () {
+            this.canvas.width = this.canvas.width;
+        }
+
+        // Constructor
         this.canvas = canvas;
         this.wrapper = CANVAS_WRAPPER;
         this.initObject = function (list) {
@@ -24,6 +32,7 @@ K2WRAPPER.createWrapper = function (type, args) {
                 var name = list[i].objName;
                 var parms = list[i].objParms;
                 var func = this.wrapper[name];
+                // Canvas is given to the object, so it can directly manipulate it.
                 var obj = new func (this.canvas, parms);
                 ret[name] = obj;
                 ret[name]["staticMethods"] = this.wrapper.staticMethods;

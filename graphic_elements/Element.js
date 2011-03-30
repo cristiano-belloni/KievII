@@ -47,6 +47,9 @@ Element.prototype.getready = function (args) {
         this.backgroundSavePending = true;
     }
 
+    // Specific parameters of the object, to be passed to the wrapper
+    this.objParms = args.objParms;
+
     // See if there is a callback to call when the value is set
     if (args !== undefined) {
         if (typeof (args.onValueSet) === "function") {
@@ -195,3 +198,7 @@ Element.prototype.onMouseDown = function (x,y) {
 Element.prototype.onMouseUp = function (x,y) {
     return undefined;
 };
+
+Element.prototype.setGraphicWrapper = function (wrapper) {
+    this.wrapper = wrapper;
+}

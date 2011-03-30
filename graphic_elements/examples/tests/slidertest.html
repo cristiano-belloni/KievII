@@ -60,8 +60,8 @@
                     sliderImg: loaderStatus.imagesArray[0],
                     knobImg: loaderStatus.imagesArray[1],
                     type: "horizontal",
-                    isClickable: true,
-                    wrapper: CWrapper };
+                    isClickable: true
+                };
             }
             else if (loaderStatus.status.id === "vert_image_loader") {
                 vSliderArgs = {
@@ -71,8 +71,8 @@
                     sliderImg: loaderStatus.imagesArray[0],
                     knobImg: loaderStatus.imagesArray[1],
                     type:"vertical",
-                    isClickable: true,
-                    wrapper: CWrapper };
+                    isClickable: true
+                };
             }
 
             if ((hSliderArgs !== undefined) && (vSliderArgs !== undefined)) {
@@ -85,7 +85,7 @@
             var ui;
             
             /* INIT */
-            ui = new UI (plugin_canvas);
+            ui = new UI (plugin_canvas, CWrapper);
 
             hSliderArgs.onValueSet = function () {
                 var that = this;

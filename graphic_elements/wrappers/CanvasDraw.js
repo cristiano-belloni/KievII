@@ -216,9 +216,9 @@ CANVAS_WRAPPER = {
         }
     },
 
-    drawPath: function (pathParms) {
+    drawPath: function (canvas, pathParms) {
 
-        this.canvasC = pathParms.canvas;
+        this.canvasC = canvas;
         this.inited = false;
         this.pathColor = pathParms.pathColor || null;
         // To be implemented
@@ -263,11 +263,15 @@ CANVAS_WRAPPER = {
 
         // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
         this.saveBackground = function (left, top, width, height) {
-            save2d (this, left, top, width, height);
+
+
+            this.backgroundPixels = this.canvasC.getImageData(left, top, width, height);
+            this.bgX = left;
+            this.bgY = top;
         }
 
         this.restoreBackground = function () {
-            restore2d (this);
+            this.canvasC.putImageData(this.backgroundPixels, this.bgX, this.bgY);
         }
     },
 
@@ -281,6 +285,10 @@ CANVAS_WRAPPER = {
 
         restore2d: function (that) {
             that.canvasC.putImageData(that.backgroundPixels, that.bgX, that.bgY);
+        },
+
+        reset: function (that) {
+            that.canvasC.width = that.canvasC.width;
         }
     }
 }

@@ -29,10 +29,6 @@ Knob.prototype.getready = function (args) {
     if (this.imagesArray.length < 1) {
         throw new Error("Invalid images array length, " + this.imagesArray.length);
     }
-
-    /* Get the wrapper primitive functions */
-    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
-                                           objParms: args.objParms}]);
                                    
     this.width = 0;
     this.height = 0;
@@ -181,4 +177,15 @@ Knob.prototype.refresh = function () {
     }
 
     
+};
+
+Knob.prototype.setGraphicWrapper = function (wrapper) {
+
+    // Call the superclass.
+    Knob.superclass.setGraphicWrapper.call(this, wrapper);
+
+    // Get the wrapper primitive functions
+    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+                                           objParms: this.objParms}]);
+
 };

@@ -33,10 +33,6 @@ Button.prototype.getready = function (args) {
 
     this.nButtons = this.imagesArray.length;
 
-    /* Get the wrapper primitive functions, unique to label */
-    this.drawClass = args.wrapper.initObject ([{objName: "drawImage",
-                                           objParms: args.objParms}]);
-
     // Calculate width and height
     this.width = 0;
     this.height = 0;
@@ -123,4 +119,15 @@ Button.prototype.refresh = function () {
     if ((this.drawClass !== undefined) && (this.isVisible === true)) {
         this.drawClass.drawImage.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
     }
+};
+
+Button.prototype.setGraphicWrapper = function (wrapper) {
+
+    // Call the superclass.
+    Button.superclass.setGraphicWrapper.call(this, wrapper);
+
+    // Get the wrapper primitive functions
+    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+                                           objParms: this.objParms}]);
+
 };

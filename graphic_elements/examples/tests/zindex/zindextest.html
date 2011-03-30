@@ -24,11 +24,11 @@
         var plugin_canvas = document.getElementById("plugin");
         var plugin_context = plugin_canvas.getContext("2d");
 
-        ui = new UI (plugin_canvas);
-
         var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
                                                {canvas: plugin_context}
                                                );
+
+        ui = new UI (plugin_canvas, CWrapper);
 
         // LOAD IMAGES
 
@@ -67,7 +67,6 @@
             ID: "test_button_1",
             top: 0,
             left: 0,
-            wrapper: CWrapper,
             imagesArray : loaders["ztest_button_image_loader"].images
         };
         button1Args.onValueSet = function () {
@@ -87,7 +86,6 @@
             ID: "test_button_2",
             top: 50,
             left: 50,
-            wrapper: CWrapper,
             imagesArray : loaders["ztest_button_image_loader"].images
         };
         button2Args.onValueSet = function () {
@@ -102,8 +100,6 @@
             ID: "knob",
             top: 30,
             left: 30,
-            wrapper: CWrapper,
-            // onValueSet = undefined,
             imagesArray : loaders["ztest_knob_image_loader"].images,
             sensivity : 5000,
             preserveBg: true

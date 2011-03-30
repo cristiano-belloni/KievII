@@ -27,7 +27,7 @@
                                                {canvas: plugin_context}
                                                );
 
-        ui = new UI (plugin_canvas);
+        ui = new UI (plugin_canvas, CWrapper);
 
         var imageDisplayer = [] //new CanvasDrawImage (plugin_context);
         var MAX_KNOB_IMAGE_NUM = 60,
@@ -77,15 +77,11 @@
                     ID: "knob" + i,
                     top: 100,
                     left: i * 100,
-                    // onValueSet = undefined,
-                    wrapper: CWrapper,
                     imagesArray : loaderStatus.imagesArray,
                     sensivity : 5000,
-                    //onComplete: this.loadCallback,
                     preserveBg: true
                 };
 
-                //onValueSet = undefined
                 knob[i] = new Knob(knobArgs[i]);
                 
                 ui.addElement(knob[i], {zIndex: 10});

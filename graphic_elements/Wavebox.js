@@ -20,10 +20,6 @@ Wavebox.prototype.getready = function (args) {
     //By default, a Wavebox always draws itself when a value is set.
     this.drawItself = args.drawItself || true;
 
-    /* Get the wrapper primitive functions */
-    this.drawClass = args.wrapper.initObject ([{objName: "drawPath",
-                                           objParms: args.objParms}]);
-
     this.width = args.width;
     this.height = args.height;
 
@@ -101,7 +97,7 @@ Wavebox.prototype.setValue = function (slot, value) {
 
 Wavebox.prototype.refresh = function () {
     // Call the superclass.
-    Wavebox.superclass.refresh.apply(this);
+    Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
 
     // Draw, if our draw class is already set.
     if ((this.drawClass !== undefined) && (this.isVisible === true)) {
@@ -162,3 +158,14 @@ Wavebox.prototype.calculateSampleCoord = function (xcoord) {
     ret.y = this.sampleindexToY(this.sampleXToIndex(xcoord));
     return ret;
 }
+
+Wavebox.prototype.setGraphicWrapper = function (wrapper) {
+
+    // Call the superclass.
+    Wavebox.superclass.setGraphicWrapper.call(this, wrapper);
+
+    // Get the wrapper primitive functions
+    this.drawClass = wrapper.initObject ([{objName: "drawPath",
+                                           objParms: this.objParms}]);
+                                   
+};
