@@ -42,10 +42,9 @@
             /* INIT */
 
             var plugin_canvas = document.getElementById("plugin");
-            var plugin_context = plugin_canvas.getContext("2d");
 
             var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                                    {canvas: plugin_context}
+                                                    {canvas: plugin_canvas}
                                                     );
 
             ui = new UI (plugin_canvas, CWrapper);
@@ -60,7 +59,7 @@
                 left: 90,
                 top: 90,
                 imagesArray : loaderStatus.imagesArray,
-                isClickable: true,
+                isClickable: true
             };
 
             buttonArgs.onValueSet = function () {

@@ -28,12 +28,10 @@ and open the template in the editor.
         var ui;
 
         /* INIT */
-
         var plugin_canvas = document.getElementById("plugin");
-        var plugin_context = plugin_canvas.getContext("2d");
 
         var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                               {canvas: plugin_context}
+                                               {canvas: plugin_canvas}
                                                );
 
         ui = new UI (plugin_canvas, CWrapper);
@@ -79,6 +77,7 @@ and open the template in the editor.
           //This isn't precise and I don't know why
           if (a1.duration <= (event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels)) {
                   waveBox.setValue ("waveboxsignal", buffer);
+                  ui.refresh();
                   //Set start value to +1/4 and endvalue to -1/5
                   setTimeout ( "waveBox.setValue ('startsample', parseInt (buffer.length / 4, 10));", 2000 );
                   setTimeout ( "waveBox.setValue ('endsample', buffer.length - parseInt (buffer.length / 5, 10));", 3000);
