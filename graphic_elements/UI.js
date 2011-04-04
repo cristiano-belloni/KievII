@@ -333,8 +333,8 @@ function UI(domElement, wrapperFactory) {
                 // When hidden, the element is also not listening to events
                 this.elements[elementID].setClickable (false);
 
-                // Reset the canvas (very wrong here, todo!)
-                this.domElement.width = this.domElement.width;
+                // Reset the wrapper.
+                this.reset();
 
                 // Repaint everything, in order.
                 this.refresh();
@@ -361,7 +361,7 @@ function UI(domElement, wrapperFactory) {
                 // When unhidden, the element starts listening to events again.
                 this.elements[elementID].setClickable (true);
 
-                //Reset the DOM element
+                //Reset the wrapper.
                 this.reset();
 
                 // Repaint everything, in order.
@@ -374,6 +374,36 @@ function UI(domElement, wrapperFactory) {
             throw new Error("Element " + elementID + " not present.");
         }
     }
+
+    this.setHidden = function (elementID, value) {
+        this.setVisible(elementID, !value)
+    }
+
+    this.setVisible = function (elementID, value) {
+            var visibilityState;
+
+            if (this.elements[elementID] !== undefined) {
+                visibilityState = this.elements[elementID].getVisible();
+                if (visibilityState !== value) {
+
+                    // Set the element's visibility
+                    this.elements[elementID].setVisible (value);
+                    // When unhidden, the element starts listening to events again.
+                    this.elements[elementID].setClickable (value);
+
+                    //Reset the wrapper.
+                    this.reset();
+
+                    // Repaint everything, in order.
+                    this.refresh();
+                }
+
+            }
+
+            else {
+                throw new Error("Element " + elementID + " not present.");
+            }
+        }
 
     // </VISIBILITY HANDLING>
 
@@ -408,6 +438,5 @@ function UI(domElement, wrapperFactory) {
         // Reset the graphic frontend
         this.graphicWrapper.reset();
     }
-    // </REFRESH HANDLING>
-
 }
+    // </REFRESH HANDLING>
