@@ -125,7 +125,7 @@ Element.prototype.setValue = function (slot, value) {
 
     // Finally, call the callback if there's one.
     if (typeof (this.onValueSet) === "function") {
-        this.onValueSet (slot, this.values[slot], this.name);
+        this.onValueSet (slot, this.values[slot], this.ID);
     }
 
 };
