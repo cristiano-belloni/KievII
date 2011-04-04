@@ -99,7 +99,10 @@ function loadMultipleImages (args) {
                         if (that.loaders.hasOwnProperty(element)) {
                             if (that.loaders[element].done !== true) {
                                 console.log ("status of element ", element, " is not true: ", that.loaders[element].done);
-                                return;
+                                // Call the singleArray callback
+                                if (typeof (that.onSingleArray) === 'function') {
+                                    return that.onSingleArray (loaderStatus);
+                                }
                             }
                         }
                     }
@@ -108,6 +111,26 @@ function loadMultipleImages (args) {
                 }
             }
 
+     this.errorManager = function () {
+         // Storage the closurage.
+        var that = this;
+        return function (errorStatus) {
+            if (typeof (that.onError) === 'function') {
+                that.onError (errorStatus);
+            }
+        }
+    }
+
+     this.singleManager = function () {
+         // Storage the closurage.
+        var that = this;
+        return function (singleStatus) {
+            if (typeof (that.onSingle) === 'function') {
+                that.onSingle (singleStatus);
+            }
+        }
+    }
+
     // Error & single; to be done TODO.
 
 
@@ -115,7 +138,7 @@ function loadMultipleImages (args) {
     this.onComplete = args.onComplete;
     this.onError = args.onError;
     this.onSingle = args.onSingle;
-    this.onSingleArray = this.singleArrayManager;
+    this.onSingleArray = args.onSingleArray;
     this.loaders = {};
 
     // init as many loadImageArray as needed, by the mighty powers of object
@@ -125,10 +148,9 @@ function loadMultipleImages (args) {
         var loader = {};
         loader.imageArray = new loadImageArray ({ID : this.multipleImages[i].ID,
                                                  imageNames: this.multipleImages[i].imageNames,
-                                                 onComplete: this.loadingManager()
-                                                 /*onError: this.errorManager(),
-                                                 onSingle: this.singleManager(),
-                                                 onSingleArray: this.singleArrayManager()*/
+                                                 onComplete: this.loadingManager(),
+                                                 onError: this.errorManager(),
+                                                 onSingle: this.singleManager()
                                                 });
         loader.done = false;
         this.loaders[this.multipleImages[i].ID] = loader;

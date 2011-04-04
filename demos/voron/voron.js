@@ -70,8 +70,10 @@ VORON.imageLoaded = function () {
     var that = this;
     // Actual callback
     return function (loaderStatus) {
-        var ls = loaderStatus;
-        // that.message.innerHTML =  ls.status.id  + " loaded image " + ls.status.loaded + " of " + ls.status.total;
+        if (that.errState !== true) {
+            var ls = loaderStatus;
+            that.message.innerHTML =  ls.status.id  + " loaded image " + ls.status.loaded + " of " + ls.status.total;
+        }
     }
 }
 
@@ -80,7 +82,8 @@ VORON.imageError = function () {
     // Actual callback
     return function (loaderStatus) {
         var ls = loaderStatus;
-        // that.message.innerHTML =  ls.status.id  + " ERROR loading " + ls.obj.src;
+        that.errState = true;
+        that.message.innerHTML =  ls.status.id  + ": ERROR loading images " /* + ls.obj.src */;
     }
 }
 
@@ -88,8 +91,10 @@ VORON.singleLoaded = function () {
     var that = this;
     // Actual callback
     return function (loaderStatus) {
-        var ls = loaderStatus;
-        // that.message.innerHTML =  ls.status.id  + " loaded image " + ls.status.loaded + " of " + ls.status.total;
+        if (that.errState !== true) {
+            var ls = loaderStatus;
+            that.message.innerHTML = ls.status.id + " loaded...";
+        }
     }
 }
 
@@ -277,6 +282,10 @@ VORON.loadingManager = function () {
 
         // Actual callback
         return function (loaders) {
+
+            if (that.errState === true) {
+                return;
+            }
             
             console.log ("Big Callback, loaded everything");
                 that.message.innerHTML = "Everything loaded, ready.";
@@ -483,8 +492,13 @@ VORON.init = function () {
                                 {ID: "sliderImageLoader", imageNames: ["images/Fader/slider_slot.png", "images/Fader/slider_handle.png"]},
                                 {ID: "switchImageLoader", imageNames: ["./images/Switch/SwitchLeft.png","./images/Switch/SwitchRight.png"]}
                             ],
-                         onComplete: this.loadCallback
+                         onComplete: this.loadCallback,
+                         onError: this.imageError(),
+                         onSingle: this.imageLoaded(),
+                         onSingleArray: this.singleLoaded()
                      }
+
+    this.errState = false;
 
     this.mImageLoader = new loadMultipleImages (mulArgs);
 
