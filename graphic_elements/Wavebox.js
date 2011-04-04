@@ -96,26 +96,29 @@ Wavebox.prototype.setValue = function (slot, value) {
 };
 
 Wavebox.prototype.refresh = function () {
-    // Call the superclass.
-    Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
+    if (this.drawClass !== undefined) {
+        // Draw, if our draw class is already set.
+       
+        // Call the superclass.
+        Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
+        // Draw, if our draw class is already set.
+        if (this.isVisible === true) {
 
-    // Draw, if our draw class is already set.
-    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
+            var oldpoint = 0;
+            this.drawClass.drawPath.beginDraw();
 
-        var oldpoint = 0;
-        this.drawClass.drawPath.beginDraw();
-
-        for (var i = 0; i < this.width; i += 1) {
-            var point = this.calculateSampleCoord(i);
-            if (point !== oldpoint) {
-                //console.log ("Drawing a point, x is ", point.x, " y is ", point.y);
-                //this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
-                this.drawClass.drawPath.draw(point.x, point.y);
+            for (var i = 0; i < this.width; i += 1) {
+                var point = this.calculateSampleCoord(i);
+                if (point !== oldpoint) {
+                    //console.log ("Drawing a point, x is ", point.x, " y is ", point.y);
+                    //this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+                    this.drawClass.drawPath.draw(point.x, point.y);
+                }
+                oldpoint = point;
             }
-            oldpoint = point;
+            this.drawClass.drawPath.endDraw();
+
         }
-        this.drawClass.drawPath.endDraw();
-        
     }
 };
 

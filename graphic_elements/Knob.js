@@ -164,19 +164,21 @@ Knob.prototype.setValue = function (slot, value) {
         
 Knob.prototype.refresh = function () {
 
-    // Call the superclass.
-    Knob.superclass.refresh.call(this, this.drawClass.drawImage);
+    if (this.drawClass !== undefined) {
+        // Draw, if our draw class is already set.
+       
+        // Call the superclass.
+        Knob.superclass.refresh.call(this, this.drawClass.drawImage);
 
-    // Draw, if our draw class is already set.
-    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
-        /*jslint nomen: false*/
-        var imageNum = this._getImageNum();
-        /*jslint nomen: true*/
-        this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
-        
+        // Draw if visible.
+        if (this.isVisible === true) {
+            /*jslint nomen: false*/
+            var imageNum = this._getImageNum();
+            /*jslint nomen: true*/
+            this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+
+        }
     }
-
-    
 };
 
 Knob.prototype.setGraphicWrapper = function (wrapper) {

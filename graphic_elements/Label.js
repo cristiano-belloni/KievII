@@ -42,17 +42,20 @@ Label.prototype.setValue = function (slot, value) {
 Label.prototype.refresh = function () {
     
     var text;
+    if (this.drawClass !== undefined) {
+        // Draw, if our draw class is already set.
 
-    // Call the superclass.
-    Label.superclass.refresh.call(this, this.drawClass.drawText);
+        // Call the superclass.
+        Label.superclass.refresh.call(this, this.drawClass.drawText);
 
-    // Draw, if our draw class is already set.
-    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
+        // Draw, if our draw class is already set.
+        if (this.isVisible === true) {
 
-        // Maybe the filtering should be done here?
-        text = this.values.labelvalue;
-        this.drawClass.drawText.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
+            // Maybe the filtering should be done here?
+            text = this.values.labelvalue;
+            this.drawClass.drawText.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
 
+        }
     }
 
 };

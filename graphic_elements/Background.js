@@ -52,11 +52,15 @@ Background.prototype.isInROI = function (x, y) {
 
 Background.prototype.refresh = function () {
 
-    // Call the superclass.
-    Background.superclass.refresh.call(this, this.drawClass.drawImage);
+    if (this.drawClass !== undefined) {
+        // Draw, if our draw class is already set.
 
-    if ((this.drawClass !== undefined) && (this.isVisible === true)) {
-        this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
+        // Call the superclass.
+        Background.superclass.refresh.call(this, this.drawClass.drawImage);
+
+        if (this.isVisible === true) {
+            this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
+        }
     }
     
 };
