@@ -11,6 +11,15 @@ CANVAS_WRAPPER = {
 
             }
 
+        this.drawRotate = function (image, x, y, rot) {
+            this.canvasC.save();
+            this.canvasC.translate(x + (image.width / 2), y + (image.height / 2));
+            this.canvasC.rotate(rot);
+            this.canvasC.translate(-(image.width / 2) - x, -(image.height / 2) - y);
+            this.canvasC.drawImage(image, x, y);
+            this.canvasC.restore();
+        }
+
         this.saveBackground = function (left, top, width, height) {
 
 

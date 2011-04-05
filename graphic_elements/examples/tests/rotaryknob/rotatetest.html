@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Knob Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../RotKnob.js"></script>
+    <script type="text/javascript" src="../../../Background.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+  </head>
+  <body>
+    <canvas id="plugin" width="800" height="800"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var ui;
+
+        /* INIT */
+
+        var plugin_canvas = document.getElementById("plugin");
+
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_canvas}
+                                               );
+
+        ui = new UI (plugin_canvas, CWrapper);
+        var imageLoader = new loadImageArray ({ID : "tuning",
+                                               imageNames: ["tuning.png", "radio_bgr.png"],
+                                               onComplete: imagesCompleted,
+                                               onSingle: imageSingle,
+                                               onError: imageError});
+
+        function imageSingle (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
+        }
+
+        function imageError (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.error, " on ", st.total," has errors, src is ", loaderStatus.obj.src);
+        }
+
+        function imagesCompleted (loaderStatus) {
+
+            if (loaderStatus.status.error !== 0) {
+                throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);
+            }
+
+            /* BACKGROUND */
+            var backgroundArgs = {
+                ID: 'background',
+                top: 100,
+                left: 100,
+                image: loaderStatus.imagesArray[1],
+                preserveBg: true
+            }
+            var background = new Background (backgroundArgs);
+
+            var knobArgs = {
+                ID: "test_knob",
+                top: 162,
+                left: 156,
+                image : loaderStatus.imagesArray[0],
+                sensivity : 3500,
+                isClickable: true
+            };
+
+            knobArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value) {
+                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                };
+            }();
+
+            var knob = new RotKnob(knobArgs);
+
+            ui.addElement(background);
+            ui.addElement(knob);
+
+            ui.refresh()
+
+            knob.setValue("knobvalue", 0.8);
+        }
+
+
+    </script>
+  </body>
+</html>
