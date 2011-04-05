@@ -169,8 +169,8 @@ Element.prototype.refresh = function (drawPrimitive) {
     }
 };
 
-Element.prototype.getName = function () {
-    return this.name;
+Element.prototype.getID = function () {
+    return this.ID;
 };
 
 Element.prototype.setDrawClass = function (drawClass) {
