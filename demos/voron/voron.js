@@ -316,7 +316,7 @@ VORON.loadingManager = function () {
                     ID: 'status',
                     width : 320,
                     height : 29,
-                    top : 339,
+                    top : 336,
                     left : 278,
                     objParms: {
                         font: "28px embedded_font",

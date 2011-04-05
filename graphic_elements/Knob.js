@@ -24,7 +24,6 @@ Knob.prototype.getready = function (args) {
     //By default, a knob always draws itself when value is set.
     this.drawItself = args.drawItself || true;
     this.sensivity = args.sensivity || 2000;
-    this.imagesArray = args.imagesArray || null;
     
     if (this.imagesArray.length < 1) {
         throw new Error("Invalid images array length, " + this.imagesArray.length);
