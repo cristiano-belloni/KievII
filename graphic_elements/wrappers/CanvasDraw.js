@@ -11,7 +11,7 @@ CANVAS_WRAPPER = {
 
             }
 
-        this.drawRotate = function (image, x, y, rot) {
+        this.drawRotate = function (image, x, y, rot, rot_type /* = center TODO */) {
             this.canvasC.save();
             this.canvasC.translate(x + (image.width / 2), y + (image.height / 2));
             this.canvasC.rotate(rot);
