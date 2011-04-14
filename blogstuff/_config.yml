@@ -1,0 +1,23 @@
+--- 
+permalink: /:year/:month/:title
+maruku: 
+  png_dir: images/latex
+  png_url: /images/latex
+  use_tex: false
+  use_divs: false
+lsi: false
+base-url: http://janesconference.github.com/KievII
+minutes: "    5986.6"
+destination: ./_site
+days: "       4.2"
+exclude: 
+- config
+- CNAME
+- Rakefile
+- Capfile
+- _site.tar.gz
+- bitterspring.net
+pygments: true
+pretty_style: html_extension
+auto: true
+server_port: 4000

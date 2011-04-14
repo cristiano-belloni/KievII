@@ -1,0 +1,20 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+  <url> 
+    <loc>http://bitterspring.net/</loc>
+    <changefreq>daily</changefreq> 
+    <priority>1</priority> 
+  </url>
+  <url>
+    <loc>http://tomafro.net/about/</loc>
+    <changefreq>weekly</changefreq>
+  </url> 
+{% for page in site.posts %}  <url>
+    <loc>http://bitterspring.net{{ page.url }}</loc>
+    <lastmod>{{ page.date | date: "%Y-%m-%d" }}</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+{% endfor %}</urlset>

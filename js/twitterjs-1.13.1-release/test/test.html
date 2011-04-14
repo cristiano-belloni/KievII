@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>Twitter Plugin</title>
+    <link rel="stylesheet" href="twitter.css" type="text/css" media="screen" charset="utf-8" />
+
+    <script src="../src/twitter.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    getTwitters('remysTweets1', {
+        id: 'rem', 
+        prefix: '<img height="16" width="16" src="%profile_image_url%" /><a href="http://twitter.com/%screen_name%">%name%</a> said: ', 
+        clearContents: false, // leave the original message in place
+        count: 10, 
+        withFriends: true,
+        ignoreReplies: false,
+        newwindow: true
+    });
+    
+    getTwitters('remysTweets2', {
+        id: 'rem',
+        timeout: 1,
+        onTimeout: function () {
+            this.innerHTML = 'Actually, Twitter is down right now, but you can <a href="http://twitter.com/rem">follow me</a> if you like! (It\'s not really - I faked it!)';
+        },
+        onTimeoutCancel: true, // don't allow twitter to finsih the job
+        ignoreReplies: true
+    });
+
+    getTwitters('johnsTweets', {
+        id: 'kievii_library', 
+        count: 20, 
+        withFriends: true, // currently disabled due to change in Twitter API
+        enableLinks: true, 
+        ignoreReplies: true,
+        template: '<span class="twitterPrefix"><img height="16" width="16" src="%user_profile_image_url%" /> <span class="twitterStatus">%text%</span> <em class="twitterTime"><a href="http://twitter.com/%user_screen_name%/statuses/%id%">%time%</a></em>'
+    });
+    </script>
+  </head>
+  <body id="page">
+    <div id="doc">
+        <h1>Twitter Plugin</h1>
+        
+        <p><a href="http://twitter.com/rem">Follow me for further updates to this script and other JavaScript goodness :-)</a></p>
+        
+        <p>Demo shows two twitter calls, two for <a href="http://twitter.com/rem">Remy Sharp</a> and <a href="http://twitter.com/jeresig">John Resig</a>. View source for the source code. Remy's second tweet call will timeout after 1 second and replace the container.</p>
+        
+        <h2>Supported template variables</h2>
+        <ul>
+            <li>text - the actual status message</li>
+            <li>id - id of status message</li>
+            <li>source</li>
+            <li>created_at</li>
+            <li>time - relative 'friendly' time</li>
+            <li>user_name - real name</li>
+            <li>user_screen_name - username</li>
+            <li>user_id</li>
+            <li>user_profile_image_url - avatar</li>
+            <li>user_url - home page</li>
+            <li>user_location</li>
+            <li>user_description</li>
+        </ul>
+        
+        <h2>Simple options - no template</h2>
+        
+        <div class="twitters" id="remysTweets1">
+          <p><a href="http://twitter.com/rem">Remy's Tweets!</a></p>
+        </div>
+        
+        <h2>Timeout after 1 second and cancel twitter call</h2>
+
+        <div class="twitters" id="remysTweets2">
+          <p>Please wait while my tweets load <img src="spinner.gif"></p>
+          <p><a href="http://twitter.com/rem">If you can't wait - check out what I've been twittering</a></p>
+        </div>
+
+        <h2>Template based with 1 tweet (linkify disabled)</h2>
+
+        <div class="twitters" id="johnsTweets">
+          <p>Please wait while my tweets load <img src="spinner.gif"></p>
+          <p><a href="http://twitter.com/jeresig">If you can't wait - check out what I've been twittering</a></p>
+        </div>
+
+    </div>
+  </body>
+</html>

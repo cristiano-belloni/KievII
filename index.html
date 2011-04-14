@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="author" content="Jane's Conference" />
+<meta name="copyright" content="Licensed under MIT." />
+<meta name="description" content="KievII is a javascript library that aims to help developing audio web applications" />
+<meta name="robots" content="all" />
+<title>KievII Audio WebApp Library</title>
+<link rel="stylesheet" href="css/master.min.css" />
+
+<script type="text/javascript" src="http://use.typekit.com/flo5dyw.js"></script>
+<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+</head>
+<body>
+<div class="container_12">
+  <div class="grid_4">
+  
+	<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+	<script>
+	new TWTR.Widget({
+	  version: 2,
+	  type: 'faves',
+	  rpp: 10,
+	  interval: 6000,
+	  title: 'Latest News',
+	  subject: 'Kiev II',
+	  width: 250,
+	  height: 190,
+	  theme: {
+	    shell: {
+	      background: '#c24040',
+	      color: '#ffffff'
+	    },
+	    tweets: {
+	      background: '#ffffff',
+	      color: '#444444',
+	      links: '#737373'
+	    }
+	  },
+	  features: {
+	    scrollbar: true,
+	    loop: false,
+	    live: true,
+	    hashtags: true,
+	    timestamp: true,
+	    avatars: true,
+	    behavior: 'all'
+	  }
+	}).render().setUser('KievII_library').start();
+	</script>
+
+  </div>
+  
+   <!-- end .grid_4 -->
+  <div class="grid_4 align_center">
+    <img src="img/logo.png" alt="KievII" />
+  </div>
+  
+  <div class="grid_4">
+			<a href="https://github.com/janesconference/KievII" title="Contribute to KievII on github!"><img style="position: absolute; /*top: -10px;*/ right: +10px; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+  </div>
+  
+  <hr />
+  <div class="grid_8 prefix_4">
+	<div id="menu">
+                            <ul>
+                                <li><a href="https://github.com/janesconference/KievII">Source Code</a></li>
+                                <li><a href="https://github.com/janesconference/KievII/wiki">Documentation</a></li>
+								<li><a href="#Demos">Demos</a></li>
+								<li><a href="http://groups.google.com/group/kievii">Google Groups</a></li>
+                            </ul>
+                        </div>
+  </div>
+
+  <hr />
+  <div class="grid_10">
+    <h3>
+      KievII
+    </h3>
+    <p>
+		<strong>KievII</strong> is a javascript library that aims to help developing audio web applications, both from GUI and DSP/audio point of view.
+    </p>
+  </div>
+  <!-- end .grid_11 -->
+  <div class="grid_2 align_right">
+  <p>
+			<a href='http://www.pledgie.com/campaigns/14967'><img alt='Click here to lend your support to: Support KievII Javascript Audio Library and make a donation at www.pledgie.com !' src='img/pledgie.gif' border='0' /></a>
+			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+			">
+			<input type="image" src="https://www.paypalobjects.com/WEBSCR-640-20110401-1/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			<img alt="" border="0" src="https://www.paypalobjects.com/WEBSCR-640-20110401-1/it_IT/i/scr/pixel.gif" width="1" height="1">
+			</form>
+	</p>
+  </div>
+  <!-- end .grid_1-->
+  <hr />
+  
+  <div class="grid_8">
+    <h3>
+      Technologies and Compatibility
+    </h3>
+    <p>
+      <strong>KievII</strong> is designed to be agnostic to audio and graphical layers.</br>
+      Currently, it supports <a href="https://developer.mozilla.org/en/HTML/Canvas">HTML5 Canvas</a> as a rendering engine and <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension">Mozilla Audio API</a> for real-time sound processing.
+	  As rendering and audio layers are designed to be easily interchangeable, <strong>KievII</strong> will support more and more technologies as they are progressively introduced in the latest browsers, like <a href="http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html">Web Audio API</a>.
+	</p>
+  </div>
+  <!-- end .grid_8 -->
+  <div class="grid_4">
+    <h3>
+      Documentation
+    </h3>
+    <p>
+      Documentation is still a work in progress. You can find a Wiki <a href="https://github.com/janesconference/KievII/wiki" >here</a> to get started, or you can check the examples in
+	  the <a href="https://github.com/janesconference/KievII">source code</a>.
+    </p>
+  </div>
+  <!-- end .grid_4 -->
+  <hr />
+  <div class="grid_8">
+    <h3>
+      Collaborating and Contributing
+    </h3>
+    <p>
+      <p><strong>Checkout</strong> or fork the code <a href="https://github.com/janesconference/KievII">here</a> [github.com] and contribute developing and improving KievII.</p>
+      <p><strong>Graphic Designers</strong> are welcome. We're in great need of audio-related vectors and bitmaps (graphic elements, knobs, sliders, equalizers, you name it). If you like the idea of seeing your designs in our demos, please contact us!</p>
+      <p><strong>Donations</strong> If you are so cool to contribute to KievII with money (open donation), here's a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=US&item_name=KievII%20PayPal%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" class="body">Paypal link</a> or a <a href="http://www.pledgie.com/campaigns/14967"> Pledgie link</a> for that. Thank you.</p> 
+    </p>
+  </div>
+  <!-- end .grid_8 -->
+  <div class="grid_4">
+    <h3>
+      Contacts and Help
+    </h3>
+    <p>
+      You can follow the library on <a href="https://twitter.com/#!/kievii_library">Twitter</a>, or ask support and questions on KievII's <a href="http://groups.google.com/group/kievii">Google Group</a>. Or you can directly contact <a href="mailto:janesconference@bitterspring.net">the author</a>.
+    </p>
+  </div>
+  <!-- end .grid_4 -->
+  <hr />
+  <div class="grid_4"><a name="Demos">
+    <h3>
+      Demo: Voron
+    </h3>
+    <p>
+      <a href="https://developer.mozilla.org/en-US/demos/detail/voron">Voron</a> is a real-time pitchshifter and low-pass filter effect. UI is rendered in any browser that supports HTML5 Canvas, but you can hear the audio only if your browser supports <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension">Mozilla Audio API</a> (Mozilla Firefox
+	  <a href="http://www.mozilla.com/it/firefox/">4+</a>). To use it, Turn on the pitchshifter and/or the low pass filter with their ON/OFF buttons to applay the effects and turn the knobs to
+	  change the effects parameters. Demo starts "clean" (aka no effect applied). "Discrete" button switches from semitones shifting (ON) to cents shifting (OFF) and vice-versa.
+    </p>
+  </div>
+  <!-- end .grid_4 -->
+  <div class="grid_8 align_right">
+  <p>
+  <a href="https://developer.mozilla.org/en-US/demos/detail/voron" target="_blank">
+  <img src="img/voron_screenshot.png" alt="Voron Demo" /> </a>
+  </p>
+  </div>
+  <!-- end .grid_8 -->
+  <hr />
+  <div class="grid_5">
+    <small>
+      <a href="http://validator.w3.org/check/referer">HTML</a> - <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> - <a href="http://www.contentquality.com/mynewtester/cynthia.exe?Url1=http://kievII.net/">508</a>
+    </small>
+  </div>
+  <div class="grid_2 align_center">
+  </div>
+  <div class="grid_5 align_right">
+    <small>
+      Licensed under <a href="http://www.opensource.org/licenses/mit-license.php" rel="license">MIT</a>.
+    </small>
+  </div>
+  <div class="clear">
+  </div>
+</div>
+<!-- end .container_12 -->
+</body>
+</html>
