@@ -1,2 +1,5 @@
-User-Agent: *
-Allow: /
+User-agent: *
+Disallow:
+
+User-agent: AboutUsBot 
+Disallow: /
