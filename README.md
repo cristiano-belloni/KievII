@@ -18,6 +18,8 @@ Look at a [working demo](https://developer.mozilla.org/en-US/demos/detail/voron)
 Look at the documentation [here](https://github.com/janesconference/KievII/wiki).  
 You can find a discussion group for developers [here][group_address].
 
+Follow [KievII](https://twitter.com/kievii_library) or [its author](https://twitter.com/janesconference) on Twitter
+
 If you are so cool to contribute to KievII with money (open donation), here's a [Paypal link](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=GB&item_name=KievII&item_number=KievII%20Donation&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)  and a [Pledgie link](http://www.pledgie.com/campaigns/14967) for that.
 
 ![Demo screenshot][dscreen]
