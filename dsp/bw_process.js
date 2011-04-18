@@ -45,7 +45,8 @@ BWP.process = function (data) {
         for( i = 0; i < data.length; i+=1) {
 
 		//sample = (((double)rand()/(double)RAND_MAX)*2.0-1.0)*0.001;
-                sample = (Math.random() * 2 -1) * 0.001;
+                var rnd = Math.random();
+                sample = (rnd * 2 - 1) * 0.001;
 
                 for (note = 0; note < this.NUMNOTES; note += 1) {
                     damp = this.stringcutoff[note];
@@ -55,10 +56,14 @@ BWP.process = function (data) {
                     }
 
                     else {
-                        this.strings[note][this.stringpos[note]] = this.strings[note][this.stringpos[note]] * damp + this.strings[note][this.stringlength[note]-1] * (1 - damp);
+                        var c = this.strings[note][this.stringpos[note]];
+                        var d = this.strings[note][this.stringlength[note]-1];
+                        this.strings[note][this.stringpos[note]] = c * damp + d * (1 - damp);
                     }
 
-                    this.strings[note][this.stringpos[note]] = tanh(this.strings[note][this.stringpos[note]]) * 0.99;
+                    var a = this.strings[note][this.stringpos[note]];
+                    var b = tanh(a);
+                    this.strings[note][this.stringpos[note]] = b * 0.99;
                     sample += this.strings[note][this.stringpos[note]];
                 }
 
@@ -72,14 +77,14 @@ BWP.process = function (data) {
 		this.lpval *= this.freso;
 		sample = this.lplast;
 
-                for(note = 0; note < NUMNOTES; note+=1 )
+                for(note = 0; note < this.NUMNOTES; note+=1 )
 		{
 			if(this.status[note] > 0 )
 			{
 				this.strings[note][this.stringpos[note]] += sample * this.ffeedback;
 			}
 
-			if( fabs( this.strings[note][this.stringpos[note]] ) <= 0.0001 )
+			if(Math.abs( this.strings[note][this.stringpos[note]] ) <= 0.0001 )
 				this.strings[note][this.stringpos[note]] = 0;
 
 			this.stringpos[note]++;
@@ -89,10 +94,11 @@ BWP.process = function (data) {
                 // TODO Check this! It does it in-place!
 		data[i] = tanh( sample ) * (this.volume / 127);
 	}
+        console.log ("Processed " + data.length + " samples.");
 
 }
 
-BWP.init = function () {
+BWP.init = function (sampleRate) {
 
 	var note, length, i,
             freq;
@@ -101,26 +107,26 @@ BWP.init = function () {
 	this.cutoff = 64;
 	this.resonance = 64;
 	this.volume = 100;
+        
+        this.strings = new Array(this.NUMNOTES);
 
 	this.fcutoff = Math.pow((this.cutoff + 50) / 200, 5 );
 	this.freso = this.resonance / 127;
 	this.ffeedback = 0.01 + Math.pow (this.feedback/127, 4) * 0.9;
 
-	for( note = 0; note < NUMNOTES; note++ )
+	for( note = 0; note < this.NUMNOTES; note++ )
 	{
 		freq = 440 * Math.pow(2, (note + this.BASENOTE - 69) / 12);
 		this.stringcutoff[note] = 0.9;
-		length = this.samplerate / freq;
-		this.stringlength[note] = length;
-                
-                //? fucking slow.
-                this.strings = new Array(NUMNOTES);
+		length = sampleRate / freq;
 
-                for (var i = 0; i < NUMNOTES; i++) {
-                    this.strings[i] = new Array(20);
-                }
+                // TODO check if it's floor! (simulating int truncation).
+                var floor_len = Math.floor(length);
 
-                for( i = 0; i < length; i++ ) {
+		this.stringlength[note] = floor_len;
+                this.strings[note] = [];
+               
+                for( i = 0; i < floor_len; i++ ) {
                     this.strings[note][i] = 0;
                 }
 

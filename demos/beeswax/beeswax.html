@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Beeswax Alpha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+    <script type="text/javascript" src="../../utilities/Utilities.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/Element.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/UI.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/Button.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/RotKnob.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../graphic_elements/wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../dsp/bw_process.js"></script>
+    <script type="text/javascript" src="../../audio/ADBeeswax.js"></script>
+  </head>
+  <body>
+    <canvas id="plugin" width="1000" height="900"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+
+        var button_img_array = ["button_sm_01.png", "button_sm_02.png"];
+
+        var imageLoader = new loadImageArray ({ID : "button_image_loader",
+                                               imageNames: button_img_array,
+                                               onComplete: imagesCompleted,
+                                               onSingle: imageSingle,
+                                               onError: imageError});
+
+        function imageSingle (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
+        }
+
+        function imageError (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.error, " on ", st.total," has errors, src is ", loaderStatus.obj.src);
+        }
+
+        function imagesCompleted (loaderStatus) {
+
+            var ui;
+            var button = [];
+
+            /* INIT */
+
+            var plugin_canvas = document.getElementById("plugin");
+
+            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                                    {canvas: plugin_canvas}
+                                                    );
+
+            ui = new UI (plugin_canvas, CWrapper);
+
+            if (loaderStatus.status.error !== 0) {
+                throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);
+            }
+
+            //Buttons
+            var buttonArgs = {
+                /*ID: "note",*/
+                left: 0,
+                top: 400,
+                imagesArray : loaderStatus.imagesArray,
+                isClickable: true
+            };
+
+            buttonArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value) {
+                    var note = slot;
+                    if (value === 0) {
+                        /*this.*/ADBeesWax.noteOff (slot);
+                    }
+                    else if (value === 1) {
+                        /*this.*/ADBeesWax.noteOff (slot);
+                    }
+                    else {
+                        //throw!
+                    }
+                };
+            }();
+
+            for (var i = 0; i < 7; i ++) {
+                buttonArgs.ID = i;
+                buttonArgs.left = i * 50;
+                button[i] = new Button(buttonArgs);
+                ui.addElement(button[i]);
+            }
+
+            //debugger;
+            var ADBeesWax = new AudioDataBeeswax();
+            ADBeesWax.init({sampleRate: 44100});
+
+            ui.refresh();
+
+        }
+
+
+    </script>
+  </body>
+</html>
