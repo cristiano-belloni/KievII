@@ -12,7 +12,7 @@
     <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
   </head>
   <body>
-    <canvas id="plugin" width="800" height="800"></canvas>
+    <canvas id="plugin" width="593" height="590"></canvas>
     <script type="text/javascript">
 
         // This should fix "console not defined" problem.
@@ -29,7 +29,7 @@
 
         ui = new UI (plugin_canvas, CWrapper);
         var imageLoader = new loadImageArray ({ID : "tuning",
-                                               imageNames: ["tuning.png", "radio_bgr.png"],
+                                               imageNames: ["safe_fg.png", "safe_bg.png"],
                                                onComplete: imagesCompleted,
                                                onSingle: imageSingle,
                                                onError: imageError});
@@ -53,8 +53,8 @@
             /* BACKGROUND */
             var backgroundArgs = {
                 ID: 'background',
-                top: 100,
-                left: 100,
+                top: 0,
+                left: 0,
                 image: loaderStatus.imagesArray[1],
                 preserveBg: true
             }
@@ -62,10 +62,10 @@
 
             var knobArgs = {
                 ID: "test_knob",
-                top: 160,
-                left: 154,
+                top: 0,
+                left: 0,
                 image : loaderStatus.imagesArray[0],
-                sensivity : 3500,
+                sensivity : 5000,
                 isClickable: true
             };
 
