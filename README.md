@@ -5,8 +5,8 @@ KievII
 
 KievII is a GUI and audio/DSP library written in Javascript that aims to help develop audio web applications.
 
-Look at the main site [here](http://kievII.net)
-Look at the documentation [here](https://github.com/janesconference/KievII/wiki).  
+Look at the main site [here](http://kievII.net)  
+Look at the documentation [here](https://github.com/janesconference/KievII/wiki)  
 Look at a working demo [here] (https://developer.mozilla.org/en-US/demos/detail/voron)  
 You can find a discussion group for developers [here][group_address].
 Follow [KievII](https://twitter.com/kievii_library) or [its author](https://twitter.com/janesconference) on Twitter
