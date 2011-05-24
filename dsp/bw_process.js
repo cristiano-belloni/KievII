@@ -24,7 +24,8 @@ var BWP = {
     feedback: null,
     cutoff: null,
     resonance: null,
-    volume: null
+    volume: null,
+    bypass: false
 };
 
 BWP.process = function (data) {
@@ -42,59 +43,69 @@ BWP.process = function (data) {
     var i, note,        //INTs
         sample, damp;   //Doubles
 
-        for( i = 0; i < data.length; i+=1) {
+        if (this.bypass === false) {
+            for( i = 0; i < data.length; i+=1) {
 
-		//sample = (((double)rand()/(double)RAND_MAX)*2.0-1.0)*0.001;
-                var rnd = Math.random();
-                sample = (rnd * 2 - 1) * 0.001;
+                    //sample = (((double)rand()/(double)RAND_MAX)*2.0-1.0)*0.001;
+                    var rnd = Math.random();
+                    sample = (rnd * 2 - 1) * 0.001;
 
-                for (note = 0; note < this.NUMNOTES; note += 1) {
-                    damp = this.stringcutoff[note];
+                    for (note = 0; note < this.NUMNOTES; note += 1) {
+                        damp = this.stringcutoff[note];
 
-                    if( this.stringpos[note] > 0 ) {
-                        this.strings[note][this.stringpos[note]] = this.strings[note][this.stringpos[note]] * damp + this.strings[note][this.stringpos[note]-1] * (1 - damp);
+                        if( this.stringpos[note] > 0 ) {
+                            this.strings[note][this.stringpos[note]] = this.strings[note][this.stringpos[note]] * damp + this.strings[note][this.stringpos[note]-1] * (1 - damp);
+                        }
+
+                        else {
+                            var c = this.strings[note][this.stringpos[note]];
+                            var d = this.strings[note][this.stringlength[note]-1];
+                            this.strings[note][this.stringpos[note]] = c * damp + d * (1 - damp);
+                        }
+
+                        var a = this.strings[note][this.stringpos[note]];
+                        var b = tanh(a);
+                        this.strings[note][this.stringpos[note]] = b * 0.99;
+                        sample += this.strings[note][this.stringpos[note]];
                     }
 
-                    else {
-                        var c = this.strings[note][this.stringpos[note]];
-                        var d = this.strings[note][this.stringlength[note]-1];
-                        this.strings[note][this.stringpos[note]] = c * damp + d * (1 - damp);
+                    this.hpval += (sample - this.hplast) * 0.0001;
+                    this.hplast += this.hpval;
+                    this.hpval *= 0.96;
+                    sample -= this.hplast;
+
+                    this.lpval += (sample - this.lplast) * this.fcutoff * (1.0-tanh(this.lplast)*tanh(this.lplast)*0.9);
+                    this.lplast += this.lpval;
+                    this.lpval *= this.freso;
+                    sample = this.lplast;
+
+                    for(note = 0; note < this.NUMNOTES; note+=1 )
+                    {
+                            if(this.status[note] > 0 )
+                            {
+                                    this.strings[note][this.stringpos[note]] += sample * this.ffeedback;
+                            }
+
+                            if(Math.abs( this.strings[note][this.stringpos[note]] ) <= 0.0001 )
+                                    this.strings[note][this.stringpos[note]] = 0;
+
+                            this.stringpos[note]++;
+                            if(this.stringpos[note] >= this.stringlength[note] ) this.stringpos[note] = 0;
                     }
 
-                    var a = this.strings[note][this.stringpos[note]];
-                    var b = tanh(a);
-                    this.strings[note][this.stringpos[note]] = b * 0.99;
-                    sample += this.strings[note][this.stringpos[note]];
-                }
+                    // TODO Check this! It does it in-place!
+                    data[i] = tanh( sample ) * (this.volume / 127);
+            }
+            console.log ("Processed " + data.length + " samples");
+        }
 
-                this.hpval += (sample - this.hplast) * 0.0001;
-		this.hplast += this.hpval;
-		this.hpval *= 0.96;
-		sample -= this.hplast;
-
-		this.lpval += (sample - this.lplast) * this.fcutoff * (1.0-tanh(this.lplast)*tanh(this.lplast)*0.9);
-		this.lplast += this.lpval;
-		this.lpval *= this.freso;
-		sample = this.lplast;
-
-                for(note = 0; note < this.NUMNOTES; note+=1 )
-		{
-			if(this.status[note] > 0 )
-			{
-				this.strings[note][this.stringpos[note]] += sample * this.ffeedback;
-			}
-
-			if(Math.abs( this.strings[note][this.stringpos[note]] ) <= 0.0001 )
-				this.strings[note][this.stringpos[note]] = 0;
-
-			this.stringpos[note]++;
-			if(this.stringpos[note] >= this.stringlength[note] ) this.stringpos[note] = 0;
-		}
-
-                // TODO Check this! It does it in-place!
-		data[i] = tanh( sample ) * (this.volume / 127);
-	}
-        console.log ("Processed " + data.length + " samples.");
+        else {
+            console.log ("Bypassed " + data.length + " samples");
+        }
+        
+        /*for (var k = 0; k < 10 ; k++) {
+            console.log (data[k]);
+        }*/
 
 }
 

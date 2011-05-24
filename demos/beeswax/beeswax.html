@@ -21,61 +21,52 @@
         // This should fix "console not defined" problem.
         if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
 
-        var button_img_array = ["button_sm_01.png", "button_sm_02.png"];
-
-        var imageLoader = new loadImageArray ({ID : "button_image_loader",
-                                               imageNames: button_img_array,
-                                               onComplete: imagesCompleted,
-                                               onSingle: imageSingle,
-                                               onError: imageError});
-
-        function imageSingle (loaderStatus) {
-            var st = loaderStatus.status;
-            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
-        }
-
-        function imageError (loaderStatus) {
-            var st = loaderStatus.status;
-            console.log ("Image number ", st.error, " on ", st.total," has errors, src is ", loaderStatus.obj.src);
-        }
-
-        function imagesCompleted (loaderStatus) {
-
-            var ui;
-            var button = [];
-
-            /* INIT */
-
-            var plugin_canvas = document.getElementById("plugin");
-
-            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+        /* INIT */
+        var plugin_canvas = document.getElementById("plugin");
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
                                                     {canvas: plugin_canvas}
                                                     );
+        var ui = new UI (plugin_canvas, CWrapper);
 
-            ui = new UI (plugin_canvas, CWrapper);
+        var button_img_array = ["button_sm_01.png", "button_sm_02.png"];
+        var knob_img_array = ["tuning.png", "radio_bgr.png"];
 
-            if (loaderStatus.status.error !== 0) {
-                throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);
-            }
+        var mulArgs = { multipleImages:
+                            [
+                                {ID : "knob_img_loader", imageNames: knob_img_array},
+                                {ID : "button_img_loader", imageNames: button_img_array}
+                            ],
+                         onComplete: afterLoading
+                     }
+                     
+        var mImageLoader = new loadMultipleImages (mulArgs);
 
-            //Buttons
+        function afterLoading (loaders) {
+      
+            var button = [];
+            var knob = [];
+
+            /* BUTTONS */
+
             var buttonArgs = {
                 /*ID: "note",*/
                 left: 0,
                 top: 400,
-                imagesArray : loaderStatus.imagesArray,
+                imagesArray : loaders["button_img_loader"].images,
                 isClickable: true
             };
 
             buttonArgs.onValueSet = function () {
                 var that = this;
-                return function (slot, value) {
-                    var note = slot;
+                return function (slot, value, ID) {
+                    var note = ID;
                     if (value === 0) {
-                        /*this.*/ADBeesWax.noteOff (slot);
+                        /*this.*/ADBeesWax.noteOff (ID);
+                        console.log ("Calling ADBeesWax.noteOff with value " + ID);
                     }
                     else if (value === 1) {
-                        /*this.*/ADBeesWax.noteOff (slot);
+                        /*this.*/ADBeesWax.noteOn (ID);
+                        console.log ("Calling ADBeesWax.noteOn with value " + ID);
                     }
                     else {
                         //throw!
@@ -88,6 +79,58 @@
                 buttonArgs.left = i * 50;
                 button[i] = new Button(buttonArgs);
                 ui.addElement(button[i]);
+            }
+            
+            buttonArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value) {
+                    if (value === 0) {
+                        /*this.*/ADBeesWax.setBypass (false);
+                        console.log ("Setting bypass to false");
+                    }
+                    else if (value === 1) {
+                        /*this.*/ADBeesWax.setBypass (true);
+                        console.log ("Setting bypass to true");
+                    }
+                };
+            }();
+
+            buttonArgs.ID = "bypass";
+            buttonArgs.left = 500;
+            var bypassButton = new Button(buttonArgs);
+            ui.addElement(bypassButton);
+
+            /* KNOBS */
+
+            var knob_names  = ["Cutoff","Resonance","Feedback","Volume"];
+
+            var knobArgs = {
+                //ID:
+                top: 200,
+                left: 0,
+                image : loaders["knob_img_loader"].images[0],
+                sensivity : 5000,
+                isClickable: true
+            };
+
+            knobArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value, ID) {
+                    var knobname = slot;
+                    // Interpolate the knob value in the integer range [0,127]
+                    var interpolated_value = Math.round(value * 127);
+                    var functionName = "set" + ID;
+                    console.log ("Calling ADBeesWax[" + functionName + "] with value " + value + "-->" + interpolated_value);
+                    ADBeesWax[functionName](interpolated_value);
+                    
+                };
+            }();
+
+            for (var i = 0; i < knob_names.length; i ++) {
+                knobArgs.ID = knob_names[i];
+                knobArgs.left = i * 200;
+                knob[i] = new RotKnob(knobArgs);
+                ui.addElement(knob[i]);
             }
 
             //debugger;

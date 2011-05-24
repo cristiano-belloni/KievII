@@ -44,3 +44,11 @@ AudioDataBeeswax.prototype.setResonance = function (resValue) {
 AudioDataBeeswax.prototype.setFeedback = function (feedValue) {
     BWP.ffeedback = 0.01 + Math.pow (feedValue / 127, 4) * 0.9;
 }
+
+AudioDataBeeswax.prototype.setVolume = function (volValue) {
+    BWP.volume = volValue;
+}
+
+AudioDataBeeswax.prototype.setBypass = function (bypassON) {
+    BWP.bypass = bypassON;
+}
