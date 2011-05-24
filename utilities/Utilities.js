@@ -88,7 +88,10 @@ function loadMultipleImages (args) {
                     if (that.loaders[ls.status.id] !== undefined) {
                         that.loaders[ls.status.id].done = true;
                         that.loaders[ls.status.id].images = that.loaders[ls.status.id].imageArray.imagesArray;
-                        // Here we call this.singleArrayManager() TODO
+                        // Call the singleArray callback
+                        if (typeof (that.onSingleArray) === 'function') {
+                            that.onSingleArray (loaderStatus);
+                        }
                     }
                     else {
                         throw new Error("in loaders, " + ls.status.id + " is undefined");
@@ -99,10 +102,8 @@ function loadMultipleImages (args) {
                         if (that.loaders.hasOwnProperty(element)) {
                             if (that.loaders[element].done !== true) {
                                 console.log ("status of element ", element, " is not true: ", that.loaders[element].done);
-                                // Call the singleArray callback
-                                if (typeof (that.onSingleArray) === 'function') {
-                                    return that.onSingleArray (loaderStatus);
-                                }
+                                // Return, we're not done yet.
+                                return;
                             }
                         }
                     }
@@ -130,8 +131,6 @@ function loadMultipleImages (args) {
             }
         }
     }
-
-    // Error & single; to be done TODO.
 
 
     this.multipleImages = args.multipleImages;
