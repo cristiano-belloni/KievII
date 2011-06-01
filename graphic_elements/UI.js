@@ -169,9 +169,8 @@ function UI(domElement, wrapperFactory) {
         }
 
         // Store the parameters
-
-        // Z Index.
         if (elementParameters !== undefined) {
+            // Z Index
             if (typeof(elementParameters.zIndex) === "number") {
                 // Insert the element's z-index
                 this.elements[element.ID].zIndex = elementParameters.zIndex;
@@ -189,13 +188,15 @@ function UI(domElement, wrapperFactory) {
                 }
             }
         }
-
         else {
             //We store the "undefined" as the lowest z-indexed layers.
             this.elements[element.ID].zIndex = undefined;
             this.zArrayUndefined.push(this.elements[element.ID]);
         }
-
+        // Complete Repaint
+        if (elementParameters.completeRepaint === true) {
+            this.elements[element.ID].completeRepaint = true;
+        }
     };
     
     // </ELEMENT HANDLING>
@@ -283,8 +284,19 @@ function UI(domElement, wrapperFactory) {
         }
 
         // Z-Index handling: refresh every >z element, starting with z+1
+        // If the element requested a full repaint (i.e. it overlaps with
+        // another at the same zIndex), reset & refresh
+        // TODO maybe completeRepaint can be set automatically.
         if (this.elements[elementID].zIndex !== undefined) {
-            this.refreshZ(this.elements[elementID].zIndex + 1);
+            if (this.elements[elementID].completeRepaint !== true) {
+                this.refreshZ(this.elements[elementID].zIndex + 1);
+            }
+            else {
+                //Reset the wrapper.
+                this.reset();
+                // Repaint everything, in order.
+                this.refresh();
+            }
         }
 
         // Check if this element has connections
