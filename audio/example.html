@@ -12,16 +12,19 @@ Simple example of reading / writing audio with Mozilla Audio Data low level APIs
            src="sound_files/german_numbers.ogg"
            controls>
     </audio>
-    <script>
+    <script type="text/javascript">
     var a1 = document.getElementById('a1'),
         a2 = new Audio(),
-        buffers = [];
-        
+        buffers = [],
+        min = 0,
+        max = 0;
+    // This should fix "console not defined" problem.
+    if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
     function loadedMetadata() {
       // Mute a1 audio.
       a1.volume = 0;
       //alert ("Channels are " + a1.mozChannels + " sampling rate is " + a1.mozSampleRate + " buffer length is " + a1.mozFrameBufferLength);
-      setTimeout("throw new Error('Error: " + "loadedMetadata called" + "')",0);
+      console.log("loadedMetadata called");
       // Setup a2 to be identical to a1, and play through there.
       a2.mozSetup(a1.mozChannels, a1.mozSampleRate);
       a1.addEventListener("MozAudioAvailable", audioAvailable, false);
@@ -45,7 +48,16 @@ Simple example of reading / writing audio with Mozilla Audio Data low level APIs
           var len = buffer.length;
           // Sample stupid thing to verify it really works.
           for (i= 0; i < len; i++) {
-              buffer[i] = buffer[i] * 0.2;
+            buffer[i] = buffer[i] * 5;
+            // DEBUG
+            if (buffer[i] < min) {
+                min = buffer[i];
+                console.log ("found a new this.min in sample", min);
+            }
+            if (buffer[i] > max) {
+                max = buffer[i];
+                console.log ("found a new max in sample", max);
+            }
           }
           var written = a2.mozWriteAudio(buffer);
           // If all data wasn't written, keep it in the buffers:
