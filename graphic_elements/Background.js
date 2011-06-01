@@ -15,14 +15,10 @@ Background.prototype.getready = function (args) {
     // Call the constructor from the superclass.
     Background.superclass.getready.call(this, args);
 
-    // Override width and height, they'll be specified by the image.
-    this.width = null;
-    this.height = null;
-
     this.image = args.image;
-
-    this.width = this.image.width;
-    this.height = this.image.height;
+    
+    this.setWidth(this.image.width);
+    this.setHeight(this.image.height);
     
     // Background saving is on by default.
     if ((args.preserveBg !== undefined) && (args.preserveBg === true)) {
@@ -40,12 +36,10 @@ Background.prototype.GetImage = function () {
 
 // This methods returns true if the point given belongs to this element.
 Background.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-            //console.log(this.name, " ROI Handler: ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x > this.ROILeft) && (y > this.ROITop)) {
+        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
             return true;
         }
-        //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
         return false;
     }
 };

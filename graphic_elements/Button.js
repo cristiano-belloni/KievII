@@ -33,17 +33,9 @@ Button.prototype.getready = function (args) {
 
     this.nButtons = this.imagesArray.length;
 
-    // Calculate width and height
-    this.width = 0;
-    this.height = 0;
-
     for (var i = 0; i < this.nButtons; i += 1) {
-        if (this.imagesArray[i].width > this.width) {
-            this.width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > this.height) {
-            this.height = this.imagesArray[i].height;
-        }
+        this.setWidth(this.imagesArray[i].width);
+        this.setHeight(this.imagesArray[i].height);
     }
 
 
@@ -51,14 +43,14 @@ Button.prototype.getready = function (args) {
 
 // This method returns true if the point given belongs to this button.
 Button.prototype.isInROI = function (x, y) {
-    if ((x >= this.xOrigin) && (y >= this.yOrigin)) {
-        if ((x <= (this.xOrigin + this.width)) && (y <= (this.yOrigin + this.height))) {
-            //console.log(this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x >= this.ROILeft) && (y >= this.ROITop)) {
+        if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight))) {
+            console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
             return true;
         }
         /*jsl:pass*/
     }
-    // console.log ("Button: ", this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
     return false;
 };
 

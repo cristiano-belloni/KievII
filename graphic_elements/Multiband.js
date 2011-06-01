@@ -46,8 +46,8 @@ Multiband.prototype.getready = function (args) {
                                            objParms: args.objParms}]);
 
     // The multiband display has a fixed width and height.
-    this.width = args.width;
-    this.height = args.height;
+    this.setWidth(args.width);
+    this.setHeight(args.height);
 
     //By default, a Multiband always draws itself when value is set.
     this.drawItself = args.drawItself || true;
@@ -85,10 +85,8 @@ Multiband.prototype.isInROI = function (x, y) {
         curSB;
 
     /* DOES NOT WORK */
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-
-            //console.log(this.name, " ROI Handler: ", x, y, " is in band bounding box ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x > this.ROILeft) && (y > this.ROITop)) {
+        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
 
             // It's in the multiband's real estate on the screen. Now we got to find if it's on the proximity of a sideband.
             // TODO set this somewhere else

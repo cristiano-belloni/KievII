@@ -26,9 +26,9 @@ RotKnob.prototype.getready = function (args) {
     this.drawItself = args.drawItself || true;
     this.sensivity = args.sensivity || 2000;
     this.image = args.image;
-
-    this.width = this.image.width;
-    this.height = this.image.height;
+    
+    this.setWidth(this.image.width);
+    this.setHeight(this.image.height);
 
     this.preserveBg = args.preserveBg || true;
     if (this.preserveBg) {
@@ -65,14 +65,14 @@ RotKnob.prototype._getImage = function () {
 
 // This method returns true if the point given belongs to this RotKnob.
 RotKnob.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-            //console.log("RotKnob: ", this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x > this.ROILeft) && (y > this.ROITop)) {
+        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
+            console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
             return true;
         }
         /*jsl:pass*/
     }
-    //console.log ("RotKnob: ", this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
     return false;
 };
 

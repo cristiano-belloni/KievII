@@ -12,10 +12,13 @@ Label.prototype.getready = function (args) {
     Label.superclass.getready.call(this, args);
 
     this.values = {"labelvalue" : 0};
-
+     
+    this.setWidth(args.width);
+    this.setHeight(args.height);
+   
     //By default, a label always draws itself when value is set.
     this.drawItself = args.drawItself || true;
-
+   
     //By default, a label always refreshes the background.
     this.preserveBg = args.preserveBg || true;
     this.backgroundSavePending = true;
@@ -24,12 +27,10 @@ Label.prototype.getready = function (args) {
 
 // This methods returns true if the point given belongs to this element.
 Label.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-            //console.log(this.name, "point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x > this.ROILeft) && (y > this.ROITop)) {
+        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
             return true;
         }
-        //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
     }
     return false;
 };

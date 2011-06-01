@@ -19,17 +19,31 @@ Element.prototype.getready = function (args) {
 
     this.ID = args.ID;
 
-    //By default, we want to be notified if some event occurs.
+    // By default, we want to be notified if some event occurs.
     this.isClickable = args.isClickable || true;
-
-    // These are arrays of 2
+    
+    // The element boundaries
     this.xOrigin = args.left;
     this.yOrigin = args.top;
-
-    // This is the bounding box. Element has no dimension.
-    this.width = args.width;
-    this.height = args.height;
-
+        
+    //set the ROI if defined
+    if (args.ROILeft !== undefined) {
+        this.ROILeft = args.ROILeft;
+    }
+    else {
+        this.ROILeft = this.xOrigin;
+    }
+    
+    if (args.ROITop !== undefined) {
+        this.ROITop = args.ROITop;
+    }
+    else {
+        this.ROITop = this.yOrigin;
+    }
+    
+    this.ROIWidth = args.ROIWidth;
+    this.ROIHeight = args.ROIHeight;
+    
     // Element never draws itself by default
     this.drawItself = args.drawItself || false;
 
@@ -92,6 +106,20 @@ Element.prototype.getWidth = function () {
 Element.prototype.getHeight = function () {
     return this.height;
 };
+
+Element.prototype.setHeight = function (height) {
+    this.height = height;
+    if (this.ROIHeight === undefined) {
+        this.ROIHeight = height;
+    }
+}
+
+Element.prototype.setWidth = function (width) {
+    this.width = width;
+    if (this.ROIWidth === undefined) {
+        this.ROIWidth = width;
+    }
+}
 
 Element.prototype.getValue = function (slot) {
     if (this.values[slot] === undefined) {

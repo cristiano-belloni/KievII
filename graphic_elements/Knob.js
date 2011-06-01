@@ -30,19 +30,23 @@ Knob.prototype.getready = function (args) {
         throw new Error("Invalid images array length, " + this.imagesArray.length);
     }
                                    
-    this.width = 0;
-    this.height = 0;
+    var width = 0,
+        height = 0;
 
     // Calculate maximum width and height.
     for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
-        if (this.imagesArray[i].width > this.width) {
-            this.width = this.imagesArray[i].width;
+        if (this.imagesArray[i].width > width) {
+            width = this.imagesArray[i].width;
         }
-        if (this.imagesArray[i].height > this.height) {
-            this.height = this.imagesArray[i].height;
+        if (this.imagesArray[i].height > height) {
+            height = this.imagesArray[i].height;
         }
     }
-
+    
+    // Set them.
+    this.setWidth(width);
+    this.setHeight(height);
+    
     // Background saving is optional.
     if ((args.preserveBg !== undefined) && (args.preserveBg === true)) {
         this.preserveBg = true;
@@ -78,14 +82,12 @@ Knob.prototype._getImage = function () {
 
 // This method returns true if the point given belongs to this knob.
 Knob.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-            //console.log("Knob: ", this.name, " point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x > this.ROILeft) && (y > this.ROITop)) {
+        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
             return true;
         }
         /*jsl:pass*/
     }
-    //console.log ("Knob: ", this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
     return false;
 };
 

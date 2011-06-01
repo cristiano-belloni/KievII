@@ -19,9 +19,9 @@ Wavebox.prototype.getready = function (args) {
 
     //By default, a Wavebox always draws itself when a value is set.
     this.drawItself = args.drawItself || true;
-
-    this.width = args.width;
-    this.height = args.height;
+    
+    this.setWidth(args.width);
+    this.setHeight(args.height);
 
     //By default, a wavebox always refreshes the background.
     this.preserveBg = args.preserveBg || true;
@@ -35,12 +35,10 @@ Wavebox.prototype.getready = function (args) {
 
 // This methods returns true if the point given belongs to this element.
 Wavebox.prototype.isInROI = function (x, y) {
-    if ((x > this.xOrigin) && (y > this.yOrigin)) {
-        if ((x < (this.xOrigin + this.width)) && (y < (this.yOrigin + this.height))) {
-            //console.log(this.name, "point ", x, y, " is in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
+    if ((x > this.ROILeft) && (y > this.ROITop)) {
+        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {            
             return true;
         }
-        //console.log(this.name, " ROI Handler: ", x, y, " is NOT in ROI ", this.xOrigin, this.yOrigin, this.xOrigin + this.width, this.yOrigin + this.height);
     }
     return false;
 };

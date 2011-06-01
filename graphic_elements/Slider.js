@@ -72,16 +72,16 @@ Slider.prototype._getKnobPosition = function () {
 Slider.prototype.isInROI = function (x, y) {
     switch(this.type) {
         case "horizontal":
-            if ((x > this._getKnobPosition()) && (y > this.yOrigin)) {
-                if ((x < (this._getKnobPosition() + this.kWidth)) && (y < (this.yOrigin + this.kHeight))) {
+            if ((x > this._getKnobPosition()) && (y > this.ROITop)) {
+                if ((x < (this._getKnobPosition() + this.kWidth)) && (y < (this.ROITop + this.kHeight))) {
                     return true;
                 }
             }
         break;
 
         case "vertical":
-            if ((y > this._getKnobPosition()) && (x > this.xOrigin)) {
-                if ((y < (this._getKnobPosition() + this.kHeight)) && (x < (this.xOrigin + this.kWidth))) {
+            if ((y > this._getKnobPosition()) && (x > this.ROILeft)) {
+                if ((y < (this._getKnobPosition() + this.kHeight)) && (x < (this.ROILeft + this.kWidth))) {
                     return true;
                 }
             }
@@ -233,16 +233,17 @@ Slider.prototype.refresh = function () {
 
 Slider.prototype.calculateDimensions = function () {
 
-    // Images were loaded, we can take their width and height.
-    this.width = this.sliderImage.width;
-    this.height = this.sliderImage.height;
     // The length of the slider knob.
     this.kWidth = this.knobImage.width;
     this.kHeight = this.knobImage.height;
-    // The knob can stick out by an half of its length at the two extremes of the
+   
+    //TODO Maybe we should override this function, to set the ROI to the fader.
+    this.setWidth(this.sliderImage.width);
+    this.setHeight(this.sliderImage.height);
+    
+    // The fader can stick out by an half of its length at the two extremes of the
     // slider. Let's store some useful variables.
-
-    switch(this.type) {
+        switch(this.type) {
         case "horizontal":
             this.totalStride = this.width + this.kWidth;
             this.additionalEndSpace = Math.round (this.kWidth / 2);
