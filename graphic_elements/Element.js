@@ -131,7 +131,7 @@ Element.prototype.getValue = function (slot) {
 };
 
 // Setters
-Element.prototype.setValue = function (slot, value) {
+Element.prototype.setValue = function (slot, value, fireCallback) {
 
     var temp_value = value;
 
@@ -152,7 +152,7 @@ Element.prototype.setValue = function (slot, value) {
     }
 
     // Finally, call the callback if there's one.
-    if (typeof (this.onValueSet) === "function") {
+    if ((typeof (this.onValueSet) === "function") && (fireCallback !== false)) {
         this.onValueSet (slot, this.values[slot], this.ID);
     }
 

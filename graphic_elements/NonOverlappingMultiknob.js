@@ -127,16 +127,7 @@ NonOverlappingMultiknob.prototype.onMouseMove = function (x, y) {
 
 NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
 
-    var temp_value,
-        knobN;
-
-    temp_value = value;
-
-    if ((temp_value < 0) || (temp_value > 1)) {
-        //Just do nothing.
-        //console.log("NonOverlappingMultiknob.prototype.setValue: VALUE INCORRECT!!");
-        return;
-    }
+    var knobN;
 
     //Do the magic here. Knobs should not overlap.
     //Note that we don't change any other knob value, we simply assure that knob[i]
@@ -185,6 +176,7 @@ NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
 
     // Now, we don't need to call the superclass since we don't have any "real" value.
     // We must refresh by ourselves, though.
+    // TODO IMPLEMENT CALLBACKS AND USE fireCallback
     if (this.drawItself === true) {
         this.refresh();
     }

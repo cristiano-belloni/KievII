@@ -36,8 +36,8 @@ Label.prototype.isInROI = function (x, y) {
 };
 
 // Setters
-Label.prototype.setValue = function (slot, value) {
-    Label.superclass.setValue.call(this, slot, value);
+Label.prototype.setValue = function (slot, value, fireCallback) {
+    Label.superclass.setValue.call(this, slot, value, fireCallback);
 };
  
 Label.prototype.refresh = function () {

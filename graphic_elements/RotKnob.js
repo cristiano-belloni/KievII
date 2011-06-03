@@ -135,7 +135,7 @@ RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
 };
 
 // Setters
-RotKnob.prototype.setValue = function (slot, value) {
+RotKnob.prototype.setValue = function (slot, value, fireCallback) {
     var temp_value = value;
 
     if ((temp_value < 0) || (temp_value > 1)) {
@@ -145,7 +145,7 @@ RotKnob.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    RotKnob.superclass.setValue.call(this, slot, value);
+    RotKnob.superclass.setValue.call(this, slot, value, fireCallback);
 
 };
 

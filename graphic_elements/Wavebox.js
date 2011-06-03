@@ -43,9 +43,10 @@ Wavebox.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Wavebox.prototype.setValue = function (slot, value) {
+Wavebox.prototype.setValue = function (slot, value, fireCallback) {
 
     // Won't call the parent: this element has a custom way to set values.
+    // TODO CALL THE CALLBACK AND USE fireCallback
 
     if (this.values[slot] === value) {
         //Nothing changed, don't redraw.

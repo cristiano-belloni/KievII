@@ -160,7 +160,7 @@ Slider.prototype.onMouseMove = function (curr_x, curr_y) {
     };
 
 // Setters
-Slider.prototype.setValue = function (slot, value) {
+Slider.prototype.setValue = function (slot, value, fireCallback) {
 
     if (this.values[slot] === value) {
         // Don't update and refresh, just return!
@@ -173,7 +173,7 @@ Slider.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    Slider.superclass.setValue.call(this, slot, value);
+    Slider.superclass.setValue.call(this, slot, value, fireCallback);
 
 };
 

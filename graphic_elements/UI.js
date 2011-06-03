@@ -226,6 +226,12 @@ function UI(domElement, wrapperFactory) {
                     if (typeof(connectParameters.callback) === "function") {
                         receiverHash.callback = connectParameters.callback;
                     }
+                    // Should the connection setValue fire cascading setValue callbacks?
+                    // By default, yes.
+                    receiverHash.cascade = true;
+                    if (connectParameters.cascade !== undefined) {
+                        receiverHash.cascade = connectParameters.cascade;
+                    }
                 }
 
                 // Push the destination element/slot in the connections matrix.
@@ -244,7 +250,7 @@ function UI(domElement, wrapperFactory) {
     // <VALUE HANDLING>
 
     // This method handles one set value event and propagates it in the connections matrix
-    this.setValue = function (elementID, slot, value, history) {
+    this.setValue = function (elementID, slot, value, history, fireCallback) {
         var hist = [],
             receiverHash,
             recvElementID,
@@ -273,7 +279,7 @@ function UI(domElement, wrapperFactory) {
             }
             // Element is present an there's no need to break a loop
             // really set value.
-            this.elements[elementID].setValue(slot, value);
+            this.elements[elementID].setValue(slot, value, fireCallback);
 
             // This element has been already set: update history
             hist.push({"element" : elementID, "slot" : slot});
@@ -313,16 +319,26 @@ function UI(domElement, wrapperFactory) {
                     recvElementID = receiverHash.recvElement;
                     recvSlot = receiverHash.recvSlot;
 
-                    //Check the callback here.
+                    // Check the callback here.
                     if (typeof(receiverHash.callback) === "function") {
                         // We have a callback to call. This is typically
                         // used as a filter to translate the values.
                         value = receiverHash.callback (value);
                     }
 
+                    // Check if consequent setValue()s should have cascading
+                    // consequences (i.e. fire the callbacks)
+                    var fireCallback;
+                    if (receiverHash.cascade === false) {
+                        fireCallback = false;
+                    }
+                    else {
+                        fireCallback = true;
+                    }
+
                     // Recursively calls itself, keeping an history in the stack
                     // this.elements[recvHash].setValue(recvSlot, value);
-                    this.setValue(recvElementID, recvSlot, value, hist);
+                    this.setValue(recvElementID, recvSlot, value, hist, fireCallback);
                 }
             }
         }

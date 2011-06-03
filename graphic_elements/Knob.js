@@ -150,7 +150,7 @@ Knob.prototype.onMouseMove = function (curr_x, curr_y) {
 };
 
 // Setters
-Knob.prototype.setValue = function (slot, value) {
+Knob.prototype.setValue = function (slot, value, fireCallback) {
     var temp_value = value;
 
     if ((temp_value < 0) || (temp_value > 1)) {
@@ -160,7 +160,7 @@ Knob.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    Knob.superclass.setValue.call(this, slot, value);
+    Knob.superclass.setValue.call(this, slot, value, fireCallback);
 
 };
         

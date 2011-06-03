@@ -91,15 +91,14 @@ Button.prototype.onMouseUp = function (curr_x, curr_y) {
 };
 
 // Setters
-Button.prototype.setValue = function (slot, value) {
-    var temp_value = value;
+Button.prototype.setValue = function (slot, value, fireCallback) {
 
-    if ((temp_value < 0) || (temp_value > this.nButtons)) {
+    if ((value < 0) || (value > this.nButtons)) {
         return;
     }
 
     // Now, we call the superclass
-    Button.superclass.setValue.call(this, slot, value);
+    Button.superclass.setValue.call(this, slot, value, fireCallback);
 
 };
 
