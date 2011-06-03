@@ -187,15 +187,15 @@ function UI(domElement, wrapperFactory) {
                     this.zMax = elementParameters.zIndex;
                 }
             }
-        }
-        else {
-            //We store the "undefined" as the lowest z-indexed layers.
-            this.elements[element.ID].zIndex = undefined;
-            this.zArrayUndefined.push(this.elements[element.ID]);
-        }
-        // Complete Repaint
-        if (elementParameters.completeRepaint === true) {
-            this.elements[element.ID].completeRepaint = true;
+            else {
+                //We store the "undefined" as the lowest z-indexed layers.
+                this.elements[element.ID].zIndex = undefined;
+                this.zArrayUndefined.push(this.elements[element.ID]);
+            }
+            // Complete Repaint
+            if (elementParameters.completeRepaint === true) {
+                this.elements[element.ID].completeRepaint = true;
+            }
         }
     };
     
