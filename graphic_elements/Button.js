@@ -45,12 +45,12 @@ Button.prototype.getready = function (args) {
 Button.prototype.isInROI = function (x, y) {
     if ((x >= this.ROILeft) && (y >= this.ROITop)) {
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight))) {
-            console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
+            //console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
             return true;
         }
         /*jsl:pass*/
     }
-    console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
+    //console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
     return false;
 };
 
@@ -109,7 +109,7 @@ Button.prototype.refresh = function () {
         // Call the superclass.
         Button.superclass.refresh.apply(this, [this.drawClass.drawImage]);
 
-        // Draw, if our draw class is already set.
+        // Draw, if the element is visible.
         if (this.isVisible === true) {
             this.drawClass.drawImage.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
         }

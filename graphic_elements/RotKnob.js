@@ -20,7 +20,29 @@ RotKnob.prototype.getready = function (args) {
     //from the parent class, define extra ones from this class
 
     //Default value is 0
-    this.values = {"knobvalue" : 0};
+    this.values = {"knobvalue" : 0,
+                   "realknobvalue" : 0}
+
+    // Init angular value. Describes the orientation of the rotary part image,
+    // relative to the angular 0 point.
+    if (args.initAngValue === undefined) {
+        this.initAngValue = 0;
+    }
+    else {
+        this.initAngValue = args.initAngValue;
+    }
+
+    // Start angular value. Defines the start point of the knob, relative to
+    // the angular 0 point (NOT the initANgValue).
+    this.startAngValue = args.startAngValue;
+
+    // Stop angular value. Defines the stop point of the knob, relative to
+    // the angular 0 point (NOT the initANgValue).
+    this.stopAngValue = args.startAngValue;
+
+    // Steps. Defines the number of discrete steps of the knob. Infinite if
+    // left undefined.
+    this.angSteps = args.angSteps;
 
     //By default, a RotKnob always draws itself when value is set.
     this.drawItself = args.drawItself || true;
@@ -47,8 +69,11 @@ RotKnob.prototype._getRotateAmount = function () {
         // Do nothing
         return undefined;
     }
-    
-    var ret = this.values.knobvalue * 360 * Math.PI / 180;
+    // Take the initial angular offset in account.
+    var angularValue = this.values.knobvalue * 360;
+    var offsetAngularValue = (360 - this.initAngValue + angularValue) % 360;
+    // Convert to radians
+    var ret = offsetAngularValue * Math.PI / 180;
     return ret;
 };
 
@@ -67,12 +92,12 @@ RotKnob.prototype._getImage = function () {
 RotKnob.prototype.isInROI = function (x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
         if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
-            console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
+            //console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
             return true;
         }
         /*jsl:pass*/
     }
-    console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
+    //console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
     return false;
 };
 
@@ -112,7 +137,7 @@ RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
 
         deltaY = curr_y - this.start_y;
 
-        temp_value = this.values.knobvalue;
+        temp_value = this.values.realknobvalue;
 
         // Todo set sensivity.
         to_set = temp_value - deltaY / this.sensivity;
@@ -136,16 +161,42 @@ RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
 
 // Setters
 RotKnob.prototype.setValue = function (slot, value, fireCallback) {
-    var temp_value = value;
+    var stepped_new_value;
 
-    if ((temp_value < 0) || (temp_value > 1)) {
+    if ((value < 0) || (value > 1)) {
         //Just do nothing.
         //console.log("RotKnob.prototype.setValue: VALUE INCORRECT!!");
         return;
     }
 
+    if (this.values[slot] === undefined) {
+        throw new Error("Slot " + slot + " not present or value undefined");
+    }
+
+    if ((value === this.values[slot]) || (value === this.values['real' + slot]))  {
+        // Nothing to do.
+        return;
+    }
+
+    this.values['real' + slot] = value;
+
+    if ((this.angSteps) !== undefined) {
+        
+        var single_step = 1 / this.angSteps;
+        stepped_new_value = Math.floor(value / single_step) * single_step;
+
+        // No change in step -> no change in state or representation. Return.
+        if (stepped_new_value === this.values [slot]) {
+            return;
+        }
+    }
+
+    else {
+        stepped_new_value = value;
+    }
+
     // Now, we call the superclass
-    RotKnob.superclass.setValue.call(this, slot, value, fireCallback);
+    RotKnob.superclass.setValue.call(this, slot, stepped_new_value, fireCallback);
 
 };
 
@@ -159,6 +210,7 @@ RotKnob.prototype.refresh = function () {
 
         // Draw if visible.
         if (this.isVisible === true) {
+
             /*jslint nomen: false*/
             var rot = this._getRotateAmount();
             /*jslint nomen: true*/

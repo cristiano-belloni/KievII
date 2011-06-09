@@ -48,6 +48,10 @@ Wavebox.prototype.setValue = function (slot, value, fireCallback) {
     // Won't call the parent: this element has a custom way to set values.
     // TODO CALL THE CALLBACK AND USE fireCallback
 
+    if (this.values[slot] === undefined) {
+        throw new Error("Slot " + slot + " not present or value undefined");
+    }
+
     if (this.values[slot] === value) {
         //Nothing changed, don't redraw.
         return;
@@ -77,7 +81,7 @@ Wavebox.prototype.setValue = function (slot, value, fireCallback) {
                 throw new Error("Error: Trying to set endsample < startsample: ", value, " < ", this.values["startsample"]);
             }
     }
-    
+
     this.values[slot] = value;
     console.log ("set value for slot ", slot);
 
