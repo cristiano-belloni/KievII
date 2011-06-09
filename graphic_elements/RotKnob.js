@@ -32,13 +32,13 @@ RotKnob.prototype.getready = function (args) {
         this.initAngValue = args.initAngValue;
     }
 
-    // Defines the rotation direction
-    if (args.rotDirection == 'anticlockwise') {
-        this.rotDirection = -1;
+    // Defines the rotation direction in relation to the movement type.
+    if (args.moveDirection == 'anticlockwise') {
+        this.moveDirection = -1;
     }
     else {
         // Default, clockwise.
-        this.rotDirection = 1;
+        this.moveDirection = 1;
     }
 
     // Start angular value. Defines the start point of the knob.
@@ -76,9 +76,18 @@ RotKnob.prototype._getRotateAmount = function () {
         // Do nothing
         return undefined;
     }
-    // Take the initial angular offset in account.
+    
+    // value in degrees.
     var angularValue = this.values.knobvalue * 360;
-    var offsetAngularValue = (360 - this.initAngValue + angularValue) % 360;
+    //console.log ("angularValue: ", angularValue);
+
+    // Linear interpolation between startAngValue and stopAngValue
+    var rangedAngularValue = 360 - (angularValue * (this.startAngValue - this.stopAngValue) / 360 + this.stopAngValue) % 360;
+    //console.log ("rangedAngularValue: ", rangedAngularValue);
+
+    // Add the angular offset, if any.
+    var offsetAngularValue = (360 - this.initAngValue + rangedAngularValue) % 360;
+
     // Convert to radians
     var ret = offsetAngularValue * Math.PI / 180;
     return ret;
@@ -146,7 +155,7 @@ RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
 
         temp_value = this.values.realknobvalue;
 
-        to_set = temp_value - ((deltaY / this.sensivity) * this.rotDirection);
+        to_set = temp_value - ((deltaY / this.sensivity) * this.moveDirection);
 
         if (to_set > 1) {
             to_set = 1;
@@ -200,6 +209,8 @@ RotKnob.prototype.setValue = function (slot, value, fireCallback) {
     else {
         stepped_new_value = value;
     }
+    
+    console.log ("Value is: ", stepped_new_value);
 
     // Now, we call the superclass
     RotKnob.superclass.setValue.call(this, slot, stepped_new_value, fireCallback);
