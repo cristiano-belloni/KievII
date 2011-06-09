@@ -53,7 +53,7 @@ RotKnob.prototype.getready = function (args) {
 
     //By default, a RotKnob always draws itself when value is set.
     this.drawItself = args.drawItself || true;
-    this.sensivity = args.sensivity || 2000;
+    this.sensitivity = args.sensitivity || 2000;
     this.image = args.image;
     
     this.setWidth(this.image.width);
@@ -155,7 +155,7 @@ RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
 
         temp_value = this.values.realknobvalue;
 
-        to_set = temp_value - ((deltaY / this.sensivity) * this.moveDirection);
+        to_set = temp_value - ((deltaY / this.sensitivity) * this.moveDirection);
 
         if (to_set > 1) {
             to_set = 1;

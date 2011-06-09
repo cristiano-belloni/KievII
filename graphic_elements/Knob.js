@@ -23,7 +23,7 @@ Knob.prototype.getready = function (args) {
 
     //By default, a knob always draws itself when value is set.
     this.drawItself = args.drawItself || true;
-    this.sensivity = args.sensivity || 2000;
+    this.sensitivity = args.sensitivity || 2000;
     this.imagesArray = args.imagesArray || null;
     
     if (this.imagesArray.length < 1) {
@@ -129,8 +129,8 @@ Knob.prototype.onMouseMove = function (curr_x, curr_y) {
 
         temp_value = this.values.knobvalue;
 
-        // Todo set sensivity.
-        to_set = temp_value - deltaY / this.sensivity;
+        // Todo set sensitivity.
+        to_set = temp_value - deltaY / this.sensitivity;
 
         if (to_set > 1) {
             to_set = 1;
