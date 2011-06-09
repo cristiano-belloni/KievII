@@ -32,13 +32,20 @@ RotKnob.prototype.getready = function (args) {
         this.initAngValue = args.initAngValue;
     }
 
-    // Start angular value. Defines the start point of the knob, relative to
-    // the angular 0 point (NOT the initANgValue).
-    this.startAngValue = args.startAngValue;
+    // Defines the rotation direction
+    if (args.rotDirection == 'anticlockwise') {
+        this.rotDirection = -1;
+    }
+    else {
+        // Default, clockwise.
+        this.rotDirection = 1;
+    }
 
-    // Stop angular value. Defines the stop point of the knob, relative to
-    // the angular 0 point (NOT the initANgValue).
-    this.stopAngValue = args.startAngValue;
+    // Start angular value. Defines the start point of the knob.
+    this.startAngValue = args.startAngValue || 0;
+
+    // Stop angular value. Defines the stop point of the knob.
+    this.stopAngValue = args.stopAngValue || 360;
 
     // Steps. Defines the number of discrete steps of the knob. Infinite if
     // left undefined.
@@ -139,8 +146,7 @@ RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
 
         temp_value = this.values.realknobvalue;
 
-        // Todo set sensivity.
-        to_set = temp_value - deltaY / this.sensivity;
+        to_set = temp_value - ((deltaY / this.sensivity) * this.rotDirection);
 
         if (to_set > 1) {
             to_set = 1;
