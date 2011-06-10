@@ -1,4 +1,4 @@
-function UI(domElement, wrapperFactory) {
+function UI(domElement, wrapperFactory, parameters) {
 
     // <EVENT HANDLING>
 
@@ -81,28 +81,64 @@ function UI(domElement, wrapperFactory) {
         };
     };
 
+    // Note: breakOnFirstEvent works only elements that share the same kind of
+    // event handling mechanism (es: buttons with buttons).
     // Notify every element about the event.
     this.elementsNotifyEvent = function (x, y, event) {
-        // For every element
-        for (var ID in this.elements) {
-            // If it is a real element
-            if (this.elements.hasOwnProperty(ID)){
-                // If the element wants to be bothered with events
-                if (this.elements[ID].getClickable()) {
-                    // Notify the element
-                    ret = this.elements[ID][event](x, y);
-                    // See if the element changed its value
-                    if (ret !== undefined) {
-                        if (ret instanceof Array) {
-                            // An element could change multiple slots of itself.
-                            for (var i = 0; i < ret.length; i+=1) {
-                                this.setValue(ID, ret[i].slot, ret[i].value);
+        
+        // For every element in Z-index array, in order
+        for (var z = this.zMax; z >= this.zMin; z -= 1) {
+            // The array has holes.
+            if (this.zArray[z] !== undefined) {
+                for (var k = (this.zArray[z].length -1); k >=0; k -= 1) {
+                    // If the element wants to be bothered with events
+                    if (this.zArray[z][k].getClickable()) {
+                        // Notify the element
+                        ret = this.zArray[z][k][event](x, y);
+                        // See if the element changed its value
+                        if (ret !== undefined) {
+                            if (ret instanceof Array) {
+                                // An element could change multiple slots of itself.
+                                for (var i = 0; i < ret.length; i+=1) {
+                                    this.setValue(this.zArray[z][k].ID, ret[i].slot, ret[i].value);
+                                }
+                            }
+                            else {
+                                // console.log("UI: Element ", ID, " changed its value on event ", event);
+                                this.setValue(this.zArray[z][k].ID, ret.slot, ret.value);
+                            }
+
+                            if (this.breakOnFirstEvent === true) {
+                                // One element has answered to an event, return.
+                                return;
                             }
                         }
-                        else {
-                            // console.log("UI: Element ", ID, " changed its value on event ", event);
-                            this.setValue(ID, ret.slot, ret.value);
+                    }
+                }
+            }
+        }
+        
+        // For every element in the undefined z-index array
+        for (z = (this.zArrayUndefined.length - 1 ); z >=0 ; z -= 1) {
+            if (this.zArrayUndefined[z].getClickable()) {
+                // Notify the element
+                ret = this.zArrayUndefined[z][event](x, y);
+                // See if the element changed its value
+                if (ret !== undefined) {
+                    if (ret instanceof Array) {
+                        // An element could change multiple slots of itself.
+                        for (i = 0; i < ret.length; i+=1) {
+                            this.setValue(this.zArrayUndefined[z].ID, ret[i].slot, ret[i].value);
                         }
+                    }
+                    else {
+                        // console.log("UI: Element ", ID, " changed its value on event ", event);
+                        this.setValue(this.zArrayUndefined[z].ID, ret.slot, ret.value);
+                    }
+
+                    if (this.breakOnFirstEvent === true) {
+                        // One element has answered to an event, return.
+                        return;
                     }
                 }
             }
@@ -135,6 +171,11 @@ function UI(domElement, wrapperFactory) {
 
     // Graphic frontend wrapper
     this.graphicWrapper = wrapperFactory;
+
+    // Break on first
+    if (parameters !== undefined) {
+        this.breakOnFirstEvent = parameters.breakOnFirstEvent || false;
+    }
 
     // </CONSTRUCTOR>
 
