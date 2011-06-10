@@ -51,9 +51,13 @@ RotKnob.prototype.getready = function (args) {
     // left undefined.
     this.angSteps = args.angSteps;
 
-    //By default, a RotKnob always draws itself when value is set.
+    // By default, a RotKnob always draws itself when value is set.
     this.drawItself = args.drawItself || true;
-    this.sensitivity = args.sensitivity || 2000;
+    var sens = args.sensitivity || 2000;
+    // Scale sensivity according to the knob angle.
+    this.sensitivity = Math.round((sens / 360) *  (Math.abs(this.stopAngValue - this.startAngValue)));
+
+    
     this.image = args.image;
     
     this.setWidth(this.image.width);
