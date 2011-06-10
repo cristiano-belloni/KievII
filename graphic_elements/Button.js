@@ -126,3 +126,11 @@ Button.prototype.setGraphicWrapper = function (wrapper) {
                                            objParms: this.objParms}]);
 
 };
+
+Button.prototype.setStatesNumber = function (number) {
+    this.nButtons = number;
+};
+
+Button.prototype.getStatesNumber = function () {
+    return this.nButtons;
+}
