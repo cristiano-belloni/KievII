@@ -372,8 +372,6 @@ function UI(domElement, wrapperFactory, parameters) {
                 // When hidden, the element is also not listening to events
                 this.elements[elementID].setClickable (false);
 
-                // Repaint everything, in order.
-                this.refresh();
             }
 
         }
@@ -397,8 +395,6 @@ function UI(domElement, wrapperFactory, parameters) {
                 // When unhidden, the element starts listening to events again.
                 this.elements[elementID].setClickable (true);
 
-                // Repaint everything, in order.
-                this.refresh();
             }
 
         }
@@ -424,8 +420,6 @@ function UI(domElement, wrapperFactory, parameters) {
                     // When unhidden, the element starts listening to events again.
                     this.elements[elementID].setClickable (value);
 
-                    // Repaint everything, in order.
-                    this.refresh();
                 }
 
             }

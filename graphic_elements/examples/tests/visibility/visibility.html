@@ -80,6 +80,7 @@
                 else if (value === 0) {
                     ui.setHidden("knob", false);
                 }
+                ui.refresh();
             };
         }();
         var button1 = new Button(button1Args);
@@ -104,6 +105,7 @@
                     //make visible
                     ui.setHidden("knob2", false);
                 }
+                ui.refresh();
             };
         }();
         var button2 = new Button(button2Args);
@@ -126,6 +128,7 @@
                 else if (value === 0) {
                     ui.setHidden("background", false);
                 }
+                ui.refresh();
             };
         }();
         var button3 = new Button(button3Args);
@@ -156,7 +159,7 @@
 
 
         /* ADD UI */
-        ui.addElement(background,{zIndex: 1});
+        ui.addElement(background);
         ui.addElement(button1,{zIndex: 5});
         ui.addElement(button2,{zIndex: 5});
         ui.addElement(button3,{zIndex: 5});
