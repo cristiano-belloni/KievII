@@ -21,8 +21,6 @@ Knob.prototype.getready = function (args) {
     //Default value is 0
     this.values = {"knobvalue" : 0};
 
-    //By default, a knob always draws itself when value is set.
-    this.drawItself = args.drawItself || true;
     this.sensitivity = args.sensitivity || 2000;
     this.imagesArray = args.imagesArray || null;
     
@@ -46,13 +44,6 @@ Knob.prototype.getready = function (args) {
     // Set them.
     this.setWidth(width);
     this.setHeight(height);
-    
-    // Background saving is optional.
-    if ((args.preserveBg !== undefined) && (args.preserveBg === true)) {
-        this.preserveBg = true;
-        // As soon as we can, we want to save our background.
-        this.backgroundSavePending = true;
-    }
 
 };
 

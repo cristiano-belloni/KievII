@@ -70,9 +70,12 @@
             ui.addElement(background);
             ui.addElement (label, {zIndex: 5});
 
-            ui.refresh();
-
             label.setValue("labelvalue", "This is a label, testing this label.");
+            
+            var i = 1
+	    var timer = setInterval(function() { ui.setValue("label", "labelvalue", "This is a label, testing this label. " + i++); }, 2000);
+            
+            ui.refresh();
         }
 
 

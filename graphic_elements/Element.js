@@ -43,32 +43,18 @@ Element.prototype.getready = function (args) {
     
     this.ROIWidth = args.ROIWidth;
     this.ROIHeight = args.ROIHeight;
-    
-    // Element never draws itself by default
-    this.drawItself = args.drawItself || false;
-
     // Element is visible by default
     this.isVisible = args.isVisible || true;
 
     // These are to be set later
     this.values = {};
     
-    // Set this if the element needs to preserve its background.
-    this.preserveBg = args.preserveBg || false;
-
-    if (this.preserveBg === true) {
-        // Set this if the element has to save the background now.
-        this.backgroundSavePending = true;
-    }
-
     // Specific parameters of the object, to be passed to the wrapper
     this.objParms = args.objParms;
 
     // See if there is a callback to call when the value is set
     if (args !== undefined) {
-        if (typeof (args.onValueSet) === "function") {
-            this.onValueSet = args.onValueSet;
-        }
+        this.onValueSet = args.onValueSet;
     }
 
 };
@@ -131,7 +117,7 @@ Element.prototype.getValue = function (slot) {
 };
 
 // Setters
-Element.prototype.setValue = function (slot, value, fireCallback) {
+Element.prototype.setValue = function (slot, value) {
 
     var temp_value = value;
 
@@ -145,16 +131,7 @@ Element.prototype.setValue = function (slot, value, fireCallback) {
     }
 
     this.values[slot] = temp_value;
-
-    // If the element needs to be refreshed, refresh it now.
-    if (this.drawItself === true) {
-        this.refresh();
-    }
-
-    // Finally, call the callback if there's one.
-    if ((typeof (this.onValueSet) === "function") && (fireCallback !== false)) {
-        this.onValueSet (slot, this.values[slot], this.ID);
-    }
+    
 
 };
 
@@ -169,32 +146,9 @@ Element.prototype.getClickable = function () {
     return this.isClickable;
 };
 
-Element.prototype.setDrawsItself = function (drawItself) {
-    if (typeof drawItself === "boolean") {
-        this.drawItself = drawItself;
-    }
-};
-
-Element.prototype.setTainted = function (tainted) {
-    if (typeof tainted === "boolean") {
-        this.backgroundSavePending = tainted;
-    }
-}
-
 // Refresh. This is the basic action.
 Element.prototype.refresh = function (drawPrimitive) {
-
-    if (this.preserveBg === true) {
-        if (this.backgroundSavePending === true) {
-            drawPrimitive.saveBackground (this.xOrigin, this.yOrigin, this.width, this.height);
-            this.backgroundSavePending = false;
-        }
-
-        else {
-            // We want drawClass to refresh the saved background.
-            drawPrimitive.restoreBackground();
-        }
-    }
+// Nothing to do in the abstract class.
 };
 
 Element.prototype.getID = function () {

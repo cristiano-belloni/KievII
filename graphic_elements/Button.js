@@ -22,9 +22,6 @@ Button.prototype.getready = function (args) {
 
     this.triggered = false;
 
-    //By default, a Button always draws itself when value is set.
-    this.drawItself = args.drawItself || true;
-
     this.imagesArray = args.imagesArray;
 
     if (this.imagesArray.length < 1) {

@@ -71,6 +71,7 @@
             var that = this;
             return function (slot, value) {
                 console.log ("onValueSet Button 1 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                ui.refresh();
             };
         }();
         var button1 = new Button(button1Args);
@@ -90,6 +91,7 @@
             var that = this;
             return function (slot, value) {
                 console.log ("onValueSet Button 2 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                ui.refresh();
             };
         }();
         var button2 = new Button(button2Args);
@@ -99,8 +101,7 @@
             top: 30,
             left: 30,
             imagesArray : loaders["ztest_knob_image_loader"].images,
-            sensitivity : 5000,
-            preserveBg: true
+            sensitivity : 5000
         };
         //onValueSet = undefined
         var knob = new Knob(knobArgs);
@@ -112,6 +113,7 @@
         button1.setValue("buttonvalue", 0);
         button2.setValue("buttonvalue", 0);
         knob.setValue("knobvalue", 0);
+        ui.refresh();
 
         }
 

@@ -43,9 +43,6 @@ NonOverlappingMultiknob.prototype.getready = function (args) {
         // The knobs are named 1,2,3...n
         tempKnob = new Knob(i, args.coordinates[i], knobSpecArgs);
 
-        //Set them undrawable, as we will explicitly refresh them.
-        tempKnob.drawItself = false;
-
         this.KnobArray.push(tempKnob);
     }
 
@@ -57,8 +54,6 @@ NonOverlappingMultiknob.prototype.getready = function (args) {
         this.values[valuename] = i;
     }
 
-    //By default, a multiple knob always draws itself when value is set.
-    this.drawItself = true;
 };
 
 NonOverlappingMultiknob.prototype.isInROI = function (x, y) {
@@ -173,13 +168,7 @@ NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
     //Set the values in the subknob. I don't like the hardcoded string here.
     //(maybe a Multielement could be generalized)
     this.KnobArray[knobN].setValue("knobvalue", value);
-
-    // Now, we don't need to call the superclass since we don't have any "real" value.
-    // We must refresh by ourselves, though.
-    // TODO IMPLEMENT CALLBACKS AND USE fireCallback
-    if (this.drawItself === true) {
-        this.refresh();
-    }
+    
 };
 
 NonOverlappingMultiknob.prototype.refresh = function () {
@@ -190,9 +179,7 @@ NonOverlappingMultiknob.prototype.refresh = function () {
         throw new Error("Error: drawClass is undefined!");
     }
     else {
-        // Refresh all the subknobs. TODO THIS IS NOT RIGHT!
-        // If we want to preserve the background, we have to have different
-        // drawing contexts.
+        // Refresh all the subknobs.
         for (i = 0; i < this.KnobArray.length; i += 1) {
             //drawClasses must be lazily initialized here.
             if (this.KnobArray[i].drawClass === undefined) {

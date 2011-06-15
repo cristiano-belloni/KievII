@@ -51,8 +51,6 @@ RotKnob.prototype.getready = function (args) {
     // left undefined.
     this.angSteps = args.angSteps;
 
-    // By default, a RotKnob always draws itself when value is set.
-    this.drawItself = args.drawItself || true;
     var sens = args.sensitivity || 2000;
     // Scale sensivity according to the knob angle.
     this.sensitivity = Math.round((sens / 360) *  (Math.abs(this.stopAngValue - this.startAngValue)));
@@ -62,12 +60,6 @@ RotKnob.prototype.getready = function (args) {
     
     this.setWidth(this.image.width);
     this.setHeight(this.image.height);
-
-    this.preserveBg = args.preserveBg || true;
-    if (this.preserveBg) {
-        this.backgroundSavePending = true;
-    }
-    
 
 };
 
@@ -95,17 +87,6 @@ RotKnob.prototype._getRotateAmount = function () {
     // Convert to radians
     var ret = offsetAngularValue * Math.PI / 180;
     return ret;
-};
-
-// This method returns an image object given the RotKnob value.
-/*jslint nomen: false*/
-RotKnob.prototype._getImage = function () {
-/*jslint nomen: true*/
-
-    /*jslint nomen: false*/
-    var ret = this._getImageNum();
-    /*jslint nomen: true*/
-    return this.imagesArray[ret];
 };
 
 // This method returns true if the point given belongs to this RotKnob.

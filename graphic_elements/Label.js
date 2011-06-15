@@ -11,17 +11,10 @@ Label.prototype.getready = function (args) {
     // Call the constructor from the superclass.
     Label.superclass.getready.call(this, args);
 
-    this.values = {"labelvalue" : 0};
+    this.values = {"labelvalue" : ""};
      
     this.setWidth(args.width);
     this.setHeight(args.height);
-   
-    //By default, a label always draws itself when value is set.
-    this.drawItself = args.drawItself || true;
-   
-    //By default, a label always refreshes the background.
-    this.preserveBg = args.preserveBg || true;
-    this.backgroundSavePending = true;
 
 };
 

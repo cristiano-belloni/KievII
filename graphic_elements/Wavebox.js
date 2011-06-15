@@ -16,20 +16,9 @@ Wavebox.prototype.getready = function (args) {
                    "endsample" : null,
                    "waveboxsignal" : undefined
                };
-
-    //By default, a Wavebox always draws itself when a value is set.
-    this.drawItself = args.drawItself || true;
     
     this.setWidth(args.width);
     this.setHeight(args.height);
-
-    //By default, a wavebox always refreshes the background.
-    this.preserveBg = args.preserveBg || true;
-
-    if (this.preserveBg === true) {
-        // As soon as we can, we want to save our background.
-        this.backgroundSavePending = true;
-    }
 
 };
 
@@ -91,10 +80,6 @@ Wavebox.prototype.setValue = function (slot, value, fireCallback) {
         console.log ("inside!");
         this.values["endsample"] = this.values["waveboxsignal"].length;
         this.values["startsample"] = 0;
-    }
-
-    if (this.drawItself === true) {
-        this.refresh();
     }
 };
 

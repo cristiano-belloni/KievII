@@ -49,9 +49,6 @@ Multiband.prototype.getready = function (args) {
     this.setWidth(args.width);
     this.setHeight(args.height);
 
-    //By default, a Multiband always draws itself when value is set.
-    this.drawItself = args.drawItself || true;
-
 };
 
 Multiband.prototype.calculateSidebands = function () {
@@ -294,12 +291,7 @@ Multiband.prototype.setValue = function (slot, value, fireCallback) {
     }
 
     this.values[slot] = value;
-
-    if (this.drawItself === true) {
-        // Paints the bands
-        this.refresh();
-    }
-
+ 
 };
 
 

@@ -91,6 +91,7 @@
                 var that = this;
                 return function (slot, value) {
                     console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                    ui.refresh();
                 };
             }();
 
@@ -98,6 +99,7 @@
                 var that = this;
                 return function (slot, value) {
                     console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                    ui.refresh();
                 };
             }();
 

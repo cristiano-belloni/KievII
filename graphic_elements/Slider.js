@@ -22,9 +22,6 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
     // Default value is 0
     this.values = {"slidervalue" : 0};
 
-    //By default, a Slider always draws itself when value is set.
-    this.drawItself = args.drawItself || true;
-
     this.width = 0;
     this.height = 0;
 
@@ -33,9 +30,6 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
     this.type = args.type;
 
     this.calculateDimensions();
-
-    // As soon as we can, we want to save our background.
-    this.backgroundSavePending = true;
 
 };
 
@@ -188,27 +182,6 @@ Slider.prototype.refresh = function () {
     }
     else {
 
-        if (this.backgroundSavePending === true) {
-            switch(this.type) {
-                case "horizontal":
-                    this.drawClass.drawImage.saveBackground (this.xOrigin - this.additionalEndSpace, this.yOrigin, this.totalStride, this.height);
-                break;
-
-                case "vertical":
-                    this.drawClass.drawImage.saveBackground (this.xOrigin, this.yOrigin - this.additionalEndSpace, this.width, this.totalStride);
-                break;
-
-                default:
-                  throw new Error("Error: Slider orientation is undefined!");
-              }
-            
-            this.backgroundSavePending = false;
-        }
-
-        else {
-            // We want drawClass to refresh the saved background.
-            this.drawClass.drawImage.restoreBackground();
-        }
         if ((this.drawClass !== undefined) && (this.isVisible === true)) {
             this.drawClass.drawImage.draw(this.sliderImage, this.xOrigin, this.yOrigin);
             /*jslint nomen: false*/

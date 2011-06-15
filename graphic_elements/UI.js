@@ -118,31 +118,6 @@ function UI(domElement, wrapperFactory, parameters) {
             }
         }
         
-        // For every element in the undefined z-index array
-        for (z = (this.zArrayUndefined.length - 1 ); z >=0 ; z -= 1) {
-            if (this.zArrayUndefined[z].getClickable()) {
-                // Notify the element
-                ret = this.zArrayUndefined[z][event](x, y);
-                // See if the element changed its value
-                if (ret !== undefined) {
-                    if (ret instanceof Array) {
-                        // An element could change multiple slots of itself.
-                        for (i = 0; i < ret.length; i+=1) {
-                            this.setValue(this.zArrayUndefined[z].ID, ret[i].slot, ret[i].value);
-                        }
-                    }
-                    else {
-                        // console.log("UI: Element ", ID, " changed its value on event ", event);
-                        this.setValue(this.zArrayUndefined[z].ID, ret.slot, ret.value);
-                    }
-
-                    if (this.breakOnFirstEvent === true) {
-                        // One element has answered to an event, return.
-                        return;
-                    }
-                }
-            }
-        }
     };
 
     // <END OF EVENT HANDLING>
@@ -167,7 +142,6 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // Z-index lists.
     this.zArray = [];
-    this.zArrayUndefined = [];
 
     // Graphic frontend wrapper
     this.graphicWrapper = wrapperFactory;
@@ -210,34 +184,33 @@ function UI(domElement, wrapperFactory, parameters) {
         }
 
         // Store the parameters
+        var zIndex = 0;
+        
         if (elementParameters !== undefined) {
-            // Z Index
-            if (typeof(elementParameters.zIndex) === "number") {
-                // Insert the element's z-index
-                this.elements[element.ID].zIndex = elementParameters.zIndex;
-                // if it's the first of its kind, initialize the array.
-                if (this.zArray[elementParameters.zIndex] === undefined) {
-                    this.zArray[elementParameters.zIndex] = [];
-                }
-                // Update the maximum and minimum z index.
-                this.zArray[elementParameters.zIndex].push(this.elements[element.ID]);
-                if ((this.zMin === undefined) || (this.zMin >  elementParameters.zIndex)) {
-                    this.zMin = elementParameters.zIndex;
-                }
-                if ((this.zMax === undefined) || (this.zMax <  elementParameters.zIndex)) {
-                    this.zMax = elementParameters.zIndex;
-                }
-            }
-            else {
-                //We store the "undefined" as the lowest z-indexed layers.
-                this.elements[element.ID].zIndex = undefined;
-                this.zArrayUndefined.push(this.elements[element.ID]);
-            }
-            // Complete Repaint
-            if (elementParameters.completeRepaint === true) {
-                this.elements[element.ID].completeRepaint = true;
-            }
+            zIndex = elementParameters.zIndex;
         }
+        
+        if ((zIndex < 0) || (typeof(zIndex) !== "number")) {
+                throw new Error("zIndex " + zIndex + " invalid");
+            }
+            
+        // Insert the z-index into the element
+        // Do we ever use this? TODO
+        this.elements[element.ID].zIndex = zIndex;
+        
+        // if it's the first of its kind, initialize the array.
+        if (this.zArray[zIndex] === undefined) {
+            this.zArray[zIndex] = [];
+        }
+        // Update the maximum and minimum z index.
+        this.zArray[zIndex].push(this.elements[element.ID]);
+        if ((this.zMin === undefined) || (this.zMin > zIndex)) {
+            this.zMin = zIndex;
+        }
+        if ((this.zMax === undefined) || (this.zMax <  zIndex)) {
+            this.zMax = zIndex;
+        }
+        
     };
     
     // </ELEMENT HANDLING>
@@ -321,6 +294,19 @@ function UI(domElement, wrapperFactory, parameters) {
             // Element is present an there's no need to break a loop
             // really set value.
             this.elements[elementID].setValue(slot, value, fireCallback);
+            
+            // Finally, call the callback if there is one and we're allowed to.
+            if ((typeof (this.elements[elementID].onValueSet) === "function") && (fireCallback !== false)) {
+                this.elements[elementID].onValueSet (slot, this.elements[elementID].values[slot], this.elements[elementID].ID);
+            }
+            
+            // Callback must be not defined to trigger the default behaviour. If
+            // the callback is set to something that's not a function, the 
+            // default will not be executed.
+            if (this.elements[elementID].onValueSet === undefined) {
+                // No (undefined) callback default behaviour: refresh the entire UI.
+                this.refresh();
+            }
 
             // This element has been already set: update history
             hist.push({"element" : elementID, "slot" : slot});
@@ -328,22 +314,6 @@ function UI(domElement, wrapperFactory, parameters) {
 
         else {
             throw new Error("Element " + elementID + " not present.");
-        }
-
-        // Z-Index handling: refresh every >z element, starting with z+1
-        // If the element requested a full repaint (i.e. it overlaps with
-        // another at the same zIndex), reset & refresh
-        // TODO maybe completeRepaint can be set automatically.
-        if (this.elements[elementID].zIndex !== undefined) {
-            if (this.elements[elementID].completeRepaint !== true) {
-                this.refreshZ(this.elements[elementID].zIndex + 1);
-            }
-            else {
-                //Reset the wrapper.
-                this.reset();
-                // Repaint everything, in order.
-                this.refresh();
-            }
         }
 
         // Check if this element has connections
@@ -369,17 +339,17 @@ function UI(domElement, wrapperFactory, parameters) {
 
                     // Check if consequent setValue()s should have cascading
                     // consequences (i.e. fire the callbacks)
-                    var fireCallback;
+                    var fire_conn_callback;
                     if (receiverHash.cascade === false) {
-                        fireCallback = false;
+                        fire_conn_callback = false;
                     }
                     else {
-                        fireCallback = true;
+                        fire_conn_callback = true;
                     }
 
                     // Recursively calls itself, keeping an history in the stack
                     // this.elements[recvHash].setValue(recvSlot, value);
-                    this.setValue(recvElementID, recvSlot, value, hist, fireCallback);
+                    this.setValue(recvElementID, recvSlot, value, hist, fire_conn_callback);
                 }
             }
         }
@@ -401,9 +371,6 @@ function UI(domElement, wrapperFactory, parameters) {
                 this.elements[elementID].setVisible (false);
                 // When hidden, the element is also not listening to events
                 this.elements[elementID].setClickable (false);
-
-                // Reset the wrapper.
-                this.reset();
 
                 // Repaint everything, in order.
                 this.refresh();
@@ -429,9 +396,6 @@ function UI(domElement, wrapperFactory, parameters) {
                 this.elements[elementID].setVisible (true);
                 // When unhidden, the element starts listening to events again.
                 this.elements[elementID].setClickable (true);
-
-                //Reset the wrapper.
-                this.reset();
 
                 // Repaint everything, in order.
                 this.refresh();
@@ -460,9 +424,6 @@ function UI(domElement, wrapperFactory, parameters) {
                     // When unhidden, the element starts listening to events again.
                     this.elements[elementID].setClickable (value);
 
-                    //Reset the wrapper.
-                    this.reset();
-
                     // Repaint everything, in order.
                     this.refresh();
                 }
@@ -483,7 +444,6 @@ function UI(domElement, wrapperFactory, parameters) {
             if (typeof(this.zArray[i]) === "object") {
                 for (var k = 0, z_length = this.zArray[i].length; k < z_length; k += 1) {
                     if (this.zArray[i][k].getVisible() === true) {
-                        this.zArray[i][k].setTainted(true);
                         this.zArray[i][k].refresh();
                     }
                 }
@@ -491,12 +451,12 @@ function UI(domElement, wrapperFactory, parameters) {
         }
     }
 
-    this.refresh = function () {
-        // Refresh the undefined z-index elements.
-        for (var k = 0, z_length = this.zArrayUndefined.length; k < z_length; k += 1) {
-            this.zArrayUndefined[k].setTainted(true);
-            this.zArrayUndefined[k].refresh();
+    this.refresh = function (doReset) {
+        // Reset everything
+        if (doReset !== false) {
+            this.reset();
         }
+        
         // Then refresh everything from the smallest z-value, if there is one.
         if (this.zMin !== undefined) {
             this.refreshZ(this.zMin);

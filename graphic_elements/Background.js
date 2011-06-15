@@ -20,12 +20,6 @@ Background.prototype.getready = function (args) {
     this.setWidth(this.image.width);
     this.setHeight(this.image.height);
     
-    // Background saving is on by default.
-    if ((args.preserveBg !== undefined) && (args.preserveBg === true)) {
-        this.preserveBg = true;
-        // As soon as we can, we want to save our background.
-        this.backgroundSavePending = true;
-    }
 
 };
 
