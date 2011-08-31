@@ -297,6 +297,7 @@ CANVAS_WRAPPER = {
         },
 
         reset: function (that) {
+            // use clearRect instead TODO TODO TODO
             that.canvasC.width = that.canvasC.width;
         }
     }

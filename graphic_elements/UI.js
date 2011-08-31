@@ -356,7 +356,7 @@ function UI(domElement, wrapperFactory, parameters) {
     };
     // </VALUE HANDLING>
 
-    // <VISIBILITY HANDLING>
+    // <VISIBILITY, RECEIVING EVENTS>
 
     // todo these two functions are complementary.
 
@@ -409,14 +409,33 @@ function UI(domElement, wrapperFactory, parameters) {
     }
 
     this.setVisible = function (elementID, value) {
-            var visibilityState;
+        var visibilityState;
+
+        if (this.elements[elementID] !== undefined) {
+            visibilityState = this.elements[elementID].getVisible();
+            if (visibilityState !== value) {
+
+                // Set the element's visibility
+                this.elements[elementID].setVisible (value);
+                // When unhidden, the element starts listening to events again.
+                this.elements[elementID].setClickable (value);
+
+            }
+
+        }
+
+        else {
+            throw new Error("Element " + elementID + " not present.");
+        }
+    }
+    
+    this.setClickable = function (elementID, value) {
+            var state;
 
             if (this.elements[elementID] !== undefined) {
-                visibilityState = this.elements[elementID].getVisible();
-                if (visibilityState !== value) {
+                state = this.elements[elementID].getClickable();
+                if (state !== value) {
 
-                    // Set the element's visibility
-                    this.elements[elementID].setVisible (value);
                     // When unhidden, the element starts listening to events again.
                     this.elements[elementID].setClickable (value);
 
@@ -429,7 +448,8 @@ function UI(domElement, wrapperFactory, parameters) {
             }
         }
 
-    // </VISIBILITY HANDLING>
+    // </VISIBILITY, RECEIVING EVENTS>
+   
 
     // <REFRESH HANDLING>
     this.refreshZ = function (z) {
@@ -447,9 +467,9 @@ function UI(domElement, wrapperFactory, parameters) {
 
     this.refresh = function (doReset) {
         // Reset everything
-        if (doReset !== false) {
+        /*if (doReset !== false) {
             this.reset();
-        }
+        }*/
         
         // Then refresh everything from the smallest z-value, if there is one.
         if (this.zMin !== undefined) {

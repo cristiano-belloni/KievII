@@ -14,6 +14,8 @@ Background.prototype.getready = function (args) {
 
     // Call the constructor from the superclass.
     Background.superclass.getready.call(this, args);
+    
+    this.values = {"backgroundvalue" : 0};
 
     this.image = args.image;
     
@@ -36,6 +38,40 @@ Background.prototype.isInROI = function (x, y) {
         }
         return false;
     }
+};
+
+Background.prototype.onMouseDown = function (x, y) {
+
+    //console.log ("Click down on ", x, y);
+
+    if (this.isInROI(x, y)) {
+        this.triggered = true;
+    }
+    return undefined;
+};
+
+Background.prototype.onMouseUp = function (curr_x, curr_y) {
+
+    var to_set = 0,
+        ret = {};
+
+    if (this.triggered) {
+        
+        if (this.isInROI(curr_x, curr_y)) {
+            
+            ret = {"slot" : "backgroundvalue", "value" : 0};
+
+            // Click on button is completed, the button is no more triggered.
+            this.triggered = false;
+            
+            return ret;
+        }
+    }
+    
+    // Action is void, button was upclicked outside its ROI or never downclicked
+    // No need to trigger anything, ignore this event.
+    return undefined;
+    
 };
 
 Background.prototype.refresh = function () {
