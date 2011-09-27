@@ -299,14 +299,15 @@ function UI(domElement, wrapperFactory, parameters) {
             if ((typeof (this.elements[elementID].onValueSet) === "function") && (fireCallback !== false)) {
                 this.elements[elementID].onValueSet (slot, this.elements[elementID].values[slot], this.elements[elementID].ID);
             }
-            
+
+            //TODO!!
             // Callback must be not defined to trigger the default behaviour. If
             // the callback is set to something that's not a function, the 
             // default will not be executed.
-            if (this.elements[elementID].onValueSet === undefined) {
+            /*if (this.elements[elementID].onValueSet === undefined) {
                 // No (undefined) callback default behaviour: refresh the entire UI.
-                this.refresh();
-            }
+                // this.refresh();
+            }*/
 
             // This element has been already set: update history
             hist.push({"element" : elementID, "slot" : slot});
