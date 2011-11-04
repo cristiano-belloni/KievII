@@ -12,6 +12,7 @@ Label.prototype.getready = function (args) {
     Label.superclass.getready.call(this, args);
 
     this.values = {"labelvalue" : ""};
+    this.defaultSlot = "labelvalue";
      
     this.setWidth(args.width);
     this.setHeight(args.height);

@@ -53,6 +53,8 @@ NonOverlappingMultiknob.prototype.getready = function (args) {
         valuename = "knobvalue" + this.KnobArray[i].name;
         this.values[valuename] = i;
     }
+    
+    this.defaultSlot = "knobvalue0";
 
 };
 

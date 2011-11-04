@@ -19,6 +19,7 @@ Button.prototype.getready = function (args) {
     // from the parent class, define extra ones from this class
     // Value 0 by default
     this.values = {"buttonvalue" : 0};
+    this.defaultSlot = "buttonvalue";
 
     this.triggered = false;
 

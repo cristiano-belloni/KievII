@@ -73,7 +73,7 @@
             label.setValue("labelvalue", "This is a label, testing this label.");
             
             var i = 1
-	    var timer = setInterval(function() { ui.setValue("label", "labelvalue", "This is a label, testing this label. " + i++); }, 2000);
+	    var timer = setInterval(function() { ui.setValue({elementID: "label", slot: "labelvalue", value: ("This is a label, testing this label. " + i++)}); }, 2000);
             
             ui.refresh();
         }

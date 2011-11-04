@@ -16,6 +16,7 @@ Background.prototype.getready = function (args) {
     Background.superclass.getready.call(this, args);
     
     this.values = {"backgroundvalue" : 0};
+    this.defaultSlot = "backgroundvalue";
 
     this.image = args.image;
     

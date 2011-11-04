@@ -20,6 +20,7 @@ Knob.prototype.getready = function (args) {
 
     //Default value is 0
     this.values = {"knobvalue" : 0};
+    this.defaultSlot = "knobvalue";
 
     this.sensitivity = args.sensitivity || 2000;
     this.imagesArray = args.imagesArray || null;

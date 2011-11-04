@@ -38,6 +38,8 @@ Multiband.prototype.getready = function (args) {
         valueName = i + "color";
         this.values[valueName] = 0;
     }
+    
+    this.defaultSlot = "0sp";
 
     this.values.colorRange = args.colorRange;
 

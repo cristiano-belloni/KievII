@@ -108,6 +108,7 @@ Element.prototype.setWidth = function (width) {
 }
 
 Element.prototype.getValue = function (slot) {
+    
     if (this.values[slot] === undefined) {
         throw new Error("Slot " + slot + " not present or value undefined");
     }
@@ -119,18 +120,16 @@ Element.prototype.getValue = function (slot) {
 // Setters
 Element.prototype.setValue = function (slot, value) {
 
-    var temp_value = value;
-
     if (this.values[slot] === undefined) {
         throw new Error("Slot " + slot + " not present or value undefined");
     }
 
-    if (temp_value === this.values[slot]) {
+    if (value === this.values[slot]) {
         // Nothing to do.
         return;
     }
 
-    this.values[slot] = temp_value;
+    this.values[slot] = value;
     
 
 };

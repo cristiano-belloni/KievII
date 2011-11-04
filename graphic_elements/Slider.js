@@ -21,6 +21,7 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
 
     // Default value is 0
     this.values = {"slidervalue" : 0};
+    this.defaultSlot = "slidervalue";
 
     this.width = 0;
     this.height = 0;
@@ -155,11 +156,6 @@ Slider.prototype.onMouseMove = function (curr_x, curr_y) {
 
 // Setters
 Slider.prototype.setValue = function (slot, value, fireCallback) {
-
-    if (this.values[slot] === value) {
-        // Don't update and refresh, just return!
-        return;
-    }
 
     if ((value < 0) || (value > 1)) {
         // Can happen if the user drags too much.

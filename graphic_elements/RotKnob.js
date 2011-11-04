@@ -22,6 +22,8 @@ RotKnob.prototype.getready = function (args) {
     //Default value is 0
     this.values = {"knobvalue" : 0,
                    "realknobvalue" : 0}
+               
+    this.defaultSlot = "knobvalue";
 
     // Init angular value. Describes the orientation of the rotary part image,
     // relative to the angular 0 point.

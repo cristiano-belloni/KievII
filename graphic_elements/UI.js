@@ -100,12 +100,12 @@ function UI(domElement, wrapperFactory, parameters) {
                             if (ret instanceof Array) {
                                 // An element could change multiple slots of itself.
                                 for (var i = 0; i < ret.length; i+=1) {
-                                    this.setValue(this.zArray[z][k].ID, ret[i].slot, ret[i].value);
+                                    this.setValue({elementID: this.zArray[z][k].ID, slot: ret[i].slot, value: ret[i].value});
                                 }
                             }
                             else {
                                 // console.log("UI: Element ", ID, " changed its value on event ", event);
-                                this.setValue(this.zArray[z][k].ID, ret.slot, ret.value);
+                                this.setValue({elementID: this.zArray[z][k].ID, slot: ret.slot, value: ret.value});
                             }
 
                             if (this.breakOnFirstEvent === true) {
@@ -264,15 +264,50 @@ function UI(domElement, wrapperFactory, parameters) {
     // <VALUE HANDLING>
 
     // This method handles one set value event and propagates it in the connections matrix
-    this.setValue = function (elementID, slot, value, history, fireCallback) {
+    //this.setValue = function (elementID, slot, value, history, fireCallback) {
+    //this.setValue ({slot: sl, value: val, elementID: id, fireCallback:false, history:undefined});
+    this.setValue = function (setParms) {
         var hist = [],
             receiverHash,
             recvElementID,
             recvSlot,
-            i
-            RECURSIONMAX = 1000;
-
+            i,
+            RECURSIONMAX = 1000,
+            elementID,
+            value,
+            slot,
+            fireCallback,
+            history;
+        
+        // Default parameters
+        if (typeof (setParms.elementID) === 'undefined') {
+            throw ("ID is undefined");
+        }
+        else elementID = setParms.elementID;
+        
+        if (typeof (setParms.value) === 'undefined') {
+            throw ("value is undefined");
+        }
+        else value = setParms.value;
+        
+        if (typeof (setParms.fireCallback) === 'undefined') {
+            fireCallback = true;
+        }
+        else fireCallback = setParms.fireCallback;
+        
+        history = setParms.history;
+        // End of defaults
+        
         if (this.elements[elementID] !== undefined) {
+            
+            // Get the default slot here, if no one specified a slot
+            if (typeof (setParms.slot) === 'undefined') {
+                slot = this.elements[elementID].defaultSlot;
+                if (typeof(slot) === undefined) {
+                    throw "Default slot is undefined!";
+                }
+            }
+            else slot = setParms.slot;
 
             // First of all, check history if it is present.
             if (history !== undefined) {
@@ -333,8 +368,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
                     // Check the callback here.
                     if (typeof(receiverHash.callback) === "function") {
-                        // We have a callback to call. This is typically
-                        // used as a filter to translate the values.
+                        // We have a callback to call.
                         value = receiverHash.callback (value);
                     }
 
@@ -349,8 +383,7 @@ function UI(domElement, wrapperFactory, parameters) {
                     }
 
                     // Recursively calls itself, keeping an history in the stack
-                    // this.elements[recvHash].setValue(recvSlot, value);
-                    this.setValue(recvElementID, recvSlot, value, hist, fire_conn_callback);
+                    this.setValue({elementID: recvElementID, slot: recvSlot, value: value, history: hist, fireCallback: fire_conn_callback});
                 }
             }
         }
