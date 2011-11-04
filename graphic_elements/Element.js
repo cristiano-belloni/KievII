@@ -20,7 +20,15 @@ Element.prototype.getready = function (args) {
     this.ID = args.ID;
 
     // By default, we want to be notified if some event occurs.
-    this.isClickable = args.isClickable || true;
+    this.isClickable = args.isClickable;
+    
+    if (typeof (this.isClickable) === 'undefined') {
+        this.isClickable = true;
+    }
+    
+    if (typeof (this.isClickable) !== 'boolean') {
+        throw "isClickable fo element " + this.ID + " is not boolean " + this.isClickable;
+    }
     
     // The element boundaries
     this.xOrigin = args.left;
