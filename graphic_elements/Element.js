@@ -27,7 +27,18 @@ Element.prototype.getready = function (args) {
     }
     
     if (typeof (this.isClickable) !== 'boolean') {
-        throw "isClickable fo element " + this.ID + " is not boolean " + this.isClickable;
+        throw "Property isClickable for element " + this.ID + " is not boolean " + this.isClickable;
+    }
+
+    // Element is visible by default
+    this.isVisible = args.isVisible;
+
+    if (typeof (this.isVisible) === 'undefined') {
+        this.isVisible = true;
+    }
+
+    if (typeof (this.isVisible) !== 'boolean') {
+        throw "Property isVisible for element " + this.ID + " is not boolean " + this.isVisible;
     }
     
     // The element boundaries
@@ -51,8 +62,6 @@ Element.prototype.getready = function (args) {
     
     this.ROIWidth = args.ROIWidth;
     this.ROIHeight = args.ROIHeight;
-    // Element is visible by default
-    this.isVisible = args.isVisible || true;
 
     // These are to be set later
     this.values = {};
@@ -147,6 +156,9 @@ Element.prototype.setClickable = function (isClickable) {
      if (typeof isClickable === "boolean") {
         this.isClickable = isClickable;
      }
+     else {
+        throw "Property isClickable for element " + this.ID + " is not boolean " + isClickable;
+    }
 };
 
 Element.prototype.getClickable = function () {
@@ -170,6 +182,10 @@ Element.prototype.setVisible = function (isVisible) {
     if (typeof isVisible === "boolean") {
         this.isVisible = isVisible;
     }
+    else {
+        throw "Property isVisible for element " + this.ID + " is not boolean " + isVisible;
+    }
+
 }
 
 Element.prototype.getVisible = function () {
