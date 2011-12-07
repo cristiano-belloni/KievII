@@ -19,7 +19,7 @@ K2WRAPPER.createWrapper = function (type, args) {
         // Utility functions
         // Resets the canvas
         this.reset = function () {
-            this.canvas.width = this.canvas.width;
+            this.wrapper.staticMethods.reset(this.context, this.canvas.width, this.canvas.height);
         }
 
         // Constructor

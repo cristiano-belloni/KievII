@@ -321,7 +321,7 @@ function UI(domElement, wrapperFactory, parameters) {
                     }
                     if ((hist[k]["element"] === elementID) && (hist[k]["slot"] === slot)) {
                         // Loop is infinite; bail out!
-                        console.log ("Broke recursion!");
+                        // console.log ("Broke recursion!");
                         return;
                     }
                 }
@@ -334,15 +334,6 @@ function UI(domElement, wrapperFactory, parameters) {
             if ((typeof (this.elements[elementID].onValueSet) === "function") && (fireCallback !== false)) {
                 this.elements[elementID].onValueSet (slot, this.elements[elementID].values[slot], this.elements[elementID].ID);
             }
-
-            //TODO!!
-            // Callback must be not defined to trigger the default behaviour. If
-            // the callback is set to something that's not a function, the 
-            // default will not be executed.
-            /*if (this.elements[elementID].onValueSet === undefined) {
-                // No (undefined) callback default behaviour: refresh the entire UI.
-                // this.refresh();
-            }*/
 
             // This element has been already set: update history
             hist.push({"element" : elementID, "slot" : slot});
@@ -392,7 +383,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // <VISIBILITY, RECEIVING EVENTS>
 
-    // todo these two functions are complementary.
+    // These two functions are complementary.
 
     this.hideElement = function (elementID) {
 
@@ -501,9 +492,9 @@ function UI(domElement, wrapperFactory, parameters) {
 
     this.refresh = function (doReset) {
         // Reset everything
-        /*if (doReset !== false) {
+        if (doReset !== false) {
             this.reset();
-        }*/
+        }
         
         // Then refresh everything from the smallest z-value, if there is one.
         if (this.zMin !== undefined) {

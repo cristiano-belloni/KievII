@@ -82,7 +82,7 @@ function loadMultipleImages (args) {
         var that = this;
         return function (loaderStatus) {
             var ls = loaderStatus;
-                    console.log (ls.status.id, " called back to say everything is loaded.");
+                    // console.log (ls.status.id, " called back to say everything is loaded.");
 
                     // Update the element status
                     if (that.loaders[ls.status.id] !== undefined) {
@@ -101,7 +101,7 @@ function loadMultipleImages (args) {
                     for (var element in that.loaders) {
                         if (that.loaders.hasOwnProperty(element)) {
                             if (that.loaders[element].done !== true) {
-                                console.log ("status of element ", element, " is not true: ", that.loaders[element].done);
+                                // console.log ("status of element ", element, " is not true: ", that.loaders[element].done);
                                 // Return, we're not done yet.
                                 return;
                             }

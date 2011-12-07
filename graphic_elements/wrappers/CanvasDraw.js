@@ -285,20 +285,8 @@ CANVAS_WRAPPER = {
     },
 
    staticMethods : {
-        // General purpose 2d saver/restorer.
-        save2d: function (that, left, top, width, height) {
-            that.backgroundPixels = that.canvasC.getImageData(left, top, width, height);
-            that.bgX = left;
-            that.bgY = top;
-        },
-
-        restore2d: function (that) {
-            that.canvasC.putImageData(that.backgroundPixels, that.bgX, that.bgY);
-        },
-
-        reset: function (that) {
-            // use clearRect instead TODO TODO TODO
-            that.canvasC.width = that.canvasC.width;
+        reset: function (context, width, height) {
+            context.clearRect(0, 0, width, height);
         }
     }
 }

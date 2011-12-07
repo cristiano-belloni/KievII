@@ -73,12 +73,12 @@ Wavebox.prototype.setValue = function (slot, value, fireCallback) {
     }
 
     this.values[slot] = value;
-    console.log ("set value for slot ", slot);
+    // console.log ("set value for slot ", slot);
 
     // When we change the signal, we know we must reset the whole thing.
     if (slot === "waveboxsignal") {
         //Take the whole waveform
-        console.log ("inside!");
+        // console.log ("inside!");
         this.values["endsample"] = this.values["waveboxsignal"].length;
         this.values["startsample"] = 0;
     }
