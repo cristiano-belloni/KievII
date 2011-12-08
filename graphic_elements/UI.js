@@ -186,7 +186,7 @@ function UI(domElement, wrapperFactory, parameters) {
         // Store the parameters
         var zIndex = 0;
         
-        if (elementParameters !== undefined) {
+        if ((typeof(elementParameters) !== "undefined") && (typeof(elementParameters.zIndex) !== "undefined")) {
             zIndex = elementParameters.zIndex;
         }
         
@@ -264,7 +264,6 @@ function UI(domElement, wrapperFactory, parameters) {
     // <VALUE HANDLING>
 
     // This method handles one set value event and propagates it in the connections matrix
-    //this.setValue = function (elementID, slot, value, history, fireCallback) {
     //this.setValue ({slot: sl, value: val, elementID: id, fireCallback:false, history:undefined});
     this.setValue = function (setParms) {
         var hist = [],

@@ -11,7 +11,7 @@
     <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
   </head>
   <body>
-    <canvas id="plugin" width="300" height="300"></canvas>
+    <canvas id="recursion_canvas" width="300" height="300"></canvas>
     <script type="text/javascript">
 
         // This should fix "console not defined" problem.
@@ -20,13 +20,13 @@
 
         /* INIT */
 
-        var plugin_canvas = document.getElementById("plugin");
+        var recursion_canvas = document.getElementById("recursion_canvas");
 
         var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                               {canvas: plugin_canvas}
+                                               {canvas: recursion_canvas}
                                                );
 
-        ui = new UI (plugin_canvas, CWrapper);
+        ui = new UI (recursion_canvas, CWrapper);
 
         var MAX_KNOB_IMAGE_NUM = 60,
             knobImgLocation = "../../images/BigKnob/",
@@ -76,22 +76,19 @@
                     top: 100,
                     left: i * 100,
                     imagesArray : loaderStatus.imagesArray,
-                    sensitivity : 5000
+                    sensitivity : 5000,
+                    onValueSet: function (slot, value, ID) {console.log (slot, value, ID); ui.refresh()}
                 };
 
                 knob[i] = new Knob(knobArgs[i]);
                 
                 ui.addElement(knob[i], {zIndex: 10});
-                knob[i].setValue("knobvalue", 0);
-
+                ui.setValue ({elementID: knobArgs[i].ID,
+                              value: 0});
             }
 
-            // ui.refresh(); is not needed, because ve did the setValues() after
-            // the addElements.
-
             // Set the connections
-            // 0 controls 1 and 1 controls 2. But when 2 "starts" the event, it
-            // controls 0 (and thus 1), without entering in a feedback loop.
+            // 0 controls 1, 1 controls 2 and 2 controls 0, without entering in an infinite loop.
 
             // 0 -> 1
             ui.connectSlots("knob0", "knobvalue", "knob1", "knobvalue", {callback: function (value) {return 1-value;}});
@@ -101,6 +98,8 @@
             ui.connectSlots("knob1", "knobvalue", "knob2", "knobvalue", {callback: function (value) {return value * 0.5;}});
             // 2 -> 0
             ui.connectSlots("knob2", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return value;}});
+
+            ui.refresh();
         }
 
     </script>

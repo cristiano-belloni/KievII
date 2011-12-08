@@ -81,9 +81,9 @@
             ui.addElement(background);
             ui.addElement(knob);
             
-            knob.setValue("knobvalue", 0.8);
+            ui.setValue({elementID: "test_knob", value: 0.8});
 
-            ui.refresh()
+            ui.refresh();
 
             
         }

@@ -66,7 +66,7 @@ RotKnob.prototype.getready = function (args) {
 };
 
 
-// This method returns an image index given the RotKnob value.
+// This method returns a rotating amount given the RotKnob value.
 /*jslint nomen: false*/
 RotKnob.prototype._getRotateAmount = function () {
 /*jslint nomen: true*/
