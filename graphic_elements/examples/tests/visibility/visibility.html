@@ -137,7 +137,7 @@
             ID: "knob",
             top: 200,
             left: 0,
-            // onValueSet = undefined,
+            onValueSet : function () {ui.refresh()},
             imagesArray : loaders["vtest_knob_image_loader"].images,
             sensitivity : 5000
         };

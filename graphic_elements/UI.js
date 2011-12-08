@@ -327,7 +327,7 @@ function UI(domElement, wrapperFactory, parameters) {
             }
             // Element is present an there's no need to break a loop
             // really set value.
-            this.elements[elementID].setValue(slot, value, fireCallback);
+            this.elements[elementID].setValue(slot, value);
             
             // Finally, call the callback if there is one and we're allowed to.
             if ((typeof (this.elements[elementID].onValueSet) === "function") && (fireCallback !== false)) {

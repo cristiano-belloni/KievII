@@ -33,10 +33,9 @@ Wavebox.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Wavebox.prototype.setValue = function (slot, value, fireCallback) {
+Wavebox.prototype.setValue = function (slot, value) {
 
     // Won't call the parent: this element has a custom way to set values.
-    // TODO CALL THE CALLBACK AND USE fireCallback
 
     if (this.values[slot] === undefined) {
         throw new Error("Slot " + slot + " not present or value undefined");

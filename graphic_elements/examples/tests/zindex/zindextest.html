@@ -101,7 +101,8 @@
             top: 30,
             left: 30,
             imagesArray : loaders["ztest_knob_image_loader"].images,
-            sensitivity : 5000
+            sensitivity : 5000,
+            onValueSet : function () {ui.refresh()}
         };
         //onValueSet = undefined
         var knob = new Knob(knobArgs);

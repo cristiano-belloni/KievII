@@ -227,7 +227,7 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
 
 };
 
-Multiband.prototype.setValue = function (slot, value, fireCallback) {
+Multiband.prototype.setValue = function (slot, value) {
 
     var bandn,
         bandtype,
@@ -281,7 +281,6 @@ Multiband.prototype.setValue = function (slot, value, fireCallback) {
 
     //Can't call the superclass; we need to clear the old band, so we need a
     //special behaviour. TODO this is no more needed. TODO call the callback
-    //and use fireCallback.
 
     if (this.values[slot] === undefined) {
         throw new Error("Slot " + slot + " not present or value undefined");

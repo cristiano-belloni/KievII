@@ -30,6 +30,11 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
     this.knobImage = args.knobImg;
     this.type = args.type;
 
+    if ((this.type !== 'horizontal') && (this.type !== 'vertical')) {
+        // Default
+        this.type = 'vertical';
+    }
+
     this.calculateDimensions();
 
 };
@@ -155,7 +160,7 @@ Slider.prototype.onMouseMove = function (curr_x, curr_y) {
     };
 
 // Setters
-Slider.prototype.setValue = function (slot, value, fireCallback) {
+Slider.prototype.setValue = function (slot, value) {
 
     if ((value < 0) || (value > 1)) {
         // Can happen if the user drags too much.
@@ -163,7 +168,7 @@ Slider.prototype.setValue = function (slot, value, fireCallback) {
     }
 
     // Now, we call the superclass
-    Slider.superclass.setValue.call(this, slot, value, fireCallback);
+    Slider.superclass.setValue.call(this, slot, value);
 
 };
 
