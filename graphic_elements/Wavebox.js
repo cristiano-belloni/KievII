@@ -14,7 +14,7 @@ Wavebox.prototype.getready = function (args) {
     this.values = {"waveboxposition" : 0,
                    "startsample" : 0,
                    "endsample" : null,
-                   "waveboxsignal" : undefined
+                   "waveboxsignal" : []
                };
     this.defaultSlot = "waveboxposition";
     
