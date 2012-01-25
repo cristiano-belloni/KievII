@@ -6,7 +6,7 @@
 <meta name="copyright" content="Licensed under MIT." />
 <meta name="description" content="KievII is a javascript library that aims to help develop audio web applications" />
 <meta name="robots" content="all" />
-<title>KievII Audio WebApp Library</title>
+<title>KievII Library</title>
 <link rel="stylesheet" href="css/master.min.css" />
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -30,6 +30,7 @@
 
 </head>
 <body>
+<!--<a href="https://github.com/janesconference/KievII" title="Fork KievII on github"><img style="position: absolute; right: +0px; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>-->
 <div class="container_12">
   <div class="grid_4">
   
@@ -46,7 +47,7 @@
 	  height: 190,
 	  theme: {
 	    shell: {
-	      background: '#c24040',
+	      background: '#d20000',
 	      color: '#ffffff'
 	    },
 	    tweets: {
@@ -75,17 +76,32 @@
   </div>
   
   <div class="grid_4">
-			<a href="https://github.com/janesconference/KievII" title="Contribute to KievII on github!"><img style="position: absolute; /*top: -10px;*/ right: +10px; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+                        <div id ="boxed_content">
+                            <p> Download Kiev II </p>
+                            <div id="boxed_content_2">
+                                <p>
+                                    <a href='https://github.com/janesconference/KievII/zipball/v0.3.01'><img alt='Kiev II stable (0.3)' src='img/github64_st.png'/></a>
+                                    <br/>
+                                    Stable version <a href='https://github.com/janesconference/KievII/zipball/v0.3.01'>(0.3.01)</a>
+                                </p>
+                                <hr />
+                                <p>
+                                    <a href='https://github.com/janesconference/KievII/zipball/master'><img alt='Kiev II develop' src='img/github64_dev.png'/></a>
+                                    <br/>
+                                    Develop version <a href='https://github.com/janesconference/KievII/zipball/master'>(master)</a>
+                                </p>
+                            </div>
+                        </div>
   </div>
   
   <hr />
   <div class="grid_8 prefix_4">
 	<div id="menu">
                             <ul>
-                                <li><a href="https://github.com/janesconference/KievII">Source Code</a></li>
-                                <li><a href="https://github.com/janesconference/KievII/wiki">Documentation</a></li>
-								<li><a href="#Demos">Demos</a></li>
-								<li><a href="http://groups.google.com/group/kievii">Google Groups</a></li>
+                                <li><a href="https://github.com/janesconference/KievII" target="_blank">Source Code</a></li>
+                                <li><a href="https://github.com/janesconference/KievII/wiki" target="_blank">Documentation</a></li>
+								<li><a href="#Apps">Apps</a></li>
+								<li><a href="http://groups.google.com/group/kievii" target="_blank">Google Groups</a></li>
                             </ul>
                         </div>
   </div>
@@ -96,7 +112,7 @@
       KievII
     </h3>
     <p>
-		<strong>KievII</strong> is a GUI and audio/DSP library written in Javascript aiming to help developing audio web applications.
+		<strong>KievII</strong> is a GUI and audio/DSP library written in Javascript, aiming to be used by web audio applications developers.
     </p>
   </div>
   <!-- end .grid_11 -->
@@ -110,7 +126,6 @@
 			<input type="image" src="https://www.paypalobjects.com/WEBSCR-640-20110401-1/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 			<img alt="" border="0" src="https://www.paypalobjects.com/WEBSCR-640-20110401-1/it_IT/i/scr/pixel.gif" width="1" height="1">
 			</form>
-	</p>
   </div>
   <!-- end .grid_1-->
   <hr />
@@ -120,8 +135,8 @@
       Technologies and Compatibility
     </h3>
     <p>
-      <strong>KievII</strong> is designed to be agnostic to the graphical layer.</br>
-      Currently, it uses <a href="https://developer.mozilla.org/en/HTML/Canvas">HTML5 Canvas</a> as a rendering engine. Demos use <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension">Mozilla Audio API</a> and <a href="http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html">Web Audio API</a>.
+      <strong>KievII</strong> is designed to be agnostic to the graphical layer.<br />
+      Currently, it uses <a href="https://developer.mozilla.org/en/HTML/Canvas" target="_blank">HTML5 Canvas</a> as a rendering engine. Demo applications use <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension" target="_blank">Mozilla Audio API</a> and <a href="http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html" target="_blank">Web Audio API</a>.
 	</p>
   </div>
   <!-- end .grid_8 -->
@@ -130,8 +145,8 @@
       Documentation
     </h3>
     <p>
-      You can find a Wiki <a href="https://github.com/janesconference/KievII/wiki" >here</a> to get started, or you can check the examples in
-	  the <a href="https://github.com/janesconference/KievII">source code</a>.
+      You can find a Wiki <a href="https://github.com/janesconference/KievII/wiki" target="_blank">here</a> to get started, or you can check the examples in
+	  the <a href="https://github.com/janesconference/KievII" target="_blank">source code</a>.
     </p>
   </div>
   <!-- end .grid_4 -->
@@ -140,11 +155,9 @@
     <h3>
       Collaborate / Contribute
     </h3>
-    <p>
-      <p><strong>Checkout</strong> or fork the code <a href="https://github.com/janesconference/KievII">here</a> [github.com] and help develop and improve KievII.</p>
-      <p><strong>Graphic Designers</strong> are welcome. We're in great need of audio-related vectors and bitmaps (graphic elements, knobs, sliders, equalizers, you name it). If you like the idea of seeing your designs in our demos, please contact us!</p>
-      <p><strong>Donations</strong> If you are so cool to contribute to KievII with money (open donation), here's a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=US&item_name=KievII%20PayPal%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" class="body">Paypal link</a> or a <a href="http://www.pledgie.com/campaigns/14967">Pledgie link</a> for that. Thank you.</p> 
-    </p>
+      <p><strong>Checkout</strong> or fork the code <a href="https://github.com/janesconference/KievII" target="_blank">here</a> and help develop and improve KievII.</p>
+      <p><strong>Developers</strong> and <strong>Graphic Designers</strong> are welcome. We're in great need of audio-related vectors and bitmaps (graphic elements, knobs, sliders, equalizers, you name it). If you like the idea of seeing your designs in our demos / applications, please contact us!</p>
+      <p><strong>Donations</strong> If you are so cool to contribute to KievII with money (open donation), there's a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=US&item_name=KievII%20PayPal%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" class="body">Paypal link</a> or a <a href="http://www.pledgie.com/campaigns/14967">Pledgie link</a> for that. Thank you.</p> 
   </div>
   <!-- end .grid_8 -->
   <div class="grid_4">
@@ -152,29 +165,62 @@
       Contacts and Help
     </h3>
     <p>
-      You can follow the library on <a href="https://twitter.com/#!/kievii_library">Twitter</a>, or ask support and questions on KievII's <a href="http://groups.google.com/group/kievii">Google Group</a>. Or you can directly contact <a href="mailto:janesconference@bitterspring.net">the author</a>.
+      You can follow the library on <a href="https://twitter.com/#!/kievii_library" target="_blank">Twitter</a>, ask support and questions on KievII's <a href="http://groups.google.com/group/kievii" target="_blank">Google Group</a>, or you can directly contact <a href="mailto:janesconference@bitterspring.net">the author</a>.
     </p>
   </div>
   <!-- end .grid_4 -->
   <hr />
-  <div class="grid_4"><a name="Demos">
+  <div class="grid_8 align_left"><a name="Apps"></a>
+  <p>
+  <a href="http://bitterspring.net/ms/morningstar/" target="_blank">
+  <img src="img/morningstar_screenshot.png" alt="Morning Star" /> </a>
+  </p>
+  </div>
+  <!-- end .grid_8 -->
+  <div class="grid_4">
     <h3>
-      Demo: Voron
+      Morning Star
     </h3>
     <p>
-      <a href="https://developer.mozilla.org/en-US/demos/detail/voron">Voron</a> is a real-time pitchshifter and low-pass filter effect. UI is rendered in any browser that supports HTML5 Canvas. Voron supports <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension">Mozilla Audio API</a> (Mozilla Firefox
-	  <a href="http://www.mozilla.com/it/firefox/">4+</a>). To use it, Turn on the pitchshifter and/or the low pass filter with their ON/OFF buttons to apply the effects and turn the knobs to
-	  change the effects parameters. Demo starts "clean" (ie. no effect applied). "Discrete" button switches from semitones shifting (ON) to cents shifting (OFF) and vice-versa.
+        <a href="http://bitterspring.net/ms/morningstar/" target="_blank">Morning Star</a> is a monophonic bassline synthesizer controlled by a step sequencer.<br />
+        The GUI is rendered correctly in any browser that properly supports <a href="http://dev.w3.org/html5/spec/Overview.html" target="_blank">HTML5 Canvas</a>.
     </p>
     <p>
-       Voron source code can be cloned and/or forked <a href="https://github.com/janesconference/Voron">here</a>.
+        Sound is supported both in <a href="http://www.google.com/chrome" target="_blank">Google Chrome</a> with <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html" target="_blank">Web Audio API</a> support and <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Mozilla Firefox</a>
+        with <a href="https://wiki.mozilla.org/Audio_Data_API">Audio Data API</a> support (Firefox 4+).
+    </p>
+    <p>
+        There is a <a href="http://bitterspring.net/blog/" target="_blank">blog</a> post with a presentation / brief user guide for Morning Star <a href="http://bitterspring.net/blog/2012/01/25/morning-star-synth-0-1-released/" target="_blank">here</a>.
+    </p>
+    <p>
+       Morning Star source code can be found <a href="https://github.com/janesconference/MorningStar" target="_blank">here</a>.
+    </p>
+  </div>
+  <!-- end .grid_4 -->
+  <hr />
+  <div class="grid_4">
+    <h3>
+      Voron
+    </h3>
+    <p>
+      <a href="https://developer.mozilla.org/en-US/demos/detail/voron" target="_blank">Voron</a> is a real-time pitchshifter and low-pass filter effect. The GUI is rendered in any browser that supports HTML5 Canvas.
+    </p>
+    <p>
+      Voron supports <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension" target="_blank">Mozilla Audio API</a> (Mozilla Firefox
+	  <a href="http://www.mozilla.com/it/firefox/" target="_blank">4+</a>).
+    </p>
+    <p>To use it, Turn on the pitchshifter and/or the low pass filter with their ON/OFF buttons to apply the effects and turn the knobs to
+       change the effects parameters. Voron starts "clean" (ie. no effect applied). "Discrete" button switches from semitones shifting (ON) to cents shifting (OFF) and vice-versa.
+    </p>
+    <p>
+       Voron source code can be found <a href="https://github.com/janesconference/Voron" target="_blank">here</a>.
     </p>
   </div>
   <!-- end .grid_4 -->
   <div class="grid_8 align_right">
   <p>
   <a href="https://developer.mozilla.org/en-US/demos/detail/voron" target="_blank">
-  <img src="img/voron_screenshot.png" alt="Voron Demo" /> </a>
+  <img src="img/voron_screenshot.png" alt="Voron" /> </a>
   </p>
   </div>
   <!-- end .grid_8 -->
