@@ -235,9 +235,13 @@ CANVAS_WRAPPER = {
 
         this.draw = function (x, y) {
 
-            //Save fillStyle.
-            var tempfillStyle = this.canvasC.fillStyle;
-            this.canvasC.fillStyle = this.pathColor;
+            //Save strokeStyle.
+            var tempstrokeStyle = this.canvasC.strokeStyle;
+            this.canvasC.strokeStyle = this.pathColor;
+            
+            //Save path dimension
+            var templineWidth = this.canvasC.lineWidth;
+            this.canvasC.lineWidth = this.pathDimension;
 
             if (this.inited === false) {
                 this.canvasC.beginPath();
@@ -248,8 +252,11 @@ CANVAS_WRAPPER = {
                 this.canvasC.lineTo(x, y);
             }
 
-            // Restore fillStyle
-            this.canvasC.fillStyle = tempfillStyle;
+            // Restore strokeStyle
+            this.canvasC.strokeStyle = tempstrokeStyle;
+            
+            // Restore path dimension
+            this.canvasC.lineWidth = templineWidth;
         }
 
         // Redundant.
@@ -260,14 +267,21 @@ CANVAS_WRAPPER = {
         this.endDraw = function () {
 
             this.inited = false;
-            //Save fillStyle.
-            var tempfillStyle = this.canvasC.fillStyle;
-            this.canvasC.fillStyle = this.fillStyle;
+            //Save strokeStyle.
+            var tempstrokeStyle = this.canvasC.strokeStyle;
+            this.canvasC.strokeStyle = this.pathColor;
+            
+            //Save path dimension
+            var templineWidth = this.canvasC.lineWidth;
+            this.canvasC.lineWidth = this.pathDimension;
 
             this.canvasC.stroke();
 
-            // Restore fillStyle
-            this.canvasC.fillStyle = tempfillStyle;
+            // Restore strokeStyle
+            this.canvasC.strokeStyle = tempstrokeStyle;
+            
+            // Restore path dimension
+            this.canvasC.lineWidth = templineWidth;
         }
 
         // These should be in the wrappers interface. TODO THIS IS DUPLICATE CODE!!!
