@@ -20,6 +20,7 @@ Wavebox.prototype.getready = function (args) {
     
     this.setWidth(args.width);
     this.setHeight(args.height);
+    this.binMethod = args.binMethod || "minmax";
 
 };
 
@@ -42,7 +43,7 @@ Wavebox.prototype.setValue = function (slot, value) {
     }
 
     if (this.values[slot] === value) {
-        //Nothing changed, don't redraw.
+        //Nothing changed.
         return;
     }
 
@@ -85,69 +86,154 @@ Wavebox.prototype.setValue = function (slot, value) {
 
 Wavebox.prototype.refresh = function () {
     if (this.drawClass !== undefined) {
-        // Draw, if our draw class is already set.
        
         // Call the superclass.
         Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
-        // Draw, if our draw class is already set.
+
         if (this.isVisible === true) {
-
-            var oldpoint = 0;
-            this.drawClass.drawPath.beginDraw();
-
-            for (var i = 0; i < this.width; i += 1) {
-                var point = this.calculateSampleCoord(i);
-                if (point !== oldpoint) {
-                    //console.log ("Drawing a point, x is ", point.x, " y is ", point.y);
-                    //this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
-                    this.drawClass.drawPath.draw(point.x, point.y);
-                }
-                oldpoint = point;
+            
+            var binFunction;
+            
+            if (this.binMethod == "minmax") {
+                binFunction = this.calculateBinMix;
             }
-            this.drawClass.drawPath.endDraw();
+            else if (this.binMethod == "none") {
+                binFunction = this.calculateBinNone;
+            }
+            else {
+                console.log ("Error: no binMethod!");
+            }
+            
+            var i = 0;
+            // One bin per pixel
+            var bin_size = parseInt (((this.values.endsample - this.values.startsample) / this.width), 10);
+
+            if (true) {
+
+                this.drawClass.drawPath.beginDraw();
+
+                this.drawClass.drawPath.draw(this.xOrigin, this.height * 0.5 + this.yOrigin);
+                for (i = 0; i < this.width; i += 1) {
+                    
+                    var bin_value = binFunction (i, bin_size, this.values);
+                    
+                    var y_point = (this.height - (((bin_value.max + 1 ) * (this.height)) / 2)) + this.yOrigin;
+                    var x_point = i + this.xOrigin;
+                    
+                    this.drawClass.drawPath.draw(x_point, y_point);
+                    
+                }
+                this.drawClass.drawPath.draw(this.width + this.xOrigin, this.height * 0.5 + this.yOrigin);
+
+                this.drawClass.drawPath.endDraw();
+
+                this.drawClass.drawPath.beginDraw();
+
+                this.drawClass.drawPath.draw(this.xOrigin, this.height * 0.5 + this.yOrigin);
+                for (i = 0; i < this.width; i += 1) {
+                    
+                    var bin_value = binFunction (i, bin_size, this.values);
+                    
+                    var y_point = (this.height - (((bin_value.min + 1 ) * (this.height)) / 2)) + this.yOrigin;
+                    var x_point = i + this.xOrigin;
+                    
+                    this.drawClass.drawPath.draw(x_point, y_point);
+                }
+                this.drawClass.drawPath.draw(this.width + this.xOrigin, this.height * 0.5 + this.yOrigin);
+
+                this.drawClass.drawPath.endDraw();
+
+            }
+           
+            if (false) {
+             
+                for (i = 0; i < this.width; i += 1) {
+                    var bin_value = binFunction (i, bin_size, this.values);
+                   
+                   //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+                   
+                   var y = (this.height - (((bin_value.max + 1 ) * (this.height)) / 2)) + this.yOrigin;
+                   var y1 = (this.height - (((bin_value.min + 1 ) * (this.height)) / 2)) + this.yOrigin;
+                   var x = i + this.xOrigin;
+                   var width = 1;
+                   var height = y1 - y;
+                   
+                   this.drawClass.drawRect.draw(x, y, width, height, 0);
+                   
+               }
+               
+           }
 
         }
     }
 };
 
 //Non-interface functions
-
-Wavebox.prototype.sampleindexToY = function (samplenum) {
-    //Check boundaries
-    if ((samplenum >= this.values.endsample) || (this.values.waveboxsignal[samplenum] === undefined) || (this.values.waveboxsignal[samplenum] === null)) {
-        throw new Error("Error: problem with sample index: ", samplenum, " or sample value: ", this.values.waveboxsignal[samplenum]);
+Wavebox.prototype.calculateBinMix = function (bin_index, bin_size, values) {
+    var wave = values.waveboxsignal;
+    var start = values.startsample + bin_index * bin_size;
+    var end = values.startsample + ((bin_index + 1) * bin_size);
+    if (end > values.endsample) {
+        end = values.endsample;
     }
 
-    //We got a sample number, and we want to know where it should be drawn.
-    //Sample values go from -1 to 1.
-    //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
-    var range01 = (this.values.waveboxsignal[samplenum] + 1) / 2;
-    //console.log ("signal that was ", this.values.waveboxsignal[samplenum], " is now transformed in ", range01);
-    var temp = ((1 - range01) *  this.height);
-    //console.log ("Adding to origin ", temp);
-    var y = this.yOrigin + temp;
-    return parseInt (y, 10);
-
+    var bin_min = wave[start];
+    var bin_max = wave[start];
+    
+    for (var i = 1; i < bin_size; i++) {
+        if (wave[start + i] < bin_min) {
+            bin_min = wave[start + i];
+        }
+        if (wave[start + i] > bin_max) {
+            bin_max = wave[start + i];
+        }
+    }
+    
+    var bin_res = {
+        "max" : bin_max,
+        "min" : bin_min
+    }
+    
+    return bin_res;
 }
 
-Wavebox.prototype.sampleXToIndex = function (xcoord) {
+Wavebox.prototype.calculateBinNone = function (bin_index, bin_size, values) {
+    
+    var start = values.startsample + bin_index * bin_size;
 
-    var factor = ((this.values.endsample - this.values.startsample) / this.width);
-    var x = xcoord * factor;
-    var ret = parseInt (x, 10);
-    //if (( x % 100) == 0 ) {
-        //console.log ("xcoord is ", xcoord , " of ", this.width , " factor is ", factor, " and corresponding sample number is ", ret , " finishing at ", this.values.endsample);
-    //}
-    return ret;
-
+    // In the middle of the bin
+    var middle = parseInt ((bin_size / 2), 10);
+    var sample_val = values.waveboxsignal[start + middle];
+    
+    var bin_res = {
+        "max" : sample_val,
+        "min" : (-sample_val)
+    }
+    
+    return bin_res;
+    
 }
 
-Wavebox.prototype.calculateSampleCoord = function (xcoord) {
-    // this returns the absolute x,y coordinates from the sample in x position, relative to the x-origin of the box
-    var ret = {};
-    ret.x = xcoord + this.xOrigin;
-    ret.y = this.sampleindexToY(this.sampleXToIndex(xcoord));
-    return ret;
+
+Wavebox.prototype.calculateBinAvg = function (bin_index, bin_size) {
+    
+    var wave = this.values.waveboxsignal;
+    var start = this.values.startsample + bin_index * bin_size;
+    var end = start + ((bin_index + 1) * bin_size);
+    if (end > this.values.endsample) {
+        end = this.values.endsample;
+    }
+
+    var bin = wave.subarray(start, end);
+
+    // Moving average
+    var bin_avg = 0;
+    var len = bin.length;
+    for (var i = 0; i < (len -1); i++) {
+        bin_avg = (bin[i+1] + i * bin_avg) / (i + 1);
+    }
+
+    return bin_avg;
 }
 
 Wavebox.prototype.setGraphicWrapper = function (wrapper) {
@@ -156,7 +242,7 @@ Wavebox.prototype.setGraphicWrapper = function (wrapper) {
     Wavebox.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject ([{objName: "drawPath",
-                                           objParms: this.objParms}]);
+    this.drawClass = wrapper.initObject ([{objName: "drawPath", objParms: this.objParms}]);
+    //this.drawClass = wrapper.initObject ([{objName: "drawRect", objParms: this.objParms}]);
                                    
 };

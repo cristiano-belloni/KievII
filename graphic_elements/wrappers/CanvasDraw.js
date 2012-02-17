@@ -275,7 +275,8 @@ CANVAS_WRAPPER = {
             var templineWidth = this.canvasC.lineWidth;
             this.canvasC.lineWidth = this.pathDimension;
 
-            this.canvasC.stroke();
+            //this.canvasC.stroke();
+            this.canvasC.fill();
 
             // Restore strokeStyle
             this.canvasC.strokeStyle = tempstrokeStyle;
