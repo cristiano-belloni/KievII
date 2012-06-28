@@ -21,6 +21,7 @@ Wavebox.prototype.getready = function (args) {
     this.setWidth(args.width);
     this.setHeight(args.height);
     this.binMethod = args.binMethod || "minmax";
+    this.orientation = args.orientation || 0;
 
 };
 
@@ -86,11 +87,22 @@ Wavebox.prototype.setValue = function (slot, value) {
 
 Wavebox.prototype.refresh = function () {
     if (this.drawClass !== undefined) {
-       
+		       
         // Call the superclass.
         Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
 
+		//TODO there must be a less-repetitive way of handling orientations
+		
         if (this.isVisible === true) {
+        	
+        	// Default
+        	var dim1 = this.width;
+        	var dim2 = this.height;
+        	
+        	if (this.orientation === 1) {
+        		var dim1 = this.height;
+        		var dim2 = this.width;
+        	}
             
             var binFunction;
             
@@ -106,40 +118,77 @@ Wavebox.prototype.refresh = function () {
             
             var i = 0;
             // One bin per pixel
-            var bin_size = parseInt (((this.values.endsample - this.values.startsample) / this.width), 10);
+            var bin_size = parseInt (((this.values.endsample - this.values.startsample) / dim1), 10);
 
             if (true) {
 
                 this.drawClass.drawPath.beginDraw();
-
-                this.drawClass.drawPath.draw(this.xOrigin, this.height * 0.5 + this.yOrigin);
-                for (i = 0; i < this.width; i += 1) {
+				
+				//Start from the middle
+				if (this.orientation === 0) {
+                	this.drawClass.drawPath.draw(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                }
+                else if (this.orientation === 1) {
+                	this.drawClass.drawPath.draw(this.xOrigin + dim2 * 0.5, this.yOrigin);
+                }
+                
+                for (i = 0; i < dim1; i += 1) {
                     
                     var bin_value = binFunction (i, bin_size, this.values);
                     
-                    var y_point = (this.height - (((bin_value.max + 1 ) * (this.height)) / 2)) + this.yOrigin;
-                    var x_point = i + this.xOrigin;
+                    if (this.orientation === 0) {
+	                    var y_point = (dim2 - (((bin_value.max + 1 ) * (dim2)) / 2)) + this.yOrigin;
+	                    var x_point = i + this.xOrigin;
+                    }
+                    else if (this.orientation === 1) {
+                    	var y_point = i + this.yOrigin;
+                    	var x_point = (dim2 - (((bin_value.max + 1 ) * (dim2)) / 2)) + this.xOrigin;
+                    }
                     
                     this.drawClass.drawPath.draw(x_point, y_point);
                     
                 }
-                this.drawClass.drawPath.draw(this.width + this.xOrigin, this.height * 0.5 + this.yOrigin);
+                if (this.orientation === 0) {
+                	this.drawClass.drawPath.draw(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                }
+                else if (this.orientation === 1) {
+                	this.drawClass.drawPath.draw(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+                }
 
                 this.drawClass.drawPath.endDraw();
 
                 this.drawClass.drawPath.beginDraw();
-
-                this.drawClass.drawPath.draw(this.xOrigin, this.height * 0.5 + this.yOrigin);
-                for (i = 0; i < this.width; i += 1) {
+				
+				if (this.orientation === 0) {
+                	this.drawClass.drawPath.draw(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+               	}
+               	else if (this.orientation === 1) {
+               		this.drawClass.drawPath.draw(this.xOrigin + dim2 * 0.5, this.yOrigin);
+               	}
+               	
+                for (i = 0; i < dim1; i += 1) {
                     
                     var bin_value = binFunction (i, bin_size, this.values);
                     
-                    var y_point = (this.height - (((bin_value.min + 1 ) * (this.height)) / 2)) + this.yOrigin;
-                    var x_point = i + this.xOrigin;
+                    if (this.orientation === 0) {
+	                    var y_point = (dim2 - (((bin_value.min + 1 ) * (dim2)) / 2)) + this.yOrigin;
+	                    var x_point = i + this.xOrigin;
+                    }
+                    if (this.orientation === 1) {
+                    	var y_point = i + this.yOrigin;
+                    	var x_point = (dim2 - (((bin_value.min + 1 ) * (dim2)) / 2)) + this.xOrigin;
+                    }
                     
                     this.drawClass.drawPath.draw(x_point, y_point);
                 }
-                this.drawClass.drawPath.draw(this.width + this.xOrigin, this.height * 0.5 + this.yOrigin);
+                
+                if (this.orientation === 0) {
+                	this.drawClass.drawPath.draw(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                }
+                else if (this.orientation === 1) {
+                	this.drawClass.drawPath.draw(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+                }
+                
 
                 this.drawClass.drawPath.endDraw();
 
@@ -147,13 +196,15 @@ Wavebox.prototype.refresh = function () {
            
             if (false) {
              
-                for (i = 0; i < this.width; i += 1) {
+             	// TODO this doesn't work with orientations
+             	
+                for (i = 0; i < dim1; i += 1) {
                     var bin_value = binFunction (i, bin_size, this.values);
                    
                    //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
                    
-                   var y = (this.height - (((bin_value.max + 1 ) * (this.height)) / 2)) + this.yOrigin;
-                   var y1 = (this.height - (((bin_value.min + 1 ) * (this.height)) / 2)) + this.yOrigin;
+                   var y = (dim2 - (((bin_value.max + 1 ) * (dim2)) / 2)) + this.yOrigin;
+                   var y1 = (dim2 - (((bin_value.min + 1 ) * (dim2)) / 2)) + this.yOrigin;
                    var x = i + this.xOrigin;
                    var width = 1;
                    var height = y1 - y;
