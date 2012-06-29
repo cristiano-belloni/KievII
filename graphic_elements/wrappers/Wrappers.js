@@ -40,6 +40,10 @@ K2WRAPPER.createWrapper = function (type, args) {
             }
             return ret;
         }
+        
+        this.getContext = function () {
+        	return this.context;
+        }
     }
 
 }

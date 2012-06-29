@@ -2,7 +2,7 @@ CANVAS_WRAPPER = {
 
     drawImage: function (canvas) {
 
-        this.canvasC = canvas
+        this.canvasC = canvas;
 
 
         this.draw = function (image, x, y) {
