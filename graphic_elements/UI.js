@@ -122,6 +122,11 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // <END OF EVENT HANDLING>
 
+	// Hammer.js stuff
+	if (typeof Hammer !== 'undefined') {
+		console.log ("We have hammer.js!");
+		this.hammer = new Hammer(domElement);
+	}
 
     // <CONSTRUCTOR>
     this.domElement = domElement;

@@ -14,7 +14,9 @@ Wavebox.prototype.getready = function (args) {
     this.values = {"waveboxposition" : 0,
                    "startsample" : 0,
                    "endsample" : null,
-                   "waveboxsignal" : []
+                   "waveboxsignal" : [],
+                   "xBarPos" : 0,
+                   "yBarPos" : 0
                };
     this.defaultSlot = "waveboxposition";
     
@@ -35,7 +37,54 @@ Wavebox.prototype.isInROI = function (x, y) {
     return false;
 };
 
+Wavebox.prototype.onMouseDown = function (x, y) {
+
+    //console.log ("Click down on ", x, y);
+
+    if (this.isInROI(x, y)) {
+        this.triggered = true;
+    }
+    return undefined;
+};
+
+Wavebox.prototype.onMouseUp = function (curr_x, curr_y) {
+
+    var to_set = 0,
+        ret = {};
+
+    if (this.triggered) {
+        // Button is activated when cursor is still in the element ROI, otherwise action is void.
+        if (this.isInROI(curr_x, curr_y)) {
+
+			var ret = {};
+            if (this.orientation === 0) {
+            	ret = {"slot" : "xBarPos", "value" : curr_x};
+            }
+            
+            else if (this.orientation === 1) {
+            	ret = {"slot" : "yBarPos", "value" : curr_y};
+            }
+            
+            else {
+            	console.error ("orientation invalid, this will probably break something");
+            }
+
+            // Click on button is completed, the button is no more triggered.
+            this.triggered = false;
+            
+            return ret;
+        }
+    }
+    
+    // Action is void, button was upclicked outside its ROI or never downclicked
+    // No need to trigger anything, ignore this event.
+    return undefined;
+    
+};
+
 Wavebox.prototype.setValue = function (slot, value) {
+	
+	console.log ("Setting " + slot + " to " + value);
 
     // Won't call the parent: this element has a custom way to set values.
 
@@ -83,6 +132,22 @@ Wavebox.prototype.setValue = function (slot, value) {
         this.values["endsample"] = this.values["waveboxsignal"].length;
         this.values["startsample"] = 0;
     }
+    
+    if (slot == "xBarPos") {
+    	if (value <= this.width) {
+        	this.values["xBarPos"] = value;
+        }
+    }
+    
+    if (slot == "yBarPos") {
+    	if (value <= this.height) {
+    		console.log ("Setting yBarPos to " + value);
+        	this.values["yBarPos"] = value;
+        }
+        else {
+        	console.log ("NOT setting yBarPos to " + value + " because height is " + this.height);
+        }
+    }
 };
 
 Wavebox.prototype.refresh = function () {
@@ -90,6 +155,8 @@ Wavebox.prototype.refresh = function () {
 		       
         // Call the superclass.
         Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
+        
+        var context = this.drawClass.drawPath.canvasC;
 
 		//TODO there must be a less-repetitive way of handling orientations
 		
@@ -191,7 +258,23 @@ Wavebox.prototype.refresh = function () {
                 
 
                 this.drawClass.drawPath.endDraw();
-
+                
+                context.beginPath();
+                
+                // Draw the current position bar
+                // TODO consider it implemented in a separate class
+                if (this.orientation === 0) {
+	                context.moveTo(this.xOrigin + this.values.xBarPos, this.yOrigin + this.height);
+	  				context.lineTo(this.xOrigin + this.values.xBarPos, this.yOrigin);
+  				}
+  				else if (this.orientation === 1) {
+  					console.log ("yOrigin, yBarPOs: ", this.yOrigin, this.values.yBarPos);
+	                context.moveTo(this.xOrigin + this.width, this.yOrigin + this.values.yBarPos);
+	  				context.lineTo(this.xOrigin, this.yOrigin + this.values.yBarPos);
+  				}
+  				context.strokeStyle = "#f00";
+				context.stroke();
+	
             }
            
             if (false) {

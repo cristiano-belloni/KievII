@@ -46,16 +46,25 @@ and open the template in the editor.
                     width: 200,
                     height: 800,
                     orientation: 1,
+                    isClickable: true,
                     objParms: {
                             pathColor: '#CC0000',
                             pathDimension: 1,
                         }
                 };
+                
+                waveboxArgs.onValueSet = function () {
+	                var that = this;
+	                return function (slot, value) {
+	                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+	                    ui.refresh();
+	                };
+            	}();
 
                 var waveBox_L = new Wavebox(waveboxArgs);
 
                 waveboxArgs.ID = "wavebox_R";
-                waveboxArgs.top = 400;
+                waveboxArgs.left = 400;
                 var waveBox_R = new Wavebox(waveboxArgs);
 
                 ui.addElement(waveBox_L);
@@ -79,14 +88,14 @@ and open the template in the editor.
 
                 ui.refresh();
 
-                alert ("Continue");
+                /* alert ("Continue");
 
                 waveBox_L.setValue ('startsample', parseInt (decoded_arrayL.length / 4, 10));
                 waveBox_L.setValue ('endsample', decoded_arrayL.length - parseInt (decoded_arrayL.length / 5, 10));
                 waveBox_R.setValue ('startsample', parseInt (decoded_arrayR.length / 4, 10));
                 waveBox_R.setValue ('endsample', decoded_arrayR.length - parseInt (decoded_arrayR.length / 5, 10));
 
-                ui.refresh();
+                ui.refresh(); */
                 
             }
             
