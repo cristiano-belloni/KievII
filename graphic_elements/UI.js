@@ -89,14 +89,14 @@ function UI(domElement, wrapperFactory, parameters) {
         // For every element in Z-index array, in order
         for (var z = this.zMax; z >= this.zMin; z -= 1) {
             // The array has holes.
-            if (this.zArray[z] !== undefined) {
+            if (typeof this.zArray[z] === 'undefined') {
                 for (var k = (this.zArray[z].length -1); k >=0; k -= 1) {
                     // If the element wants to be bothered with events
                     if (this.zArray[z][k].getClickable()) {
                         // Notify the element
                         ret = this.zArray[z][k][event](x, y);
                         // See if the element changed its value
-                        if (ret !== undefined) {
+                        if (typeof ret !== 'undefined') {
                             if (ret instanceof Array) {
                                 // An element could change multiple slots of itself.
                                 for (var i = 0; i < ret.length; i+=1) {
@@ -147,7 +147,7 @@ function UI(domElement, wrapperFactory, parameters) {
     this.graphicWrapper = wrapperFactory;
 
     // Break on first
-    if (parameters !== undefined) {
+    if (typeof parameters !== 'undefined') {
         this.breakOnFirstEvent = parameters.breakOnFirstEvent || false;
     }
 
@@ -160,7 +160,7 @@ function UI(domElement, wrapperFactory, parameters) {
         var slot,
             slots;
 
-        if (this.elements[element.ID] !== undefined) {
+        if (typeof this.elements[element.ID] !== 'undefined') {
             throw new Error("Conflicting / Duplicated ID in UI: " + element.ID + " (IDs are identifiers and should be unique)");
             return;
         }
@@ -186,7 +186,7 @@ function UI(domElement, wrapperFactory, parameters) {
         // Store the parameters
         var zIndex = 0;
         
-        if ((typeof(elementParameters) !== "undefined") && (typeof(elementParameters.zIndex) !== "undefined")) {
+        if ((typeof elementParameters !== "undefined") && (typeof elementParameters.zIndex !== "undefined")) {
             zIndex = elementParameters.zIndex;
         }
         
@@ -199,15 +199,15 @@ function UI(domElement, wrapperFactory, parameters) {
         this.elements[element.ID].zIndex = zIndex;
         
         // if it's the first of its kind, initialize the array.
-        if (this.zArray[zIndex] === undefined) {
+        if (typeof this.zArray[zIndex] === 'undefined') {
             this.zArray[zIndex] = [];
         }
         // Update the maximum and minimum z index.
         this.zArray[zIndex].push(this.elements[element.ID]);
-        if ((this.zMin === undefined) || (this.zMin > zIndex)) {
+        if ((typeof this.zMin === 'undefined') || (this.zMin > zIndex)) {
             this.zMin = zIndex;
         }
-        if ((this.zMax === undefined) || (this.zMax <  zIndex)) {
+        if ((typeof this.zMax === 'undefined') || (this.zMax <  zIndex)) {
             this.zMax = zIndex;
         }
         
@@ -222,10 +222,10 @@ function UI(domElement, wrapperFactory, parameters) {
     this.connectSlots  = function (senderElement, senderSlot, receiverElement, receiverSlot, connectParameters) {
 
         //Check for the elements.
-        if ((this.elements[senderElement] !== undefined) && (this.elements[receiverElement] !== undefined)) {
+        if ((typeof this.elements[senderElement] !== 'undefined') && (typeof this.elements[receiverElement] !== 'undefined')) {
             // //Check for the slots.
-            if ((this.elements[senderElement].values[senderSlot] === undefined) ||
-                (this.elements[receiverElement].values[receiverSlot] === undefined))  {
+            if ((typeof this.elements[senderElement].values[senderSlot] === 'undefined') ||
+                (typeof this.elements[receiverElement].values[receiverSlot] === 'undefined'))  {
                 throw new Error("Slot " + senderSlot + " or " + receiverSlot + " not present.");
             }
 
@@ -235,7 +235,7 @@ function UI(domElement, wrapperFactory, parameters) {
                 var receiverHash = {"recvElement" : receiverElement, "recvSlot": receiverSlot};
 
                 //Check if there are optional parameters
-                if (connectParameters !== undefined) {
+                if (typeof connectParameters !== 'undefined') {
                     // Is there a callback?
                     if (typeof(connectParameters.callback) === "function") {
                         receiverHash.callback = connectParameters.callback;
@@ -243,7 +243,7 @@ function UI(domElement, wrapperFactory, parameters) {
                     // Should the connection setValue fire cascading setValue callbacks?
                     // By default, yes.
                     receiverHash.cascade = true;
-                    if (connectParameters.cascade !== undefined) {
+                    if (typeof connectParameters.cascade !== 'undefined') {
                         receiverHash.cascade = connectParameters.cascade;
                     }
                 }
@@ -279,17 +279,17 @@ function UI(domElement, wrapperFactory, parameters) {
             history;
         
         // Default parameters
-        if (typeof (setParms.elementID) === 'undefined') {
+        if (typeof setParms.elementID === 'undefined') {
             throw ("ID is undefined");
         }
         else elementID = setParms.elementID;
         
-        if (typeof (setParms.value) === 'undefined') {
+        if (typeof setParms.value === 'undefined') {
             throw ("value is undefined");
         }
         else value = setParms.value;
         
-        if (typeof (setParms.fireCallback) === 'undefined') {
+        if (typeof setParms.fireCallback === 'undefined') {
             fireCallback = true;
         }
         else fireCallback = setParms.fireCallback;
@@ -297,19 +297,19 @@ function UI(domElement, wrapperFactory, parameters) {
         history = setParms.history;
         // End of defaults
         
-        if (this.elements[elementID] !== undefined) {
+        if (typeof this.elements[elementID] !== 'undefined') {
             
             // Get the default slot here, if no one specified a slot
-            if (typeof (setParms.slot) === 'undefined') {
+            if (typeof setParms.slot === 'undefined') {
                 slot = this.elements[elementID].defaultSlot;
-                if (typeof(slot) === undefined) {
+                if (typeof slot === undefined) {
                     throw "Default slot is undefined!";
                 }
             }
             else slot = setParms.slot;
 
             // First of all, check history if it is present.
-            if (history !== undefined) {
+            if (typeof history !== 'undefined') {
                 hist = history;
                 // Is this an infinite loop?
                 for(var k = 0; k < hist.length ; k += 1) {
@@ -343,7 +343,7 @@ function UI(domElement, wrapperFactory, parameters) {
         }
 
         // Check if this element has connections
-        if (this.connections[elementID][slot] !== undefined) {
+        if (typeof this.connections[elementID][slot] !== 'undefined') {
 
             // For every connection the element has
             for (i in this.connections[elementID][slot]) {
@@ -388,7 +388,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
         var visibilityState;
 
-        if (this.elements[elementID] !== undefined) {
+        if (typeof this.elements[elementID] !== 'undefined') {
             visibilityState = this.elements[elementID].getVisible();
             if (visibilityState === true) {
                 // Set the element's visibility
@@ -410,7 +410,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
         var visibilityState;
 
-        if (this.elements[elementID] !== undefined) {
+        if (typeof this.elements[elementID] !== 'undefined') {
             visibilityState = this.elements[elementID].getVisible();
             if (visibilityState === false) {
 
@@ -435,7 +435,7 @@ function UI(domElement, wrapperFactory, parameters) {
     this.setVisible = function (elementID, value) {
         var visibilityState;
 
-        if (this.elements[elementID] !== undefined) {
+        if (typeof this.elements[elementID] !== 'undefined') {
             visibilityState = this.elements[elementID].getVisible();
             if (visibilityState !== value) {
 
@@ -456,7 +456,7 @@ function UI(domElement, wrapperFactory, parameters) {
     this.setClickable = function (elementID, value) {
             var state;
 
-            if (this.elements[elementID] !== undefined) {
+            if (typeof this.elements[elementID] !== 'undefined') {
                 state = this.elements[elementID].getClickable();
                 if (state !== value) {
 
@@ -496,7 +496,7 @@ function UI(domElement, wrapperFactory, parameters) {
         }
         
         // Then refresh everything from the smallest z-value, if there is one.
-        if (this.zMin !== undefined) {
+        if (typeof this.zMin !== 'undefined') {
             this.refreshZ(this.zMin);
         }
     }
