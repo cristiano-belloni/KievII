@@ -19,7 +19,7 @@ function UI(domElement, wrapperFactory, parameters) {
     };
 
     // Get mouse event position in DOM element (don't know how to use scale yet).
-    this.getEventPosition = function (e, obj, scale) {
+    this.getEventPosition = function (e, obj, aux_e, scale) {
         var evt, docX, docY, pos;
         //if (!e) evt = window.event;
         evt = (e ? e : window.event);
@@ -32,6 +32,10 @@ function UI(domElement, wrapperFactory, parameters) {
             docY = evt.clientY + document.body.scrollTop +
                 document.documentElement.scrollTop;
         }
+        else if (typeof aux_e !== 'undefined') {
+        	docX = aux_e.touches[0].x;
+        	docY = aux_e.touches[0].y;
+        }
         pos = this.getPosition(obj);
         if (typeof scale === "undefined") {
             scale = 1;
@@ -39,45 +43,50 @@ function UI(domElement, wrapperFactory, parameters) {
         return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
     };
 
-    // Event handlers: we need closures here, because they will be called as callbacks.
+    // Event handlers
 
-    // On mouseMove event
-    this.onMouseMoveFunc = function () {
+	// onMouse events
+	this.onMouseEvent = function () {
         var that = this;
             return function (evt) {
-
-            //var realCoords = that.calculateOffset(evt);
-            var realCoords = that.getEventPosition (evt, that.domElement);
-
-            // Only if the mouse button is still down (This could be useless TODO).
-            if (that.mouseUp === false) {
-                that.elementsNotifyEvent(realCoords.x, realCoords.y, "onMouseMove");
+            	
+            var event = evt;
+            var type = evt.type;
+            
+			var realCoords = that.getEventPosition (event, that.domElement);
+			
+			if (type === 'mousedown') {
+				that.mouseUp = false;
+			}
+			else if (type === 'mouseup') {
+				that.mouseUp = true;
+			}
+			
+			if (type === 'mousemove') {
+				// Only if the mouse button is still down (This could be incomplete TODO).
+            	if (that.mouseUp === false) {
+                	that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
+            	}
             }
+            console.log ("About to notify a mouse event of type", type);
+            that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
-
-    // On mouseDown event
-    this.onMouseDownFunc = function () {
+    
+    // hammer.js events
+    this.onHammerEvent = function () {
         var that = this;
             return function (evt) {
-
-            var realCoords = that.getEventPosition (evt, that.domElement);
-
-            that.mouseUp = false;
-            that.elementsNotifyEvent(realCoords.x, realCoords.y, "onMouseDown");
-        };
-    };
-
-    // On mouseUp event
-    this.onMouseUpFunc = function () {
-        var that = this;
-            return function (evt) {
-
-            var realCoords = that.getEventPosition (evt, that.domElement);
-
-            that.mouseUp = true;
-            that.elementsNotifyEvent(realCoords.x, realCoords.y, "onMouseUp");
-
+            	
+            var event = evt.originalEvent;
+            var type = evt.type;
+            
+            var realCoords = that.getEventPosition (event, that.domElement, evt);
+            
+            console.log ("About to notify an Hammer event of type", type);
+            
+            that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
+            
         };
     };
 
@@ -93,25 +102,28 @@ function UI(domElement, wrapperFactory, parameters) {
                 for (var k = (this.zArray[z].length -1); k >=0; k -= 1) {
                     // If the element wants to be bothered with events
                     if (this.zArray[z][k].getClickable()) {
-                        // Notify the element
-                        ret = this.zArray[z][k][event](x, y);
-                        // See if the element changed its value
-                        if (typeof ret !== 'undefined') {
-                            if (ret instanceof Array) {
-                                // An element could change multiple slots of itself.
-                                for (var i = 0; i < ret.length; i+=1) {
-                                    this.setValue({elementID: this.zArray[z][k].ID, slot: ret[i].slot, value: ret[i].value});
-                                }
-                            }
-                            else {
-                                // console.log("UI: Element ", ID, " changed its value on event ", event);
-                                this.setValue({elementID: this.zArray[z][k].ID, slot: ret.slot, value: ret.value});
-                            }
-
-                            if (this.breakOnFirstEvent === true) {
-                                // One element has answered to an event, return.
-                                return;
-                            }
+                        // Notify the element, if the element has an handler
+                        if (typeof this.zArray[z][k][event] === 'function') {
+                        	var ret = this.zArray[z][k][event](x, y);
+                        
+	                        // See if the element changed its value
+	                        if (typeof ret !== 'undefined') {
+	                            if (ret instanceof Array) {
+	                                // An element could change multiple slots of itself.
+	                                for (var i = 0; i < ret.length; i+=1) {
+	                                    this.setValue({elementID: this.zArray[z][k].ID, slot: ret[i].slot, value: ret[i].value});
+	                                }
+	                            }
+	                            else {
+	                                // console.log("UI: Element ", ID, " changed its value on event ", event);
+	                                this.setValue({elementID: this.zArray[z][k].ID, slot: ret.slot, value: ret.value});
+	                            }
+	
+	                            if (this.breakOnFirstEvent === true) {
+	                                // One element has answered to an event, return.
+	                                return;
+	                            }
+	                        }
                         }
                     }
                 }
@@ -122,18 +134,31 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // <END OF EVENT HANDLING>
 
-	// Hammer.js stuff
+	// <CONSTRUCTOR>
+    this.domElement = domElement;
+
+	// Hammer.js is present
 	if (typeof Hammer !== 'undefined') {
 		console.log ("We have hammer.js!");
 		this.hammer = new Hammer(domElement);
+		this.hammer.ondragstart = this.onHammerEvent();
+		this.hammer.ondrag = this.onHammerEvent();
+		this.hammer.ondragend = this.onHammerEvent();
+		this.hammer.onswipe = this.onHammerEvent();
+		this.hammer.ontap = this.onHammerEvent();;
+		this.hammer.ondoubletap = this.onHammerEvent();
+		this.hammer.onhold = this.onHammerEvent();
+		this.hammer.ontransformstart = this.onHammerEvent();
+		this.hammer.ontransform = this.onHammerEvent();
+		this.hammer.ontransformend = this.onHammerEvent();
+		this.hammer.onrelease = this.onHammerEvent();
 	}
-
-    // <CONSTRUCTOR>
-    this.domElement = domElement;
-
-    this.domElement.addEventListener("mousedown", this.onMouseDownFunc(), true);
-    this.domElement.addEventListener("mouseup", this.onMouseUpFunc(), true);
-    this.domElement.addEventListener("mousemove", this.onMouseMoveFunc(), true);
+	// Hammer not present, switch to regular events
+    else {
+	    this.domElement.addEventListener("mousedown", this.onMouseEvent(), true);
+	    this.domElement.addEventListener("mouseup", this.onMouseEvent(), true);
+	    this.domElement.addEventListener("mousemove", this.onMouseEvent(), true);
+	   }
 
     this.mouseUp = true;
    

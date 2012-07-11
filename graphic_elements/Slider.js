@@ -95,7 +95,7 @@ Slider.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Slider.prototype.onMouseDown = function (x, y) {
+Slider.prototype.dragstart = Slider.prototype.mousedown = function (x, y) {
     if (this.isInROI(x, y)) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
@@ -117,13 +117,13 @@ Slider.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-Slider.prototype.onMouseUp = function (x, y) {
+Slider.prototype.dragend = Slider.prototype.mouseup = function (x, y) {
     this.triggered = false;
     this.drag_offset = undefined;
     return undefined;
 };
 
-Slider.prototype.onMouseMove = function (curr_x, curr_y) {
+Slider.prototype.drag = Slider.prototype.mousemove = function (curr_x, curr_y) {
 
         if (this.triggered === true) {
             var to_set,

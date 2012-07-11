@@ -52,7 +52,7 @@ Button.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Button.prototype.onMouseDown = function (x, y) {
+Button.prototype.doubletap = Button.prototype.tap = Button.prototype.mousedown = function (x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -62,7 +62,7 @@ Button.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-Button.prototype.onMouseUp = function (curr_x, curr_y) {
+Button.prototype.release = Button.prototype.mouseup = function (curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};

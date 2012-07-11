@@ -192,18 +192,6 @@ Element.prototype.getVisible = function () {
     return this.isVisible;
 }
 
-Element.prototype.onMouseMove = function (x,y) {
-    return undefined;
-};
-
-Element.prototype.onMouseDown = function (x,y) {
-    return undefined;
-};
-
-Element.prototype.onMouseUp = function (x,y) {
-    return undefined;
-};
-
 Element.prototype.setGraphicWrapper = function (wrapper) {
     this.wrapper = wrapper;
 }

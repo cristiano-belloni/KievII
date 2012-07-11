@@ -46,7 +46,7 @@ Grid.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Grid.prototype.onMouseDown = function (x, y) {
+Grid.prototype.mousedown = function (x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -56,7 +56,7 @@ Grid.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-Grid.prototype.onMouseUp = function (curr_x, curr_y) {
+Grid.prototype.mousedown = function (curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};

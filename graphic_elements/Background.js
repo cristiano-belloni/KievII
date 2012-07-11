@@ -41,7 +41,7 @@ Background.prototype.isInROI = function (x, y) {
     }
 };
 
-Background.prototype.onMouseDown = function (x, y) {
+Background.prototype.mousedown = function (x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -51,7 +51,7 @@ Background.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-Background.prototype.onMouseUp = function (curr_x, curr_y) {
+Background.prototype.mouseup = function (curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};

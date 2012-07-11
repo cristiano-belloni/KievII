@@ -37,7 +37,7 @@ Wavebox.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Wavebox.prototype.onMouseDown = function (x, y) {
+Wavebox.prototype.tap = Wavebox.prototype.mousedown = function (x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -47,7 +47,7 @@ Wavebox.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-Wavebox.prototype.onMouseUp = function (curr_x, curr_y) {
+Wavebox.prototype.release = Wavebox.prototype.mouseup = function (curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};

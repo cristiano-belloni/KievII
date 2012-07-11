@@ -104,7 +104,7 @@ RotKnob.prototype.isInROI = function (x, y) {
     return false;
 };
 
-RotKnob.prototype.onMouseDown = function (x, y) {
+RotKnob.prototype.dragstart = RotKnob.prototype.mousedown = function (x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -117,7 +117,7 @@ RotKnob.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-RotKnob.prototype.onMouseUp = function (x, y) {
+RotKnob.prototype.dragend = RotKnob.prototype.mouseup = function (x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -128,7 +128,7 @@ RotKnob.prototype.onMouseUp = function (x, y) {
 
 };
 
-RotKnob.prototype.onMouseMove = function (curr_x, curr_y) {
+RotKnob.prototype.drag = RotKnob.prototype.mousemove = function (curr_x, curr_y) {
 
     if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
 

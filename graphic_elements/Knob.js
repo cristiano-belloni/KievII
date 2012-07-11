@@ -83,7 +83,7 @@ Knob.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Knob.prototype.onMouseDown = function (x, y) {
+Knob.prototype.dragstart = Knob.prototype.mousedown = function (x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -96,7 +96,7 @@ Knob.prototype.onMouseDown = function (x, y) {
     return undefined;
 };
 
-Knob.prototype.onMouseUp = function (x, y) {
+Knob.prototype.dragend = Knob.prototype.mouseup = function (x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -107,7 +107,7 @@ Knob.prototype.onMouseUp = function (x, y) {
 
 };
 
-Knob.prototype.onMouseMove = function (curr_x, curr_y) {
+Knob.prototype.drag = Knob.prototype.mousemove = function (curr_x, curr_y) {
 
     if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
 
