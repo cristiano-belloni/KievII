@@ -89,7 +89,7 @@ function UI(domElement, wrapperFactory, parameters) {
         // For every element in Z-index array, in order
         for (var z = this.zMax; z >= this.zMin; z -= 1) {
             // The array has holes.
-            if (typeof this.zArray[z] === 'undefined') {
+            if (typeof this.zArray[z] !== 'undefined') {
                 for (var k = (this.zArray[z].length -1); k >=0; k -= 1) {
                     // If the element wants to be bothered with events
                     if (this.zArray[z][k].getClickable()) {
