@@ -224,6 +224,10 @@ CANVAS_WRAPPER = {
 
         }
     },
+    
+    drawDummy: function (canvas) {
+    	this.canvasC = canvas;
+    },
 
     drawPath: function (canvas, pathParms) {
 
