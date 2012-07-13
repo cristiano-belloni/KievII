@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Bezier Curve test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Curve.js"></script>
+    <script type="text/javascript" src="../../../Background.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+      <canvas id="plugin" width="800" height="700"></canvas>
+      <script type="text/javascript">
+          
+        function init () {
+            
+            // Curve stuff
+            var plugin_canvas = document.getElementById("plugin");
+
+            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                                   {canvas: plugin_canvas}
+                                                   );
+
+            ui = new UI (plugin_canvas, CWrapper);
+
+            //Bezier curve
+            var curveArgs = {
+                ID: "bezier_test",
+                top: 0,
+                left: 0,
+                width: 800,
+                height:700,
+                curveType: "bezier",
+                thickness: 8,
+                curveColor: "blue",
+                handleColor: "red",
+                helperColor: "gray",
+                curveLabels: true,
+                handleSize: 24,
+                points: [120, 280, 280, 130, 420, 280/*, 580, 130, 600, 140*/],
+                isClickable: true
+            };
+            
+            curveArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value) {
+                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                    ui.refresh();
+                    console.log (bezierCurveElement.getnumPoints());
+                };
+            }();
+
+            var bezierCurveElement = new Curve(curveArgs);
+            
+            ui.addElement(bezierCurveElement);
+            ui.refresh();
+
+        }
+                
+        init();
+    </script>
+  </body>
+</html>
