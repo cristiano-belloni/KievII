@@ -68,7 +68,7 @@ function UI(domElement, wrapperFactory, parameters) {
                 	that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
             	}
             }
-            console.log ("About to notify a mouse event of type", type);
+            //console.log ("About to notify a mouse event of type", type);
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
@@ -83,7 +83,7 @@ function UI(domElement, wrapperFactory, parameters) {
             
             var realCoords = that.getEventPosition (event, that.domElement, evt);
             
-            console.log ("About to notify an Hammer event of type", type);
+            //console.log ("About to notify an Hammer event of type", type);
             
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
             
@@ -140,7 +140,7 @@ function UI(domElement, wrapperFactory, parameters) {
 	// Hammer.js is present
 	if (typeof Hammer !== 'undefined') {
 		console.log ("We have hammer.js!");
-		this.hammer = new Hammer(domElement);
+		this.hammer = new Hammer(domElement, {drag_min_distance: 2});
 		this.hammer.ondragstart = this.onHammerEvent();
 		this.hammer.ondrag = this.onHammerEvent();
 		this.hammer.ondragend = this.onHammerEvent();
