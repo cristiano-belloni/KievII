@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>Bezier Curve test</title>
+    <title>Curve Element test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../../Element.js"></script>
     <script type="text/javascript" src="../../../UI.js"></script>
@@ -11,10 +11,8 @@
     <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-      <canvas id="plugin" width="800" height="700"></canvas>
-      <script type="text/javascript">
+    
+    <script type="text/javascript">
           
         function init () {
             
@@ -29,39 +27,77 @@
 
             //Bezier curve
             var curveArgs = {
-                ID: "bezier_test",
+                ID: "curve_test",
                 top: 0,
                 left: 0,
                 width: 800,
                 height:700,
-                curveType: "bezier",
+                curveType: "halfcosine",
                 thickness: 8,
                 curveColor: "blue",
                 handleColor: "red",
                 helperColor: "gray",
                 curveLabels: true,
-                handleSize: 24,
-                points: [120, 280, 280, 130, 420, 280/*, 580, 130, 600, 140*/],
+                handleSize: 8,
+                paintTerminalPoints: 'first',
+                terminalPointSize: 16,
+                terminalPointColor: 'black',
+                terminalPointFill: 'gray',
+                midPointFill: 'yellow',
+                //points: [120, 280, 280, 130, 420, 280, 580, 130, 600, 140],
+                points: [60, 280, 280, 130],
                 isClickable: true
             };
             
             curveArgs.onValueSet = function () {
                 var that = this;
-                return function (slot, value) {
-                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                return function (slot, value, element) {
+                    console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
                     ui.refresh();
-                    console.log (bezierCurveElement.getnumPoints());
+                    // console.log (bezierCurveElement.getnumPoints());
                 };
             }();
 
-            var bezierCurveElement = new Curve(curveArgs);
+            var curveElement = new Curve(curveArgs);
             
-            ui.addElement(bezierCurveElement);
+            curveArgs.ID = "curve_test_2";
+            curveArgs.curveType = "smooth";
+            //curveArgs.paintTerminalPoints = 'first';
+            curveArgs.points = [280, 130, 310, 180];
+            
+            var curveElement2 = new Curve(curveArgs);
+            
+            curveArgs.ID = "curve_test_3";
+            curveArgs.curveType = "bezier";
+            //curveArgs.paintTerminalPoints = 'all';
+            curveArgs.points = [310, 180, 420, 280, 580, 130, 600, 140, 650, 210];
+            var curveElement3 = new Curve(curveArgs);
+            
+            curveArgs.ID = "curve_test_4";
+            curveArgs.curveType = "linear";
+            curveArgs.paintTerminalPoints = 'all';
+            curveArgs.points = [650, 210, 680, 100];
+            var curveElement4 = new Curve(curveArgs);
+            
+            /* curveArgs.ID = "curve_test_5";
+            curveArgs.curveType = "hermite";
+            curveArgs.points = [680, 100, 700, 110, 720, 160, 760, 88];
+            var curveElement5 = new Curve(curveArgs); */
+            
+            ui.addElement(curveElement);
+            ui.addElement(curveElement2);
+            ui.addElement(curveElement3);
+            ui.addElement(curveElement4);
+            //ui.addElement(curveElement5);
+            
             ui.refresh();
 
         }
                 
-        init();
     </script>
+    
+  </head>
+  <body onload="init()">
+      <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
   </body>
 </html>
