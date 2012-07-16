@@ -17,7 +17,6 @@ Curve.prototype.getready = function (args) {
     this.setWidth(args.width);
     this.setHeight(args.height);
     this.curveType = args.curveType || "bezier";
-    this.handleSize = args.handleSize || 10;
     this.thickness = args.thickness || 2;
     this.curveColor = args.curveColor || "black";
     this.helperColor = args.helperColor || '#CCCCCC';
@@ -26,12 +25,14 @@ Curve.prototype.getready = function (args) {
     this.terminalPointStyle = args.terminalPointStyle || 'rect';
     this.paintTerminalPoints = args.paintTerminalPoints || 'all';
     this.midPointStyle = args.midPointStyle || 'circle';
-    this.terminalPointSize = args.terminalPointSize || this.handleSize;
-    this.midPointSize = args.midPointSize || this.handleSize;
+    this.terminalPointSize = args.terminalPointSize || 16;
+    this.midPointSize = args.midPointSize || 8;
     this.terminalPointColor = args.terminalPointColor || this.handleColor;
     this.midPointColor = args.midPointColor || this.handleColor;
     this.terminalPointFill = args.terminalPointFill || null;
     this.midPointFill = args.midPointFill || null;
+    // handleSize is the tolerance when dragging handles
+    this.handleSize = args.handleSize || (this.terminalPointSize > this.midPointSize) ? this.terminalPointSize : this.midPointSize;
     
     //internals
     this.handleClicked = null;
@@ -470,7 +471,7 @@ Curve.prototype.paintPoints = function (ctx, parameters) {
 	        	this.paintHandle(ctx, points[i], terminal);
 	        	// Paint the curve labels
 		        if (this.curveLabels) {
-		        	ctx.fillText("P" + i + " [" + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
+		        	ctx.fillText(this.ID + " (" + i  + ")" + " [" + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
 		        }
 	        }
 	    }
@@ -480,7 +481,7 @@ Curve.prototype.paintPoints = function (ctx, parameters) {
 	    	this.paintHandle(ctx, points[i], terminal);
 	    	// Paint the curve labels
 			if (this.curveLabels) {
-				ctx.fillText("P" + i + " [" + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
+				ctx.fillText(this.ID + " (" + i  + ")" + " [" + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
 			}
 	    }           
     ctx.restore();

@@ -27,7 +27,7 @@
 
             //Bezier curve
             var curveArgs = {
-                ID: "curve_test",
+                ID: "hCos",
                 top: 0,
                 left: 0,
                 width: 800,
@@ -38,7 +38,7 @@
                 handleColor: "red",
                 helperColor: "gray",
                 curveLabels: true,
-                handleSize: 8,
+                midPointSize: 8,
                 paintTerminalPoints: 'first',
                 terminalPointSize: 16,
                 terminalPointColor: 'black',
@@ -60,20 +60,20 @@
 
             var curveElement = new Curve(curveArgs);
             
-            curveArgs.ID = "curve_test_2";
+            curveArgs.ID = "smooth";
             curveArgs.curveType = "smooth";
             //curveArgs.paintTerminalPoints = 'first';
             curveArgs.points = [280, 130, 310, 180];
             
             var curveElement2 = new Curve(curveArgs);
             
-            curveArgs.ID = "curve_test_3";
+            curveArgs.ID = "bez4";
             curveArgs.curveType = "bezier";
             //curveArgs.paintTerminalPoints = 'all';
             curveArgs.points = [310, 180, 420, 280, 580, 130, 600, 140, 650, 210];
             var curveElement3 = new Curve(curveArgs);
             
-            curveArgs.ID = "curve_test_4";
+            curveArgs.ID = "line";
             curveArgs.curveType = "linear";
             curveArgs.paintTerminalPoints = 'all';
             curveArgs.points = [650, 210, 680, 100];
