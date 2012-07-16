@@ -32,13 +32,19 @@ Curve.prototype.getready = function (args) {
     // check for correct number of arguments
     // TODO this will evolve with various types of curves
     
-    if(args.points.length % 2 != 0 || args.points.length < 4) {
-        throw "Incorrect number of points " + arguments.length;
-    }
-                
-    //simple console dump
-    if(console){
-        console.info(args.points);
+    switch (args.curveType)  {
+    	case "bezier":
+		    if(args.points.length % 2 != 0 || args.points.length < 4) {
+		        throw "Incorrect number of points " + args.points.length;
+		       }
+		    break;
+	    case "halfcosine":
+	    	if(args.points.length !== 4) {
+		        throw "Incorrect number of points " + args.points.length;
+		       }
+		    break;
+		default:
+			throw "Unknown curve type " + args.curveType;
     }
                 
     //transform initial arguments into an {Array} of [x,y] coordinates
@@ -147,7 +153,15 @@ Curve.prototype.refresh = function () {
      			handleSize: this.handleSize,
      			curveLabels: this.curveLabels
         	}
-			this.bezier (context, initialPoints, parameters);
+        	
+        	switch (this.curveType) {
+        	case "bezier":
+				this.bezier (context, initialPoints, parameters);
+				break;
+			case "halfcosine":
+				this.halfCosine (context, initialPoints, parameters);
+				break;
+			}
         }
     }
 };
@@ -161,6 +175,121 @@ Curve.prototype.getnumPoints = function () {
 };
 
 //Non-interface functions
+
+Curve.prototype.halfCosine = function (context, initialPoints, parameters) {
+	// TODO duplicate
+	function distance(a, b){
+        return Math.sqrt(Math.pow(a[0]-b[0], 2) + Math.pow(a[1]-b[1], 2));
+    }
+	
+	/* 
+     *Computes a point's coordinates for a value of t
+     *@param {Number} t - a value between 0 and 1
+     *@param {Array} points - an {Array} of [x,y] coodinates. The initial points
+    */
+   
+    function hCosine (t, points) {
+    	// http://paulbourke.net/miscellaneous/interpolation/
+    	var mu2 = (1 - Math.cos (t * Math.PI)) / 2;
+    	
+    	var r = [0,0];
+        r[0] = points[0][0] + (points[1][0] - points[0][0]) * t;
+        r[1] = (points[0][1] * (1 - mu2) + points[1][1] * mu2);                  
+        return r;
+    }
+    
+    //Computes the drawing/support points for the Bezier curve
+    // TODO all duplicates
+    function computeSupportPoints(points){	
+    	/**Compute the incremental step*/
+	    var tLength = 0;
+	    for(var i=0; i< points.length-1; i++){
+	        tLength += distance(points[i], points[i+1]);
+	    }
+	    var step = 1 / tLength;
+    	
+	    //compute the support points
+	    var temp = [];
+	    for(var t=0; t<=1; t = t+step ){
+	        var p = hCosine(t, points);
+	        temp.push(p);
+	    }
+	    return temp;
+	}
+    
+    /**Generic paint curve method*/
+    function paintCurve(ctx, points, thickness, color){
+        ctx.save();
+		ctx.lineWidth = thickness;
+		context.strokeStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        for(var i=1;i<points.length; i++){
+            ctx.lineTo(points[i][0], points[i][1]);
+        }
+        ctx.stroke();
+        ctx.restore();
+    }
+    
+    // Stroked rectangle dot
+    function paintPoint(ctx, color, size, point){
+        
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.round(size / 5);
+        ctx.strokeRect(point[0] - Math.round(size / 2) , point[1] - Math.round (size / 2), size, size);                
+        ctx.restore();
+    }
+            
+            
+    /**Paint the support points*/
+    function paintPoints(ctx, points, parameters){
+        ctx.save();
+                
+        //paint lines           
+        ctx.strokeStyle = parameters.helperColor;
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        for(var i=1;i<points.length; i++){
+            ctx.lineTo(points[i][0], points[i][1]);
+        }
+        ctx.stroke();
+                
+                
+        //control points
+        for(var i=0;i<points.length; i++){
+            paintPoint(ctx, parameters.handleColor, parameters.handleSize, points[i]);
+            if (parameters.curveLabels) {
+            	ctx.fillText("P" + i + " [" + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
+            }
+        }
+                
+                
+        ctx.restore();
+    }
+
+	// They are memorized, but they are stepped.     			                
+    this.supportPoints = computeSupportPoints(initialPoints);
+    paintCurve(context, this.supportPoints, parameters.thickness, parameters.curveColor);
+    paintPoints(context, initialPoints, parameters);
+    
+}
+
+Curve.prototype.smoothStep = function (context, initialPoints, parameters) {
+    function smooth (y0, y1, t) {
+    	// http://codeplea.com/simple-interpolation
+    	var tSmooth = t * t * (3 - 2 * t);
+    	var res = y0 + tSmooth * (y1 - y0);
+    }
+}
+
+Curve.prototype.linear = function (context, initialPoints, parameters) {
+    function smooth (y0, y1, t) {
+    	// http://codeplea.com/simple-interpolation
+    	var res = y0 + t * (y1 - y0);
+    }
+}
+
 //N grade bezier curve, adapted from http://html5tutorial.com/how-to-draw-n-grade-bezier-curve-with-canvas-api/ 
 Curve.prototype.bezier = function (context, initialPoints, parameters) {
     
@@ -283,7 +412,7 @@ Curve.prototype.bezier = function (context, initialPoints, parameters) {
     this.supportPoints = computeSupportPoints(initialPoints);
     paintCurve(context, this.supportPoints, parameters.thickness, parameters.curveColor);
     if(debug){
-        paintPoints(context, initialPoints, parameters /*.helperColor, parameters.handleColor, parameters.handleSize, parameters.curveLabels*/);
+        paintPoints(context, initialPoints, parameters);
     }
 }
 
