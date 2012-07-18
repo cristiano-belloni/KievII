@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE HTML>
 <html>
   <head>
@@ -23,6 +25,11 @@
     		selected: null,
     		nextNumber: 0
     	}
+    	
+    	var globalWidth = 800;
+    	var globalHeight = 600;
+    	
+    	var lastCalculatedPoint = [];
     	
     	// One callback for all
     	var callback = function () {
@@ -50,8 +57,8 @@
             ID: "",
             top: 0,
             left: 0,
-            width: 800,
-            height:700,
+            width: globalWidth,
+            height:globalHeight,
             thickness: 5,
             curveColor: "02B51F",
             handleColor: "A81B32",
@@ -133,8 +140,8 @@
       		newCurveArgs.paintTerminalPoints = 'all';
       		// Calculate terminal points type and first, last point
       		if (this.appStatus.curveArray.length === 0) {
-      			// TODO remove the magic number
-      			firstPoint = [0,600];
+      			// Lower left
+      			firstPoint = [0,this.globalHeight];
       		}
       		else {
       			// Appending: calculate the terminal point
@@ -145,8 +152,30 @@
 	      		// Set the curve to paint only its first handle
 	      		ui.setProp (lastElementID, 'paintTerminalPoints', 'first');
       		}
-      		// TODO remove the magic numbers
-      		lastPoint = [firstPoint[0] + 120, firstPoint[1] - 100];
+      		
+      		var xInc = Math.round(globalWidth / 8);
+      		var yInc = - Math.round(globalHeight / 8);
+      		
+      		// Calculate the next "landing" point
+      		lastPoint = [firstPoint[0] + xInc, firstPoint[1] + yInc];
+      		
+      		if (lastPoint[0] > globalWidth) {
+      			lastPoint[0] = globalWidth;
+      		}
+      		if (lastPoint[1] < 0) {
+      			lastPoint[1] = 0;
+      		}
+      		
+      		if ((lastPoint[0] === lastCalculatedPoint[0]) && (lastPoint[1] === lastCalculatedPoint[1])) {
+      			// Set the curve to paint only its first handle
+      			console.log ("Remove something before adding stuff");
+      			// Undo the previous paintTerminalPoints inference
+      			ui.setProp (lastElementID, 'paintTerminalPoints', 'all');
+      			return;
+      		}
+      		
+      		lastCalculatedPoint[0] = lastPoint[0];
+      		lastCalculatedPoint[1] = lastPoint[1];
       		
       		switch (curveType) {
       			case 'linear':
