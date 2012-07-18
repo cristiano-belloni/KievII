@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Curve Element test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Curve.js"></script>
+    <script type="text/javascript" src="../../../Background.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <script type="text/javascript">
+    
+    	var ui;
+    	var plugin_canvas;
+    	var CWrapper;
+    	 
+    	var appStatus = {
+    		curveArray: [],
+    		selected: null,
+    		nextNumber: 0
+    	}
+    	
+    	// One callback for all
+    	var callback = function () {
+                var that = this;
+                return function (slot, value, element) {
+                    console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                    if (slot === 'selected') {
+                    	// TODO We would really need the element here
+                    	for (var i = 0; i < that.appStatus.curveArray.length; i +=1) {
+                    		if (that.appStatus.curveArray[i].ID === element) {
+                    			that.appStatus.curveArray[i].curveColor = 'red';
+                    			that.appStatus.selected = i;
+                    		}
+                    		else {
+                    			that.appStatus.curveArray[i].curveColor = that.curveArgsTemplate.curveColor;
+                    		}
+                    	}
+                    }
+                    ui.refresh();
+                };
+        }();
+    	
+    	//curve template
+        var curveArgsTemplate = {
+            ID: "",
+            top: 0,
+            left: 0,
+            width: 800,
+            height:700,
+            thickness: 5,
+            curveColor: "02B51F",
+            handleColor: "A81B32",
+            helperColor: "gray",
+            curveLabels: true,
+            midPointSize: 8,
+            terminalPointSize: 15,
+            terminalPointColor: 'black',
+            terminalPointFill: '015C10',
+            midPointFill: 'E6965A',
+            isClickable: true,
+            onValueSet: callback
+        };
+        
+        function clone(obj) {
+		    // Handle the 3 simple types, and null or undefined
+		    if (null == obj || "object" != typeof obj) return obj;
+		
+		    // Handle Date
+		    if (obj instanceof Date) {
+		        var copy = new Date();
+		        copy.setTime(obj.getTime());
+		        return copy;
+		    }
+		
+		    // Handle Array
+		    if (obj instanceof Array) {
+		        var copy = [];
+		        var len;
+		        for (var i = 0, len = obj.length; i < len; ++i) {
+		            copy[i] = clone(obj[i]);
+		        }
+		        return copy;
+		    }
+		
+		    // Handle Object
+		    if (obj instanceof Object) {
+		        var copy = {};
+		        for (var attr in obj) {
+		            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+		        }
+		        return copy;
+		    }
+		
+		    throw new Error("Unable to copy obj! Its type isn't supported.");
+		}
+        
+        
+        function addCallback(frm) {
+        	console.log ("Adding a curve");
+        	
+        	// Get a deep copy of the template object
+        	// var newCurveArgs = JSON.parse(JSON.stringify(this.curveArgsTemplate));
+        	var newCurveArgs = clone(this.curveArgsTemplate);
+        	
+        	newCurveArgs.ID = 'curve' + this.appStatus.nextNumber++;
+        	
+        	var curveType = null;
+        	
+        	for (i = 0; i < frm.buttontype.length; i++) {
+      			if (frm.buttontype[i].checked) {
+         			curveType = frm.buttontype[i].value;
+      			}
+      		}
+      		
+      		if (curveType === null) curveType = 'linear';
+      		
+      		console.log ('Add: curve type is ' + curveType);
+      		
+      		if (curveType.indexOf('bezier') == 0) {
+      			var bezierN = parseInt(curveType.charAt(6), 10);
+      			curveType = 'bezier';
+      			console.log ("Curve is bezier and grade is " + bezierN);
+      		}
+      		newCurveArgs.curveType = curveType;
+      		
+      		var firstPoint, lastPoint, midPoints = [];
+      		
+      		newCurveArgs.paintTerminalPoints = 'all';
+      		// Calculate terminal points type and first, last point
+      		if (this.appStatus.curveArray.length === 0) {
+      			// TODO remove the magic number
+      			firstPoint = [0,600];
+      		}
+      		else {
+      			// Appending: calculate the terminal point
+	      		var lastElement = this.appStatus.curveArray[this.appStatus.curveArray.length -1];
+	      		// TODO put the values getter here
+	      		var coordinates = lastElement.values.points;
+	      		firstPoint = [coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]];
+	      		// TODO we definitely need a setter there
+	      		lastElement.paintTerminalPoints = 'first';
+      		}
+      		// TODO remove the magic numbers
+      		lastPoint = [firstPoint[0] + 120, firstPoint[1] - 100];
+      		
+      		switch (curveType) {
+      			case 'linear':
+      			case 'smooth':
+      			case 'halfcosine':
+      			// Two point curve
+      			newCurveArgs.points = firstPoint.concat(lastPoint);
+      			case 'bezier':
+      			var midPoint = firstPoint.slice();
+      			for (var i = 1; i < bezierN; i += 1) {
+      				// TODO remove the magic numbers
+      				midPoint[0] += 20;
+      				midPoint[1] -= 20;
+      				midPoints = midPoints.concat(midPoint);
+      			}
+      			newCurveArgs.points = firstPoint.concat(midPoints, lastPoint);
+      		}
+      		
+      		var curveElement = new Curve(newCurveArgs);
+      		ui.addElement(curveElement);
+      		this.appStatus.curveArray.push(curveElement);
+      		ui.refresh();
+        }
+        
+        function removeCallback() {
+        	if (this.appStatus.selected !== null) {
+	        	console.log ("Deleting selected curve " + this.appStatus.selected);
+
+	        	//arr = arr.filter(function(){return true});
+	        	
+	        	// Change the (selected + 1) array initial point
+	        	// TODO setProp/getProp in UI
+	        	if ((this.appStatus.selected !== 0) && (this.appStatus.selected < this.appStatus.curveArray.length - 1)) {
+	        		var nextArray = this.appStatus.curveArray[this.appStatus.selected + 1];
+	        		var prevArray = this.appStatus.curveArray[this.appStatus.selected - 1];
+		        	nextArray.values.points[0][0] = prevArray.values.points[prevArray.values.points.length - 1][0];
+		        	nextArray.values.points[0][1] = prevArray.values.points[prevArray.values.points.length - 1][1];
+		        }
+		        
+		        if ((this.appStatus.selected === this.appStatus.curveArray.length - 1) && (this.appStatus.selected !== 0)){
+		        		// Paint the final point in the previous curve
+		        		var prevArray = this.appStatus.curveArray[this.appStatus.selected - 1];
+			        	prevArray.paintTerminalPoints = 'all';
+		        	}
+		        
+		        // Remove the element from the UI
+	        	ui.removeElement (this.appStatus.curveArray[this.appStatus.selected].ID);
+		        
+		        // Remove the element from the array
+	        	this.appStatus.curveArray.splice(this.appStatus.selected, 1);
+	        	
+		        this.appStatus.selected = null;
+		        ui.refresh();
+	        }
+        }
+          
+        function init () {
+            
+            // Curve stuff
+            var plugin_canvas = document.getElementById("plugin");
+
+            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                                   {canvas: plugin_canvas}
+                                                   );
+
+            ui = new UI (plugin_canvas, CWrapper);
+
+        }
+                
+    </script>
+    
+  </head>
+  <body onload="init()">
+      <form action="">
+		  <input type="radio" name="buttontype" value="linear" /> linear
+	      <input type="radio" name="buttontype" value="halfcosine" /> halfcosine
+	      <input type="radio" name="buttontype" value="smooth" /> smooth
+	      <input type="radio" name="buttontype" value="bezier2" /> bezier2
+	      <input type="radio" name="buttontype" value="bezier3" /> bezier3
+	      <button id="addbutton" type="button" onclick="addCallback(this.form)">Add</button>
+      	  <button id="removebutton" type="button" onclick="removeCallback()">Remove</button>
+	      <button type="button" onclick="applyType(this.form)">Apply</button>
+	  </form>
+      <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
+  </body>
+</html>
