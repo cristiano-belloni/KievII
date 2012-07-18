@@ -11,7 +11,8 @@ Curve.prototype.getready = function (args) {
     // Call the constructor from the superclass.
     Curve.superclass.getready.call(this, args);
 
-    this.values = {	"points" : []};
+    this.values = {	"points" : [],
+    				"selected" : []};
     this.defaultSlot = "points";
     
     this.setWidth(args.width);
@@ -37,6 +38,7 @@ Curve.prototype.getready = function (args) {
     //internals
     this.handleClicked = null;
     this.supportPoints = [];
+    this.selectStart = false;
     
     
     // Check for correct number of arguments
@@ -85,13 +87,13 @@ Curve.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Curve.prototype.dragstart = Curve.prototype.mousedown = function (x, y) {
+Curve.prototype.tap = Curve.prototype.dragstart = Curve.prototype.mousedown = function (x, y) {
 
     var points = this.values.points;
 
     if (this.isInROI(x, y)) { 
 	    for (var i = 0; i < points.length; i+=1) {
-                // TODO check here for a terminal / mid point and do the proper math
+            // TODO check here for a terminal / mid point and do the proper math
 	    	if ((x > (points[i][0] - this.handleSize)) && (x < (points[i][0] + this.handleSize))) {
 	    		if ((y > (points[i][1] - this.handleSize)) && (y < (points[i][1] + this.handleSize))) {
 	    			// We clicked on an handle!
@@ -99,10 +101,24 @@ Curve.prototype.dragstart = Curve.prototype.mousedown = function (x, y) {
 	    			this.handleClicked = i;
                                 if ((i === 0) || (i === points.length - 1)) {
                                     console.log ("Clicked on a terminal handle!");
+                                    return;
                                 }
 	    		} 
 	    	}
 	    }
+	    // check the selection-start
+	    // check if the point is "on" the curve plot
+	    // and save a guard (this might be inefficient when t is small and wrong when t is big)
+	    for (i = 0; i < this.supportPoints.length; i+=1) {
+	    	if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
+	    		if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
+	    			//Curve is selected
+	    			this.selectStart = true;
+	    			return;
+	    		}  
+	    	} 
+	    }
+	    
     }
     return undefined;
 };
@@ -121,7 +137,7 @@ Curve.prototype.drag = Curve.prototype.mousemove = function (curr_x, curr_y) {
             var points = this.values.points.slice();
             points[this.handleClicked][0] = curr_x;
             points[this.handleClicked][1] = curr_y;
-            ret = {"slot" : "knobvalue", "value" : points};
+            ret = {"slot" : "points", "value" : points};
             return ret;
         }
         else {
@@ -146,13 +162,31 @@ Curve.prototype.drag = Curve.prototype.mousemove = function (curr_x, curr_y) {
     
 };
 
-Curve.prototype.dragend = Curve.prototype.mouseup = function (x, y) {
+Curve.prototype.release = Curve.prototype.dragend = Curve.prototype.mouseup = function (x, y) {
 	this.handleClicked = null;
+	// check the selection-end
+	// check if the point is "on" the curve plot
+	// if the saved guard is true
+	// reset the guard and trigger a selected event
+	if (this.selectStart === true) {
+		for (i = 0; i < this.supportPoints.length; i+=1) {
+	    	if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
+	    		if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
+	    			//Curve is selected
+	    			this.selectStart = false;
+	    			var ret = {"slot" : "selected", "value" : [x, y]};
+	    			return ret;
+	    		}  
+	    	} 
+	    }
+	}
 }
 
 Curve.prototype.setValue = function (slot, value) {
 	
 	console.log ("Setting " + slot + " to " + value);
+	// Now, we call the superclass
+    Curve.superclass.setValue.call(this, slot, value);
 
 };
 
