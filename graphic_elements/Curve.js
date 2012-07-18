@@ -12,7 +12,9 @@ Curve.prototype.getready = function (args) {
     Curve.superclass.getready.call(this, args);
 
     this.values = {	"points" : [],
-    				"selected" : []};
+    				"selected" : [],
+    				"held" : []};
+    				
     this.defaultSlot = "points";
     
     this.setWidth(args.width);
@@ -77,6 +79,18 @@ Curve.prototype.getready = function (args) {
 
 };
 
+Curve.prototype.isInCurve = function (x, y) {
+	for (i = 0; i < this.supportPoints.length; i+=1) {
+	    	if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
+	    		if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
+	    			// Curve selected
+	    			return true;
+	    		}  
+	    	} 
+	    }
+	    return false;
+}
+
 // This methods returns true if the point given belongs to this element.
 Curve.prototype.isInROI = function (x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
@@ -109,16 +123,11 @@ Curve.prototype.tap = Curve.prototype.dragstart = Curve.prototype.mousedown = fu
 	    // check the selection-start
 	    // check if the point is "on" the curve plot
 	    // and save a guard (this might be inefficient when t is small and wrong when t is big)
-	    for (i = 0; i < this.supportPoints.length; i+=1) {
-	    	if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
-	    		if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
-	    			//Curve is selected
-	    			this.selectStart = true;
-	    			return;
-	    		}  
-	    	} 
-	    }
-	    
+	    if (this.isInCurve (x,y)) {
+			//Curve is selected
+			this.selectStart = true;
+			return;
+		}
     }
     return undefined;
 };
@@ -169,16 +178,22 @@ Curve.prototype.release = Curve.prototype.dragend = Curve.prototype.mouseup = fu
 	// if the saved guard is true
 	// reset the guard and trigger a selected event
 	if (this.selectStart === true) {
-		for (i = 0; i < this.supportPoints.length; i+=1) {
-	    	if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
-	    		if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
-	    			//Curve is selected
-	    			this.selectStart = false;
-	    			var ret = {"slot" : "selected", "value" : [x, y]};
-	    			return ret;
-	    		}  
-	    	} 
-	    }
+		if (this.isInCurve (x,y)) {
+			//Curve is selected
+			this.selectStart = false;
+			var ret = {"slot" : "selected", "value" : [x, y]};
+			return ret;
+			}
+	}
+}
+
+Curve.prototype.hold = function (x, y) {
+	if (this.isInROI(x, y)) {
+		if (this.isInCurve (x,y)) {
+			//Curve is held
+		    var ret = {"slot" : "held", "value" : [x, y]};
+		    return ret;
+	   }
 	}
 }
 
