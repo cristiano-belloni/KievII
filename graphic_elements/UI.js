@@ -243,6 +243,24 @@ function UI(domElement, wrapperFactory, parameters) {
         
     };
     
+    this.removeElement = function (elementID) {
+    	if (typeof this.elements[elementID] !== 'undefined') {
+    		var elZIndex = this.elements[elementID].zIndex;
+    		var elZArray = this.zArray[elZIndex];
+    		// Delete the element in the zIndex subarray
+    		// TODO whe should handle the zIndex array differently
+    		for (var i = 0; i < elZArray.length; i+=1) {
+    			if (elZArray[i].ID === elementID) {
+    				elZArray.splice (i,1);
+    				break;
+    			}
+    		}
+    		// Delete the element in the elements array
+    		delete this.elements[elementID];
+    		// TODO delete the element in the connection matrix?
+    	}
+    }
+    
     // </ELEMENT HANDLING>
 
 
