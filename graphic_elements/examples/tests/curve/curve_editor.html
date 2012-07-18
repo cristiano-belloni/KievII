@@ -105,6 +105,29 @@
 		
 		    throw new Error("Unable to copy obj! Its type isn't supported.");
 		}
+		
+		function parseCurveType (frm) { 
+			var curveType = null;
+	        var grade = null;
+	        	
+	        	for (i = 0; i < frm.buttontype.length; i++) {
+	      			if (frm.buttontype[i].checked) {
+	         			curveType = frm.buttontype[i].value;
+	      			}
+	      		}
+	      		
+	      		if (curveType === null) curveType = 'linear';
+	      		
+	      		console.log ('Add: curve type is ' + curveType);
+	      		
+	      		if (curveType.indexOf('bezier') == 0) {
+	      			var grade = parseInt(curveType.charAt(6), 10);
+	      			curveType = 'bezier';
+	      			console.log ("Curve is bezier and grade is " + grade);
+	      		}
+	      		
+	      		return [curveType, grade];
+      	}
         
         
         function addCallback(frm) {
@@ -116,24 +139,9 @@
         	
         	newCurveArgs.ID = 'curve' + this.appStatus.nextNumber++;
         	
-        	var curveType = null;
-        	
-        	for (i = 0; i < frm.buttontype.length; i++) {
-      			if (frm.buttontype[i].checked) {
-         			curveType = frm.buttontype[i].value;
-      			}
-      		}
-      		
-      		if (curveType === null) curveType = 'linear';
-      		
-      		console.log ('Add: curve type is ' + curveType);
-      		
-      		if (curveType.indexOf('bezier') == 0) {
-      			var bezierN = parseInt(curveType.charAt(6), 10);
-      			curveType = 'bezier';
-      			console.log ("Curve is bezier and grade is " + bezierN);
-      		}
-      		newCurveArgs.curveType = curveType;
+        	var argParse = parseCurveType(frm);
+      		var curveType = newCurveArgs.curveType = argParse[0];
+      		var bezierN = argParse[1];
       		
       		var firstPoint, lastPoint, midPoints = [];
       		
@@ -239,6 +247,66 @@
 		        ui.refresh();
 	        }
         }
+        
+        function applyCallback(frm) {
+        	if (this.appStatus.selected !== null) {
+        		
+        		var argParse = parseCurveType(frm);
+        		
+	        	console.log ("Transforming selected curve " + this.appStatus.selected);
+	        	
+	        	var curveType = argParse[0];
+	        	var bezierN = argParse[1];
+	        	
+	        	var curveNow = ui.getProp (this.appStatus.curveArray[this.appStatus.selected], 'curveType');
+	        	var curveValues = clone(ui.getProp (this.appStatus.curveArray[this.appStatus.selected], 'values'));
+	        	var curvePoints = curveValues.points;
+	        	var curveGrade = curvePoints.length - 1;
+	        	
+	        	if (curveNow === curveType) {
+	        		if (curveType !== 'bezier') {
+	        			console.log ("Identical type, doing nothing");
+	        			return;
+	        		}
+	        		else {
+	        			if (bezierN === curveGrade) {
+	        				console.log ("Identical type and grade, doing nothing");
+	        				return;
+	        			}
+	        		}
+	        	}
+	        	
+	        	// We really have to change the curve
+	        	// Take the first points
+	        	var startPoint = curvePoints[0];
+	        	var midPoints = [];
+	        	var midPoint = [startPoint[0], startPoint[1]];
+	        	// Calculate the midpoints, optionally
+	        	if (curveType === 'bezier') {
+		        	for (var i = 1; i < bezierN; i += 1) {
+	      				// TODO remove the magic numbers
+	      				midPoint[0] += 20;
+	      				midPoint[1] -= 20;
+	      				midPoints = midPoints.concat(midPoint);
+	      			}
+      			}
+      			var endPoint = curvePoints[curvePoints.length - 1];
+	        	var newPoints = startPoint.concat(midPoints, endPoint);
+	        	
+	        	//transform initial arguments into an {Array} of [x,y] coordinates
+			    var newPointsCoordArray = [];
+			    for(var i=0; i < newPoints.length; i = i + 2){
+			        newPointsCoordArray.push([newPoints[i], newPoints[i+1]]);
+			    }
+	        	
+	        	// set curveType and new points
+	        	curveValues.points = newPointsCoordArray;
+	        	ui.setProp (this.appStatus.curveArray[this.appStatus.selected], 'curveType', curveType);
+	        	ui.setProp (this.appStatus.curveArray[this.appStatus.selected], 'values', curveValues);
+	        	
+	        	ui.refresh();
+	        }
+        }
           
         function init () {
             
@@ -265,7 +333,7 @@
 	      <input type="radio" name="buttontype" value="bezier3" /> bezier3
 	      <button id="addbutton" type="button" onclick="addCallback(this.form)">Add</button>
       	  <button id="removebutton" type="button" onclick="removeCallback()">Remove</button>
-	      <button type="button" onclick="applyType(this.form)">Apply</button>
+	      <button type="button" onclick="applyCallback(this.form)">Apply</button>
 	  </form>
       <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
   </body>
