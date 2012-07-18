@@ -259,8 +259,21 @@ function UI(domElement, wrapperFactory, parameters) {
     		delete this.elements[elementID];
     		// TODO delete the element in the connection matrix?
     	}
-    }
+    };
     
+    this.setProp = function (elementID, prop, value) {
+    	if ((typeof this.elements[elementID] !== 'undefined') && (typeof this.elements[elementID] !== 'undefined')){
+    		this.elements[elementID][prop] = value;
+    	}
+    	else throw ("Could not find ID: " + elementID + " property: " + prop);
+    };
+    
+    this.getProp = function (elementID, prop) {
+    	if ((typeof this.elements[elementID] !== 'undefined') && (typeof this.elements[elementID] !== 'undefined')){
+    		return this.elements[elementID][prop];
+    	}
+    	else throw ("Could not find ID: " + elementID + " property: " + prop);
+    };
     // </ELEMENT HANDLING>
 
 
