@@ -32,12 +32,12 @@
                     if (slot === 'selected') {
                     	// TODO We would really need the element here
                     	for (var i = 0; i < that.appStatus.curveArray.length; i +=1) {
-                    		if (that.appStatus.curveArray[i].ID === element) {
-                    			that.appStatus.curveArray[i].curveColor = 'red';
+                    		if (that.appStatus.curveArray[i] === element) {
+                    			ui.setProp (element, 'curveColor', 'red');
                     			that.appStatus.selected = i;
                     		}
                     		else {
-                    			that.appStatus.curveArray[i].curveColor = that.curveArgsTemplate.curveColor;
+                    			ui.setProp (that.appStatus.curveArray[i], 'curveColor', that.curveArgsTemplate.curveColor);
                     		}
                     	}
                     }
@@ -138,12 +138,12 @@
       		}
       		else {
       			// Appending: calculate the terminal point
-	      		var lastElement = this.appStatus.curveArray[this.appStatus.curveArray.length -1];
-	      		// TODO put the values getter here
-	      		var coordinates = lastElement.values.points;
+	      		var lastElementID = this.appStatus.curveArray[this.appStatus.curveArray.length -1];
+	      		//Get the values from the element
+	      		var coordinates = (ui.getProp (lastElementID, 'values')).points;
 	      		firstPoint = [coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]];
-	      		// TODO we definitely need a setter there
-	      		lastElement.paintTerminalPoints = 'first';
+	      		// Set the curve to paint only its first handle
+	      		ui.setProp (lastElementID, 'paintTerminalPoints', 'first');
       		}
       		// TODO remove the magic numbers
       		lastPoint = [firstPoint[0] + 120, firstPoint[1] - 100];
@@ -167,7 +167,7 @@
       		
       		var curveElement = new Curve(newCurveArgs);
       		ui.addElement(curveElement);
-      		this.appStatus.curveArray.push(curveElement);
+      		this.appStatus.curveArray.push(newCurveArgs.ID);
       		ui.refresh();
         }
         
@@ -178,22 +178,30 @@
 	        	//arr = arr.filter(function(){return true});
 	        	
 	        	// Change the (selected + 1) array initial point
-	        	// TODO setProp/getProp in UI
 	        	if ((this.appStatus.selected !== 0) && (this.appStatus.selected < this.appStatus.curveArray.length - 1)) {
-	        		var nextArray = this.appStatus.curveArray[this.appStatus.selected + 1];
-	        		var prevArray = this.appStatus.curveArray[this.appStatus.selected - 1];
-		        	nextArray.values.points[0][0] = prevArray.values.points[prevArray.values.points.length - 1][0];
-		        	nextArray.values.points[0][1] = prevArray.values.points[prevArray.values.points.length - 1][1];
+	        		var nextID = this.appStatus.curveArray[this.appStatus.selected + 1];
+	        		var prevID = this.appStatus.curveArray[this.appStatus.selected - 1];
+	        		
+	        		var nextValues = ui.getProp(nextID, 'values');
+	        		var prevValues = ui.getProp(prevID, 'values');
+
+					// TODO maybe they should be cloned inside the UI (r/o copy)		        	
+		        	var newValues = clone(nextValues);
+		        	newValues.points[0][0] = prevValues.points[prevValues.points.length - 1][0];
+		        	newValues.points[0][1] = prevValues.points[prevValues.points.length - 1][1];
+		        	
+		        	ui.setProp (nextID, 'values', newValues);
+		        	
 		        }
 		        
 		        if ((this.appStatus.selected === this.appStatus.curveArray.length - 1) && (this.appStatus.selected !== 0)){
 		        		// Paint the final point in the previous curve
-		        		var prevArray = this.appStatus.curveArray[this.appStatus.selected - 1];
-			        	prevArray.paintTerminalPoints = 'all';
+		        		var prevID = this.appStatus.curveArray[this.appStatus.selected - 1];
+		        		ui.setProp (prevID, 'paintTerminalPoints', 'all');
 		        	}
 		        
 		        // Remove the element from the UI
-	        	ui.removeElement (this.appStatus.curveArray[this.appStatus.selected].ID);
+	        	ui.removeElement (this.appStatus.curveArray[this.appStatus.selected]);
 		        
 		        // Remove the element from the array
 	        	this.appStatus.curveArray.splice(this.appStatus.selected, 1);
