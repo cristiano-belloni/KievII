@@ -13,7 +13,8 @@ Curve.prototype.getready = function (args) {
 
     this.values = {	"points" : [],
     				"selected" : [],
-    				"held" : []};
+    				"held" : [],
+    				"doubletap" : []};
     				
     this.defaultSlot = "points";
     
@@ -192,6 +193,16 @@ Curve.prototype.hold = function (x, y) {
 		if (this.isInCurve (x,y)) {
 			//Curve is held
 		    var ret = {"slot" : "held", "value" : [x, y]};
+		    return ret;
+	   }
+	}
+}
+
+Curve.prototype.doubletap = function (x, y) {
+	if (this.isInROI(x, y)) {
+		if (this.isInCurve (x,y)) {
+			//Curve is double-tapped
+		    var ret = {"slot" : "doubletap", "value" : [x, y]};
 		    return ret;
 	   }
 	}
@@ -381,14 +392,12 @@ Curve.prototype.bezier = {
         **/
         P : function (t, points) {
         	
-        	/**Computes factorial*/
-	        function fact(k){
-	            if(k==0 || k==1){
-	                return 1;
-	            }
-	            else{
-	                return k * fact(k-1);
-	            }
+        	/**Computes factorial iteratively*/
+	        var fact = function (k){
+	            var rval = 1;
+		    	for (var i = 2; i <= k; i++)
+		        	rval = rval * i;
+		    	return rval;
 	        }
 	
 	        /**Computes Bernstain
@@ -398,7 +407,11 @@ Curve.prototype.bezier = {
 	        **/
 	        function B(i,n,t){
 	            //if(n < i) throw "Wrong";
-	            return fact(n) / (fact(i) * fact(n-i))* Math.pow(t, i) * Math.pow(1-t, n-i);
+	            var fact_funct = fact;
+	            if (typeof fact_lookup === "function") {
+	            	fact_funct = fact_lookup;
+	            }
+	            return fact_funct(n) / (fact_funct(i) * fact_funct(n-i))* Math.pow(t, i) * Math.pow(1-t, n-i);
 	        }
         	
             var r = [0,0];
