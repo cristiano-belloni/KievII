@@ -27,6 +27,10 @@
     		nextNumber: 0
     	}
     	
+    	var pastEvent = new Date().getTime();
+    	// millisecs
+    	EVENT_DELAY = 200;
+    	
     	var globalWidth = 800;
     	var globalHeight = 600;
     	
@@ -85,7 +89,7 @@
                     if (slot === 'held') {
                     	/* TODO maybe a context menu or something */
                     }
-                    if (slot === 'doubletap') {
+                    if (slot === 'doubletap_c') {
                     	/* Set the last point of the selected curve to x,y, then create another curve 
                     	 * and set its initial point to x,y, then its final point to the initial point of the next
                     	 * curve. Then insert the new curve in the right point of the array with splice() */
@@ -93,7 +97,14 @@
                     	 /* TODO Might want to check if two (or more) held events come with the same coordinates in a small
                     	 * amount of time (this happens when curves cross, or in the intersections)
                     	 */
+                    	var now = new Date().getTime();
+                    	if ((now - pastEvent) < EVENT_DELAY) {
+                    		pastEvent = now;
+                    		console.log ("Event arrived too short!");
+                    		return;
+                    	} 
                     	
+                    	pastEvent = now;
                     	// PLEASE KEEP IN MIND that getProp does return a reference and not an hard copy! Be careful changing these values!
 	        			var currentPoints = (ui.getProp (element, 'values')).points;
 	        			
