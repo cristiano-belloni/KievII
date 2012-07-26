@@ -14,7 +14,8 @@ Curve.prototype.getready = function (args) {
     this.values = {	"points" : [],
     				"selected" : [],
     				"held" : [],
-    				"doubletap" : []};
+    				"doubletap_c" : [],
+    				"doubletap_h" : []};
     				
     this.defaultSlot = "points";
     
@@ -92,6 +93,20 @@ Curve.prototype.isInCurve = function (x, y) {
 	    return false;
 }
 
+Curve.prototype.isInHandle = function (x, y) {
+	var points = this.values.points;
+	for (var i = 0; i < points.length; i+=1) {
+		if ((x > (points[i][0] - this.handleSize)) && (x < (points[i][0] + this.handleSize))) {
+			if ((y > (points[i][1] - this.handleSize)) && (y < (points[i][1] + this.handleSize))) {
+		    	// We clicked on an handle!
+		    	console.log ("Clicked on handle " + i);
+		    	return  i;
+		   	} 
+		}
+	}
+	return null;
+}
+
 // This methods returns true if the point given belongs to this element.
 Curve.prototype.isInROI = function (x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
@@ -107,30 +122,24 @@ Curve.prototype.tap = Curve.prototype.dragstart = Curve.prototype.mousedown = fu
     var points = this.values.points;
 
     if (this.isInROI(x, y)) { 
-	    for (var i = 0; i < points.length; i+=1) {
-            // TODO check here for a terminal / mid point and do the proper math
-	    	if ((x > (points[i][0] - this.handleSize)) && (x < (points[i][0] + this.handleSize))) {
-	    		if ((y > (points[i][1] - this.handleSize)) && (y < (points[i][1] + this.handleSize))) {
-	    			// We clicked on an handle!
-	    			console.log ("Clicked on handle " + i);
-	    			this.handleClicked = i;
-                                if ((i === 0) || (i === points.length - 1)) {
-                                    console.log ("Clicked on a terminal handle!");
-                                    return;
-                                }
-	    		} 
-	    	}
-	    }
-	    // check the selection-start
-	    // check if the point is "on" the curve plot
-	    // and save a guard (this might be inefficient when t is small and wrong when t is big)
+	    	
+    	var handleNum;
+		if ((handleNum = this.isInHandle (x,y)) !== null) {
+			// Handle was tapped.
+			this.handleClicked = handleNum;
+            if ((handleNum === 0) || (handleNum === points.length - 1)) {
+                console.log ("Clicked on a terminal handle!");
+                return;
+            } 				
+		}
+	    // check if Curve was tapped/clicked
+	    // and save a guard (this might be inefficient when t is small and plain wrong when t is big)
 	    if (this.isInCurve (x,y)) {
 			//Curve is selected
 			this.selectStart = true;
 			return;
 		}
     }
-    return undefined;
 };
 
 Curve.prototype.drag = Curve.prototype.mousemove = function (curr_x, curr_y) {
@@ -200,11 +209,16 @@ Curve.prototype.hold = function (x, y) {
 
 Curve.prototype.doubletap = function (x, y) {
 	if (this.isInROI(x, y)) {
+		
+		var handleNum;
+		if ((handleNum = this.isInHandle (x,y)) !== null) {
+			// Handle is double-tapped. This has precedence
+			return {"slot" : "doubletap_h", "value" : [[x, y], handleNum]}; 				
+		}
 		if (this.isInCurve (x,y)) {
 			//Curve is double-tapped
-		    var ret = {"slot" : "doubletap", "value" : [x, y]};
-		    return ret;
-	   }
+			return {"slot" : "doubletap_c", "value" : [x, y]};
+		}
 	}
 }
 
