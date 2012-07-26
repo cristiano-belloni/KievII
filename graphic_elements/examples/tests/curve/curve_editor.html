@@ -11,6 +11,7 @@
     <script type="text/javascript" src="../../../Background.js"></script>
     <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
     <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
@@ -31,49 +32,7 @@
     	
     	var lastCalculatedPoint = [];
     	
-    	// One callback for all
-    	var callback = function () {
-                var that = this;
-                return function (slot, value, element) {
-                    console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
-                    if (slot === 'selected') {
-                    	// TODO We would really need the element here
-                    	for (var i = 0; i < that.appStatus.curveArray.length; i +=1) {
-                    		if (that.appStatus.curveArray[i] === element) {
-                    			ui.setProp (element, 'curveColor', 'red');
-                    			that.appStatus.selected = i;
-                    		}
-                    		else {
-                    			ui.setProp (that.appStatus.curveArray[i], 'curveColor', that.curveArgsTemplate.curveColor);
-                    		}
-                    	}
-                    }
-                    ui.refresh();
-                };
-        }();
-    	
-    	//curve template
-        var curveArgsTemplate = {
-            ID: "",
-            top: 0,
-            left: 0,
-            width: globalWidth,
-            height:globalHeight,
-            thickness: 5,
-            curveColor: "02B51F",
-            handleColor: "A81B32",
-            helperColor: "gray",
-            curveLabels: true,
-            midPointSize: 8,
-            terminalPointSize: 15,
-            terminalPointColor: 'black',
-            terminalPointFill: '015C10',
-            midPointFill: 'E6965A',
-            isClickable: true,
-            onValueSet: callback
-        };
-        
-        function clone(obj) {
+    	function clone(obj) {
 		    // Handle the 3 simple types, and null or undefined
 		    if (null == obj || "object" != typeof obj) return obj;
 		
@@ -105,7 +64,98 @@
 		
 		    throw new Error("Unable to copy obj! Its type isn't supported.");
 		}
-		
+    	
+    	// One callback for all
+    	var callback = function () {
+                var that = this;
+                return function (slot, value, element) {
+                    console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                    if (slot === 'selected') {
+                    	// See which element are we selecting
+                    	for (var i = 0; i < that.appStatus.curveArray.length; i +=1) {
+                    		if (that.appStatus.curveArray[i] === element) {
+                    			ui.setProp (element, 'curveColor', 'red');
+                    			that.appStatus.selected = i;
+                    		}
+                    		else {
+                    			ui.setProp (that.appStatus.curveArray[i], 'curveColor', that.curveArgsTemplate.curveColor);
+                    		}
+                    	}
+                    }
+                    if (slot === 'held') {
+                    	/* TODO maybe a context menu or something */
+                    }
+                    if (slot === 'doubletap') {
+                    	/* Set the last point of the selected curve to x,y, then create another curve 
+                    	 * and set its initial point to x,y, then its final point to the initial point of the next
+                    	 * curve. Then insert the new curve in the right point of the array with splice() */
+                    	
+                    	 /* TODO Might want to check if two (or more) held events come with the same coordinates in a small
+                    	 * amount of time (this happens when curves cross, or in the intersections)
+                    	 */
+                    	
+                    	// PLEASE KEEP IN MIND that getProp does return a reference and not an hard copy! Be careful changing these values!
+	        			var currentPoints = (ui.getProp (element, 'values')).points;
+	        			
+	        			// Get a deep copy of the template object
+			        	var newCurveArgs = clone(that.curveArgsTemplate);
+			        	// This duplicates the terminal points, but it's a quick shorthand (otherwise we should alter the z-indexes according to the array order)
+	        			newCurveArgs.paintTerminalPoints = 'all';
+	        			
+	        			// Linear by default (for now?)
+			        	newCurveArgs.curveType = "linear";
+        				newCurveArgs.ID = 'curve' + that.appStatus.nextNumber++;
+        				
+        				if (that.appStatus.selected < that.appStatus.curveArray.length - 1) {
+        					// The selected curve ends at the double-click value
+        					currentPoints[currentPoints.length - 1] = value;
+        					// Get the next curve
+	        				var nextID = that.appStatus.curveArray[that.appStatus.selected + 1];
+	        				var nextPoints = (ui.getProp (nextID, 'values')).points;
+	        				// The new curve starts at the double-click value, ends at the first point of the next curve
+	        				newCurveArgs.points = [value[0], value[1], nextPoints[0][0], nextPoints[0][1]];
+        				}
+        				
+        				else {
+        					// Deep copy of the final object
+        					var finalPoints = clone(currentPoints[currentPoints.length - 1]);
+        					// The former last curve ends at the double-click value
+        					currentPoints[currentPoints.length - 1] = value;
+        					// The new last curve starts at the double-click value, ends at the former last points
+        					newCurveArgs.points = [value[0], value[1], finalPoints[0], finalPoints[1]];
+        				}
+        				
+        				var curveElement = new Curve(newCurveArgs);
+      					ui.addElement(curveElement);
+      					
+      					that.appStatus.curveArray.splice(that.appStatus.selected + 1, 0, newCurveArgs.ID);
+                    }
+                    
+                    ui.refresh();
+                };
+        }();
+    	
+    	//curve template
+        var curveArgsTemplate = {
+            ID: "",
+            top: 0,
+            left: 0,
+            width: globalWidth,
+            height:globalHeight,
+            thickness: 5,
+            curveColor: "02B51F",
+            handleColor: "A81B32",
+            helperColor: "gray",
+            curveLabels: true,
+            midPointSize: 8,
+            terminalPointSize: 15,
+            terminalPointColor: 'black',
+            terminalPointFill: '015C10',
+            midPointFill: 'E6965A',
+            isClickable: true,
+            onValueSet: callback
+        };
+        
 		function parseCurveType (frm) { 
 			var curveType = null;
 	        var grade = null;
@@ -129,6 +179,16 @@
 	      		return [curveType, grade];
       	}
         
+        function clearCallback() {
+        	for (var i = 0; i < this.appStatus.curveArray.length; i += 1) {
+	        		// Remove the element from the UI
+		        	ui.removeElement (this.appStatus.curveArray[i]);
+		        }
+		        // Remove the element from the array
+		        this.appStatus.curveArray = [];
+		        this.appStatus.selected = null;
+		        ui.refresh();
+        }
         
         function addCallback(frm) {
         	console.log ("Adding a curve");
@@ -222,6 +282,7 @@
 	        		var nextValues = ui.getProp(nextID, 'values');
 	        		var prevValues = ui.getProp(prevID, 'values');
 
+					// PLEASE KEEP IN MIND that getProp does return a reference and not an hard copy! Be careful changing these values!
 					// TODO maybe they should be cloned inside the UI (r/o copy)		        	
 		        	var newValues = clone(nextValues);
 		        	newValues.points[0][0] = prevValues.points[prevValues.points.length - 1][0];
@@ -334,6 +395,7 @@
 	      <button id="addbutton" type="button" onclick="addCallback(this.form)">Add</button>
       	  <button id="removebutton" type="button" onclick="removeCallback()">Remove</button>
 	      <button type="button" onclick="applyCallback(this.form)">Apply</button>
+	      <button id="clearbutton" type="button" onclick="clearCallback()">CLEAR ALL</button>
 	  </form>
       <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
   </body>
