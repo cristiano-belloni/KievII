@@ -31,6 +31,8 @@
     	// millisecs
     	EVENT_DELAY = 200;
     	
+    	Z_OFFSET = 0;
+    	
     	var globalWidth = 800;
     	var globalHeight = 600;
     	
@@ -67,6 +69,27 @@
 		    }
 		
 		    throw new Error("Unable to copy obj! Its type isn't supported.");
+		}
+		
+		var reorganizeElements = function (that) {
+			var filter_func = function (value, connDetails) {
+				// last point of the receiver is first point of the sender
+				var recvPoints = clone(ui.getProp(connDetails.recv, 'values').points);
+				var sendPoints = clone(ui.getProp(connDetails.sender, 'values').points);
+				recvPoints [recvPoints.length - 1] = sendPoints[0];
+				return recvPoints;
+			}
+			// Reset the connections
+			ui.resetSlots();
+			
+			// Set the z-Indexes & the connections
+			for (var i = 0; i < that.appStatus.curveArray.length; i +=1) {
+				ui.setZIndex (that.appStatus.curveArray[i], i + Z_OFFSET);
+				// If it's not the last curve, connect the next curve to this one
+				if (i < that.appStatus.curveArray.length - 1) {
+					ui.connectSlots (that.appStatus.curveArray[i+1], 'points', that.appStatus.curveArray[i], 'points', {'callback': filter_func});
+				}
+			}
 		}
     	
     	// One callback for all
@@ -110,14 +133,13 @@
 	        			
 	        			// Get a deep copy of the template object
 			        	var newCurveArgs = clone(that.curveArgsTemplate);
-			        	// This duplicates the terminal points, but it's a quick shorthand (otherwise we should alter the z-indexes according to the array order)
-	        			newCurveArgs.paintTerminalPoints = 'all';
-	        			
+			        	
 	        			// Linear by default (for now?)
 			        	newCurveArgs.curveType = "linear";
         				newCurveArgs.ID = 'curve' + that.appStatus.nextNumber++;
         				
         				if (that.appStatus.selected < that.appStatus.curveArray.length - 1) {
+        					newCurveArgs.paintTerminalPoints = 'first';
         					// The selected curve ends at the double-click value
         					currentPoints[currentPoints.length - 1] = value;
         					// Get the next curve
@@ -128,6 +150,10 @@
         				}
         				
         				else {
+        					// Set the former last curve's terminal points draw strategy as 'first' 
+        					ui.setProp(element, 'paintTerminalPoints', 'first');
+        					
+        					newCurveArgs.paintTerminalPoints = 'all';
         					// Deep copy of the final object
         					var finalPoints = clone(currentPoints[currentPoints.length - 1]);
         					// The former last curve ends at the double-click value
@@ -141,7 +167,8 @@
       					
       					that.appStatus.curveArray.splice(that.appStatus.selected + 1, 0, newCurveArgs.ID);
                     }
-                    
+                    console.log ("Reorganizing elements");
+                    reorganizeElements(that);
                     ui.refresh();
                 };
         }();
@@ -276,6 +303,7 @@
       		var curveElement = new Curve(newCurveArgs);
       		ui.addElement(curveElement);
       		this.appStatus.curveArray.push(newCurveArgs.ID);
+      		reorganizeElements(this);
       		ui.refresh();
         }
         
@@ -316,6 +344,8 @@
 	        	this.appStatus.curveArray.splice(this.appStatus.selected, 1);
 	        	
 		        this.appStatus.selected = null;
+		        
+		        reorganizeElements(this);
 		        ui.refresh();
 	        }
         }
@@ -376,6 +406,7 @@
 	        	ui.setProp (this.appStatus.curveArray[this.appStatus.selected], 'curveType', curveType);
 	        	ui.setProp (this.appStatus.curveArray[this.appStatus.selected], 'values', curveValues);
 	        	
+	        	reorganizeElements(this);
 	        	ui.refresh();
 	        }
         }
@@ -389,7 +420,7 @@
                                                    {canvas: plugin_canvas}
                                                    );
 
-            ui = new UI (plugin_canvas, CWrapper);
+            ui = new UI (plugin_canvas, CWrapper, {'breakOnFirstEvent': true});
 
         }
                 
