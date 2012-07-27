@@ -185,7 +185,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // <ELEMENT HANDLING>
 
-    // *** Add an UI element **** //
+    // Add and remove elements
     this.addElement = function (element, elementParameters) {
         var slot,
             slots;
@@ -194,25 +194,7 @@ function UI(domElement, wrapperFactory, parameters) {
             throw new Error("Conflicting / Duplicated ID in UI: " + element.ID + " (IDs are identifiers and should be unique)");
             return;
         }
-
-        this.elements[element.ID] = element;
-
-        // Set the element's graphic wrapper
-        element.setGraphicWrapper(this.graphicWrapper);
-
-        // Insert the element in the connection keys.
-        this.connections[element.ID] = {};
-
-        // Get the slots available from the element.
-        slots = element.getValues();
-
-        // Insert all possible elements in the connection matrix TODO ARRAY
-        for (slot in slots) {
-            if (slots.hasOwnProperty(slot)) {
-                this.connections[element.ID][slots[slot]] = [];
-            }
-        }
-
+        
         // Store the parameters
         var zIndex = 0;
         
@@ -222,18 +204,25 @@ function UI(domElement, wrapperFactory, parameters) {
         
         if ((zIndex < 0) || (typeof(zIndex) !== "number")) {
                 throw new Error("zIndex " + zIndex + " invalid");
-            }
-            
-        // Insert the z-index into the element
-        // Do we ever use this? TODO
-        this.elements[element.ID].zIndex = zIndex;
+        }
         
-        // if it's the first of its kind, initialize the array.
+        // Create the element to insert
+        var tempEl = {'element': element, 'zIndex': zIndex};
+
+        this.elements[element.ID] = tempEl;
+
+        // Set the element's graphic wrapper
+        element.setGraphicWrapper(this.graphicWrapper);       
+
+        // Get the slots available from the element.
+        slots = element.getValues();
+        
+        // if it's the first element having this zIndex, create the subarray.
         if (typeof this.zArray[zIndex] === 'undefined') {
             this.zArray[zIndex] = [];
         }
         // Update the maximum and minimum z index.
-        this.zArray[zIndex].push(this.elements[element.ID]);
+        this.zArray[zIndex].push(this.elements[element.ID].element);
         if ((typeof this.zMin === 'undefined') || (this.zMin > zIndex)) {
             this.zMin = zIndex;
         }
@@ -248,7 +237,6 @@ function UI(domElement, wrapperFactory, parameters) {
     		var elZIndex = this.elements[elementID].zIndex;
     		var elZArray = this.zArray[elZIndex];
     		// Delete the element in the zIndex subarray
-    		// TODO whe should handle the zIndex array differently
     		for (var i = 0; i < elZArray.length; i+=1) {
     			if (elZArray[i].ID === elementID) {
     				elZArray.splice (i,1);
@@ -261,16 +249,60 @@ function UI(domElement, wrapperFactory, parameters) {
     	}
     };
     
+    // Z-Index getter and setter
+    this.setZIndex = function (elementID, zIndex) {
+    	if (typeof this.elements[elementID] !== 'undefined') {
+    		var elZIndex = this.elements[elementID].zIndex;
+    		// if zIndexes differ
+    		if (elZIndex !== zIndex) {
+    			// if it's the first element having this zIndex, create the subarray.
+		        if (typeof this.zArray[zIndex] === 'undefined') {
+		            this.zArray[zIndex] = [];
+		        }
+		        // Update the maximum and minimum z index.
+		        if ((typeof this.zMin === 'undefined') || (this.zMin > zIndex)) {
+		            this.zMin = zIndex;
+		        }
+		        if ((typeof this.zMax === 'undefined') || (this.zMax <  zIndex)) {
+		            this.zMax = zIndex;
+		        }
+		        // Get the old and new zIndex subarrays
+    			var oldZArray = this.zArray[elZIndex];
+	    		var newZArray = this.zArray[zIndex];
+	    		// Delete the element in the old zIndex subarray
+	    		for (var i = 0; i < oldZArray.length; i+=1) {
+	    			if (oldZArray[i].ID === elementID) {
+	    				oldZArray.splice (i,1);
+	    				break;
+	    			}
+	    		}
+	    		// Add the element to the new zIndex subarray
+	    		newZArray.push (this.elements[elementID].element);
+	    		// Change the element zIndex
+	    		this.elements[elementID].zIndex = zIndex;
+    		}
+    	}
+    	else throw ("Could not find element ID: " + elementID);
+    };
+    
+    this.getZIndex = function (elementID) {
+    	if (typeof this.elements[elementID] !== 'undefined') {
+    		return this.elements[elementID].zIndex;
+    	}
+    	else throw ("Could not find element ID: " + elementID);
+    }
+    
+    // Properties getter and setter
     this.setProp = function (elementID, prop, value) {
-    	if ((typeof this.elements[elementID] !== 'undefined') && (typeof this.elements[elementID] !== 'undefined')){
-    		this.elements[elementID][prop] = value;
+    	if (typeof this.elements[elementID] !== 'undefined') {
+    		this.elements[elementID].element[prop] = value;
     	}
     	else throw ("Could not find ID: " + elementID + " property: " + prop);
     };
     
     this.getProp = function (elementID, prop) {
-    	if ((typeof this.elements[elementID] !== 'undefined') && (typeof this.elements[elementID] !== 'undefined')){
-    		return this.elements[elementID][prop];
+    	if (typeof this.elements[elementID] !== 'undefined') {
+    		return this.elements[elementID].element[prop];
     	}
     	else throw ("Could not find ID: " + elementID + " property: " + prop);
     };
@@ -285,8 +317,8 @@ function UI(domElement, wrapperFactory, parameters) {
         //Check for the elements.
         if ((typeof this.elements[senderElement] !== 'undefined') && (typeof this.elements[receiverElement] !== 'undefined')) {
             // //Check for the slots.
-            if ((typeof this.elements[senderElement].values[senderSlot] === 'undefined') ||
-                (typeof this.elements[receiverElement].values[receiverSlot] === 'undefined'))  {
+            if ((typeof this.elements[senderElement].element.values[senderSlot] === 'undefined') ||
+                (typeof this.elements[receiverElement].element.values[receiverSlot] === 'undefined'))  {
                 throw new Error("Slot " + senderSlot + " or " + receiverSlot + " not present.");
             }
 
@@ -310,6 +342,13 @@ function UI(domElement, wrapperFactory, parameters) {
                 }
 
                 // Push the destination element/slot in the connections matrix.
+                // Create the slot object if it doesn't exist yet.
+                if (typeof this.connections[senderElement] === 'undefined') {
+                	this.connections[senderElement] = {};
+                }
+                if (typeof this.connections[senderElement][senderSlot] === 'undefined') {
+                	this.connections[senderElement][senderSlot] = [];
+                }
                 this.connections[senderElement][senderSlot].push(receiverHash);
             }
             
@@ -318,6 +357,18 @@ function UI(domElement, wrapperFactory, parameters) {
             throw new Error("Element " + senderElement + " or " + receiverElement + " not present.");
         }
     };
+    
+    this.resetSlots = function () {
+    	this.connections = {};
+    }
+    
+    this.unconnectSlots = function (senderElement, senderSlot, receiverElement, receiverSlot) {
+    	// TODO
+    }
+    
+    this.resetSenderSlot = function (senderElement) {
+    	// TODO
+    }
 
     //</CONNECTION HANDLING>
 
@@ -362,7 +413,7 @@ function UI(domElement, wrapperFactory, parameters) {
             
             // Get the default slot here, if no one specified a slot
             if (typeof setParms.slot === 'undefined') {
-                slot = this.elements[elementID].defaultSlot;
+                slot = this.elements[elementID].element.defaultSlot;
                 if (typeof slot === undefined) {
                     throw "Default slot is undefined!";
                 }
@@ -388,11 +439,11 @@ function UI(domElement, wrapperFactory, parameters) {
             }
             // Element is present an there's no need to break a loop
             // really set value.
-            this.elements[elementID].setValue(slot, value);
+            this.elements[elementID].element.setValue(slot, value);
             
             // Finally, call the callback if there is one and we're allowed to.
-            if ((typeof (this.elements[elementID].onValueSet) === "function") && (fireCallback !== false)) {
-                this.elements[elementID].onValueSet (slot, this.elements[elementID].values[slot], this.elements[elementID].ID);
+            if ((typeof (this.elements[elementID].element.onValueSet) === "function") && (fireCallback !== false)) {
+                this.elements[elementID].element.onValueSet (slot, this.elements[elementID].element.values[slot], elementID);
             }
 
             // This element has been already set: update history
@@ -404,7 +455,7 @@ function UI(domElement, wrapperFactory, parameters) {
         }
 
         // Check if this element has connections
-        if (typeof this.connections[elementID][slot] !== 'undefined') {
+        if ((typeof this.connections[elementID] !== 'undefined') && (typeof this.connections[elementID][slot] !== 'undefined')) {
 
             // For every connection the element has
             for (i in this.connections[elementID][slot]) {
@@ -419,8 +470,12 @@ function UI(domElement, wrapperFactory, parameters) {
 
                     // Check the callback here.
                     if (typeof(receiverHash.callback) === "function") {
+                    	var connDetails = {'sender': elementID,
+                    					   'sendSlot': slot,
+                    					   'recv': recvElementID,
+                    					   'recvSlot': recvSlot};
                         // We have a callback to call.
-                        value = receiverHash.callback (value);
+                        value = receiverHash.callback (value, connDetails);
                     }
 
                     // Check if consequent setValue()s should have cascading
@@ -450,12 +505,12 @@ function UI(domElement, wrapperFactory, parameters) {
         var visibilityState;
 
         if (typeof this.elements[elementID] !== 'undefined') {
-            visibilityState = this.elements[elementID].getVisible();
+            visibilityState = this.elements[elementID].element.getVisible();
             if (visibilityState === true) {
                 // Set the element's visibility
-                this.elements[elementID].setVisible (false);
+                this.elements[elementID].element.setVisible (false);
                 // When hidden, the element is also not listening to events
-                this.elements[elementID].setClickable (false);
+                this.elements[elementID].element.setClickable (false);
 
             }
 
@@ -472,13 +527,13 @@ function UI(domElement, wrapperFactory, parameters) {
         var visibilityState;
 
         if (typeof this.elements[elementID] !== 'undefined') {
-            visibilityState = this.elements[elementID].getVisible();
+            visibilityState = this.elements[elementID].element.getVisible();
             if (visibilityState === false) {
 
                 // Set the element's visibility
-                this.elements[elementID].setVisible (true);
+                this.elements[elementID].element.setVisible (true);
                 // When unhidden, the element starts listening to events again.
-                this.elements[elementID].setClickable (true);
+                this.elements[elementID].element.setClickable (true);
 
             }
 
@@ -497,13 +552,13 @@ function UI(domElement, wrapperFactory, parameters) {
         var visibilityState;
 
         if (typeof this.elements[elementID] !== 'undefined') {
-            visibilityState = this.elements[elementID].getVisible();
+            visibilityState = this.elements[elementID].element.getVisible();
             if (visibilityState !== value) {
 
                 // Set the element's visibility
-                this.elements[elementID].setVisible (value);
+                this.elements[elementID].element.setVisible (value);
                 // When unhidden, the element starts listening to events again.
-                this.elements[elementID].setClickable (value);
+                this.elements[elementID].element.setClickable (value);
 
             }
 
@@ -518,11 +573,11 @@ function UI(domElement, wrapperFactory, parameters) {
             var state;
 
             if (typeof this.elements[elementID] !== 'undefined') {
-                state = this.elements[elementID].getClickable();
+                state = this.elements[elementID].element.getClickable();
                 if (state !== value) {
 
                     // When unhidden, the element starts listening to events again.
-                    this.elements[elementID].setClickable (value);
+                    this.elements[elementID].element.setClickable (value);
 
                 }
 
