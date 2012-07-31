@@ -182,3 +182,14 @@ function fact_lookup(n) {
     	return rval;
 	}
 }
+
+K2.CanvasUtils = {};
+
+K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
+    ctx.save();
+    ctx.translate(args.x + (args.image.width / 2), args.y + (args.image.height / 2));
+    ctx.rotate(args.rot);
+    ctx.translate(-(args.image.width / 2) - args.x, -(args.image.height / 2) - args.y);
+    ctx.drawImage(args.image, args.x, args.y);
+    ctx.restore();
+}

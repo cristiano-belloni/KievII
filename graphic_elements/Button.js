@@ -100,29 +100,12 @@ K2.Button.prototype.setValue = function(slot, value) {
 
 };
 
-K2.Button.prototype.refresh = function() {
-    if (this.drawClass !== undefined) {
-        // Draw, if our draw class is already set.
-
-        // Call the superclass.
-        K2.Button.superclass.refresh.apply(this, [this.drawClass.drawImage]);
-
-        // Draw, if the element is visible.
-        if (this.isVisible === true) {
-            this.drawClass.drawImage.draw(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
-        }
+K2.Button.prototype.refresh_CANVAS2D = function(engine) {
+    // Draw, if the element is visible.
+    if (this.isVisible === true) {
+        engine.context.drawImage(this.imagesArray[this.values.buttonvalue], this.xOrigin, this.yOrigin);
     }
-};
-
-K2.Button.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Button.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawImage',
-                                           objParms: this.objParms}]);
-
+    
 };
 
 K2.Button.prototype.setStatesNumber = function(number) {

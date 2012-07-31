@@ -49,8 +49,6 @@ K2.Background.prototype.isInROI = function(x, y) {
 
 K2.Background.prototype.mousedown = function(x, y) {
 
-    //console.log ("Click down on ", x, y);
-
     if (this.isInROI(x, y)) {
         this.triggered = true;
     }
@@ -68,7 +66,7 @@ K2.Background.prototype.mouseup = function(curr_x, curr_y) {
 
             ret = {'slot' : 'backgroundvalue', 'value' : 0};
 
-            // Click on button is completed, the button is no more triggered.
+            // Click on bg is completed.
             this.triggered = false;
 
             return ret;
@@ -81,28 +79,12 @@ K2.Background.prototype.mouseup = function(curr_x, curr_y) {
 
 };
 
-K2.Background.prototype.refresh = function() {
+K2.Background.prototype.refresh_CANVAS2D = function(engine) {
 
-    if (this.drawClass !== undefined) {
-        // Draw, if our draw class is already set.
-
-        // Call the superclass.
-        K2.Background.superclass.refresh.call(this, this.drawClass.drawImage);
-
-        if (this.isVisible === true) {
-            this.drawClass.drawImage.draw(this.image, this.xOrigin, this.yOrigin);
-        }
+    // Draw, if the element is visible.
+    if (this.isVisible === true) {
+        engine.context.drawImage(this.image, this.xOrigin, this.yOrigin);
     }
 
 };
 
-K2.Background.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Background.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawImage',
-                                           objParms: this.objParms}]);
-
-};

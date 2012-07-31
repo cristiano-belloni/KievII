@@ -153,8 +153,12 @@ K2.UIElement.prototype.getListening = function() {
     return this.isListening;
 };
 
-K2.UIElement.prototype.refresh = function(drawPrimitive) {
-// Nothing to do in the abstract class.
+K2.UIElement.prototype.refresh = function(engine) {
+    var refreshFunc = 'refresh' + '_' + engine.type;
+    if (typeof this[refreshFunc] === 'function') {
+        this[refreshFunc](engine);
+    }
+    else throw ('Element ' + this.ID + ' ' + refreshFunc + ' is not a function. Its type is ' + typeof this[refreshFunc]);
 };
 
 K2.UIElement.prototype.getID = function() {

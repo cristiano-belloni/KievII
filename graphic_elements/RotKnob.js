@@ -201,32 +201,12 @@ K2.RotKnob.prototype.setValue = function(slot, value) {
 
 };
 
-K2.RotKnob.prototype.refresh = function() {
+K2.RotKnob.prototype.refresh_CANVAS2D = function(engine) {
 
-    if (this.drawClass !== undefined) {
-        // Draw, if our draw class is already set.
-
-        // Call the superclass.
-        K2.RotKnob.superclass.refresh.call(this, this.drawClass.drawImage);
-
-        // Draw if visible.
-        if (this.isVisible === true) {
-
-            var rot = this.getRotateAmount();
-
-            this.drawClass.drawImage.drawRotate(this.image, this.xOrigin, this.yOrigin, rot);
-
-        }
+    // Draw if visible.
+    if (this.isVisible === true) {
+        var rot = this.getRotateAmount();
+        K2.CanvasUtils.drawRotate(engine.context, {image: this.image, x: this.xOrigin, y: this.yOrigin, rot: rot});
     }
-};
-
-K2.RotKnob.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.RotKnob.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawImage',
-                                           objParms: this.objParms}]);
-
+    
 };

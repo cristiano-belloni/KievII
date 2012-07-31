@@ -1,4 +1,6 @@
-K2.UI = function(domElement, wrapperFactory, parameters) {
+K2.UI = function(domElement, engine, parameters) {
+    
+    // Engine {type: 'CANVAS2D', target: 'canvas'}
 
     // <EVENT HANDLING>
 
@@ -173,8 +175,8 @@ K2.UI = function(domElement, wrapperFactory, parameters) {
     // Z-index lists.
     this.zArray = [];
 
-    // Graphic frontend wrapper
-    this.graphicWrapper = wrapperFactory;
+    // get the engine from the engine factory
+    this.engine = K2.ENGINE.engineFactory (engine.type, {'canvas': engine.target});
 
     // Break on first
     if (typeof parameters !== 'undefined') {
@@ -209,9 +211,6 @@ K2.UI = function(domElement, wrapperFactory, parameters) {
         var tempEl = {'element': element, 'zIndex': zIndex};
 
         this.elements[element.ID] = tempEl;
-
-        // Set the element's graphic wrapper
-        element.setGraphicWrapper(this.graphicWrapper);
 
         // Get the slots available from the element.
         slots = element.getValues();
@@ -597,7 +596,7 @@ K2.UI = function(domElement, wrapperFactory, parameters) {
             if (typeof(this.zArray[i]) === 'object') {
                 for (var k = 0, z_length = this.zArray[i].length; k < z_length; k += 1) {
                     if (this.zArray[i][k].getVisible() === true) {
-                        this.zArray[i][k].refresh();
+                        this.zArray[i][k].refresh(this.engine);
                     }
                 }
             }
@@ -618,7 +617,7 @@ K2.UI = function(domElement, wrapperFactory, parameters) {
 
     this.reset = function() {
         // Reset the graphic frontend
-        this.graphicWrapper.reset();
+        this.engine.reset();
     }
 }
     // </REFRESH HANDLING>

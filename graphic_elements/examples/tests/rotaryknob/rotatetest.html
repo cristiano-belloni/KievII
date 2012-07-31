@@ -10,19 +10,11 @@
     <canvas id="plugin" width="593" height="590"></canvas>
     <script type="text/javascript">
 
-        // This should fix "console not defined" problem.
-        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
-        var ui;
-
         /* INIT */
 
         var plugin_canvas = document.getElementById("plugin");
-
-        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                               {canvas: plugin_canvas}
-                                               );
-
-        ui = new K2.UI (plugin_canvas, CWrapper);
+        var ui = new K2.UI (plugin_canvas, {type: 'CANVAS2D', target: plugin_canvas});
+        
         var imageLoader = new loadImageArray ({ID : "tuning",
                                                imageNames: ["safe_fg.png", "safe_bg.png"],
                                                onComplete: imagesCompleted,
@@ -79,10 +71,8 @@
             ui.setValue({elementID: "test_knob", value: 0.8});
 
             ui.refresh();
-
             
         }
-
 
     </script>
   </body>
