@@ -228,15 +228,11 @@ K2.Curve.prototype.setValue = function(slot, value) {
 
 };
 
-K2.Curve.prototype.refresh = function() {
-    if (this.drawClass !== undefined) {
-
-        // Call the superclass.
-        K2.Curve.superclass.refresh.call(this, this.drawClass.drawDummy);
-
-        var context = this.drawClass.drawDummy.canvasC;
+K2.Curve.prototype.refresh_CANVAS2D = function(engine) {
 
         if (this.isVisible === true) {
+            
+            var context = engine.context;
         	var initialPoints = this.values.points;
         	var parameters = {
         		thickness: this.thickness,
@@ -251,7 +247,7 @@ K2.Curve.prototype.refresh = function() {
         	this.paintCurve(context);
     		this.paintPoints(context, this.values.points, parameters);
         }
-    }
+    
 };
 
 K2.Curve.prototype.getPoint = function(index) {
@@ -583,14 +579,4 @@ K2.Curve.prototype.paintCurve = function(ctx) {
     }
     ctx.stroke();
     ctx.restore();
-};
-
-K2.Curve.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Curve.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions TODO dummy here
-    this.drawClass = wrapper.initObject([{objName: 'drawDummy'}]);
-
 };

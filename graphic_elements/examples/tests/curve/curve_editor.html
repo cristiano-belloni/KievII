@@ -4,7 +4,7 @@
     <title>Curve Editor</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
-    <script type="text/javascript" src="../../../../kievII_cl.min.js"></script>
+    <script type="text/javascript" src="../../../../kievII.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <script type="text/javascript">
@@ -407,12 +407,7 @@
             
             // Curve stuff
             var plugin_canvas = document.getElementById("plugin");
-
-            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                                   {canvas: plugin_canvas}
-                                                   );
-
-            ui = new K2.UI (plugin_canvas, CWrapper, {'breakOnFirstEvent': true});
+            ui = new K2.UI (plugin_canvas, {type: 'CANVAS2D', target: plugin_canvas}, {'breakOnFirstEvent': true});
 
         }
                 
