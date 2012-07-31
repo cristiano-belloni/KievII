@@ -36,7 +36,7 @@ and open the template in the editor.
                                                    {canvas: plugin_canvas}
                                                    );
 
-            ui = new UI (plugin_canvas, CWrapper);
+            ui = new K2.UI (plugin_canvas, CWrapper);
 
             //Wave box.
             var waveboxArgs = {
@@ -45,7 +45,7 @@ and open the template in the editor.
                 left: 0,
                 width: 800,
                 height:150,
-                isClickable: true,
+                isListening: true,
                 objParms: {
                         pathColor: '#000',
                         pathDimension: 0.2

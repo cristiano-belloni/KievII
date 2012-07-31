@@ -46,7 +46,7 @@
                                                     {canvas: plugin_canvas}
                                                     );
 
-            ui = new UI (plugin_canvas, CWrapper);
+            ui = new K2.UI (plugin_canvas, CWrapper);
 
             if (loaderStatus.status.error !== 0) {
                 throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);

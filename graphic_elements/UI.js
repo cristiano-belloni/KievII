@@ -1,4 +1,4 @@
-function UI(domElement, wrapperFactory, parameters) {
+K2.UI = function(domElement, wrapperFactory, parameters) {
 
     // <EVENT HANDLING>
 
@@ -509,7 +509,7 @@ function UI(domElement, wrapperFactory, parameters) {
                 // Set the element's visibility
                 this.elements[elementID].element.setVisible(false);
                 // When hidden, the element is also not listening to events
-                this.elements[elementID].element.setClickable(false);
+                this.elements[elementID].element.setListening(false);
 
             }
 
@@ -532,7 +532,7 @@ function UI(domElement, wrapperFactory, parameters) {
                 // Set the element's visibility
                 this.elements[elementID].element.setVisible(true);
                 // When unhidden, the element starts listening to events again.
-                this.elements[elementID].element.setClickable(true);
+                this.elements[elementID].element.setListening(true);
 
             }
 
@@ -557,7 +557,7 @@ function UI(domElement, wrapperFactory, parameters) {
                 // Set the element's visibility
                 this.elements[elementID].element.setVisible(value);
                 // When unhidden, the element starts listening to events again.
-                this.elements[elementID].element.setClickable(value);
+                this.elements[elementID].element.setListening(value);
 
             }
 
@@ -568,15 +568,15 @@ function UI(domElement, wrapperFactory, parameters) {
         }
     }
 
-    this.setClickable = function(elementID, value) {
+    this.setListening = function(elementID, value) {
             var state;
 
             if (typeof this.elements[elementID] !== 'undefined') {
-                state = this.elements[elementID].element.getClickable();
+                state = this.elements[elementID].element.getListening();
                 if (state !== value) {
 
                     // When unhidden, the element starts listening to events again.
-                    this.elements[elementID].element.setClickable(value);
+                    this.elements[elementID].element.setListening(value);
 
                 }
 

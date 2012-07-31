@@ -62,7 +62,7 @@
                     sliderImg: loaderStatus.imagesArray[0],
                     knobImg: loaderStatus.imagesArray[1],
                     type: "horizontal",
-                    isClickable: true
+                    isListening: true
                 };
             }
             else if (loaderStatus.status.id === "vert_image_loader") {
@@ -73,7 +73,7 @@
                     sliderImg: loaderStatus.imagesArray[0],
                     knobImg: loaderStatus.imagesArray[1],
                     type:"vertical",
-                    isClickable: true
+                    isListening: true
                 };
             }
 
@@ -87,7 +87,7 @@
             var ui;
             
             /* INIT */
-            ui = new UI (plugin_canvas, CWrapper);
+            ui = new K2.UI (plugin_canvas, CWrapper);
 
             hSliderArgs.onValueSet = function () {
                 var that = this;

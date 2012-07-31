@@ -4,7 +4,7 @@
     <title>Curve Element test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
-    <script type="text/javascript" src="../../../../kievII_cl.min.js"></script>
+    <script type="text/javascript" src="../../../../kievII.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <script type="text/javascript">
@@ -18,7 +18,7 @@
                                                    {canvas: plugin_canvas}
                                                    );
 
-            ui = new UI (plugin_canvas, CWrapper);
+            ui = new K2.UI (plugin_canvas, CWrapper);
 
             //Bezier curve
             var curveArgs = {
@@ -41,7 +41,7 @@
                 midPointFill: 'E6965A',
                 //points: [120, 280, 280, 130, 420, 280, 580, 130, 600, 140],
                 points: [60, 280, 280, 130],
-                isClickable: true
+                isListening: true
             };
             
             curveArgs.onValueSet = function () {

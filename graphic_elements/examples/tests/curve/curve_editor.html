@@ -182,7 +182,7 @@
             terminalPointColor: 'black',
             terminalPointFill: '015C10',
             midPointFill: 'E6965A',
-            isClickable: true,
+            isListening: true,
             onValueSet: callback
         };
         
@@ -412,7 +412,7 @@
                                                    {canvas: plugin_canvas}
                                                    );
 
-            ui = new UI (plugin_canvas, CWrapper, {'breakOnFirstEvent': true});
+            ui = new K2.UI (plugin_canvas, CWrapper, {'breakOnFirstEvent': true});
 
         }
                 

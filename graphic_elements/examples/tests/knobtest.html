@@ -3,8 +3,9 @@
   <head>
     <title>Knob Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../initial.js"></script>
+    <script type="text/javascript" src="../../UIElement.js"></script>
     <script type="text/javascript" src="../../../utilities/Utilities.js"></script>
-    <script type="text/javascript" src="../../Element.js"></script>
     <script type="text/javascript" src="../../UI.js"></script>
     <script type="text/javascript" src="../../Knob.js"></script>
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
@@ -26,7 +27,7 @@
                                                {canvas: plugin_canvas}
                                                );
 
-        ui = new UI (plugin_canvas, CWrapper);
+        ui = new K2.UI (plugin_canvas, CWrapper);
 
         // Knob
         function knob_name (basename, knob_n) {
@@ -80,7 +81,7 @@
                 left: 90,
                 imagesArray : loaderStatus.imagesArray,
                 sensitivity : 2000,
-                isClickable: true
+                isListening: true
             };
 
             knobArgs.onValueSet = function () {
@@ -91,7 +92,7 @@
                 };
             }();
 
-            var knob = new Knob(knobArgs);
+            var knob = new K2.Knob(knobArgs);
 
             ui.addElement(knob);
             ui.setValue({elementID: "test_knob", value: 0.7});

@@ -4,7 +4,7 @@
     <title>Knob Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
-    <script type="text/javascript" src="../../../../kievII_cl.min.js"></script>
+    <script type="text/javascript" src="../../../../kievII.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="593" height="590"></canvas>
@@ -22,7 +22,7 @@
                                                {canvas: plugin_canvas}
                                                );
 
-        ui = new UI (plugin_canvas, CWrapper);
+        ui = new K2.UI (plugin_canvas, CWrapper);
         var imageLoader = new loadImageArray ({ID : "tuning",
                                                imageNames: ["safe_fg.png", "safe_bg.png"],
                                                onComplete: imagesCompleted,
@@ -60,7 +60,7 @@
                 left: 0,
                 image : loaderStatus.imagesArray[0],
                 sensitivity : 5000,
-                isClickable: true
+                isListening: true
             };
 
             knobArgs.onValueSet = function () {

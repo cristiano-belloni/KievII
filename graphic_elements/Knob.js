@@ -13,7 +13,7 @@ K2.Knob.prototype.getready = function(args) {
     }
 
     // Call the constructor from the superclass.
-    Knob.superclass.getready.call(this, args);
+    K2.Knob.superclass.getready.call(this, args);
 
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
@@ -143,7 +143,7 @@ K2.Knob.prototype.setValue = function(slot, value) {
     }
 
     // Call the superclass
-    this.superclass.setValue.call(this, slot, value);
+    K2.Knob.superclass.setValue.call(this, slot, value);
 
 };
 
@@ -153,7 +153,7 @@ K2.Knob.prototype.refresh = function() {
         // Draw, if our draw class is already set.
 
         // Call the superclass.
-        this.superclass.refresh.call(this, this.drawClass.drawImage);
+        K2.Knob.superclass.refresh.call(this, this.drawClass.drawImage);
 
         // Draw if visible.
         if (this.isVisible === true) {
@@ -169,7 +169,7 @@ K2.Knob.prototype.refresh = function() {
 K2.Knob.prototype.setGraphicWrapper = function(wrapper) {
 
     // Call the superclass.
-    this.superclass.setGraphicWrapper.call(this, wrapper);
+    K2.Knob.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
     this.drawClass = wrapper.initObject([{objName: 'drawImage',
