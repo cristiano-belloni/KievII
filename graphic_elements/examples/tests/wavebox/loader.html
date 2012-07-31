@@ -7,7 +7,8 @@ and open the template in the editor.
   <head>
     <title>Wavebox with async loader</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../../initial.js"></script>
+    <script type="text/javascript" src="../../../UIElement.js"></script>
     <script type="text/javascript" src="../../../UI.js"></script>
     <script type="text/javascript" src="../../../Wavebox.js"></script>
     <script type="text/javascript" src="../../../Background.js"></script>
@@ -59,11 +60,11 @@ and open the template in the editor.
                 };
             }();
 
-            var waveBox_L = new Wavebox(waveboxArgs);
+            var waveBox_L = new K2.Wavebox(waveboxArgs);
             
             waveboxArgs.ID = "wavebox_R";
             waveboxArgs.top = 400;
-            var waveBox_R = new Wavebox(waveboxArgs);
+            var waveBox_R = new K2.Wavebox(waveboxArgs);
 
             ui.addElement(waveBox_L);
             ui.addElement(waveBox_R);

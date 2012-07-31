@@ -3,13 +3,8 @@
   <head>
     <title>Curve Element test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../Element.js"></script>
-    <script type="text/javascript" src="../../../UI.js"></script>
-    <script type="text/javascript" src="../../../Curve.js"></script>
-    <script type="text/javascript" src="../../../Background.js"></script>
-    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
-    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <script type="text/javascript" src="../../../../kievII_cl.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <script type="text/javascript">
@@ -58,26 +53,26 @@
                 };
             }();
 
-            var curveElement = new Curve(curveArgs);
+            var curveElement = new K2.Curve(curveArgs);
             
             curveArgs.ID = "smooth";
             curveArgs.curveType = "smooth";
             //curveArgs.paintTerminalPoints = 'first';
             curveArgs.points = [280, 130, 310, 180];
             
-            var curveElement2 = new Curve(curveArgs);
+            var curveElement2 = new K2.Curve(curveArgs);
             
             curveArgs.ID = "bez4";
             curveArgs.curveType = "bezier";
             //curveArgs.paintTerminalPoints = 'all';
             curveArgs.points = [310, 180, 420, 280, 580, 130, 600, 140, 650, 210];
-            var curveElement3 = new Curve(curveArgs);
+            var curveElement3 = new K2.Curve(curveArgs);
             
             curveArgs.ID = "line";
             curveArgs.curveType = "linear";
             curveArgs.paintTerminalPoints = 'all';
             curveArgs.points = [650, 210, 680, 100];
-            var curveElement4 = new Curve(curveArgs);
+            var curveElement4 = new K2.Curve(curveArgs);
             
             /* curveArgs.ID = "curve_test_5";
             curveArgs.curveType = "hermite";

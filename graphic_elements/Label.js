@@ -1,26 +1,26 @@
-function Label(args) {
+K2.Label = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
 }
 
-extend(Label, Element);
+extend(K2.Label, K2.UIElement);
 
-Label.prototype.getready = function (args) {
+K2.Label.prototype.getready = function(args) {
 
     // Call the constructor from the superclass.
-    Label.superclass.getready.call(this, args);
+    K2.Label.superclass.getready.call(this, args);
 
-    this.values = {"labelvalue" : ""};
-    this.defaultSlot = "labelvalue";
-     
+    this.values = {'labelvalue' : ''};
+    this.defaultSlot = 'labelvalue';
+
     this.setWidth(args.width);
     this.setHeight(args.height);
 
 };
 
 // This methods returns true if the point given belongs to this element.
-Label.prototype.isInROI = function (x, y) {
+K2.Label.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
         if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
             return true;
@@ -30,18 +30,18 @@ Label.prototype.isInROI = function (x, y) {
 };
 
 // Setters
-Label.prototype.setValue = function (slot, value) {
-    Label.superclass.setValue.call(this, slot, value);
+K2.Label.prototype.setValue = function(slot, value) {
+    K2.Label.superclass.setValue.call(this, slot, value);
 };
- 
-Label.prototype.refresh = function () {
-    
+
+K2.Label.prototype.refresh = function() {
+
     var text;
     if (this.drawClass !== undefined) {
         // Draw, if our draw class is already set.
 
         // Call the superclass.
-        Label.superclass.refresh.call(this, this.drawClass.drawText);
+        K2.Label.superclass.refresh.call(this, this.drawClass.drawText);
 
         // Draw, if our draw class is already set.
         if (this.isVisible === true) {
@@ -55,12 +55,12 @@ Label.prototype.refresh = function () {
 
 };
 
-Label.prototype.setGraphicWrapper = function (wrapper) {
+K2.Label.prototype.setGraphicWrapper = function(wrapper) {
 
     // Call the superclass.
-    Label.superclass.setGraphicWrapper.call(this, wrapper);
+    K2.Label.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject ([{objName: "drawText",
+    this.drawClass = wrapper.initObject([{objName: 'drawText',
                                            objParms: this.objParms}]);
-}
+};

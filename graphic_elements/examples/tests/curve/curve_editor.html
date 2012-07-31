@@ -1,18 +1,10 @@
-
-
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>Curve Element test</title>
+    <title>Curve Editor</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../Element.js"></script>
-    <script type="text/javascript" src="../../../UI.js"></script>
-    <script type="text/javascript" src="../../../Curve.js"></script>
-    <script type="text/javascript" src="../../../Background.js"></script>
-    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
-    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
-    <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <script type="text/javascript" src="../../../../kievII_cl.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <script type="text/javascript">
@@ -117,7 +109,7 @@
                     	 * and set its initial point to x,y, then its final point to the initial point of the next
                     	 * curve. Then insert the new curve in the right point of the array with splice() */
                     	
-                    	 /* TODO Might want to check if two (or more) held events come with the same coordinates in a small
+                    	 /* Might want to check if two (or more) held events come with the same coordinates in a small
                     	 * amount of time (this happens when curves cross, or in the intersections)
                     	 */
                     	var now = new Date().getTime();
@@ -162,7 +154,7 @@
         					newCurveArgs.points = [value[0], value[1], finalPoints[0], finalPoints[1]];
         				}
         				
-        				var curveElement = new Curve(newCurveArgs);
+        				var curveElement = new K2.Curve(newCurveArgs);
       					ui.addElement(curveElement);
       					
       					that.appStatus.curveArray.splice(that.appStatus.selected + 1, 0, newCurveArgs.ID);
@@ -300,7 +292,7 @@
       			newCurveArgs.points = firstPoint.concat(midPoints, lastPoint);
       		}
       		
-      		var curveElement = new Curve(newCurveArgs);
+      		var curveElement = new K2.Curve(newCurveArgs);
       		ui.addElement(curveElement);
       		this.appStatus.curveArray.push(newCurveArgs.ID);
       		reorganizeElements(this);

@@ -1,34 +1,34 @@
-function Knob(args) {
+K2.Knob = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
 }
 
-extend(Knob, Element);
+extend(K2.Knob, K2.UIElement);
 
-Knob.prototype.getready = function (args) {
+K2.Knob.prototype.getready = function(args) {
 
     if (args === undefined) {
-        throw new Error("Error: specArgs is undefined!");
+        throw new Error('Error: specArgs is undefined!');
     }
-    
+
     // Call the constructor from the superclass.
     Knob.superclass.getready.call(this, args);
-    
+
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
 
     //Default value is 0
-    this.values = {"knobvalue" : 0};
-    this.defaultSlot = "knobvalue";
+    this.values = {'knobvalue' : 0};
+    this.defaultSlot = 'knobvalue';
 
     this.sensitivity = args.sensitivity || 2000;
     this.imagesArray = args.imagesArray || null;
-    
+
     if (this.imagesArray.length < 1) {
-        throw new Error("Invalid images array length, " + this.imagesArray.length);
+        throw new Error('Invalid images array length, ' + this.imagesArray.length);
     }
-                                   
+
     var width = 0,
         height = 0;
 
@@ -41,7 +41,7 @@ Knob.prototype.getready = function (args) {
             height = this.imagesArray[i].height;
         }
     }
-    
+
     // Set them.
     this.setWidth(width);
     this.setHeight(height);
@@ -50,9 +50,7 @@ Knob.prototype.getready = function (args) {
 
 
 // This method returns an image index given the knob value.
-/*jslint nomen: false*/
-Knob.prototype._getImageNum = function () {
-/*jslint nomen: true*/
+K2.Knob.prototype.getImageNum = function() {
     if ((this.values.knobvalue < 0) || (this.values.knobvalue > 1)) {
         // Do nothing
         return undefined;
@@ -61,29 +59,23 @@ Knob.prototype._getImageNum = function () {
     return ret;
 };
 
-// This method returns an image object given the knob value.
-/*jslint nomen: false*/
-Knob.prototype._getImage = function () {
-/*jslint nomen: true*/
+K2.Knob.prototype.getImage = function() {
 
-    /*jslint nomen: false*/
-    var ret = this._getImageNum();
-    /*jslint nomen: true*/
+    var ret = this.getImageNum();
     return this.imagesArray[ret];
 };
 
 // This method returns true if the point given belongs to this knob.
-Knob.prototype.isInROI = function (x, y) {
+K2.Knob.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
         if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
             return true;
         }
-        /*jsl:pass*/
     }
     return false;
 };
 
-Knob.prototype.dragstart = Knob.prototype.mousedown = function (x, y) {
+K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -96,7 +88,7 @@ Knob.prototype.dragstart = Knob.prototype.mousedown = function (x, y) {
     return undefined;
 };
 
-Knob.prototype.dragend = Knob.prototype.mouseup = function (x, y) {
+K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -107,7 +99,7 @@ Knob.prototype.dragend = Knob.prototype.mouseup = function (x, y) {
 
 };
 
-Knob.prototype.drag = Knob.prototype.mousemove = function (curr_x, curr_y) {
+K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) {
 
     if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
 
@@ -131,7 +123,7 @@ Knob.prototype.drag = Knob.prototype.mousemove = function (curr_x, curr_y) {
             to_set = 0;
         }
 
-        ret = {"slot" : "knobvalue", "value" : to_set};
+        ret = {'slot' : 'knobvalue', 'value' : to_set};
 
         return ret;
     }
@@ -142,46 +134,45 @@ Knob.prototype.drag = Knob.prototype.mousemove = function (curr_x, curr_y) {
 };
 
 // Setters
-Knob.prototype.setValue = function (slot, value) {
+K2.Knob.prototype.setValue = function(slot, value) {
     var temp_value = value;
 
     if ((temp_value < 0) || (temp_value > 1)) {
-        //Just do nothing.
-        //console.log("Knob.prototype.setValue: VALUE INCORRECT!!");
+        // Out of range; do not set
         return;
     }
 
-    // Now, we call the superclass
-    Knob.superclass.setValue.call(this, slot, value);
+    // Call the superclass
+    this.superclass.setValue.call(this, slot, value);
 
 };
-        
-Knob.prototype.refresh = function () {
+
+K2.Knob.prototype.refresh = function() {
 
     if (this.drawClass !== undefined) {
         // Draw, if our draw class is already set.
-       
+
         // Call the superclass.
-        Knob.superclass.refresh.call(this, this.drawClass.drawImage);
+        this.superclass.refresh.call(this, this.drawClass.drawImage);
 
         // Draw if visible.
         if (this.isVisible === true) {
-            /*jslint nomen: false*/
-            var imageNum = this._getImageNum();
-            /*jslint nomen: true*/
+            // Get the image to draw
+            var imageNum = this.getImageNum();
+            // Draw the image on the canvas
             this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
 
         }
     }
 };
 
-Knob.prototype.setGraphicWrapper = function (wrapper) {
+K2.Knob.prototype.setGraphicWrapper = function(wrapper) {
 
     // Call the superclass.
-    Knob.superclass.setGraphicWrapper.call(this, wrapper);
+    this.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+    this.drawClass = wrapper.initObject([{objName: 'drawImage',
                                            objParms: this.objParms}]);
 
 };

@@ -3,14 +3,8 @@
   <head>
     <title>Knob Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
-    <script type="text/javascript" src="../../../Element.js"></script>
-    <script type="text/javascript" src="../../../UI.js"></script>
-    <script type="text/javascript" src="../../../RotKnob.js"></script>
-    <script type="text/javascript" src="../../../Background.js"></script>
-    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
-    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
     <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <script type="text/javascript" src="../../../../kievII_cl.min.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="593" height="590"></canvas>
@@ -58,7 +52,7 @@
                 left: 0,
                 image: loaderStatus.imagesArray[1]
             }
-            var background = new Background (backgroundArgs);
+            var background = new K2.Background (backgroundArgs);
 
             var knobArgs = {
                 ID: "test_knob",
@@ -77,7 +71,7 @@
                 };
             }();
 
-            var knob = new RotKnob(knobArgs);
+            var knob = new K2.RotKnob(knobArgs);
 
             ui.addElement(background);
             ui.addElement(knob);

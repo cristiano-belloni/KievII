@@ -4,9 +4,9 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // Thanks for these two functions to the noVNC project. You are great.
     // https://github.com/kanaka/noVNC/blob/master/include/util.js#L121
-    
+
     // Get DOM element position on page
-    this.getPosition = function (obj) {
+    this.getPosition = function(obj) {
         var x = 0, y = 0;
         if (obj.offsetParent) {
             do {
@@ -19,7 +19,7 @@ function UI(domElement, wrapperFactory, parameters) {
     };
 
     // Get mouse event position in DOM element (don't know how to use scale yet).
-    this.getEventPosition = function (e, obj, aux_e, scale) {
+    this.getEventPosition = function(e, obj, aux_e, scale) {
         var evt, docX, docY, pos;
         //if (!e) evt = window.event;
         evt = (e ? e : window.event);
@@ -37,7 +37,7 @@ function UI(domElement, wrapperFactory, parameters) {
         	docY = aux_e.touches[0].y;
         }
         pos = this.getPosition(obj);
-        if (typeof scale === "undefined") {
+        if (typeof scale === 'undefined') {
             scale = 1;
         }
         return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
@@ -46,22 +46,22 @@ function UI(domElement, wrapperFactory, parameters) {
     // Event handlers
 
 	// onMouse events
-	this.onMouseEvent = function () {
+	this.onMouseEvent = function() {
         var that = this;
-            return function (evt) {
-            	
+            return function(evt) {
+
             var event = evt;
             var type = evt.type;
-            
-			var realCoords = that.getEventPosition (event, that.domElement);
-			
+
+			var realCoords = that.getEventPosition(event, that.domElement);
+
 			if (type === 'mousedown') {
 				that.mouseUp = false;
 			}
 			else if (type === 'mouseup') {
 				that.mouseUp = true;
 			}
-			
+
 			if (type === 'mousemove') {
 				// Only if the mouse button is still down (This could be incomplete TODO).
             	if (that.mouseUp === false) {
@@ -72,45 +72,45 @@ function UI(domElement, wrapperFactory, parameters) {
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
-    
+
     // hammer.js events
-    this.onHammerEvent = function () {
+    this.onHammerEvent = function() {
         var that = this;
-            return function (evt) {
-            	
+            return function(evt) {
+
             var event = evt.originalEvent;
             var type = evt.type;
-            
-            var realCoords = that.getEventPosition (event, that.domElement, evt);
-            
+
+            var realCoords = that.getEventPosition(event, that.domElement, evt);
+
             //console.log ("About to notify an Hammer event of type", type);
-            
+
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
-            
+
         };
     };
 
     // Note: breakOnFirstEvent works only elements that share the same kind of
     // event handling mechanism (es: buttons with buttons).
     // Notify every element about the event.
-    this.elementsNotifyEvent = function (x, y, event) {
-        
+    this.elementsNotifyEvent = function(x, y, event) {
+
         // For every element in Z-index array, in order
         for (var z = this.zMax; z >= this.zMin; z -= 1) {
             // The array has holes.
             if (typeof this.zArray[z] !== 'undefined') {
-                for (var k = (this.zArray[z].length -1); k >=0; k -= 1) {
+                for (var k = (this.zArray[z].length - 1); k >= 0; k -= 1) {
                     // If the element wants to be bothered with events
-                    if (this.zArray[z][k].getClickable()) {
+                    if (this.zArray[z][k].getListening()) {
                         // Notify the element, if the element has an handler
                         if (typeof this.zArray[z][k][event] === 'function') {
                         	var ret = this.zArray[z][k][event](x, y);
-                        
+
 	                        // See if the element changed its value
 	                        if (typeof ret !== 'undefined') {
 	                            if (ret instanceof Array) {
 	                                // An element could change multiple slots of itself.
-	                                for (var i = 0; i < ret.length; i+=1) {
+	                                for (var i = 0; i < ret.length; i += 1) {
 	                                    this.setValue({elementID: this.zArray[z][k].ID, slot: ret[i].slot, value: ret[i].value});
 	                                }
 	                            }
@@ -118,7 +118,7 @@ function UI(domElement, wrapperFactory, parameters) {
 	                                // console.log("UI: Element ", ID, " changed its value on event ", event);
 	                                this.setValue({elementID: this.zArray[z][k].ID, slot: ret.slot, value: ret.value});
 	                            }
-	
+
 	                            if (this.breakOnFirstEvent === true) {
 	                                // One element has answered to an event, return.
 	                                return;
@@ -129,7 +129,7 @@ function UI(domElement, wrapperFactory, parameters) {
                 }
             }
         }
-        
+
     };
 
     // <END OF EVENT HANDLING>
@@ -139,13 +139,13 @@ function UI(domElement, wrapperFactory, parameters) {
 
 	// Hammer.js is present
 	if (typeof Hammer !== 'undefined') {
-		console.log ("We have hammer.js!");
+		console.log('We have hammer.js!');
 		this.hammer = new Hammer(domElement, {drag_min_distance: 2});
 		this.hammer.ondragstart = this.onHammerEvent();
 		this.hammer.ondrag = this.onHammerEvent();
 		this.hammer.ondragend = this.onHammerEvent();
 		this.hammer.onswipe = this.onHammerEvent();
-		this.hammer.ontap = this.onHammerEvent();;
+		this.hammer.ontap = this.onHammerEvent();
 		this.hammer.ondoubletap = this.onHammerEvent();
 		this.hammer.onhold = this.onHammerEvent();
 		this.hammer.ontransformstart = this.onHammerEvent();
@@ -155,13 +155,13 @@ function UI(domElement, wrapperFactory, parameters) {
 	}
 	// Hammer not present, switch to regular events
     else {
-	    this.domElement.addEventListener("mousedown", this.onMouseEvent(), true);
-	    this.domElement.addEventListener("mouseup", this.onMouseEvent(), true);
-	    this.domElement.addEventListener("mousemove", this.onMouseEvent(), true);
+	    this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
+	    this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
+	    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
 	   }
 
     this.mouseUp = true;
-   
+
     var ret;
 
     // Elements in this UI.
@@ -186,37 +186,36 @@ function UI(domElement, wrapperFactory, parameters) {
     // <ELEMENT HANDLING>
 
     // Add and remove elements
-    this.addElement = function (element, elementParameters) {
+    this.addElement = function(element, elementParameters) {
         var slot,
             slots;
 
         if (typeof this.elements[element.ID] !== 'undefined') {
-            throw new Error("Conflicting / Duplicated ID in UI: " + element.ID + " (IDs are identifiers and should be unique)");
-            return;
+            throw new Error('Conflicting / Duplicated ID in UI: ' + element.ID + ' (IDs are identifiers and should be unique)');
         }
-        
+
         // Store the parameters
         var zIndex = 0;
-        
-        if ((typeof elementParameters !== "undefined") && (typeof elementParameters.zIndex !== "undefined")) {
+
+        if ((typeof elementParameters !== 'undefined') && (typeof elementParameters.zIndex !== 'undefined')) {
             zIndex = elementParameters.zIndex;
         }
-        
-        if ((zIndex < 0) || (typeof(zIndex) !== "number")) {
-                throw new Error("zIndex " + zIndex + " invalid");
+
+        if ((zIndex < 0) || (typeof(zIndex) !== 'number')) {
+                throw new Error('zIndex ' + zIndex + ' invalid');
         }
-        
+
         // Create the element to insert
         var tempEl = {'element': element, 'zIndex': zIndex};
 
         this.elements[element.ID] = tempEl;
 
         // Set the element's graphic wrapper
-        element.setGraphicWrapper(this.graphicWrapper);       
+        element.setGraphicWrapper(this.graphicWrapper);
 
         // Get the slots available from the element.
         slots = element.getValues();
-        
+
         // if it's the first element having this zIndex, create the subarray.
         if (typeof this.zArray[zIndex] === 'undefined') {
             this.zArray[zIndex] = [];
@@ -226,20 +225,20 @@ function UI(domElement, wrapperFactory, parameters) {
         if ((typeof this.zMin === 'undefined') || (this.zMin > zIndex)) {
             this.zMin = zIndex;
         }
-        if ((typeof this.zMax === 'undefined') || (this.zMax <  zIndex)) {
+        if ((typeof this.zMax === 'undefined') || (this.zMax < zIndex)) {
             this.zMax = zIndex;
         }
-        
+
     };
-    
-    this.removeElement = function (elementID) {
+
+    this.removeElement = function(elementID) {
     	if (typeof this.elements[elementID] !== 'undefined') {
     		var elZIndex = this.elements[elementID].zIndex;
     		var elZArray = this.zArray[elZIndex];
     		// Delete the element in the zIndex subarray
-    		for (var i = 0; i < elZArray.length; i+=1) {
+    		for (var i = 0; i < elZArray.length; i += 1) {
     			if (elZArray[i].ID === elementID) {
-    				elZArray.splice (i,1);
+    				elZArray.splice(i, 1);
     				break;
     			}
     		}
@@ -248,9 +247,9 @@ function UI(domElement, wrapperFactory, parameters) {
     		// TODO delete the element in the connection matrix?
     	}
     };
-    
+
     // Z-Index getter and setter
-    this.setZIndex = function (elementID, zIndex) {
+    this.setZIndex = function(elementID, zIndex) {
     	if (typeof this.elements[elementID] !== 'undefined') {
     		var elZIndex = this.elements[elementID].zIndex;
     		// if zIndexes differ
@@ -263,48 +262,48 @@ function UI(domElement, wrapperFactory, parameters) {
 		        if ((typeof this.zMin === 'undefined') || (this.zMin > zIndex)) {
 		            this.zMin = zIndex;
 		        }
-		        if ((typeof this.zMax === 'undefined') || (this.zMax <  zIndex)) {
+		        if ((typeof this.zMax === 'undefined') || (this.zMax < zIndex)) {
 		            this.zMax = zIndex;
 		        }
 		        // Get the old and new zIndex subarrays
     			var oldZArray = this.zArray[elZIndex];
 	    		var newZArray = this.zArray[zIndex];
 	    		// Delete the element in the old zIndex subarray
-	    		for (var i = 0; i < oldZArray.length; i+=1) {
+	    		for (var i = 0; i < oldZArray.length; i += 1) {
 	    			if (oldZArray[i].ID === elementID) {
-	    				oldZArray.splice (i,1);
+	    				oldZArray.splice(i, 1);
 	    				break;
 	    			}
 	    		}
 	    		// Add the element to the new zIndex subarray
-	    		newZArray.push (this.elements[elementID].element);
+	    		newZArray.push(this.elements[elementID].element);
 	    		// Change the element zIndex
 	    		this.elements[elementID].zIndex = zIndex;
     		}
     	}
-    	else throw ("Could not find element ID: " + elementID);
+    	else throw ('Could not find element ID: ' + elementID);
     };
-    
-    this.getZIndex = function (elementID) {
+
+    this.getZIndex = function(elementID) {
     	if (typeof this.elements[elementID] !== 'undefined') {
     		return this.elements[elementID].zIndex;
     	}
-    	else throw ("Could not find element ID: " + elementID);
-    }
-    
+    	else throw ('Could not find element ID: ' + elementID);
+    };
+
     // Properties getter and setter
-    this.setProp = function (elementID, prop, value) {
+    this.setProp = function(elementID, prop, value) {
     	if (typeof this.elements[elementID] !== 'undefined') {
     		this.elements[elementID].element[prop] = value;
     	}
-    	else throw ("Could not find ID: " + elementID + " property: " + prop);
+    	else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
     };
-    
-    this.getProp = function (elementID, prop) {
+
+    this.getProp = function(elementID, prop) {
     	if (typeof this.elements[elementID] !== 'undefined') {
     		return this.elements[elementID].element[prop];
     	}
-    	else throw ("Could not find ID: " + elementID + " property: " + prop);
+    	else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
     };
     // </ELEMENT HANDLING>
 
@@ -312,25 +311,25 @@ function UI(domElement, wrapperFactory, parameters) {
     // <CONNECTION HANDLING>
 
     // Connect slots, so that one element can "listen" to the other
-    this.connectSlots  = function (senderElement, senderSlot, receiverElement, receiverSlot, connectParameters) {
+    this.connectSlots = function(senderElement, senderSlot, receiverElement, receiverSlot, connectParameters) {
 
         //Check for the elements.
         if ((typeof this.elements[senderElement] !== 'undefined') && (typeof this.elements[receiverElement] !== 'undefined')) {
             // //Check for the slots.
             if ((typeof this.elements[senderElement].element.values[senderSlot] === 'undefined') ||
-                (typeof this.elements[receiverElement].element.values[receiverSlot] === 'undefined'))  {
-                throw new Error("Slot " + senderSlot + " or " + receiverSlot + " not present.");
+                (typeof this.elements[receiverElement].element.values[receiverSlot] === 'undefined')) {
+                throw new Error('Slot ' + senderSlot + ' or ' + receiverSlot + ' not present.');
             }
 
             else {
 
                 //The sender & receiver element & slot exist. Do the connection.
-                var receiverHash = {"recvElement" : receiverElement, "recvSlot": receiverSlot};
+                var receiverHash = {'recvElement' : receiverElement, 'recvSlot': receiverSlot};
 
                 //Check if there are optional parameters
                 if (typeof connectParameters !== 'undefined') {
                     // Is there a callback?
-                    if (typeof(connectParameters.callback) === "function") {
+                    if (typeof(connectParameters.callback) === 'function') {
                         receiverHash.callback = connectParameters.callback;
                     }
                     // Should the connection setValue fire cascading setValue callbacks?
@@ -351,22 +350,22 @@ function UI(domElement, wrapperFactory, parameters) {
                 }
                 this.connections[senderElement][senderSlot].push(receiverHash);
             }
-            
+
         }
         else {
-            throw new Error("Element " + senderElement + " or " + receiverElement + " not present.");
+            throw new Error('Element ' + senderElement + ' or ' + receiverElement + ' not present.');
         }
     };
-    
-    this.resetSlots = function () {
+
+    this.resetSlots = function() {
     	this.connections = {};
     }
-    
-    this.unconnectSlots = function (senderElement, senderSlot, receiverElement, receiverSlot) {
+
+    this.unconnectSlots = function(senderElement, senderSlot, receiverElement, receiverSlot) {
     	// TODO
     }
-    
-    this.resetSenderSlot = function (senderElement) {
+
+    this.resetSenderSlot = function(senderElement) {
     	// TODO
     }
 
@@ -377,7 +376,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // This method handles one set value event and propagates it in the connections matrix
     //this.setValue ({slot: sl, value: val, elementID: id, fireCallback:false, history:undefined});
-    this.setValue = function (setParms) {
+    this.setValue = function(setParms) {
         var hist = [],
             receiverHash,
             recvElementID,
@@ -389,33 +388,33 @@ function UI(domElement, wrapperFactory, parameters) {
             slot,
             fireCallback,
             history;
-        
+
         // Default parameters
         if (typeof setParms.elementID === 'undefined') {
-            throw ("ID is undefined");
+            throw ('ID is undefined');
         }
         else elementID = setParms.elementID;
-        
+
         if (typeof setParms.value === 'undefined') {
-            throw ("value is undefined");
+            throw ('value is undefined');
         }
         else value = setParms.value;
-        
+
         if (typeof setParms.fireCallback === 'undefined') {
             fireCallback = true;
         }
         else fireCallback = setParms.fireCallback;
-        
+
         history = setParms.history;
         // End of defaults
-        
+
         if (typeof this.elements[elementID] !== 'undefined') {
-            
+
             // Get the default slot here, if no one specified a slot
             if (typeof setParms.slot === 'undefined') {
                 slot = this.elements[elementID].element.defaultSlot;
                 if (typeof slot === undefined) {
-                    throw "Default slot is undefined!";
+                    throw 'Default slot is undefined!';
                 }
             }
             else slot = setParms.slot;
@@ -424,13 +423,13 @@ function UI(domElement, wrapperFactory, parameters) {
             if (typeof history !== 'undefined') {
                 hist = history;
                 // Is this an infinite loop?
-                for(var k = 0; k < hist.length ; k += 1) {
+                for (var k = 0; k < hist.length; k += 1) {
                     // This is for precaution.
                     if (hist.length > RECURSIONMAX) {
-                        throw new Error ("Recursion exceeded");
+                        throw new Error('Recursion exceeded');
                         return;
                     }
-                    if ((hist[k]["element"] === elementID) && (hist[k]["slot"] === slot)) {
+                    if ((hist[k]['element'] === elementID) && (hist[k]['slot'] === slot)) {
                         // Loop is infinite; bail out!
                         // console.log ("Broke recursion!");
                         return;
@@ -440,18 +439,18 @@ function UI(domElement, wrapperFactory, parameters) {
             // Element is present an there's no need to break a loop
             // really set value.
             this.elements[elementID].element.setValue(slot, value);
-            
+
             // Finally, call the callback if there is one and we're allowed to.
-            if ((typeof (this.elements[elementID].element.onValueSet) === "function") && (fireCallback !== false)) {
-                this.elements[elementID].element.onValueSet (slot, this.elements[elementID].element.values[slot], elementID);
+            if ((typeof (this.elements[elementID].element.onValueSet) === 'function') && (fireCallback !== false)) {
+                this.elements[elementID].element.onValueSet(slot, this.elements[elementID].element.values[slot], elementID);
             }
 
             // This element has been already set: update history
-            hist.push({"element" : elementID, "slot" : slot});
+            hist.push({'element' : elementID, 'slot' : slot});
         }
 
         else {
-            throw new Error("Element " + elementID + " not present.");
+            throw new Error('Element ' + elementID + ' not present.');
         }
 
         // Check if this element has connections
@@ -460,22 +459,22 @@ function UI(domElement, wrapperFactory, parameters) {
             // For every connection the element has
             for (i in this.connections[elementID][slot]) {
 
-                if (this.connections[elementID][slot].hasOwnProperty(i)){
+                if (this.connections[elementID][slot].hasOwnProperty(i)) {
 
                     // Retrieve the other connection end and the connection parameters.
                     receiverHash = this.connections[elementID][slot][i];
-                 
+
                     recvElementID = receiverHash.recvElement;
                     recvSlot = receiverHash.recvSlot;
 
                     // Check the callback here.
-                    if (typeof(receiverHash.callback) === "function") {
+                    if (typeof(receiverHash.callback) === 'function') {
                     	var connDetails = {'sender': elementID,
                     					   'sendSlot': slot,
                     					   'recv': recvElementID,
                     					   'recvSlot': recvSlot};
                         // We have a callback to call.
-                        value = receiverHash.callback (value, connDetails);
+                        value = receiverHash.callback(value, connDetails);
                     }
 
                     // Check if consequent setValue()s should have cascading
@@ -500,7 +499,7 @@ function UI(domElement, wrapperFactory, parameters) {
 
     // These two functions are complementary.
 
-    this.hideElement = function (elementID) {
+    this.hideElement = function(elementID) {
 
         var visibilityState;
 
@@ -508,21 +507,21 @@ function UI(domElement, wrapperFactory, parameters) {
             visibilityState = this.elements[elementID].element.getVisible();
             if (visibilityState === true) {
                 // Set the element's visibility
-                this.elements[elementID].element.setVisible (false);
+                this.elements[elementID].element.setVisible(false);
                 // When hidden, the element is also not listening to events
-                this.elements[elementID].element.setClickable (false);
+                this.elements[elementID].element.setClickable(false);
 
             }
 
         }
 
         else {
-            throw new Error("Element " + elementID + " not present.");
+            throw new Error('Element ' + elementID + ' not present.');
         }
 
     }
 
-    this.unhideElement = function (elementID) {
+    this.unhideElement = function(elementID) {
 
         var visibilityState;
 
@@ -531,24 +530,24 @@ function UI(domElement, wrapperFactory, parameters) {
             if (visibilityState === false) {
 
                 // Set the element's visibility
-                this.elements[elementID].element.setVisible (true);
+                this.elements[elementID].element.setVisible(true);
                 // When unhidden, the element starts listening to events again.
-                this.elements[elementID].element.setClickable (true);
+                this.elements[elementID].element.setClickable(true);
 
             }
 
         }
 
         else {
-            throw new Error("Element " + elementID + " not present.");
+            throw new Error('Element ' + elementID + ' not present.');
         }
     }
 
-    this.setHidden = function (elementID, value) {
-        this.setVisible(elementID, !value)
+    this.setHidden = function(elementID, value) {
+        this.setVisible(elementID, !value);
     }
 
-    this.setVisible = function (elementID, value) {
+    this.setVisible = function(elementID, value) {
         var visibilityState;
 
         if (typeof this.elements[elementID] !== 'undefined') {
@@ -556,20 +555,20 @@ function UI(domElement, wrapperFactory, parameters) {
             if (visibilityState !== value) {
 
                 // Set the element's visibility
-                this.elements[elementID].element.setVisible (value);
+                this.elements[elementID].element.setVisible(value);
                 // When unhidden, the element starts listening to events again.
-                this.elements[elementID].element.setClickable (value);
+                this.elements[elementID].element.setClickable(value);
 
             }
 
         }
 
         else {
-            throw new Error("Element " + elementID + " not present.");
+            throw new Error('Element ' + elementID + ' not present.');
         }
     }
-    
-    this.setClickable = function (elementID, value) {
+
+    this.setClickable = function(elementID, value) {
             var state;
 
             if (typeof this.elements[elementID] !== 'undefined') {
@@ -577,25 +576,25 @@ function UI(domElement, wrapperFactory, parameters) {
                 if (state !== value) {
 
                     // When unhidden, the element starts listening to events again.
-                    this.elements[elementID].element.setClickable (value);
+                    this.elements[elementID].element.setClickable(value);
 
                 }
 
             }
 
             else {
-                throw new Error("Element " + elementID + " not present.");
+                throw new Error('Element ' + elementID + ' not present.');
             }
         }
 
     // </VISIBILITY, RECEIVING EVENTS>
-   
+
 
     // <REFRESH HANDLING>
-    this.refreshZ = function (z) {
+    this.refreshZ = function(z) {
         //Refresh every layer, starting from z to the last one.
-        for (var i = z, length =  this.zArray.length; i < length; i += 1) {
-            if (typeof(this.zArray[i]) === "object") {
+        for (var i = z, length = this.zArray.length; i < length; i += 1) {
+            if (typeof(this.zArray[i]) === 'object') {
                 for (var k = 0, z_length = this.zArray[i].length; k < z_length; k += 1) {
                     if (this.zArray[i][k].getVisible() === true) {
                         this.zArray[i][k].refresh();
@@ -605,19 +604,19 @@ function UI(domElement, wrapperFactory, parameters) {
         }
     }
 
-    this.refresh = function (doReset) {
+    this.refresh = function(doReset) {
         // Reset everything
         if (doReset !== false) {
             this.reset();
         }
-        
+
         // Then refresh everything from the smallest z-value, if there is one.
         if (typeof this.zMin !== 'undefined') {
             this.refreshZ(this.zMin);
         }
     }
 
-    this.reset = function () {
+    this.reset = function() {
         // Reset the graphic frontend
         this.graphicWrapper.reset();
     }

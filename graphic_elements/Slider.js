@@ -1,27 +1,26 @@
-// Ok, this Slider is an horizontal one. Must implement the vertical one as well.
-function Slider(args) {
+K2.Slider = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
 }
 
-extend(Slider, Element);
+extend(K2.Slider, K2.UIElement);
 
-Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
+K2.Slider.prototype.getready = function(args) {
 
-    if (args === undefined) {
-        throw new Error("Error: specArgs is undefined!");
+    if (typeof args === 'undefined') {
+        throw ('Slider error: args is undefined!');
     }
 
     // Call the constructor from the superclass.
-    Slider.superclass.getready.call(this, args);
+    K2.Slider.superclass.getready.call(this, args);
 
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
 
     // Default value is 0
-    this.values = {"slidervalue" : 0};
-    this.defaultSlot = "slidervalue";
+    this.values = {'slidervalue' : 0};
+    this.defaultSlot = 'slidervalue';
 
     this.width = 0;
     this.height = 0;
@@ -41,9 +40,7 @@ Slider.prototype.getready = function (args /*sliderImg, knobImg*/) {
 
 
 // This method returns an x position given the Slider value.
-/*jslint nomen: false*/
-Slider.prototype._getKnobPosition = function () {
-/*jslint nomen: true*/
+K2.Slider.prototype.getKnobPosition = function() {
     var ret;
 
     if ((this.values.slidervalue < 0) || (this.values.slidervalue > 1)) {
@@ -51,79 +48,79 @@ Slider.prototype._getKnobPosition = function () {
         return undefined;
     }
     // We must take in account the half-knob thing, here.
-    switch(this.type) {
+    switch (this.type) {
 
-      case "horizontal":
+      case 'horizontal':
           ret = Math.round(this.values.slidervalue * this.width + this.zeroLimit);
       break;
 
-      case "vertical":
+      case 'vertical':
           ret = Math.round(this.values.slidervalue * this.height + this.zeroLimit);
       break;
 
       default:
-          throw new Error("Error: Slider orientation is undefined!");
+          throw new Error('Error: Slider orientation is undefined!');
       }
 
     return ret;
 };
 
 // This method returns true if the point given belongs to this Slider.
-Slider.prototype.isInROI = function (x, y) {
-    switch(this.type) {
-        case "horizontal":
-            if ((x > this._getKnobPosition()) && (y > this.ROITop)) {
-                if ((x < (this._getKnobPosition() + this.kWidth)) && (y < (this.ROITop + this.kHeight))) {
+K2.Slider.prototype.isInROI = function(x, y) {
+    switch (this.type) {
+        case 'horizontal':
+            if ((x > this.getKnobPosition()) && (y > this.ROITop)) {
+                if ((x < (this.getKnobPosition() + this.kWidth)) && (y < (this.ROITop + this.kHeight))) {
                     return true;
                 }
             }
         break;
 
-        case "vertical":
-            if ((y > this._getKnobPosition()) && (x > this.ROILeft)) {
-                if ((y < (this._getKnobPosition() + this.kHeight)) && (x < (this.ROILeft + this.kWidth))) {
+        case 'vertical':
+            if ((y > this.getKnobPosition()) && (x > this.ROILeft)) {
+                if ((y < (this.getKnobPosition() + this.kHeight)) && (x < (this.ROILeft + this.kWidth))) {
                     return true;
                 }
             }
         break;
 
         default:
-          throw new Error("Error: Slider orientation is undefined!");
+          throw new Error('Error: Slider orientation is undefined!');
       }
 
     // Slider is in ROI if and only if we drag the knob.
     return false;
 };
 
-Slider.prototype.dragstart = Slider.prototype.mousedown = function (x, y) {
+K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown = function(x, y) {
     if (this.isInROI(x, y)) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
         // the point where we started dragging.
-        switch(this.type) {
+        switch (this.type) {
 
-            case "horizontal":
-                this.drag_offset = x - this._getKnobPosition();
+            case 'horizontal':
+                this.drag_offset = x - this.getKnobPosition();
             break;
 
-            case "vertical":
-                this.drag_offset = y - this._getKnobPosition();
+            case 'vertical':
+                this.drag_offset = y - this.getKnobPosition();
             break;
 
             default:
-              throw new Error("Error: Slider orientation is undefined!");
+              throw new Error('Error: Slider orientation is undefined!');
           }
     }
     return undefined;
 };
 
-Slider.prototype.dragend = Slider.prototype.mouseup = function (x, y) {
+K2.Slider.prototype.dragend = K2.Slider.prototype.mouseup = function(x, y) {
     this.triggered = false;
     this.drag_offset = undefined;
     return undefined;
 };
 
-Slider.prototype.drag = Slider.prototype.mousemove = function (curr_x, curr_y) {
+K2.Slider.prototype.drag = K2.Slider.prototype.mousemove = function(curr_x, curr_y) {
 
         if (this.triggered === true) {
             var to_set,
@@ -131,17 +128,17 @@ Slider.prototype.drag = Slider.prototype.mousemove = function (curr_x, curr_y) {
 
             // We must compensate for the point where we started to drag if
             // we want a seamless drag animation.
-            switch(this.type) {
-                case "horizontal":
+            switch (this.type) {
+                case 'horizontal':
                     to_set = (curr_x - this.zeroLimit - this.drag_offset) / (this.width);
                 break;
 
-                case "vertical":
+                case 'vertical':
                     to_set = (curr_y - this.zeroLimit - this.drag_offset) / (this.height);
                 break;
 
                 default:
-                  throw new Error("Error: Slider orientation is undefined!");
+                  throw new Error('Error: Slider orientation is undefined!');
               }
 
             if (to_set > 1) {
@@ -151,16 +148,16 @@ Slider.prototype.drag = Slider.prototype.mousemove = function (curr_x, curr_y) {
                 to_set = 0;
             }
 
-            ret = {"slot" : "slidervalue", "value" : to_set};
+            ret = {'slot' : 'slidervalue', 'value' : to_set};
 
             return ret;
         }
-        
+
         return undefined;
     };
 
 // Setters
-Slider.prototype.setValue = function (slot, value) {
+K2.Slider.prototype.setValue = function(slot, value) {
 
     if ((value < 0) || (value > 1)) {
         // Can happen if the user drags too much.
@@ -168,11 +165,11 @@ Slider.prototype.setValue = function (slot, value) {
     }
 
     // Now, we call the superclass
-    Slider.superclass.setValue.call(this, slot, value);
+    K2.Slider.superclass.setValue.call(this, slot, value);
 
 };
 
-Slider.prototype.refresh = function () {
+K2.Slider.prototype.refresh = function() {
 
     // Completely override the superclass, because the mechanism is different.
     // Maybe this function could be polymorphic and also accept areas, so we
@@ -185,66 +182,64 @@ Slider.prototype.refresh = function () {
 
         if ((this.drawClass !== undefined) && (this.isVisible === true)) {
             this.drawClass.drawImage.draw(this.sliderImage, this.xOrigin, this.yOrigin);
-            /*jslint nomen: false*/
 
-            switch(this.type) {
-                case "horizontal":
-                    this.drawClass.drawImage.draw(this.knobImage, this._getKnobPosition(), this.yOrigin);
+            switch (this.type) {
+                case 'horizontal':
+                    this.drawClass.drawImage.draw(this.knobImage, this.getKnobPosition(), this.yOrigin);
                 break;
 
-                case "vertical":
-                    this.drawClass.drawImage.draw(this.knobImage, this.xOrigin, this._getKnobPosition());
+                case 'vertical':
+                    this.drawClass.drawImage.draw(this.knobImage, this.xOrigin, this.getKnobPosition());
                 break;
 
                 default:
-                  throw new Error("Error: Slider orientation is undefined!");
+                  throw new Error('Error: Slider orientation is undefined!');
               }
           }
-        
-        /*jslint nomen: true*/
+
     }
 };
 
-Slider.prototype.calculateDimensions = function () {
+K2.Slider.prototype.calculateDimensions = function() {
 
     // The length of the slider knob.
     this.kWidth = this.knobImage.width;
     this.kHeight = this.knobImage.height;
-   
+
     //TODO Maybe we should override this function, to set the ROI to the fader.
     this.setWidth(this.sliderImage.width);
     this.setHeight(this.sliderImage.height);
-    
+
     // The fader can stick out by an half of its length at the two extremes of the
     // slider. Let's store some useful variables.
-        switch(this.type) {
-        case "horizontal":
+        switch (this.type) {
+        case 'horizontal':
             this.totalStride = this.width + this.kWidth;
-            this.additionalEndSpace = Math.round (this.kWidth / 2);
+            this.additionalEndSpace = Math.round(this.kWidth / 2);
             this.zeroLimit = this.xOrigin - this.additionalEndSpace;
-            this.oneLimit =  this.xOrigin + this.width + this.additionalEndSpace;
+            this.oneLimit = this.xOrigin + this.width + this.additionalEndSpace;
         break;
 
-        case "vertical":
+        case 'vertical':
             this.totalStride = this.height + this.kHeight;
-            this.additionalEndSpace = Math.round (this.kHeight / 2);
+            this.additionalEndSpace = Math.round(this.kHeight / 2);
             this.zeroLimit = this.yOrigin - this.additionalEndSpace;
-            this.oneLimit =  this.yOrigin + this.height + this.additionalEndSpace;
+            this.oneLimit = this.yOrigin + this.height + this.additionalEndSpace;
         break;
 
         default:
-          throw new Error("Error: Slider orientation is undefined!");
+          throw new Error('Error: Slider orientation is undefined!');
       }
-    
+
 };
 
-Slider.prototype.setGraphicWrapper = function (wrapper) {
+K2.Slider.prototype.setGraphicWrapper = function(wrapper) {
 
     // Call the superclass.
-    Slider.superclass.setGraphicWrapper.call(this, wrapper);
+    K2.Slider.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+    this.drawClass = wrapper.initObject([{objName: 'drawImage',
                                            objParms: this.objParms}]);
 
 };

@@ -7,10 +7,10 @@ function Multiband(args) {
 extend(Multiband, Element);
 
 
-Multiband.prototype.getready = function (args) {
+Multiband.prototype.getready = function(args) {
 
     if (args === undefined) {
-        throw new Error("Error: specArgs is undefined!");
+        throw new Error('Error: specArgs is undefined!');
     }
 
     var valueName,
@@ -18,33 +18,33 @@ Multiband.prototype.getready = function (args) {
 
      // Call the constructor from the superclass.
     Multiband.superclass.getready.call(this, args);
-    
+
     this.nBands = args.nBands;
-    this.sideBands = new Array (this.nBands);
+    this.sideBands = new Array(this.nBands);
 
     // The values. Every band has its starting point, height, width, hight and color.
 
     this.values = {};
 
     for (i = 0; i < args.nBands; i += 1) {
-        valueName = i + "sp";
+        valueName = i + 'sp';
         this.values[valueName] = 0;
-        valueName = i + "ep";
+        valueName = i + 'ep';
         this.values[valueName] = 0;
-        valueName = i + "width";
+        valueName = i + 'width';
         this.values[valueName] = 0;
-        valueName = i + "height";
+        valueName = i + 'height';
         this.values[valueName] = 0;
-        valueName = i + "color";
+        valueName = i + 'color';
         this.values[valueName] = 0;
     }
-    
-    this.defaultSlot = "0sp";
+
+    this.defaultSlot = '0sp';
 
     this.values.colorRange = args.colorRange;
 
     /* Get the wrapper primitive functions, unique to label */
-    this.drawClass = args.wrapper.initObject ([{objName: "drawRect",
+    this.drawClass = args.wrapper.initObject([{objName: 'drawRect',
                                            objParms: args.objParms}]);
 
     // The multiband display has a fixed width and height.
@@ -53,7 +53,7 @@ Multiband.prototype.getready = function (args) {
 
 };
 
-Multiband.prototype.calculateSidebands = function () {
+Multiband.prototype.calculateSidebands = function() {
 
     var startValue,
         endValue,
@@ -65,20 +65,20 @@ Multiband.prototype.calculateSidebands = function () {
 
     for (i = 0; i < this.nBands; i += 1) {
 
-        startValue = this.values[i + "sp"];
-        endValue = this.values[i + "ep"];
-        heightValue = this.values[i + "height"];
+        startValue = this.values[i + 'sp'];
+        endValue = this.values[i + 'ep'];
+        heightValue = this.values[i + 'height'];
 
         startXPoint = this.xOrigin + (this.width * startValue);
         endXPoint = this.xOrigin + (this.width * endValue);
         yPoint = this.yOrigin + (1 - this.height * heightValue);
 
-        this.sideBands[i] = {"startXPoint": startXPoint, "endXPoint": endXPoint, "yPoint": yPoint};
+        this.sideBands[i] = {'startXPoint': startXPoint, 'endXPoint': endXPoint, 'yPoint': yPoint};
     }
 
 };
 
-Multiband.prototype.isInROI = function (x, y) {
+Multiband.prototype.isInROI = function(x, y) {
     var proximity,
         i,
         curSB;
@@ -121,7 +121,7 @@ Multiband.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
+Multiband.prototype.onROI = function(start_x, start_y, curr_x, curr_y) {
 
     var temp_value,
             to_set,
@@ -131,7 +131,7 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
             prevEndSlot,
             nextStartSlot,
             deltaX;
-            
+
     deltaX = curr_x - start_x;
 
     if (this.sideBand[0] === 0) {
@@ -143,21 +143,21 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
 
             to_set = temp_value - deltaX / 2000;
 
-            if (to_set >= this.values["0ep"]) {
-                to_set = this.values["0ep"];
+            if (to_set >= this.values['0ep']) {
+                to_set = this.values['0ep'];
             }
             if (to_set < 0) {
                 to_set = 0;
             }
 
-            ret = {"slot" : "0sp", "value" : to_set};
+            ret = {'slot' : '0sp', 'value' : to_set};
 
             return ret;
         }
         // Moving a middle start sideband; this is affected by the endband.
-        startSlot = this.sideBand[1] + "sp";
-        endSlot = this.sideBand[1] + "ep";
-        prevEndSlot = (this.sideBand[1] - 1) + "ep";
+        startSlot = this.sideBand[1] + 'sp';
+        endSlot = this.sideBand[1] + 'ep';
+        prevEndSlot = (this.sideBand[1] - 1) + 'ep';
 
         temp_value = this.values[startSlot];
 
@@ -171,7 +171,7 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
             to_set = this.values[prevEndSlot];
         }
 
-        ret = {"slot" : startSlot, "value" : to_set};
+        ret = {'slot' : startSlot, 'value' : to_set};
         return ret;
 
     }
@@ -180,8 +180,8 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
         //Moving the end sideband
         if (this.sideBand[1] === 0) {
             //Moving the last ending sideband: This is affected only by the hard limit.
-            startSlot = this.sideBand[this.nBands] + "sp";
-            endSlot = this.sideBand[this.nBands] + "ep";
+            startSlot = this.sideBand[this.nBands] + 'sp';
+            endSlot = this.sideBand[this.nBands] + 'ep';
 
             temp_value = this.values[endSlot];
 
@@ -194,15 +194,15 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
                 to_set = 1;
             }
 
-            ret = {"slot" : endSlot, "value" : to_set};
+            ret = {'slot' : endSlot, 'value' : to_set};
 
             return ret;
         }
 
         // Moving a middle end sideband; this is affected by other bands
-        startSlot = this.sideBand[1] + "sp";
-        endSlot = this.sideBand[1] + "ep";
-        nextStartSlot = (this.sideBand[1] + 1) + "sp";
+        startSlot = this.sideBand[1] + 'sp';
+        endSlot = this.sideBand[1] + 'ep';
+        nextStartSlot = (this.sideBand[1] + 1) + 'sp';
 
         temp_value = this.values[endSlot];
 
@@ -216,42 +216,42 @@ Multiband.prototype.onROI = function (start_x, start_y, curr_x, curr_y) {
             to_set = this.values[nextStartSlot];
         }
 
-        ret = {"slot" : endSlot, "value" : to_set};
+        ret = {'slot' : endSlot, 'value' : to_set};
         return ret;
 
     }
     else {
         //Shouldn't be here.
-        throw new Error("Error: sideband is neither start not end.");
+        throw new Error('Error: sideband is neither start not end.');
     }
 
 };
 
-Multiband.prototype.setValue = function (slot, value) {
+Multiband.prototype.setValue = function(slot, value) {
 
     var bandn,
         bandtype,
         previous,
         next;
-    
+
     bandn = parseInt(slot, 10);
     bandtype = slot.substring(slot.length - 2);
 
     // Bad hack. It catches the end or start points. TODO write it better.
-    if ((bandtype === "sp") || (bandtype === "ep")) {
+    if ((bandtype === 'sp') || (bandtype === 'ep')) {
 
         // If it's a start or end point, don't make them overlap.
         previous = undefined;
         next = undefined;
 
-        if ((bandtype === "sp") && (bandn === 0)) {
-            if (value > this.values["0ep"]) {
-                value = this.values["0ep"];
+        if ((bandtype === 'sp') && (bandn === 0)) {
+            if (value > this.values['0ep']) {
+                value = this.values['0ep'];
             }
         }
 
-        else if ((bandtype === "ep") && (bandn === this.nBands - 1)) {
-            previous = bandn + "sp";
+        else if ((bandtype === 'ep') && (bandn === this.nBands - 1)) {
+            previous = bandn + 'sp';
             if (value < this.values[previous]) {
                 value = this.values[previous];
             }
@@ -259,13 +259,13 @@ Multiband.prototype.setValue = function (slot, value) {
 
         else {
 
-            if (bandtype === "sp") {
-                previous = (bandn - 1) + "ep";
-                next = bandn + "ep";
+            if (bandtype === 'sp') {
+                previous = (bandn - 1) + 'ep';
+                next = bandn + 'ep';
             }
-            else if (bandtype === "ep") {
-                previous = bandn + "sp";
-                next = (bandn + 1) + "sp";
+            else if (bandtype === 'ep') {
+                previous = bandn + 'sp';
+                next = (bandn + 1) + 'sp';
             }
 
             if (value < this.values[previous]) {
@@ -283,7 +283,7 @@ Multiband.prototype.setValue = function (slot, value) {
     //special behaviour. TODO this is no more needed. TODO call the callback
 
     if (this.values[slot] === undefined) {
-        throw new Error("Slot " + slot + " not present or value undefined");
+        throw new Error('Slot ' + slot + ' not present or value undefined');
     }
 
     if (value === this.values[slot]) {
@@ -292,11 +292,11 @@ Multiband.prototype.setValue = function (slot, value) {
     }
 
     this.values[slot] = value;
- 
+
 };
 
 
-Multiband.prototype.refresh = function () {
+Multiband.prototype.refresh = function() {
 
     var height,
         range,
@@ -306,7 +306,7 @@ Multiband.prototype.refresh = function () {
 
     // Call the superclass.
     Multiband.superclass.refresh.apply(this, [this.drawClass.drawRect]);
-    
+
     // Draw, if our draw class is already set.
     if ((this.drawClass !== undefined) && (this.isVisible === true)) {
 
@@ -315,9 +315,9 @@ Multiband.prototype.refresh = function () {
 
         for (i = 0; i < this.nBands; i += 1) {
 
-            height = (1 - this.values[i + "height"]) * this.height;
+            height = (1 - this.values[i + 'height']) * this.height;
             range = this.values.colorRange;
-            colValue = this.values[i + "color"];
+            colValue = this.values[i + 'color'];
             color_shade = (colValue - 0.5) * range;
             this.drawClass.drawRect.draw(this.sideBands[i].startXPoint,
                                          this.yOrigin + height,
@@ -327,6 +327,6 @@ Multiband.prototype.refresh = function () {
         }
     }
 };
-                    
+
 
 

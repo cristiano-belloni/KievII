@@ -3,8 +3,9 @@
   <head>
     <title>3 State Button Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../initial.js"></script>
     <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
-    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UIElement.js"></script>
     <script type="text/javascript" src="../../../UI.js"></script>
     <script type="text/javascript" src="../../../Button.js"></script>
     <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
@@ -14,9 +15,6 @@
   <body>
     <canvas id="plugin" width="200" height="200"></canvas>
     <script type="text/javascript">
-
-        // This should fix "console not defined" problem.
-        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
 
         var button_img_array = ["state0.png", "state1.png", "state2.png"];
 
@@ -71,7 +69,7 @@
                 };
             }();
 
-            var button = new Button(buttonArgs);
+            var button = new K2.Button(buttonArgs);
             ui.addElement(button);
 
             ui.refresh();

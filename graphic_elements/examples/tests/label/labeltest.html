@@ -3,8 +3,9 @@
   <head>
     <title>Label Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../initial.js"></script>
     <script type="text/javascript" src="../../../../utilities/Utilities.js"></script>
-    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UIElement.js"></script>
     <script type="text/javascript" src="../../../UI.js"></script>
     <script type="text/javascript" src="../../../Label.js"></script>
     <script type="text/javascript" src="../../../Background.js"></script>
@@ -15,8 +16,6 @@
     <canvas id="plugin" width="300" height="300"></canvas>
     <script type="text/javascript">
 
-        // This should fix "console not defined" problem.
-        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
         var ui;
 
         var imageLoader = new loadImageArray ({ID : "labeltest_image_loader",
@@ -48,7 +47,7 @@
                 top: 10,
                 left: 20,
                 width: 200,
-                height: 24,
+                height: 48,
                 objParms: {
                     font: "verdana bold",
                     textColor: "yellow",
@@ -64,21 +63,24 @@
                 image: loaderStatus.imagesArray[0]
             }
 
-            var label = new Label (labelArgs);
-            var background = new Background (backgroundArgs);
+            var label = new K2.Label (labelArgs);
+            var background = new K2.Background (backgroundArgs);
 
             ui.addElement(background);
             ui.addElement (label, {zIndex: 5});
 
-            label.setValue("labelvalue", "This is a label, testing this label.");
+            label.setValue("labelvalue", "This is a label, testing this label 0");
             
             var i = 1
-	    var timer = setInterval(function() { ui.setValue({elementID: "label", slot: "labelvalue", value: ("This is a label, testing this label. " + i++)}); }, 2000);
+	        var timer = setInterval(function() {
+	            ui.setValue(
+	                { elementID: "label", slot: "labelvalue", value: ("This is a label, testing this label " + i++) }
+	             );
+	             ui.refresh();
+	        }, 1000);
             
             ui.refresh();
         }
-
-
 
     </script>
   </body>

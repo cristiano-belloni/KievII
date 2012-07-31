@@ -3,8 +3,9 @@
   <head>
     <title>slider Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../initial.js"></script>
     <script type="text/javascript" src="../../../utilities/Utilities.js"></script>
-    <script type="text/javascript" src="../../Element.js"></script>
+    <script type="text/javascript" src="../../UIElement.js"></script>
     <script type="text/javascript" src="../../UI.js"></script>
     <script type="text/javascript" src="../../Slider.js"></script>
     <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
@@ -104,8 +105,8 @@
                 };
             }();
 
-            var hSlider = new Slider(hSliderArgs);
-            var vSlider = new Slider(vSliderArgs);
+            var hSlider = new K2.Slider(hSliderArgs);
+            var vSlider = new K2.Slider(vSliderArgs);
 
             ui.addElement(hSlider, {zIndex: 5});
             ui.addElement(vSlider, {zIndex: 5});

@@ -1,29 +1,29 @@
-function RotKnob(args) {
+K2.RotKnob = function (args) {
     if (arguments.length) {
         this.getready(args);
     }
 }
 
 // TODO should it extend Knob? Or maybe we should make a GenericKnob class?
-extend(RotKnob, Element);
+extend(K2.RotKnob, K2.UIElement);
 
-RotKnob.prototype.getready = function (args) {
+K2.RotKnob.prototype.getready = function(args) {
 
-    if (args === undefined) {
-        throw new Error("Error: specArgs is undefined!");
+    if (typeof args === 'undefined') {
+        throw ('RotKnob constructor: args is undefined!');
     }
 
     // Call the constructor from the superclass.
-    RotKnob.superclass.getready.call(this, args);
+    K2.RotKnob.superclass.getready.call(this, args);
 
     //now that all required properties have been inherited
     //from the parent class, define extra ones from this class
 
     //Default value is 0
-    this.values = {"knobvalue" : 0,
-                   "realknobvalue" : 0}
-               
-    this.defaultSlot = "knobvalue";
+    this.values = {'knobvalue' : 0,
+                   'realknobvalue' : 0};
+
+    this.defaultSlot = 'knobvalue';
 
     // Init angular value. Describes the orientation of the rotary part image,
     // relative to the angular 0 point.
@@ -55,26 +55,26 @@ RotKnob.prototype.getready = function (args) {
 
     var sens = args.sensitivity || 2000;
     // Scale sensivity according to the knob angle.
-    this.sensitivity = Math.round((sens / 360) *  (Math.abs(this.stopAngValue - this.startAngValue)));
+    this.sensitivity = Math.round((sens / 360) * (Math.abs(this.stopAngValue - this.startAngValue)));
 
-    
+
     this.image = args.image;
-    
+
     this.setWidth(this.image.width);
     this.setHeight(this.image.height);
-
+    
+    this.start_x = null;
+    this.start_y = null;
 };
 
 
 // This method returns a rotating amount given the RotKnob value.
-/*jslint nomen: false*/
-RotKnob.prototype._getRotateAmount = function () {
-/*jslint nomen: true*/
+K2.RotKnob.prototype.getRotateAmount = function() {
     if ((this.values.knobvalue < 0) || (this.values.knobvalue > 1)) {
         // Do nothing
         return undefined;
     }
-    
+
     // value in degrees.
     var angularValue = this.values.knobvalue * 360;
     //console.log ("angularValue: ", angularValue);
@@ -92,19 +92,16 @@ RotKnob.prototype._getRotateAmount = function () {
 };
 
 // This method returns true if the point given belongs to this RotKnob.
-RotKnob.prototype.isInROI = function (x, y) {
+K2.RotKnob.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
         if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
-            //console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
             return true;
         }
-        /*jsl:pass*/
     }
-    //console.log ("Point ", x, ",", y, " NOT in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
     return false;
 };
 
-RotKnob.prototype.dragstart = RotKnob.prototype.mousedown = function (x, y) {
+K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -117,20 +114,20 @@ RotKnob.prototype.dragstart = RotKnob.prototype.mousedown = function (x, y) {
     return undefined;
 };
 
-RotKnob.prototype.dragend = RotKnob.prototype.mouseup = function (x, y) {
+K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = function(x, y) {
 
     // Reset the starting point.
-    this.start_x = undefined;
-    this.start_y = undefined;
+    this.start_x = null;
+    this.start_y = null;
 
     // No value has been changed
     return undefined;
 
 };
 
-RotKnob.prototype.drag = RotKnob.prototype.mousemove = function (curr_x, curr_y) {
+K2.RotKnob.prototype.drag = K2.RotKnob.prototype.mousemove = function(curr_x, curr_y) {
 
-    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
+    if ((this.start_x !== null) && (this.start_y !== null)) {
 
         // This means that the mouse is currently down.
         var deltaY = 0,
@@ -151,7 +148,7 @@ RotKnob.prototype.drag = RotKnob.prototype.mousemove = function (curr_x, curr_y)
             to_set = 0;
         }
 
-        ret = {"slot" : "knobvalue", "value" : to_set};
+        ret = {'slot' : 'knobvalue', 'value' : to_set};
 
         return ret;
     }
@@ -162,7 +159,7 @@ RotKnob.prototype.drag = RotKnob.prototype.mousemove = function (curr_x, curr_y)
 };
 
 // Setters
-RotKnob.prototype.setValue = function (slot, value) {
+K2.RotKnob.prototype.setValue = function(slot, value) {
     var stepped_new_value;
 
     if ((value < 0) || (value > 1)) {
@@ -172,10 +169,10 @@ RotKnob.prototype.setValue = function (slot, value) {
     }
 
     if (this.values[slot] === undefined) {
-        throw new Error("Slot " + slot + " not present or value undefined");
+        throw new Error('Slot ' + slot + ' not present or value undefined');
     }
 
-    if ((value === this.values[slot]) || (value === this.values['real' + slot]))  {
+    if ((value === this.values[slot]) || (value === this.values['real' + slot])) {
         // Nothing to do.
         return;
     }
@@ -183,12 +180,12 @@ RotKnob.prototype.setValue = function (slot, value) {
     this.values['real' + slot] = value;
 
     if ((this.angSteps) !== undefined) {
-        
+
         var single_step = 1 / this.angSteps;
         stepped_new_value = Math.floor(value / single_step) * single_step;
 
         // No change in step -> no change in state or representation. Return.
-        if (stepped_new_value === this.values [slot]) {
+        if (stepped_new_value === this.values[slot]) {
             return;
         }
     }
@@ -196,28 +193,26 @@ RotKnob.prototype.setValue = function (slot, value) {
     else {
         stepped_new_value = value;
     }
-    
-    console.log ("Value is: ", stepped_new_value);
+
+    console.log('Value is: ', stepped_new_value);
 
     // Now, we call the superclass
-    RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
+    K2.RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
 
 };
 
-RotKnob.prototype.refresh = function () {
+K2.RotKnob.prototype.refresh = function() {
 
     if (this.drawClass !== undefined) {
         // Draw, if our draw class is already set.
 
         // Call the superclass.
-        RotKnob.superclass.refresh.call(this, this.drawClass.drawImage);
+        K2.RotKnob.superclass.refresh.call(this, this.drawClass.drawImage);
 
         // Draw if visible.
         if (this.isVisible === true) {
 
-            /*jslint nomen: false*/
-            var rot = this._getRotateAmount();
-            /*jslint nomen: true*/
+            var rot = this.getRotateAmount();
 
             this.drawClass.drawImage.drawRotate(this.image, this.xOrigin, this.yOrigin, rot);
 
@@ -225,13 +220,13 @@ RotKnob.prototype.refresh = function () {
     }
 };
 
-RotKnob.prototype.setGraphicWrapper = function (wrapper) {
+K2.RotKnob.prototype.setGraphicWrapper = function(wrapper) {
 
     // Call the superclass.
-    RotKnob.superclass.setGraphicWrapper.call(this, wrapper);
+    K2.RotKnob.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+    this.drawClass = wrapper.initObject([{objName: 'drawImage',
                                            objParms: this.objParms}]);
 
 };

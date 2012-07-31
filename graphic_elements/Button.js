@@ -1,32 +1,32 @@
-function Button(args) {
+K2.Button = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
 }
 
-extend(Button, Element);
+extend(K2.Button, K2.UIElement);
 
-Button.prototype.getready = function (args) {
+K2.Button.prototype.getready = function(args) {
 
     if (args === undefined) {
-        throw new Error("Error: args is undefined!");
+        throw new Error('Error: args is undefined!');
     }
 
     // Call the constructor from the superclass.
-    Button.superclass.getready.call(this, args);
+    K2.Button.superclass.getready.call(this, args);
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
     // Value 0 by default
-    this.values = {"buttonvalue" : 0};
-    this.defaultSlot = "buttonvalue";
+    this.values = {'buttonvalue' : 0};
+    this.defaultSlot = 'buttonvalue';
 
     this.triggered = false;
 
     this.imagesArray = args.imagesArray;
 
     if (this.imagesArray.length < 1) {
-        throw new Error("Invalid images array length, " + this.imagesArray.length);
+        throw new Error('Invalid images array length, ' + this.imagesArray.length);
     }
 
     this.nButtons = this.imagesArray.length;
@@ -40,7 +40,7 @@ Button.prototype.getready = function (args) {
 };
 
 // This method returns true if the point given belongs to this button.
-Button.prototype.isInROI = function (x, y) {
+K2.Button.prototype.isInROI = function(x, y) {
     if ((x >= this.ROILeft) && (y >= this.ROITop)) {
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight))) {
             //console.log ("Point ", x, ",", y, " in ROI: ", this.ROILeft, ",", this.ROITop, this.ROIWidth, "x", this.ROIHeight);
@@ -52,7 +52,7 @@ Button.prototype.isInROI = function (x, y) {
     return false;
 };
 
-Button.prototype.doubletap = Button.prototype.tap = Button.prototype.mousedown = function (x, y) {
+K2.Button.prototype.doubletap = K2.Button.prototype.tap = K2.Button.prototype.mousedown = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -62,7 +62,7 @@ Button.prototype.doubletap = Button.prototype.tap = Button.prototype.mousedown =
     return undefined;
 };
 
-Button.prototype.release = Button.prototype.mouseup = function (curr_x, curr_y) {
+K2.Button.prototype.release = K2.Button.prototype.mouseup = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -73,39 +73,39 @@ Button.prototype.release = Button.prototype.mouseup = function (curr_x, curr_y) 
 
             //Simply add 1 to the button value until it rolls back.
             to_set = (this.values.buttonvalue + 1) % this.nButtons;
-            ret = {"slot" : "buttonvalue", "value" : to_set};
+            ret = {'slot' : 'buttonvalue', 'value' : to_set};
 
             // Click on button is completed, the button is no more triggered.
             this.triggered = false;
-            
+
             return ret;
         }
     }
-    
+
     // Action is void, button was upclicked outside its ROI or never downclicked
     // No need to trigger anything, ignore this event.
     return undefined;
-    
+
 };
 
 // Setters
-Button.prototype.setValue = function (slot, value) {
+K2.Button.prototype.setValue = function(slot, value) {
 
     if ((value < 0) || (value > this.nButtons)) {
         return;
     }
 
     // Now, we call the superclass
-    Button.superclass.setValue.call(this, slot, value);
+    K2.Button.superclass.setValue.call(this, slot, value);
 
 };
 
-Button.prototype.refresh = function () {
+K2.Button.prototype.refresh = function() {
     if (this.drawClass !== undefined) {
         // Draw, if our draw class is already set.
 
         // Call the superclass.
-        Button.superclass.refresh.apply(this, [this.drawClass.drawImage]);
+        K2.Button.superclass.refresh.apply(this, [this.drawClass.drawImage]);
 
         // Draw, if the element is visible.
         if (this.isVisible === true) {
@@ -114,21 +114,21 @@ Button.prototype.refresh = function () {
     }
 };
 
-Button.prototype.setGraphicWrapper = function (wrapper) {
+K2.Button.prototype.setGraphicWrapper = function(wrapper) {
 
     // Call the superclass.
-    Button.superclass.setGraphicWrapper.call(this, wrapper);
+    K2.Button.superclass.setGraphicWrapper.call(this, wrapper);
 
     // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject ([{objName: "drawImage",
+    this.drawClass = wrapper.initObject([{objName: 'drawImage',
                                            objParms: this.objParms}]);
 
 };
 
-Button.prototype.setStatesNumber = function (number) {
+K2.Button.prototype.setStatesNumber = function(number) {
     this.nButtons = number;
 };
 
-Button.prototype.getStatesNumber = function () {
+K2.Button.prototype.getStatesNumber = function() {
     return this.nButtons;
-}
+};

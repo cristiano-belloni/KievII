@@ -10,8 +10,8 @@ function NonOverlappingMultiknob(args) {
 extend(NonOverlappingMultiknob, Element);
 
 
-NonOverlappingMultiknob.prototype.getready = function (args) {
-    
+NonOverlappingMultiknob.prototype.getready = function(args) {
+
      // Call the constructor from the superclass.
     NonOverlappingMultiknob.superclass.getready.call(this, args);
 
@@ -50,15 +50,15 @@ NonOverlappingMultiknob.prototype.getready = function (args) {
 
     //Map our values to the corresponding knob
     for (i = 0; i < this.KnobArray.length; i += 1) {
-        valuename = "knobvalue" + this.KnobArray[i].name;
+        valuename = 'knobvalue' + this.KnobArray[i].name;
         this.values[valuename] = i;
     }
-    
-    this.defaultSlot = "knobvalue0";
+
+    this.defaultSlot = 'knobvalue0';
 
 };
 
-NonOverlappingMultiknob.prototype.isInROI = function (x, y) {
+NonOverlappingMultiknob.prototype.isInROI = function(x, y) {
 
     var nKnobs,
         i;
@@ -77,7 +77,7 @@ NonOverlappingMultiknob.prototype.isInROI = function (x, y) {
 
 };
 
-NonOverlappingMultiknob.prototype.mousedown = function (x, y) {
+NonOverlappingMultiknob.prototype.mousedown = function(x, y) {
 
     var knobret,
         inROI;
@@ -85,44 +85,44 @@ NonOverlappingMultiknob.prototype.mousedown = function (x, y) {
     inROI = this.isInROI(x, y);
 
     if (inROI === true) {
-        knobret = this.KnobArray[this.ROIKnob].mousedown(x,y);
+        knobret = this.KnobArray[this.ROIKnob].mousedown(x, y);
     }
 
     //assert (knobret === undefined) TODO
     return knobret;
-    
+
 };
 
-NonOverlappingMultiknob.prototype.mouseup = function (x, y) {
+NonOverlappingMultiknob.prototype.mouseup = function(x, y) {
 
     var knobret;
 
     if (this.ROIKnob !== undefined) {
-        knobret = this.KnobArray[this.ROIKnob].mouseup(x,y);
+        knobret = this.KnobArray[this.ROIKnob].mouseup(x, y);
     }
     this.ROIKnob = undefined;
     //assert (knobret === undefined) TODO
     return knobret;
-}
+};
 
-NonOverlappingMultiknob.prototype.mousemove = function (x, y) {
+NonOverlappingMultiknob.prototype.mousemove = function(x, y) {
 
     var knobret;
 
     if (this.ROIKnob !== undefined) {
         //Pass it to the right subknob
-        knobret = this.KnobArray[this.ROIKnob].mousemove(x,y);
+        knobret = this.KnobArray[this.ROIKnob].mousemove(x, y);
 
         if (knobret !== undefined) {
-            var ret = {"slot" : ("knobvalue" + this.ROIKnob), "value" : knobret.value};
+            var ret = {'slot' : ('knobvalue' + this.ROIKnob), 'value' : knobret.value};
             return ret;
         }
     }
     // else
     return undefined;
-}
+};
 
-NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
+NonOverlappingMultiknob.prototype.setValue = function(slot, value) {
 
     var knobN;
 
@@ -169,16 +169,16 @@ NonOverlappingMultiknob.prototype.setValue = function (slot, value) {
 
     //Set the values in the subknob. I don't like the hardcoded string here.
     //(maybe a Multielement could be generalized)
-    this.KnobArray[knobN].setValue("knobvalue", value);
-    
+    this.KnobArray[knobN].setValue('knobvalue', value);
+
 };
 
-NonOverlappingMultiknob.prototype.refresh = function () {
-    
+NonOverlappingMultiknob.prototype.refresh = function() {
+
     var i;
 
     if (this.drawClass === undefined) {
-        throw new Error("Error: drawClass is undefined!");
+        throw new Error('Error: drawClass is undefined!');
     }
     else {
         // Refresh all the subknobs.
@@ -192,9 +192,9 @@ NonOverlappingMultiknob.prototype.refresh = function () {
     }
 };
 
-NonOverlappingMultiknob.prototype.getValue = function (slot) {
+NonOverlappingMultiknob.prototype.getValue = function(slot) {
     //Retrieve the knob numer here. Kind of an hack, mh?
     var knobN = this.values[slot];
     //Get the values from the subknob. Same as setValue.
-    this.KnobArray[knobN].getValue("knobvalue");
+    this.KnobArray[knobN].getValue('knobvalue');
 };
