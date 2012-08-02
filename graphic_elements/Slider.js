@@ -169,35 +169,27 @@ K2.Slider.prototype.setValue = function(slot, value) {
 
 };
 
-K2.Slider.prototype.refresh = function() {
+K2.Slider.prototype.refresh_CANVAS2D = function(engine) {
 
-    // Completely override the superclass, because the mechanism is different.
-    // Maybe this function could be polymorphic and also accept areas, so we
-    // could call the superclass with parameters.
-
-    if (this.drawClass === undefined) {
-        return;
+    if (this.isVisible === true) {
+        
+        engine.context.drawImage (this.sliderImage, this.xOrigin, this.yOrigin);
+    
+        switch (this.type) {
+            case 'horizontal':
+                engine.context.drawImage (this.knobImage, this.getKnobPosition(), this.yOrigin);
+            break;
+    
+            case 'vertical':
+                engine.context.drawImage (this.knobImage, this.xOrigin, this.getKnobPosition());
+            break;
+    
+            default:
+              throw new Error('Error: Slider orientation unknown: ', this.type);
+        }
     }
-    else {
 
-        if ((this.drawClass !== undefined) && (this.isVisible === true)) {
-            this.drawClass.drawImage.draw(this.sliderImage, this.xOrigin, this.yOrigin);
-
-            switch (this.type) {
-                case 'horizontal':
-                    this.drawClass.drawImage.draw(this.knobImage, this.getKnobPosition(), this.yOrigin);
-                break;
-
-                case 'vertical':
-                    this.drawClass.drawImage.draw(this.knobImage, this.xOrigin, this.getKnobPosition());
-                break;
-
-                default:
-                  throw new Error('Error: Slider orientation is undefined!');
-              }
-          }
-
-    }
+    
 };
 
 K2.Slider.prototype.calculateDimensions = function() {
