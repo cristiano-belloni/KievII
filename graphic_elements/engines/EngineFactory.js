@@ -5,8 +5,8 @@ K2.ENGINE.engineFactory = function (type, args) {
     switch(type)
     {
     case 'CANVAS2D':
-      if (args.canvas !== undefined) {
-          return new canvasEngineCreator (args.canvas);
+      if (args.target !== undefined) {
+          return new canvasEngineCreator (args.target);
       }
       else {
           throw ("Engine: args is undefined");

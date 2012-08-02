@@ -1,6 +1,6 @@
-K2.UI = function(domElement, engine, parameters) {
+K2.UI = function(engine, parameters) {
     
-    // Engine {type: 'CANVAS2D', target: 'canvas'}
+    // Engine {type: 'CANVAS2D', target: "target", renderTarget: 'renderTarget', eventTarget: "eventTarget"}
 
     // <EVENT HANDLING>
 
@@ -137,12 +137,15 @@ K2.UI = function(domElement, engine, parameters) {
     // <END OF EVENT HANDLING>
 
 	// <CONSTRUCTOR>
-    this.domElement = domElement;
+	var eventTarget = engine.eventTarget || engine.target;
+	var renderTarget = engine.renderTarget || engine.target;
+    
+    this.domElement = eventTarget;
 
 	// Hammer.js is present
 	if (typeof Hammer !== 'undefined') {
 		console.log('We have hammer.js!');
-		this.hammer = new Hammer(domElement, {drag_min_distance: 2});
+		this.hammer = new Hammer(this.domElement, {drag_min_distance: 2});
 		this.hammer.ondragstart = this.onHammerEvent();
 		this.hammer.ondrag = this.onHammerEvent();
 		this.hammer.ondragend = this.onHammerEvent();
@@ -176,7 +179,7 @@ K2.UI = function(domElement, engine, parameters) {
     this.zArray = [];
 
     // get the engine from the engine factory
-    this.engine = K2.ENGINE.engineFactory (engine.type, {'canvas': engine.target});
+    this.engine = K2.ENGINE.engineFactory (engine.type, {'target': renderTarget});
 
     // Break on first
     if (typeof parameters !== 'undefined') {
