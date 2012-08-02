@@ -35,14 +35,14 @@ K2.UIElement.prototype.getready = function(args) {
     this.yOrigin = args.top;
 
     //set the ROI if defined
-    if (args.ROILeft !== undefined) {
+    if (typeof args.ROILeft !== 'undefined') {
         this.ROILeft = args.ROILeft;
     }
     else {
         this.ROILeft = this.xOrigin;
     }
 
-    if (args.ROITop !== undefined) {
+    if (typeof args.ROITop !== 'undefined') {
         this.ROITop = args.ROITop;
     }
     else {
@@ -59,7 +59,7 @@ K2.UIElement.prototype.getready = function(args) {
     this.objParms = args.objParms;
 
     // See if there is a callback to call when the value is set
-    if (args !== undefined) {
+    if (typeof args !== 'undefined') {
         this.onValueSet = args.onValueSet;
     }
 
@@ -101,21 +101,21 @@ K2.UIElement.prototype.getHeight = function() {
 
 K2.UIElement.prototype.setHeight = function(height) {
     this.height = height;
-    if (this.ROIHeight === undefined) {
+    if (typeof this.ROIHeight === 'undefined') {
         this.ROIHeight = height;
     }
 };
 
 K2.UIElement.prototype.setWidth = function(width) {
     this.width = width;
-    if (this.ROIWidth === undefined) {
+    if (typeof this.ROIWidth === 'undefined') {
         this.ROIWidth = width;
     }
 };
 
 K2.UIElement.prototype.getValue = function(slot) {
 
-    if (this.values[slot] === undefined) {
+    if (typeof this.values[slot] === 'undefined') {
         throw new Error('Slot ' + slot + ' not present or value undefined');
     }
     else {
@@ -126,7 +126,7 @@ K2.UIElement.prototype.getValue = function(slot) {
 // Setters
 K2.UIElement.prototype.setValue = function(slot, value) {
 
-    if (this.values[slot] === undefined) {
+    if (typeof this.values[slot] === 'undefined') {
         throw new Error('Slot ' + slot + ' not present or value undefined');
     }
 
