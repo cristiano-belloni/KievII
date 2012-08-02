@@ -4,7 +4,7 @@ K2.Wavebox = function(args) {
     }
 }
 
-extend(K2.Wavebox, K2.UIElement);
+K2.extend(K2.Wavebox, K2.UIElement);
 
 K2.Wavebox.prototype.getready = function(args) {
 

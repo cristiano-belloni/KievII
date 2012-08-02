@@ -4,7 +4,7 @@ K2.Knob = function(args) {
     }
 }
 
-extend(K2.Knob, K2.UIElement);
+K2.extend(K2.Knob, K2.UIElement);
 
 K2.Knob.prototype.getready = function(args) {
 

@@ -4,7 +4,7 @@ K2.Slider = function(args) {
     }
 }
 
-extend(K2.Slider, K2.UIElement);
+K2.extend(K2.Slider, K2.UIElement);
 
 K2.Slider.prototype.getready = function(args) {
 

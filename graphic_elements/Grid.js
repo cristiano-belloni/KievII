@@ -4,7 +4,7 @@ K2.Grid = function(args) {
     }
 }
 
-extend(K2.Grid, K2.UIElement);
+K2.extend(K2.Grid, K2.UIElement);
 
 K2.Grid.prototype.getready = function(args) {
 

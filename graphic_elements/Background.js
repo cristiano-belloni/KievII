@@ -4,7 +4,7 @@ K2.Background = function(args) {
     }
 }
 
-extend(K2.Background, K2.UIElement);
+K2.extend(K2.Background, K2.UIElement);
 
 K2.Background.prototype.getready = function(args) {
 

@@ -4,7 +4,7 @@ K2.Curve = function(args) {
     }
 }
 
-extend(K2.Curve, K2.UIElement);
+K2.extend(K2.Curve, K2.UIElement);
 
 K2.Curve.prototype.getready = function(args) {
 

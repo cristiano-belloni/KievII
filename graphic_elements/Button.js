@@ -4,7 +4,7 @@ K2.Button = function(args) {
     }
 }
 
-extend(K2.Button, K2.UIElement);
+K2.extend(K2.Button, K2.UIElement);
 
 K2.Button.prototype.getready = function(args) {
 

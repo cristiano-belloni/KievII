@@ -4,7 +4,7 @@ K2.Label = function(args) {
     }
 }
 
-extend(K2.Label, K2.UIElement);
+K2.extend(K2.Label, K2.UIElement);
 
 K2.Label.prototype.getready = function(args) {
 

@@ -7,7 +7,7 @@ function NonOverlappingMultiknob(args) {
     }
 }
 
-extend(NonOverlappingMultiknob, Element);
+K2.extend(NonOverlappingMultiknob, Element);
 
 
 NonOverlappingMultiknob.prototype.getready = function(args) {

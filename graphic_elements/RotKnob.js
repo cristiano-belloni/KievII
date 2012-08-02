@@ -5,7 +5,7 @@ K2.RotKnob = function (args) {
 }
 
 // TODO should it extend Knob? Or maybe we should make a GenericKnob class?
-extend(K2.RotKnob, K2.UIElement);
+K2.extend(K2.RotKnob, K2.UIElement);
 
 K2.RotKnob.prototype.getready = function(args) {
 

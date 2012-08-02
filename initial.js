@@ -2,7 +2,7 @@
 var K2 = {};
 
 /* Some general-purpose function */
-function extend(subClass, superClass) {
+K2.extend = function (subClass, superClass) {
     var F = function() {};
     F.prototype = superClass.prototype;
     subClass.prototype = new F();
@@ -13,7 +13,7 @@ function extend(subClass, superClass) {
     }
 }
 
-function clone(obj) {
+K2.clone = function (obj) {
     // Handle the 3 simple types, and null or undefined
     if (null == obj || "object" != typeof obj) return obj;
     
@@ -44,6 +44,29 @@ function clone(obj) {
     }
     
     throw new Error("Unable to copy obj! Its type isn't supported.");
+}
+
+/**
+ * merge 2 objects into a new object
+ * @param   object  obj1
+ * @param   object  obj2
+ * @return  object  merged object
+ */
+K2.mergeObject = function(obj1, obj2) {
+    var output = {};
+
+    if(!obj2) {
+        return obj1;
+    }
+
+    for (var prop in obj1) {
+        if (prop in obj2) {
+            output[prop] = obj2[prop];
+        } else {
+            output[prop] = obj1[prop];
+        }
+    }
+    return output;
 }
 
 // This should fix "console not defined" problem.

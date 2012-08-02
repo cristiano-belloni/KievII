@@ -4,7 +4,7 @@ function Multiband(args) {
     }
 }
 
-extend(Multiband, Element);
+K2.extend(Multiband, Element);
 
 
 Multiband.prototype.getready = function(args) {
