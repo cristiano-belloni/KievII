@@ -147,32 +147,14 @@ K2.Knob.prototype.setValue = function(slot, value) {
 
 };
 
-K2.Knob.prototype.refresh = function() {
+K2.Knob.prototype.refresh_CANVAS2D = function(engine) {
 
-    if (this.drawClass !== undefined) {
-        // Draw, if our draw class is already set.
-
-        // Call the superclass.
-        K2.Knob.superclass.refresh.call(this, this.drawClass.drawImage);
-
-        // Draw if visible.
-        if (this.isVisible === true) {
-            // Get the image to draw
-            var imageNum = this.getImageNum();
-            // Draw the image on the canvas
-            this.drawClass.drawImage.draw(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
-
-        }
+    // Draw if visible.
+    if (this.isVisible === true) {
+        // Get the image to draw
+        var imageNum = this.getImageNum();
+        // Draw the image on the canvas
+        engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
     }
-};
-
-K2.Knob.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Knob.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawImage',
-                                           objParms: this.objParms}]);
-
+    
 };
