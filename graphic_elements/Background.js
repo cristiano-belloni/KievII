@@ -64,7 +64,7 @@ K2.Background.prototype.mouseup = function(curr_x, curr_y) {
 
         if (this.isInROI(curr_x, curr_y)) {
 
-            ret = {'slot' : 'backgroundvalue', 'value' : 0};
+            ret = {'slot' : 'selected', 'value' : [curr_x, curr_y]};
 
             // Click on bg is completed.
             this.triggered = false;
