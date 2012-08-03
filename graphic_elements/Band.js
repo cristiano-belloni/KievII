@@ -25,6 +25,8 @@ K2.Band.prototype.getready = function(args) {
     
     this.color = args.color || 'red';
     this.proximity = args.proximity || 10;
+    this.borders = args.borders || {top: true, bottom: true, right: true, left: true};
+    this.move = args.move || true;
     var height = args.height || 0;
     var width = args.width || 0; 
     this.setWidth(width);
@@ -75,7 +77,36 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
             // We're next to the top side
             this.topSide = true;
             console.log ("Top side click detected");
-        } 
+        }
+        
+        var xInside = false;
+        var yInside = false;
+        
+        if (this.values.width > 0) {
+            if ((x > this.values.xOffset) && (x < this.values.xOffset + this.values.width)) {
+                xInside = true;
+            }
+        }
+        else {
+            if ((x < this.values.xOffset) && (x > this.values.xOffset + this.values.width)) {
+                xInside = true;
+            }
+        }
+        
+        if (this.values.height > 0) {
+            if ((y > this.height - (this.values.yOffset + this.values.height)) && (y < this.height - this.values.yOffset)) {
+                yInside = true;
+            }
+        }
+        else {
+            if ((y < this.height - (this.values.yOffset + this.values.height)) && (y > this.height - this.values.yOffset)) {
+                yInside = true;
+            }
+        }
+        
+        if (xInside && yInside) {
+            console.log ("clicked inside!");
+        }
 };
 
 K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y) {
@@ -83,19 +114,19 @@ K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y)
     var ret = {},
         points;
     
-    if (this.leftSide) {
+    if (this.leftSide && this.borders.left) {
         return [{slot: 'width', value : this.values.width - (curr_x - this.values.xOffset)}, {slot : 'xOffset', value : curr_x}];
     }
     
-    if (this.rightSide) {
+    if (this.rightSide && this.borders.right) {
         return {slot : 'width', value : (curr_x - this.values.xOffset)};
     }
     
-    if (this.bottomSide) {
+    if (this.bottomSide && this.borders.bottom) {
         return [{slot: 'height', value : this.values.height + (curr_y - (this.height - this.values.yOffset))}, {slot : 'yOffset', value : this.height - curr_y}];
     }
     
-    if (this.topSide) {
+    if (this.topSide && this.borders.top) {
         return {slot : 'height', value : (this.height - curr_y - this.values.yOffset)};
     }
     
