@@ -14,6 +14,7 @@ var BandTest = {
             height: this.viewHeight,
             width: this.viewWidth,
             onValueSet: function (slot, value) {
+                console.log ("Event on slot " + slot + " with value " + value);
                 this.ui.refresh();
             }.bind(this),
             color: 'black',

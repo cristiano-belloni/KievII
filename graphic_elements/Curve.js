@@ -107,6 +107,7 @@ K2.Curve.prototype.isInHandle = function(x, y) {
 };
 
 // This methods returns true if the point given belongs to this element.
+// TODO to reflect the bounding box of the element ?
 K2.Curve.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
         if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
