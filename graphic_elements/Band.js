@@ -17,7 +17,7 @@ K2.Band.prototype.getready = function(args) {
     // A band has its starting point, height, width and color.
     this.values = { 'width'     : 0,
                     'height'    : 0,
-                    'selected'  : false,
+                    'selected'  : [],
                     'xOffset'   : 0,
                     'yOffset'   : 0};
 
@@ -43,6 +43,41 @@ K2.Band.prototype.isInROI = function(x, y) {
 
     return false;
 };
+
+K2.Band.prototype.isInBand = function (x,y) {
+    var xInside = false;
+    var yInside = false;
+    
+    if (this.values.width > 0) {
+        if ((x > this.values.xOffset) && (x < this.values.xOffset + this.values.width)) {
+            xInside = true;
+        }
+    }
+    else {
+        if ((x < this.values.xOffset) && (x > this.values.xOffset + this.values.width)) {
+            xInside = true;
+        }
+    }
+    
+    if (this.values.height > 0) {
+        if ((y > this.height - (this.values.yOffset + this.values.height)) && (y < this.height - this.values.yOffset)) {
+            yInside = true;
+        }
+    }
+    else {
+        if ((y < this.height - (this.values.yOffset + this.values.height)) && (y > this.height - this.values.yOffset)) {
+            yInside = true;
+        }
+    }
+    
+    if (xInside && yInside) {
+        return true;
+    }
+    else {
+        return false;
+    }
+    
+}
 
 K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedown = function(x, y) {
     
@@ -79,34 +114,11 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
             console.log ("Top side click detected");
         }
         
-        var xInside = false;
-        var yInside = false;
-        
-        if (this.values.width > 0) {
-            if ((x > this.values.xOffset) && (x < this.values.xOffset + this.values.width)) {
-                xInside = true;
-            }
-        }
-        else {
-            if ((x < this.values.xOffset) && (x > this.values.xOffset + this.values.width)) {
-                xInside = true;
-            }
-        }
-        
-        if (this.values.height > 0) {
-            if ((y > this.height - (this.values.yOffset + this.values.height)) && (y < this.height - this.values.yOffset)) {
-                yInside = true;
-            }
-        }
-        else {
-            if ((y < this.height - (this.values.yOffset + this.values.height)) && (y > this.height - this.values.yOffset)) {
-                yInside = true;
-            }
-        }
-        
-        if (xInside && yInside) {
+        if (this.isInBand (x,y)) {
             console.log ("clicked inside!");
+            this.inside = true;
         }
+        else this.inside = false;
 };
 
 K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y) {
@@ -139,19 +151,18 @@ K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y)
 K2.Band.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mouseup = function(x, y) {
     // Drag guards are reset to false
     this.leftSide = this.rightSide =  this.bottomSide = this.topSide = false;
+    var ret = undefined;
     
-    // Selection event
-    // check if the point is inside the band
-    // if the saved guard is true
-    // reset the guard and trigger a selected event
-    /*if (this.selectStart === true) {
-        if (this.isInCurve(x, y)) {
-            //Curve is selected
-            this.selectStart = false;
-            var ret = {'slot' : 'selected', 'value' : [x, y]};
-            return ret;
-            }
-    }*/
+    // Clicked in and out inside the object. the object is selected
+    if (this.inside) {
+        if (this.isInBand (x,y)) {
+           ret = {slot : 'selected', value : [x, y]}; 
+        }
+    }
+    this.inside = false;
+    
+    return ret; 
+    
 };
 
 K2.Band.prototype.setValue = function(slot, value) {
