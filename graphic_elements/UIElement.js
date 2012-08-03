@@ -54,6 +54,9 @@ K2.UIElement.prototype.getready = function(args) {
 
     // These are to be set later
     this.values = {};
+    
+    // Object transparency
+    this.transparency = args.transparency || 1.0;
 
     // Specific parameters of the object, to be passed to the wrapper
     this.objParms = args.objParms;
@@ -154,12 +157,34 @@ K2.UIElement.prototype.getListening = function() {
 };
 
 K2.UIElement.prototype.refresh = function(engine) {
-    var refreshFunc = 'refresh' + '_' + engine.type;
+    var callerFunc = 'call_' + engine.type;
+    
+    
+        if (typeof this[callerFunc] === 'function') {
+            this[callerFunc](engine);
+        }
+    
+    else throw ('Element ' + this.ID + ' ' + callerFunc + ' is not a function. Its type is ' + typeof this[callerFunc]);
+};
+
+// Type-specific functions
+K2.UIElement.prototype.call_CANVAS2D = function (engine) {
+    
+    var refreshFunc = 'refresh_' + engine.type;
+    
+    // Stuff every CANVAS2D element must do    
+    engine.context.save();
+    engine.context.globalAlpha = this.transparency;
     if (typeof this[refreshFunc] === 'function') {
+        // Call the specific implementation
         this[refreshFunc](engine);
     }
-    else throw ('Element ' + this.ID + ' ' + refreshFunc + ' is not a function. Its type is ' + typeof this[refreshFunc]);
-};
+    else {
+        throw ('Element ' + this.ID + ' ' + refreshFunc + ' is not a function. Its type is ' + typeof this[refreshFunc]);
+    }
+    engine.context.restore();
+    
+}
 
 K2.UIElement.prototype.getID = function() {
     return this.ID;
