@@ -124,23 +124,29 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
 
 K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y) {
 
-    var ret = {},
-        points;
-    
+    var ret = [];
+       
     if (this.leftSide && this.borders.left) {
-        return [{slot: 'width', value : this.values.width - (curr_x - this.values.xOffset)}, {slot : 'xOffset', value : curr_x}];
+        ret.push ({slot: 'width', value : this.values.width - (curr_x - this.values.xOffset)});
+        ret.push ({slot : 'xOffset', value : curr_x});
     }
     
-    if (this.rightSide && this.borders.right) {
-        return {slot : 'width', value : (curr_x - this.values.xOffset)};
+    if (this.rightSide && this.borders.right && !this.leftSide) {
+        ret.push ({slot : 'width', value : (curr_x - this.values.xOffset)});
     }
     
     if (this.bottomSide && this.borders.bottom) {
-        return [{slot: 'height', value : this.values.height + (curr_y - (this.height - this.values.yOffset))}, {slot : 'yOffset', value : this.height - curr_y}];
+        ret.push ({slot: 'height', value : this.values.height + (curr_y - (this.height - this.values.yOffset))});
+        ret.push ({slot : 'yOffset', value : this.height - curr_y});
     }
     
-    if (this.topSide && this.borders.top) {
-        return {slot : 'height', value : (this.height - curr_y - this.values.yOffset)};
+    if (this.topSide && this.borders.top && !this.bottomSide) {
+        ret.push ({slot : 'height', value : (this.height - curr_y - this.values.yOffset)});
+    }
+    
+    if (ret.length > 0) {
+        // return here, do not move
+        return ret;
     }
     
     if (this.inside && this.move) {
