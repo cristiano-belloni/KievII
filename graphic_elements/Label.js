@@ -14,6 +14,8 @@ K2.Label.prototype.getready = function(args) {
     this.values = {'labelvalue' : ''};
     this.defaultSlot = 'labelvalue';
 
+    this.textColor = args.textColor || 'black';
+    
     this.setWidth(args.width);
     this.setHeight(args.height);
 
@@ -34,33 +36,26 @@ K2.Label.prototype.setValue = function(slot, value) {
     K2.Label.superclass.setValue.call(this, slot, value);
 };
 
-K2.Label.prototype.refresh = function() {
+K2.Label.prototype.refresh_CANVAS2D = function(engine) {
 
     var text;
-    if (this.drawClass !== undefined) {
-        // Draw, if our draw class is already set.
 
-        // Call the superclass.
-        K2.Label.superclass.refresh.call(this, this.drawClass.drawText);
+    if (this.isVisible === true) {
 
-        // Draw, if our draw class is already set.
-        if (this.isVisible === true) {
-
-            // Maybe the filtering should be done here?
-            text = this.values.labelvalue;
-            this.drawClass.drawText.draw(text, this.xOrigin, this.yOrigin, this.width, this.height);
-
+        if (typeof this.objParms !== 'undefined') {
+            
+            if (typeof this.objParms.textBaseline !== 'undefined') {
+                engine.context.textBaseline =  this.objParms.textBaseline;
+            }
+            if (typeof this.objParms.textAlign !== 'undefined') {
+                engine.context.textAlign =  this.objParms.textAlign;
+            }
+            if (typeof this.objParms.font !== 'undefined') {
+                engine.context.font =  this.objParms.font;
+            }
+            
         }
+        engine.context.fillStyle = this.textColor;
+        engine.context.fillText(this.values.labelvalue, this.xOrigin, this.yOrigin);
     }
-
-};
-
-K2.Label.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Label.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawText',
-                                           objParms: this.objParms}]);
 };
