@@ -3,32 +3,19 @@
   <head>
     <title>Visibility Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../../utilities/utilities.js"></script>
-    <script type="text/javascript" src="../../../Element.js"></script>
-    <script type="text/javascript" src="../../../UI.js"></script>
-    <script type="text/javascript" src="../../../Button.js"></script>
-    <script type="text/javascript" src="../../../Knob.js"></script>
-    <script type="text/javascript" src="../../../Background.js"></script>
-    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
-    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../../../kievII.js"></script>
   </head>
   <body>
     <canvas id="plugin" width="800" height="800"></canvas>
     <script type="text/javascript">
-
-        // This should fix "console not defined" problem.
-        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        
         var ui;
 
         /* INIT */
 
         var plugin_canvas = document.getElementById("plugin");
 
-        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                               {canvas: plugin_canvas}
-                                               );
-
-        ui = new UI (plugin_canvas, CWrapper);
+        ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas});
 
         // LOAD IMAGES
 
@@ -68,7 +55,8 @@
             ID: "test_button_1",
             top: 50,
             left: 0,
-            imagesArray : loaders["vtest_button_image_loader"].images
+            imagesArray : loaders["vtest_button_image_loader"].images,
+            transparency: 1
         };
         button1Args.onValueSet = function () {
             var that = this;
@@ -83,7 +71,7 @@
                 ui.refresh();
             };
         }();
-        var button1 = new Button(button1Args);
+        var button1 = new K2.Button(button1Args);
 
         /* BUTTON 2 */
 
@@ -91,7 +79,8 @@
             ID: "test_button_2",
             top: 50,
             left: 50,
-            imagesArray : loaders["vtest_button_image_loader"].images
+            imagesArray : loaders["vtest_button_image_loader"].images,
+            transparency: 1
         };
         button2Args.onValueSet = function () {
             var that = this;
@@ -108,7 +97,7 @@
                 ui.refresh();
             };
         }();
-        var button2 = new Button(button2Args);
+        var button2 = new K2.Button(button2Args);
         
         /* BUTTON 3 */
 
@@ -116,7 +105,8 @@
             ID: "test_button_3",
             top: 50,
             left: 100,
-            imagesArray : loaders["vtest_button_image_loader"].images
+            imagesArray : loaders["vtest_button_image_loader"].images,
+            transparency: 1
         };
         button3Args.onValueSet = function () {
             var that = this;
@@ -131,7 +121,7 @@
                 ui.refresh();
             };
         }();
-        var button3 = new Button(button3Args);
+        var button3 = new K2.Button(button3Args);
 
         var knobArgs = {
             ID: "knob",
@@ -139,13 +129,14 @@
             left: 0,
             onValueSet : function () {ui.refresh()},
             imagesArray : loaders["vtest_knob_image_loader"].images,
-            sensitivity : 5000
+            sensitivity : 5000,
+            transparency: 1
         };
         //onValueSet = undefined
-        var knob1 = new Knob(knobArgs);
+        var knob1 = new K2.Knob(knobArgs);
         knobArgs.ID = "knob2";
         knobArgs.left = 150;
-        var knob2 = new Knob(knobArgs);
+        var knob2 = new K2.Knob(knobArgs);
 
         /* BACKGROUND */
         var backgroundArgs = {
@@ -154,7 +145,7 @@
                 left: 0,
                 image: loaders["vtest_bg_image_loader"].images[0]
             }
-       var background = new Background (backgroundArgs);
+       var background = new K2.Background (backgroundArgs);
 
 
 
