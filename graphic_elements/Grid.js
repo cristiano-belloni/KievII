@@ -20,7 +20,7 @@ K2.Grid.prototype.getready = function(args) {
 
     // Now that all required properties have been inherited
     // from the parent class, define extra ones from this class
-    this.values = {};
+    this.values = {'selected' : []};
     this.defaultSlot = '';
 
     this.triggered = false;
@@ -58,9 +58,6 @@ K2.Grid.prototype.mousedown = function(x, y) {
 
 K2.Grid.prototype.mouseup = function(curr_x, curr_y) {
 
-    var to_set = 0,
-        ret = {};
-
     if (this.triggered) {
         // Grid is activated when cursor is still in the element ROI, otherwise action is void.
         if (this.isInROI(curr_x, curr_y)) {
@@ -68,7 +65,7 @@ K2.Grid.prototype.mouseup = function(curr_x, curr_y) {
             // Click on Grid is completed, the Grid is no more triggered.
             this.triggered = false;
 
-            return ret;
+            return {slot: 'selected', value: [curr_x, curr_y]};
         }
     }
 
@@ -85,43 +82,28 @@ K2.Grid.prototype.setValue = function(slot, value) {
 
 };
 
-K2.Grid.prototype.refresh = function() {
-    if (typeof this.drawClass !== 'undefined') {
-        // Call the superclass.
-        K2.Grid.superclass.refresh.apply(this, [this.drawClass.drawImage]);
+K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
+    
+    if (this.isVisible === true) {
 
-        // Draw, if the element is visible.
-        if (this.isVisible === true) {
+        var context = engine.context;
 
-            var context = this.drawClass.drawImage.canvasC;
+        var rowSpace = Math.floor(this.height / this.rows);
+        var columnSpace = Math.floor(this.width / this.columns);
 
-            var rowSpace = Math.floor(this.height / this.rows);
-            var columnSpace = Math.floor(this.width / this.columns);
+        // Draw horizontal lines
+        for (var x = this.xOrigin + 0.0; x < this.xOrigin + this.width; x += rowSpace) {
+			context.moveTo(x, this.yOrigin);
+			context.lineTo(x, this.yOrigin + this.height);
+		}
+		// Draw vertical lines
+		for (var y = this.yOrigin + 0.0; y < this.yOrigin + this.height; y += columnSpace) {
+  			context.moveTo(this.xOrigin, y);
+  			context.lineTo(this.xOrigin + this.width, y);
+		}
 
-            // Draw horizontal lines
-            for (var x = this.xOrigin + 0.0; x < this.xOrigin + this.width; x += rowSpace) {
-  				context.moveTo(x, this.yOrigin);
-  				context.lineTo(x, this.yOrigin + this.height);
-			}
- 			// Draw vertical lines
-			for (var y = this.yOrigin + 0.0; y < this.yOrigin + this.height; y += columnSpace) {
-	  			context.moveTo(this.xOrigin, y);
-	  			context.lineTo(this.xOrigin + this.width, y);
-			}
-
-			context.strokeStyle = '#eee';
-			context.stroke();
-        }
+		context.strokeStyle = '#eee';
+		context.stroke();
     }
-};
-
-K2.Grid.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Grid.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawImage',
-                                           objParms: this.objParms}]);
-
+    
 };
