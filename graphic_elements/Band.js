@@ -188,11 +188,8 @@ K2.Band.prototype.setValue = function(slot, value) {
 
 K2.Band.prototype.refresh_CANVAS2D = function(engine) {
 
-
-    // Draw, if our draw class is already set.
     if (this.isVisible === true) {
         
-        engine.context.save();
         engine.context.fillStyle = this.color;
         engine.context.strokeStyle = this.borderColor;
         engine.context.lineWidth = this.thickness;
@@ -204,6 +201,5 @@ K2.Band.prototype.refresh_CANVAS2D = function(engine) {
                                  this.height - this.values.height - this.values.yOffset,
                                  this.values.width,
                                  this.values.height);
-        engine.context.restore();
     }
 };
