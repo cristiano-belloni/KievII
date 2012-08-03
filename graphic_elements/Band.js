@@ -117,6 +117,7 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
         if (this.isInBand (x,y)) {
             console.log ("clicked inside!");
             this.inside = true;
+            this.startPoint = [x,y];
         }
         else this.inside = false;
 };
@@ -142,8 +143,13 @@ K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y)
         return {slot : 'height', value : (this.height - curr_y - this.values.yOffset)};
     }
     
-    // Action is void, button was upclicked outside its ROI or never downclicked
-    // No need to trigger anything, ignore this event.
+    if (this.inside && this.move) {
+        var xDelta = curr_x - this.startPoint[0];
+        var yDelta = this.startPoint[1] - curr_y;
+        this.startPoint = [curr_x, curr_y];
+        return ([{slot : 'xOffset', value : this.values.xOffset + xDelta}, {slot : 'yOffset', value : this.values.yOffset + yDelta}]);
+    }
+    
     return undefined;
 
 };
