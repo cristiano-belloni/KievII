@@ -172,7 +172,7 @@ TInt.prototype = {
         this.value = Struct.Unpack('>i', data.slice(0, 4))[0];
         return data.slice(4);
     },
-    encode: function (buf, pos) {
+    encode: function () {
         var tempArray = new Array(4);
         return Struct.PackTo('>i', tempArray, 0, [ this.value ]);
     }
@@ -204,8 +204,9 @@ TFloat.prototype = {
         this.value = Struct.Unpack('>f', data.slice(0, 4))[0];
         return data.slice(4);
     },
-    encode: function (buf, pos) {
-        return Struct.PackTo('>f', buf, pos, [ this.value ]);
+    encode: function () {
+    	var tempArray = new Array(4);
+        return Struct.PackTo('>f', tempArray, 0, [ this.value ]);
     }
 }
 
