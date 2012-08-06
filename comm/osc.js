@@ -173,7 +173,8 @@ TInt.prototype = {
         return data.slice(4);
     },
     encode: function (buf, pos) {
-        return Struct.PackTo('>i', buf, pos, [ this.value ]);
+        var tempArray = new Array(4);
+        return Struct.PackTo('>i', tempArray, 0, [ this.value ]);
     }
 }
 
@@ -239,7 +240,7 @@ TDouble.prototype = {
 }
 
 // for each OSC type tag we use a specific constructor function to decode its respective data
-var tagToConstructor = { 'i': function () { return new TInteger },
+var tagToConstructor = { 'i': function () { return new TInt },
                          'f': function () { return new TFloat },
                          's': function () { return new TString },
                          'b': function () { return new TBlob },
