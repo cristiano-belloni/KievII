@@ -3,10 +3,6 @@ var serverPorts = {
     ControllerSide: 1489
 };
 
-var state = {
-    K2Socket: undefined
-}
-
 var udpHosts = [];
 
 // UDP server, listens to controllers.
@@ -19,11 +15,9 @@ var K2IO = require('socket.io').listen(serverPorts.K2Side);
 UDPserver.on("message", function (msg, rinfo) {
   console.log("server got: " + msg + " from " +
     rinfo.address + ":" + rinfo.port);
-    // Send them to the K2 client
-    if (typeof state.K2Socket !== 'undefined') {
-        console.log ("emitting on osc: " + msg);
-        state.K2Socket.emit('osc', {osc: msg});
-    }
+    // Send them to the K2 clients
+    console.log ("emitting on osc: " + msg);
+    K2IO.sockets.emit('osc', {osc: msg});
 });
 
 UDPserver.on("listening", function () {
@@ -37,8 +31,6 @@ UDPserver.bind(serverPorts.ControllerSide);
 
 K2IO.sockets.on('connection', function (socket) {
     
-  state.K2Socket = socket;
-  
   // Tell who we are and our version
   socket.emit('admin', { id: 'K2OSCSERVER', version: 0.1});
   console.log ("Emitted ID and version on the admin channel")
