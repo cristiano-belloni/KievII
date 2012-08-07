@@ -28,7 +28,7 @@ UDPserver.on("message", function (msg, rinfo) {
 
 UDPserver.on("listening", function () {
   var address = UDPserver.address();
-  console.log("UDP server listening on" +
+  console.log("UDP server listening on " +
       address.address + ":" + address.port);
 });
 
