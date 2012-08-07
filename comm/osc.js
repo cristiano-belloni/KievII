@@ -246,6 +246,34 @@ var tagToConstructor = { 'i': function () { return new TInt },
                          's': function () { return new TString },
                          'b': function () { return new TBlob },
                          'd': function () { return new TDouble } };
+                         
+function decodeBundle (data) {
+    
+    var bundle = [];
+    var bundleElement = {time: null, args: []};
+    
+    // Decode the time tag
+    var timeTag = new TTime;
+    data = timeTag.decode(data);
+    bundleElement.time = timeTag.value;
+    
+    while (data.length > 0) { 
+        // Get the data length
+        var dataLen = new TInt;
+        data = dataLen.decode(data);
+        
+        // Decode the next message 
+        var message = decode(data.slice(0, dataLen.value));
+        
+        // push it into the bundleElement
+        bundleElement.args.push(message);
+        
+        // advance in the data array
+        data = data.slice(dataLen.value);
+    }
+    bundle.push(bundleElement);
+    return bundle;
+}
 
 function decode (data) {
     // this stores the decoded data as an array
@@ -256,6 +284,11 @@ function decode (data) {
     data = address.decode(data);
 
     message.push(address.value);
+    
+    if (address.value === "#bundle") {
+        // A bundle was detected, let's parse it
+        return decodeBundle (data);
+    }
 
     // if we have rest, maybe we have some typetags... let see...
     if (data.length > 0) {
