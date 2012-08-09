@@ -11,6 +11,7 @@ var BandTest = {
             ID: "testBand",
             left: 0,
             top : 0,
+            thickness:8,
             height: this.viewHeight,
             width: this.viewWidth,
             onValueSet: function (slot, value) {
@@ -18,6 +19,7 @@ var BandTest = {
                 this.ui.refresh();
             }.bind(this),
             color: 'black',
+            transparency: 0.5,
             isListening: true
         };
         

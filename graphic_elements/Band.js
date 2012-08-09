@@ -25,8 +25,8 @@ K2.Band.prototype.getready = function(args) {
     
     this.color = args.color || 'black';
     this.borderColor = args.borderColor || 'green';
-    this.proximity = args.proximity || 10;
-    this.thickness = args.thickness || this.proximity;
+    this.proximity = Math.floor(args.proximity) || 10;
+    this.thickness = Math.floor(args.thickness) || this.proximity;
     this.borders = args.borders || {top: true, bottom: true, right: true, left: true};
     this.move = args.move || true;
     var height = args.height || 0;
@@ -193,10 +193,11 @@ K2.Band.prototype.refresh_CANVAS2D = function(engine) {
         engine.context.fillStyle = this.color;
         engine.context.strokeStyle = this.borderColor;
         engine.context.lineWidth = this.thickness;
-        engine.context.fillRect (this.xOrigin + this.values.xOffset,
-                                 this.height - this.values.height - this.values.yOffset,
-                                 this.values.width,
-                                 this.values.height);
+        var halfThickness = Math.floor (this.thickness / 2);
+        engine.context.fillRect (this.xOrigin + this.values.xOffset + halfThickness,
+                                 this.height - this.values.height - this.values.yOffset + halfThickness,
+                                 this.values.width - halfThickness * 2,
+                                 this.values.height - halfThickness * 2);
         engine.context.strokeRect (this.xOrigin + this.values.xOffset,
                                  this.height - this.values.height - this.values.yOffset,
                                  this.values.width,
