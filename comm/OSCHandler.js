@@ -8,7 +8,7 @@ OSCClient = function (localClient, oscHandler) {
 
 OSCClient.prototype.sendOSC = function (oscMessage, args) {
     // Encode it
-    var binaryMsg = this.oscHandler.OSCclient.send(oscMessage);
+    var binaryMsg = this.oscHandler.OSCEncoder.encode(oscMessage);
     var flags = args;
     
     if (typeof args === 'undefined') {
@@ -27,8 +27,8 @@ OSCClient.prototype.sendOSC = function (oscMessage, args) {
 OSCHandler = function (proxyServer, udpServers) {
 
     this.localClients = {};
-    this.OSCserver = new Server();
-    this.OSCclient = new Client();
+    this.OSCDecoder = new Decoder();
+    this.OSCEncoder = new Encoder();
     this.udpServers = udpServers || null;
     this.proxyServer = proxyServer || null;
     this.proxyOK = false;
@@ -89,7 +89,7 @@ OSCHandler.prototype.unregisterClient = function (clientID) {
 
 OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     // Try to decode it
-    var received = this.OSCserver.receive (oscMessage);
+    var received = this.OSCDecoder.decode (oscMessage);
     console.log ("decoded OSC = " + received);
     
     // Send it to the callbacks, except for the clientID one

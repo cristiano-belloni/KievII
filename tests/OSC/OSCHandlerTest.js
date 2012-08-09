@@ -10,22 +10,22 @@ var OSCHandlerTest = {
         /* localclient = {clientID, oscCallback, isListening} */
         var client1 = handler.registerClient ({clientID : "client1",
                                                oscCallback : function (message) {
-                                                   console.log ("client1 received message: " + message);
+                                                   console.log ("client1 received message: ", message);
                                                }
                                                });  
         var client2 = handler.registerClient ({clientID : "client2",
                                                oscCallback : function (message) {
-                                                   console.log ("client2 received message: " + message);
+                                                   console.log ("client2 received message: ", message);
                                                }
                                                });
         var client3 = handler.registerClient ({clientID : "client3",
                                                 oscCallback : function (message) {
-                                                    console.log ("client3 received message: " + message);
+                                                    console.log ("client3 received message: ", message);
                                                 }
-                                                });
+                                            });
         var i = 0;
         
-        var sendMessages = function ()  {
+         var sendMessages = function ()  {
             var msg1 = new Message('/lp/dest/1', 'oscTest', i, 55, 7.88787);
             var msg2 = new Message('/lp/dest/2', 'oscTest', i, 55, 7.88787);
             var msg3 = new Message('/lp/dest/3', 'oscTest', i, 55, 7.88787);

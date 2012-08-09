@@ -93,14 +93,14 @@ Bundle.prototype.toBinary = function () {
 };
 
 ////////////////////
-// OSC Client
+// OSC Encoder
 ////////////////////
 
-var Client = function () {
+var Encoder = function () {
 }
 
-Client.prototype = {
-    send: function () {
+Encoder.prototype = {
+    encode: function () {
         var binary;
         if (arguments[0].toBinary) {
             binary = arguments[0].toBinary();
@@ -316,15 +316,15 @@ function decode (data) {
 };
 
 ////////////////////
-// OSC Server
+// OSC Decoder
 ////////////////////
 
-var Server = function() {
+var Decoder = function() {
     
     
 }
 
-Server.prototype.receive = function (msg) {
+Decoder.prototype.decode = function (msg) {
     
     // we decode the message getting a beautiful array with the form:
     // [<address>, <typetags>, <values>*]
