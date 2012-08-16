@@ -27,7 +27,16 @@ K2.Grid.prototype.getready = function(args) {
 
     this.rows = args.rows || 4;
     this.columns = args.columns || 4;
-    this.style = args.style || 'dotted';
+    // line or dashed
+    this.style = args.style || 'line';
+    // line color
+    this.lineColor = args.lineColor || "#eee";
+    // bg color
+    this.bgColor = args.bgColor || "white";
+    // Dashed array
+    this.dashArray = args.dashArray;
+    // line width
+    this.lineWidth = args.lineWidth || 0.1; 
 
     if ((this.rows < 0) || (this.columns < 0)) {
         throw new Error('Invalid number of row / columns ' + this.rows + ' / ' + this.columns);
@@ -90,19 +99,38 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
 
         var rowSpace = Math.floor(this.height / this.rows);
         var columnSpace = Math.floor(this.width / this.columns);
+        
+        // Draw background
+        context.fillStyle = this.bgColor;
+    	context.fillRect(this.xOrigin, this.yOrigin, this.width, this.height);
 
+		// Draw grid lines
+		context.lineWidth = this.lineWidth;
+		
         // Draw horizontal lines
         for (var x = this.xOrigin + 0.0; x < this.xOrigin + this.width; x += rowSpace) {
-			context.moveTo(x, this.yOrigin);
-			context.lineTo(x, this.yOrigin + this.height);
+			
+			if (this.style === 'line') {
+				context.moveTo(x, this.yOrigin);
+				context.lineTo(x, this.yOrigin + this.height);
+			}
+			else if (this.style === 'dashed') {
+				context.dashedLine(x, this.yOrigin, x, this.yOrigin + this.height, this.dashArray);
+			}
 		}
 		// Draw vertical lines
 		for (var y = this.yOrigin + 0.0; y < this.yOrigin + this.height; y += columnSpace) {
-  			context.moveTo(this.xOrigin, y);
-  			context.lineTo(this.xOrigin + this.width, y);
+  			
+  			if (this.style === 'line') {
+  				context.moveTo(this.xOrigin, y);
+  				context.lineTo(this.xOrigin + this.width, y);
+  			}
+  			else if (this.style === 'dashed') {
+				context.dashedLine(this.xOrigin, y, this.xOrigin + this.width, y, this.dashArray);
+			}
 		}
 
-		context.strokeStyle = '#eee';
+		context.strokeStyle = this.lineColor;
 		context.stroke();
     }
     
