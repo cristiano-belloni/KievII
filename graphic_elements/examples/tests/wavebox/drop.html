@@ -7,14 +7,7 @@ and open the template in the editor.
     <head>
         <title>Wavebox test with drag & drop</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="../../../../initial.js"></script>
-        <script type="text/javascript" src="../../../UIElement.js"></script>
-        <script type="text/javascript" src="../../../UI.js"></script>
-        <script type="text/javascript" src="../../../Wavebox.js"></script>
-        <script type="text/javascript" src="../../../Background.js"></script>
-        <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
-        <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../../../kievII.js"></script>
     </head>
     <body>
         <div id="dropbox"><span id="droplabel">Drop file here...</span></div>
@@ -30,16 +23,11 @@ and open the template in the editor.
                 var decoded_arrayR = decoded.getChannelData (1);
                 console.log ("I got the data! ", decoded_arrayL.length, decoded_arrayL[0], decoded_arrayL[1000], decoded_arrayL[3000], decoded_arrayL[10000]);
 
-                // Wavebox stuff
+                // Initialize UI
                 var plugin_canvas = document.getElementById("plugin");
+                ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas});
 
-                var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
-                                                       {canvas: plugin_canvas}
-                                                       );
-
-                ui = new K2.UI (plugin_canvas, CWrapper);
-
-                //Wave box.
+                // Wavebox parameters
                 var waveboxArgs = {
                     ID: "wavebox_L",
                     top: 0,
@@ -48,10 +36,7 @@ and open the template in the editor.
                     height: 800,
                     orientation: 1,
                     isListening: true,
-                    objParms: {
-                            pathColor: '#CC0000',
-                            pathDimension: 1,
-                        }
+					waveColor: '#CC0000'
                 };
                 
                 waveboxArgs.onValueSet = function () {

@@ -15,8 +15,8 @@ K2.Wavebox.prototype.getready = function(args) {
                    'startsample' : 0,
                    'endsample' : null,
                    'waveboxsignal' : [],
-                   'xBarPos' : 0,
-                   'yBarPos' : 0
+                   'xPos' : 0,
+                   'yPos' : 0
                };
     this.defaultSlot = 'waveboxposition';
 
@@ -24,6 +24,7 @@ K2.Wavebox.prototype.getready = function(args) {
     this.setHeight(args.height);
     this.binMethod = args.binMethod || 'minmax';
     this.orientation = args.orientation || 0;
+    this.waveColor = args.waveColor || 'black';
 
 };
 
@@ -57,11 +58,11 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
         if (this.isInROI(curr_x, curr_y)) {
 
             if (this.orientation === 0) {
-            	ret = {'slot' : 'xBarPos', 'value' : curr_x};
+            	ret = {'slot' : 'xPos', 'value' : curr_x};
             }
 
             else if (this.orientation === 1) {
-            	ret = {'slot' : 'yBarPos', 'value' : curr_y};
+            	ret = {'slot' : 'yPos', 'value' : curr_y};
             }
 
             else {
@@ -130,34 +131,31 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
         this.values.startsample = 0;
     }
 
-    if (slot == 'xBarPos') {
+    if (slot == 'xPos') {
     	if (value <= this.width) {
-        	this.values.xBarPos = value;
+        	this.values.xPos = value;
         }
     }
 
-    if (slot == 'yBarPos') {
+    if (slot == 'yPos') {
     	if (value <= this.height) {
-    		console.log('Setting yBarPos to ' + value);
-        	this.values.yBarPos = value;
+    		console.log('Setting yPos to ' + value);
+        	this.values.yPos = value;
         }
         else {
-        	console.log('NOT setting yBarPos to ' + value + ' because height is ' + this.height);
+        	console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
         }
     }
 };
 
-K2.Wavebox.prototype.refresh = function() {
-    if (this.drawClass !== undefined) {
-
-        // Call the superclass.
-        K2.Wavebox.superclass.refresh.call(this, this.drawClass.drawPath);
-
-        var context = this.drawClass.drawPath.canvasC;
+K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
 
 		//TODO there must be a less-repetitive way of handling orientations
 
         if (this.isVisible === true) {
+        	
+        	var context = engine.context;
+        	context.fillStyle = this.waveColor;
 
         	var y_point,
         		x_point,
@@ -191,14 +189,13 @@ K2.Wavebox.prototype.refresh = function() {
 
             if (true) {
 
-                this.drawClass.drawPath.beginDraw();
-
+				context.beginPath();
 				//Start from the middle
 				if (this.orientation === 0) {
-                	this.drawClass.drawPath.draw(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                	context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
                 }
                 else if (this.orientation === 1) {
-                	this.drawClass.drawPath.draw(this.xOrigin + dim2 * 0.5, this.yOrigin);
+                	context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
                 }
 
                 for (i = 0; i < dim1; i += 1) {
@@ -214,25 +211,25 @@ K2.Wavebox.prototype.refresh = function() {
                     	x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
                     }
 
-                    this.drawClass.drawPath.draw(x_point, y_point);
+                    context.lineTo(x_point, y_point);
 
                 }
                 if (this.orientation === 0) {
-                	this.drawClass.drawPath.draw(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                	 context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
                 }
                 else if (this.orientation === 1) {
-                	this.drawClass.drawPath.draw(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+                	 context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
                 }
 
-                this.drawClass.drawPath.endDraw();
+               context.fill();
 
-                this.drawClass.drawPath.beginDraw();
+               context.beginPath();
 
 				if (this.orientation === 0) {
-                	this.drawClass.drawPath.draw(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                	context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
                	}
                	else if (this.orientation === 1) {
-               		this.drawClass.drawPath.draw(this.xOrigin + dim2 * 0.5, this.yOrigin);
+               		context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
                	}
 
                 for (i = 0; i < dim1; i += 1) {
@@ -248,35 +245,17 @@ K2.Wavebox.prototype.refresh = function() {
                     	x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
                     }
 
-                    this.drawClass.drawPath.draw(x_point, y_point);
+                    context.lineTo(x_point, y_point);
                 }
 
                 if (this.orientation === 0) {
-                	this.drawClass.drawPath.draw(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                	context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
                 }
                 else if (this.orientation === 1) {
-                	this.drawClass.drawPath.draw(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+                	context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
                 }
 
-
-                this.drawClass.drawPath.endDraw();
-
-                context.beginPath();
-
-                // Draw the current position bar
-                // TODO consider it implemented in a separate class
-                if (this.orientation === 0) {
-	                context.moveTo(this.xOrigin + this.values.xBarPos, this.yOrigin + this.height);
-	  				context.lineTo(this.xOrigin + this.values.xBarPos, this.yOrigin);
-  				}
-  				else if (this.orientation === 1) {
-  					console.log('yOrigin, yBarPOs: ', this.yOrigin, this.values.yBarPos);
-	                context.moveTo(this.xOrigin + this.width, this.yOrigin + this.values.yBarPos);
-	  				context.lineTo(this.xOrigin, this.yOrigin + this.values.yBarPos);
-  				}
-  				context.strokeStyle = '#f00';
-				context.stroke();
-
+                context.fill();
             }
 
             if (false) {
@@ -294,14 +273,13 @@ K2.Wavebox.prototype.refresh = function() {
                    var width = 1;
                    var height = y1 - y;
 
-                   this.drawClass.drawRect.draw(x, y, width, height, 0);
+                   //this.drawClass.drawRect.draw(x, y, width, height, 0);
 
                }
 
            }
 
         }
-    }
 };
 
 //Non-interface functions
@@ -370,15 +348,4 @@ K2.Wavebox.prototype.calculateBinAvg = function(bin_index, bin_size) {
     }
 
     return bin_avg;
-};
-
-K2.Wavebox.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Wavebox.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawPath', objParms: this.objParms}]);
-    //this.drawClass = wrapper.initObject ([{objName: "drawRect", objParms: this.objParms}]);
-
 };
