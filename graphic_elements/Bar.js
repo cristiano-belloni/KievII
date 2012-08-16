@@ -122,14 +122,3 @@ K2.Bar.prototype.refresh_CANVAS2D = function(engine) {
     }
     
 };
-
-K2.Bar.prototype.setGraphicWrapper = function(wrapper) {
-
-    // Call the superclass.
-    K2.Bar.superclass.setGraphicWrapper.call(this, wrapper);
-
-    // Get the wrapper primitive functions
-    this.drawClass = wrapper.initObject([{objName: 'drawPath', objParms: this.objParms}]);
-    //this.drawClass = wrapper.initObject ([{objName: "drawRect", objParms: this.objParms}]);
-
-};
