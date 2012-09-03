@@ -1,22 +1,13 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title>Curve Element test</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
-    <script type="text/javascript" src="../../../../kievII.js"></script>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+var CurveTest = {
     
-    <script type="text/javascript">
-          
-        function init () {
-            
-            // Curve stuff
-            var plugin_canvas = document.getElementById("plugin");
-            var ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas});
-
-            //Bezier curve
-            var curveArgs = {
+    name: 'CurveTest',
+    ui: null,
+    
+    main: function () {
+        
+        // !VIEWABLEDOCSTART
+        
+        var curveArgs = {
                 ID: "hCos",
                 top: 0,
                 left: 0,
@@ -38,15 +29,11 @@
                 points: [60, 280, 280, 130],
                 isListening: true
             };
-            
-            curveArgs.onValueSet = function () {
-                var that = this;
-                return function (slot, value, element) {
-                    console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
-                    ui.refresh();
-                    // console.log (bezierCurveElement.getnumPoints());
-                };
-            }();
+        
+        curveArgs.onValueSet = function (slot, value, element) {
+            console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value);
+            CurveTest.ui.refresh();
+        };
 
             var curveElement = new K2.Curve(curveArgs);
             
@@ -74,20 +61,25 @@
             curveArgs.points = [680, 100, 700, 110, 720, 160, 760, 88];
             var curveElement5 = new Curve(curveArgs); */
             
-            ui.addElement(curveElement);
-            ui.addElement(curveElement2);
-            ui.addElement(curveElement3);
-            ui.addElement(curveElement4);
+            this.ui.addElement(curveElement);
+            this.ui.addElement(curveElement2);
+            this.ui.addElement(curveElement3);
+            this.ui.addElement(curveElement4);
             //ui.addElement(curveElement5);
             
-            ui.refresh();
-
-        }
-                
-    </script>
+            this.ui.refresh();
+        // !VIEWABLEDOCEND            
+    },
     
-  </head>
-  <body onload="init()">
-      <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
-  </body>
-</html>
+    init: function (canvas) {
+    
+                                               
+        this.viewWidth = canvas.width;
+        this.viewHeight = canvas.height;
+        
+        this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
+        
+        this.main();
+        
+    }
+}
