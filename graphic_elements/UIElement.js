@@ -58,7 +58,7 @@ K2.UIElement.prototype.getready = function(args) {
     // Object transparency
     this.transparency = args.transparency || 1.0;
 
-    // Specific parameters of the object, to be passed to the wrapper
+    // Specific parameters of the object
     this.objParms = args.objParms;
 
     // See if there is a callback to call when the value is set
