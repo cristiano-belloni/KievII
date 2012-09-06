@@ -11,23 +11,24 @@ K2.extend = function (subClass, superClass) {
     if (superClass.prototype.constructor == Object.prototype.constructor) {
         superClass.prototype.constructor = superClass;
     }
-}
+};
 
 K2.clone = function (obj) {
+    var copy;
+    
     // Handle the 3 simple types, and null or undefined
-    if (null == obj || "object" != typeof obj) return obj;
+    if (null === obj || "object" !== typeof obj) return obj;
     
     // Handle Date
     if (obj instanceof Date) {
-        var copy = new Date();
+        copy = new Date();
         copy.setTime(obj.getTime());
         return copy;
     }
     
     // Handle Array
     if (obj instanceof Array) {
-        var copy = [];
-        var len;
+        copy = [];
         for (var i = 0, len = obj.length; i < len; ++i) {
             copy[i] = clone(obj[i]);
         }
@@ -36,7 +37,7 @@ K2.clone = function (obj) {
     
     // Handle Object
     if (obj instanceof Object) {
-        var copy = {};
+        copy = {};
         for (var attr in obj) {
             if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
         }
@@ -44,7 +45,7 @@ K2.clone = function (obj) {
     }
     
     throw new Error("Unable to copy obj! Its type isn't supported.");
-}
+};
 
 /**
  * merge 2 objects into a new object
@@ -67,7 +68,16 @@ K2.mergeObject = function(obj1, obj2) {
         }
     }
     return output;
-}
+};
 
 // This should fix "console not defined" problem.
-if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+if (typeof console === 'undefined') {
+    console = {
+        log: function(A) {
+            var B=false;
+            if(B) {
+                alert(A);
+                }
+            }
+    };
+}

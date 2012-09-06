@@ -17,9 +17,16 @@ if (CP.lineTo) {
         while (len > x) {
             x += da[di++ % dc];
             if (x > len) x = len;
-            draw ? this.lineTo(x, 0): this.moveTo(x, 0);
+            
+            if (draw) {
+                this.lineTo(x, 0);
+            }
+            else {
+                this.moveTo(x, 0);
+            }
+            
             draw = !draw;
         }       
         this.restore();
-    }
+    };
 }

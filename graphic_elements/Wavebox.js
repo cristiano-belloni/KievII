@@ -2,7 +2,7 @@ K2.Wavebox = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Wavebox, K2.UIElement);
 
@@ -58,15 +58,15 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
         if (this.isInROI(curr_x, curr_y)) {
 
             if (this.orientation === 0) {
-            	ret = {'slot' : 'xPos', 'value' : curr_x};
+                ret = {'slot' : 'xPos', 'value' : curr_x};
             }
 
             else if (this.orientation === 1) {
-            	ret = {'slot' : 'yPos', 'value' : curr_y};
+                ret = {'slot' : 'yPos', 'value' : curr_y};
             }
 
             else {
-            	console.error('orientation invalid, this will probably break something');
+                console.error('orientation invalid, this will probably break something');
             }
 
             // Click on button is completed, the button is no more triggered.
@@ -132,18 +132,18 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
     }
 
     if (slot == 'xPos') {
-    	if (value <= this.width) {
-        	this.values.xPos = value;
+        if (value <= this.width) {
+            this.values.xPos = value;
         }
     }
 
     if (slot == 'yPos') {
-    	if (value <= this.height) {
-    		console.log('Setting yPos to ' + value);
-        	this.values.yPos = value;
+        if (value <= this.height) {
+            console.log('Setting yPos to ' + value);
+            this.values.yPos = value;
         }
         else {
-        	console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
+            console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
         }
     }
 };
@@ -153,23 +153,23 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
 		//TODO there must be a less-repetitive way of handling orientations
 
         if (this.isVisible === true) {
-        	
-        	var context = engine.context;
-        	context.fillStyle = this.waveColor;
 
-        	var y_point,
-        		x_point,
-        		bin_size,
-        		bin_value;
+            var context = engine.context;
+            context.fillStyle = this.waveColor;
 
-        	// Default
-        	var dim1 = this.width;
-        	var dim2 = this.height;
+            var y_point,
+                x_point,
+                bin_size,
+                bin_value;
 
-        	if (this.orientation === 1) {
-        		dim1 = this.height;
-        		dim2 = this.width;
-        	}
+            // Default
+            var dim1 = this.width;
+            var dim2 = this.height;
+
+            if (this.orientation === 1) {
+                dim1 = this.height;
+                dim2 = this.width;
+            }
 
             var binFunction;
 
@@ -192,10 +192,10 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
 				context.beginPath();
 				//Start from the middle
 				if (this.orientation === 0) {
-                	context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
                 }
                 else if (this.orientation === 1) {
-                	context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
+                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
                 }
 
                 for (i = 0; i < dim1; i += 1) {
@@ -207,18 +207,18 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
 	                    x_point = i + this.xOrigin;
                     }
                     else if (this.orientation === 1) {
-                    	y_point = i + this.yOrigin;
-                    	x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
+                        y_point = i + this.yOrigin;
+                        x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
                     }
 
                     context.lineTo(x_point, y_point);
 
                 }
                 if (this.orientation === 0) {
-                	 context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
                 }
                 else if (this.orientation === 1) {
-                	 context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
                 }
 
                context.fill();
@@ -226,11 +226,11 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                context.beginPath();
 
 				if (this.orientation === 0) {
-                	context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-               	}
-               	else if (this.orientation === 1) {
-               		context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-               	}
+                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                }
+                else if (this.orientation === 1) {
+                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
+                }
 
                 for (i = 0; i < dim1; i += 1) {
 
@@ -241,18 +241,18 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
 	                    x_point = i + this.xOrigin;
                     }
                     if (this.orientation === 1) {
-                    	y_point = i + this.yOrigin;
-                    	x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
+                        y_point = i + this.yOrigin;
+                        x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
                     }
 
                     context.lineTo(x_point, y_point);
                 }
 
                 if (this.orientation === 0) {
-                	context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
                 }
                 else if (this.orientation === 1) {
-                	context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
                 }
 
                 context.fill();
@@ -260,7 +260,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
 
             if (false) {
 
-             	// TODO this doesn't work with orientations
+                // TODO this doesn't work with orientations
 
                 for (i = 0; i < dim1; i += 1) {
                     bin_value = binFunction(i, bin_size, this.values);

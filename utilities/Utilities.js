@@ -19,15 +19,15 @@ function loadImageArray(args) {
         return function() {
             that.objectsLoaded += 1;
             that.check(that.onSingle, this);
-        }
+        };
     };
 
     this.onError = function(that) {
         return function() {
             that.objectsError += 1;
             that.check(that.onErr, this);
-            }
         };
+    };
 
     this.check = function(callback, imageObj) {
 
@@ -37,11 +37,11 @@ function loadImageArray(args) {
                     obj: imageObj,
                     status: temp_status
                 });
-            }
+        }
             if (this.objectsLoaded + this.objectsError === this.objectsTotal) {
                 this.onCompletion();
             }
-    }
+    };
 
     this.pollStatus = function() {
         return {
@@ -50,7 +50,7 @@ function loadImageArray(args) {
                 error: this.objectsError,
                 total: this.objectsTotal
                 };
-    }
+    };
 
     // The user will recognize this particular instance by ID
     this.ID = args.ID;
@@ -109,8 +109,8 @@ function loadMultipleImages(args) {
                     }
 
                     that.onComplete(that.loaders);
-                }
-            }
+            };
+        };
 
      this.errorManager = function() {
          // Storage the closurage.
@@ -119,8 +119,8 @@ function loadMultipleImages(args) {
             if (typeof (that.onError) === 'function') {
                 that.onError(errorStatus);
             }
-        }
-    }
+        };
+    };
 
      this.singleManager = function() {
          // Storage the closurage.
@@ -129,8 +129,8 @@ function loadMultipleImages(args) {
             if (typeof (that.onSingle) === 'function') {
                 that.onSingle(singleStatus);
             }
-        }
-    }
+        };
+    };
 
 
     this.multipleImages = args.multipleImages;
@@ -177,11 +177,47 @@ function fact_lookup(n) {
 	}
 	else {
 		var rval = 1;
-    	for (var i = 2; i <= n; i++)
-        	rval = rval * i;
-    	return rval;
+        for (var i = 2; i <= n; i++)
+            rval = rval * i;
+        return rval;
 	}
 }
+
+K2.GenericUtils = {};
+
+K2.GenericUtils.clone = function(obj) {
+    var copy;
+    
+    // Handle the 3 simple types, and null or undefined
+    if (null === obj || "object" !== typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; ++i) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+};
 
 K2.CanvasUtils = {};
 
@@ -192,4 +228,4 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.translate(-(args.image.width / 2) - args.x, -(args.image.height / 2) - args.y);
     ctx.drawImage(args.image, args.x, args.y);
     ctx.restore();
-}
+};

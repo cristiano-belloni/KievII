@@ -2,7 +2,7 @@ K2.Knob = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Knob, K2.UIElement);
 

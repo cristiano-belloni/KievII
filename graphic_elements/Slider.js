@@ -2,7 +2,7 @@ K2.Slider = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Slider, K2.UIElement);
 

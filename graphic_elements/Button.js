@@ -2,7 +2,7 @@ K2.Button = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Button, K2.UIElement);
 

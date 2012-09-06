@@ -2,7 +2,7 @@ K2.Label = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Label, K2.UIElement);
 

@@ -2,7 +2,7 @@ K2.Background = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Background, K2.UIElement);
 

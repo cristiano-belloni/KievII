@@ -12,8 +12,11 @@ K2.ENGINE.engineFactory = function (type, args) {
           throw ("Engine: args is undefined");
       }
       break;
+      
+    case 'ANOTHERTYPE':
+        throw ("Engine type not recognized: " + type);
     default:
-      throw ("Engine type not recognized: " + type);
+        throw ("Engine type not recognized: " + type);
     }
 
     function canvasEngineCreator (canvas) {
@@ -22,7 +25,7 @@ K2.ENGINE.engineFactory = function (type, args) {
         // Resets the canvas
         this.reset = function () {
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        }
+        };
 
         // Constructor
         this.canvas = canvas;
@@ -30,11 +33,11 @@ K2.ENGINE.engineFactory = function (type, args) {
         this.type = 'CANVAS2D';
         
         this.getContext = function () {
-        	return this.context;
-        }
+            return this.context;
+        };
         this.getCanvas = function () {
             return this.canvas;
-        }
+        };
     }
 
-}
+};

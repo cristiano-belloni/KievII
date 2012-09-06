@@ -2,7 +2,7 @@ K2.Curve = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Curve, K2.UIElement);
 
@@ -123,7 +123,7 @@ K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mouse
 
     if (this.isInROI(x, y)) {
 
-    	var handleNum;
+        var handleNum;
 		if ((handleNum = this.isInHandle(x, y)) !== null) {
 			// Handle was tapped.
 			this.handleClicked = handleNum;
@@ -145,7 +145,7 @@ K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mouse
 K2.Curve.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y) {
 
     var ret = {},
-    	points;
+        points;
 
     if (this.handleClicked !== null) {
         // Button is activated when cursor is still in the element ROI, otherwise action is void.
@@ -161,9 +161,9 @@ K2.Curve.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y
             return ret;
         }
         else {
-        	// Out of ROI, end this here
-        	// Copy the array before modifying it
-        	// TODO this is a shallow copy
+            // Out of ROI, end this here
+            // Copy the array before modifying it
+            // TODO this is a shallow copy
             points = this.values.points.slice();
             // Calculate where to stop
             points[this.handleClicked][0] = (curr_x < this.ROILeft + this.ROIWidth) ? curr_x : (this.ROILeft + this.ROIWidth);
@@ -171,7 +171,7 @@ K2.Curve.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y
             points[this.handleClicked][1] = (curr_y < this.ROITop + this.ROIHeight) ? curr_y : (this.ROITop + this.ROIHeight);
             points[this.handleClicked][1] = (curr_y < this.ROITop) ? curr_y : this.ROITop;
             // Stop the drag action
-        	this.handleClicked = null;
+            this.handleClicked = null;
 
         }
     }
@@ -234,19 +234,19 @@ K2.Curve.prototype.refresh_CANVAS2D = function(engine) {
         if (this.isVisible === true) {
             
             var context = engine.context;
-        	var initialPoints = this.values.points;
-        	var parameters = {
-        		thickness: this.thickness,
-     			curveColor: this.curveColor,
-     			helperColor: this.helperColor,
-     			handleColor: this.handleColor,
-     			handleSize: this.handleSize,
-     			curveLabels: this.curveLabels
-        	};
+            var initialPoints = this.values.points;
+            var parameters = {
+                thickness: this.thickness,
+                curveColor: this.curveColor,
+                helperColor: this.helperColor,
+                handleColor: this.handleColor,
+                handleSize: this.handleSize,
+                curveLabels: this.curveLabels
+            };
 
-        	this.genericCurve(this.values.points, this.curveType);
-        	this.paintCurve(context);
-    		this.paintPoints(context, this.values.points, parameters);
+            this.genericCurve(this.values.points, this.curveType);
+            this.paintCurve(context);
+            this.paintPoints(context, this.values.points, parameters);
         }
     
 };
@@ -270,10 +270,10 @@ K2.Curve.prototype.halfcosine = {
     */
 
     P: function(t, points) {
-    	// http://paulbourke.net/miscellaneous/interpolation/
-    	var mu2 = (1 - Math.cos(t * Math.PI)) / 2;
+        // http://paulbourke.net/miscellaneous/interpolation/
+        var mu2 = (1 - Math.cos(t * Math.PI)) / 2;
 
-    	var r = [0, 0];
+        var r = [0, 0];
         r[0] = points[0][0] + (points[1][0] - points[0][0]) * t;
         r[1] = (points[0][1] * (1 - mu2) + points[1][1] * mu2);
         return r;
@@ -282,25 +282,25 @@ K2.Curve.prototype.halfcosine = {
 
 K2.Curve.prototype.smooth = {
     P: function(t, points) {
-    	// http://codeplea.com/simple-interpolation
-    	var tSmooth = t * t * (3 - 2 * t);
+        // http://codeplea.com/simple-interpolation
+        var tSmooth = t * t * (3 - 2 * t);
 
-    	var r = [0, 0];
-    	r[0] = points[0][0] + (points[1][0] - points[0][0]) * t;
-    	r[1] = points[0][1] + tSmooth * (points[1][1] - points[0][1]);
+        var r = [0, 0];
+        r[0] = points[0][0] + (points[1][0] - points[0][0]) * t;
+        r[1] = points[0][1] + tSmooth * (points[1][1] - points[0][1]);
 
-    	return r;
+        return r;
     }
 };
 
 K2.Curve.prototype.linear = {
 
     P: function(t, points) {
-    	var r = [0, 0];
-    	r[0] = points[0][0] + (points[1][0] - points[0][0]) * t;
-    	r[1] = points[0][1] * (1 - t) + points[1][1] * t;
+        var r = [0, 0];
+        r[0] = points[0][0] + (points[1][0] - points[0][0]) * t;
+        r[1] = points[0][1] * (1 - t) + points[1][1] * t;
 
-    	return r;
+        return r;
     }
 };
 
@@ -308,46 +308,46 @@ K2.Curve.prototype.linear = {
 K2.Curve.prototype.cubic = {
 
     P: function(t, points) {
-    	var r = [0, 0];
+        var r = [0, 0];
 
-    	r[0] = points[0][0] + (points[3][0] - points[0][0]) * t;
+        r[0] = points[0][0] + (points[3][0] - points[0][0]) * t;
 
-    	var mu = t;
-    	var mu2 = t * t;
+        var mu = t;
+        var mu2 = t * t;
 
-    	var a0 = points[3][1] - points[2][1] - points[0][1] + points[1][1];
-    	var a1 = points[0][1] - points[1][1] - a0;
-    	var a2 = points[2][1] - points[0][1];
-    	var a3 = points[1][1];
+        var a0 = points[3][1] - points[2][1] - points[0][1] + points[1][1];
+        var a1 = points[0][1] - points[1][1] - a0;
+        var a2 = points[2][1] - points[0][1];
+        var a3 = points[1][1];
 
-    	r[1] = (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
+        r[1] = (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
 
-    	return r;
+        return r;
     }
 };
 
 K2.Curve.prototype.catmull = {
 
     P: function(t, points) {
-    	var r = [0, 0];
+        var r = [0, 0];
 
-    	r[0] = points[0][0] + (points[3][0] - points[0][0]) * t;
+        r[0] = points[0][0] + (points[3][0] - points[0][0]) * t;
 
-    	var mu = t;
-    	var mu2 = t * t;
-    	var y0 = points[0][1];
-    	var y1 = points[1][1];
-    	var y2 = points[2][1];
-    	var y3 = points[3][1];
+        var mu = t;
+        var mu2 = t * t;
+        var y0 = points[0][1];
+        var y1 = points[1][1];
+        var y2 = points[2][1];
+        var y3 = points[3][1];
 
-    	var a0 = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
-   		var a1 = y0 - 2.5 * y1 + 2 * y2 - 0.5 * y3;
-   		var a2 = -0.5 * y0 + 0.5 * y2;
-   		var a3 = y1;
+        var a0 = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
+        var a1 = y0 - 2.5 * y1 + 2 * y2 - 0.5 * y3;
+        var a2 = -0.5 * y0 + 0.5 * y2;
+        var a3 = y1;
 
-    	r[1] = (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
+        r[1] = (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
 
-    	return r;
+        return r;
     }
 };
 
@@ -372,9 +372,9 @@ K2.Curve.prototype.hermite = {
 		var mu = t;
 
 		var y0 = points[0][1];
-    	var y1 = points[1][1];
-    	var y2 = points[2][1];
-    	var y3 = points[3][1];
+        var y1 = points[1][1];
+        var y2 = points[2][1];
+        var y3 = points[3][1];
 
 		mu2 = mu * mu;
 		mu3 = mu2 * mu;
@@ -401,13 +401,13 @@ K2.Curve.prototype.bezier = {
         **/
         P: function(t, points) {
 
-        	/**Computes factorial iteratively*/
+            /**Computes factorial iteratively*/
 	        var fact = function(k) {
 	            var rval = 1;
-		    	for (var i = 2; i <= k; i++)
-		        	rval = rval * i;
-		    	return rval;
-	        }
+                for (var i = 2; i <= k; i++)
+                    rval = rval * i;
+                return rval;
+	        };
 
 	        /**Computes Bernstain
 	        *@param {Integer} i - the i-th index
@@ -418,7 +418,7 @@ K2.Curve.prototype.bezier = {
 	            //if(n < i) throw "Wrong";
 	            var fact_funct = fact;
 	            if (typeof fact_lookup === 'function') {
-	            	fact_funct = fact_lookup;
+                    fact_funct = fact_lookup;
 	            }
 	            return fact_funct(n) / (fact_funct(i) * fact_funct(n - i)) * Math.pow(t, i) * Math.pow(1 - t, n - i);
 	        }
@@ -489,8 +489,8 @@ K2.Curve.prototype.paintPoint = function(ctx, point, style, fill, color, size) {
 			ctx.strokeRect(point[0] - Math.round(size / 2) , point[1] - Math.round(size / 2), size, size);
 			if (fill !== null) {
 				ctx.fillStyle = fill;
-        		ctx.fillRect((point[0] - Math.ceil(size / 2)) + Math.floor(ctx.lineWidth / 2) , (point[1] - Math.ceil(size / 2)) + Math.floor(ctx.lineWidth / 2), size - ctx.lineWidth + 1, size - ctx.lineWidth + 1);
-        	}
+                ctx.fillRect((point[0] - Math.ceil(size / 2)) + Math.floor(ctx.lineWidth / 2) , (point[1] - Math.ceil(size / 2)) + Math.floor(ctx.lineWidth / 2), size - ctx.lineWidth + 1, size - ctx.lineWidth + 1);
+            }
 			ctx.restore();
 		}
 		else if (style === 'circle') {
@@ -502,8 +502,8 @@ K2.Curve.prototype.paintPoint = function(ctx, point, style, fill, color, size) {
 			ctx.arc(point[0], point[1], size, 0, 2 * Math.PI, false);
 			if (fill !== null) {
 				ctx.fillStyle = fill;
-        		ctx.fill();
-        	}
+                ctx.fill();
+            }
 			ctx.stroke();
 			ctx.restore();
 		}
@@ -519,42 +519,43 @@ K2.Curve.prototype.paintPoint = function(ctx, point, style, fill, color, size) {
 K2.Curve.prototype.paintPoints = function(ctx, parameters) {
 
 	var points = this.values.points;
+	var i;
 
     ctx.save();
     //paint lines
     ctx.strokeStyle = this.helperColor;
     ctx.beginPath();
     ctx.moveTo(points[0][0], points[0][1]);
-    for (var i = 1; i < points.length; i++) {
+    for (i = 1; i < points.length; i++) {
         ctx.lineTo(points[i][0], points[i][1]);
     }
     ctx.stroke();
 
     //control points
-    for (var i = 0; i < points.length; i++) {
+    for (i = 0; i < points.length; i++) {
 
-    	// See if the point being painted is a terminal one
-    	var terminal = false;
-    	if ((i === 0) || (i === (points.length - 1))) {
-    		terminal = true;
-    	}
+        // See if the point being painted is a terminal one
+        var terminal = false;
+        if ((i === 0) || (i === (points.length - 1))) {
+            terminal = true;
+        }
 
-    	// Paint the handle and labels only according to paintTerminalPoints strategy
-    	var pTT = this.paintTerminalPoints;
-    	if (terminal === true) {
+        // Paint the handle and labels only according to paintTerminalPoints strategy
+        var pTT = this.paintTerminalPoints;
+        if (terminal === true) {
 			if ((pTT === 'all') || ((pTT === 'first') && (i === 0)) || ((pTT === 'last') && (i === (points.length - 1)))) {
-	        	this.paintHandle(ctx, points[i], terminal);
-	        	// Paint the curve labels
+                this.paintHandle(ctx, points[i], terminal);
+                // Paint the curve labels
 		        if (this.curveLabels) {
-		        	ctx.fillText(this.ID + ' (' + i + ')' + ' [' + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
+                    ctx.fillText(this.ID + ' (' + i + ')' + ' [' + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
 		        }
 	        }
 	    }
 
 	    else {
-	    	// Paint the midpoints
-	    	this.paintHandle(ctx, points[i], terminal);
-	    	// Paint the curve labels
+            // Paint the midpoints
+            this.paintHandle(ctx, points[i], terminal);
+            // Paint the curve labels
 			if (this.curveLabels) {
 				ctx.fillText(this.ID + ' (' + i + ')' + ' [' + points[i][0] + ',' + points[i][1] + ']', points[i][0], points[i][1] - 10);
 			}

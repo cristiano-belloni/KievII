@@ -35,8 +35,8 @@ K2.UI = function(engine, parameters) {
                 document.documentElement.scrollTop;
         }
         else if (typeof aux_e !== 'undefined') {
-        	docX = aux_e.touches[0].x;
-        	docY = aux_e.touches[0].y;
+            docX = aux_e.touches[0].x;
+            docY = aux_e.touches[0].y;
         }
         pos = this.getPosition(obj);
         if (typeof scale === 'undefined') {
@@ -66,9 +66,9 @@ K2.UI = function(engine, parameters) {
 
 			if (type === 'mousemove') {
 				// Only if the mouse button is still down (This could be incomplete TODO).
-            	if (that.mouseUp === false) {
-                	that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
-            	}
+                if (that.mouseUp === false) {
+                    that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
+                }
             }
             //console.log ("About to notify a mouse event of type", type);
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
@@ -106,7 +106,7 @@ K2.UI = function(engine, parameters) {
                     if (this.zArray[z][k].getListening()) {
                         // Notify the element, if the element has an handler
                         if (typeof this.zArray[z][k][event] === 'function') {
-                        	var ret = this.zArray[z][k][event](x, y);
+                            var ret = this.zArray[z][k][event](x, y);
 
 	                        // See if the element changed its value
 	                        if (typeof ret !== 'undefined') {
@@ -234,29 +234,29 @@ K2.UI = function(engine, parameters) {
     };
 
     this.removeElement = function(elementID) {
-    	if (typeof this.elements[elementID] !== 'undefined') {
-    		var elZIndex = this.elements[elementID].zIndex;
-    		var elZArray = this.zArray[elZIndex];
-    		// Delete the element in the zIndex subarray
-    		for (var i = 0; i < elZArray.length; i += 1) {
-    			if (elZArray[i].ID === elementID) {
-    				elZArray.splice(i, 1);
-    				break;
-    			}
-    		}
-    		// Delete the element in the elements array
-    		delete this.elements[elementID];
-    		// TODO delete the element in the connection matrix?
-    	}
+        if (typeof this.elements[elementID] !== 'undefined') {
+            var elZIndex = this.elements[elementID].zIndex;
+            var elZArray = this.zArray[elZIndex];
+            // Delete the element in the zIndex subarray
+            for (var i = 0; i < elZArray.length; i += 1) {
+                if (elZArray[i].ID === elementID) {
+                    elZArray.splice(i, 1);
+                    break;
+                }
+            }
+            // Delete the element in the elements array
+            delete this.elements[elementID];
+            // TODO delete the element in the connection matrix?
+        }
     };
 
     // Z-Index getter and setter
     this.setZIndex = function(elementID, zIndex) {
-    	if (typeof this.elements[elementID] !== 'undefined') {
-    		var elZIndex = this.elements[elementID].zIndex;
-    		// if zIndexes differ
-    		if (elZIndex !== zIndex) {
-    			// if it's the first element having this zIndex, create the subarray.
+        if (typeof this.elements[elementID] !== 'undefined') {
+            var elZIndex = this.elements[elementID].zIndex;
+            // if zIndexes differ
+            if (elZIndex !== zIndex) {
+                // if it's the first element having this zIndex, create the subarray.
 		        if (typeof this.zArray[zIndex] === 'undefined') {
 		            this.zArray[zIndex] = [];
 		        }
@@ -268,44 +268,44 @@ K2.UI = function(engine, parameters) {
 		            this.zMax = zIndex;
 		        }
 		        // Get the old and new zIndex subarrays
-    			var oldZArray = this.zArray[elZIndex];
-	    		var newZArray = this.zArray[zIndex];
-	    		// Delete the element in the old zIndex subarray
-	    		for (var i = 0; i < oldZArray.length; i += 1) {
-	    			if (oldZArray[i].ID === elementID) {
-	    				oldZArray.splice(i, 1);
-	    				break;
-	    			}
-	    		}
-	    		// Add the element to the new zIndex subarray
-	    		newZArray.push(this.elements[elementID].element);
-	    		// Change the element zIndex
-	    		this.elements[elementID].zIndex = zIndex;
-    		}
-    	}
-    	else throw ('Could not find element ID: ' + elementID);
+                var oldZArray = this.zArray[elZIndex];
+                var newZArray = this.zArray[zIndex];
+                // Delete the element in the old zIndex subarray
+                for (var i = 0; i < oldZArray.length; i += 1) {
+                    if (oldZArray[i].ID === elementID) {
+                        oldZArray.splice(i, 1);
+                        break;
+                    }
+                }
+                // Add the element to the new zIndex subarray
+                newZArray.push(this.elements[elementID].element);
+                // Change the element zIndex
+                this.elements[elementID].zIndex = zIndex;
+            }
+        }
+        else throw ('Could not find element ID: ' + elementID);
     };
 
     this.getZIndex = function(elementID) {
-    	if (typeof this.elements[elementID] !== 'undefined') {
-    		return this.elements[elementID].zIndex;
-    	}
-    	else throw ('Could not find element ID: ' + elementID);
+        if (typeof this.elements[elementID] !== 'undefined') {
+            return this.elements[elementID].zIndex;
+        }
+        else throw ('Could not find element ID: ' + elementID);
     };
 
     // Properties getter and setter
     this.setProp = function(elementID, prop, value) {
-    	if (typeof this.elements[elementID] !== 'undefined') {
-    		this.elements[elementID].element[prop] = value;
-    	}
-    	else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
+        if (typeof this.elements[elementID] !== 'undefined') {
+            this.elements[elementID].element[prop] = value;
+        }
+        else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
     };
 
     this.getProp = function(elementID, prop) {
-    	if (typeof this.elements[elementID] !== 'undefined') {
-    		return this.elements[elementID].element[prop];
-    	}
-    	else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
+        if (typeof this.elements[elementID] !== 'undefined') {
+            return this.elements[elementID].element[prop];
+        }
+        else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
     };
     // </ELEMENT HANDLING>
 
@@ -345,10 +345,10 @@ K2.UI = function(engine, parameters) {
                 // Push the destination element/slot in the connections matrix.
                 // Create the slot object if it doesn't exist yet.
                 if (typeof this.connections[senderElement] === 'undefined') {
-                	this.connections[senderElement] = {};
+                    this.connections[senderElement] = {};
                 }
                 if (typeof this.connections[senderElement][senderSlot] === 'undefined') {
-                	this.connections[senderElement][senderSlot] = [];
+                    this.connections[senderElement][senderSlot] = [];
                 }
                 this.connections[senderElement][senderSlot].push(receiverHash);
             }
@@ -360,16 +360,16 @@ K2.UI = function(engine, parameters) {
     };
 
     this.resetSlots = function() {
-    	this.connections = {};
-    }
+        this.connections = {};
+    };
 
     this.unconnectSlots = function(senderElement, senderSlot, receiverElement, receiverSlot) {
-    	// TODO
-    }
+        // TODO
+    };
 
     this.resetSenderSlot = function(senderElement) {
-    	// TODO
-    }
+        // TODO
+    };
 
     //</CONNECTION HANDLING>
 
@@ -429,9 +429,8 @@ K2.UI = function(engine, parameters) {
                     // This is for precaution.
                     if (hist.length > RECURSIONMAX) {
                         throw new Error('Recursion exceeded');
-                        return;
                     }
-                    if ((hist[k]['element'] === elementID) && (hist[k]['slot'] === slot)) {
+                    if ((hist[k].element === elementID) && (hist[k].slot === slot)) {
                         // Loop is infinite; bail out!
                         // console.log ("Broke recursion!");
                         return;
@@ -471,10 +470,10 @@ K2.UI = function(engine, parameters) {
 
                     // Check the callback here.
                     if (typeof(receiverHash.callback) === 'function') {
-                    	var connDetails = {'sender': elementID,
-                    					   'sendSlot': slot,
-                    					   'recv': recvElementID,
-                    					   'recvSlot': recvSlot};
+                        var connDetails = { 'sender': elementID,
+                                            'sendSlot': slot,
+                                            'recv': recvElementID,
+                                            'recvSlot': recvSlot};
                         // We have a callback to call.
                         value = receiverHash.callback(value, connDetails);
                     }
@@ -521,7 +520,7 @@ K2.UI = function(engine, parameters) {
             throw new Error('Element ' + elementID + ' not present.');
         }
 
-    }
+    };
 
     this.unhideElement = function(elementID) {
 
@@ -543,11 +542,11 @@ K2.UI = function(engine, parameters) {
         else {
             throw new Error('Element ' + elementID + ' not present.');
         }
-    }
+    };
 
     this.setHidden = function(elementID, value) {
         this.setVisible(elementID, !value);
-    }
+    };
 
     this.setVisible = function(elementID, value) {
         var visibilityState;
@@ -568,26 +567,26 @@ K2.UI = function(engine, parameters) {
         else {
             throw new Error('Element ' + elementID + ' not present.');
         }
-    }
+    };
 
     this.setListening = function(elementID, value) {
-            var state;
+        var state;
 
-            if (typeof this.elements[elementID] !== 'undefined') {
-                state = this.elements[elementID].element.getListening();
-                if (state !== value) {
+        if (typeof this.elements[elementID] !== 'undefined') {
+            state = this.elements[elementID].element.getListening();
+            if (state !== value) {
 
-                    // When unhidden, the element starts listening to events again.
-                    this.elements[elementID].element.setListening(value);
-
-                }
+                // When unhidden, the element starts listening to events again.
+                this.elements[elementID].element.setListening(value);
 
             }
 
-            else {
-                throw new Error('Element ' + elementID + ' not present.');
-            }
         }
+
+        else {
+            throw new Error('Element ' + elementID + ' not present.');
+        }
+    };
 
     // </VISIBILITY, RECEIVING EVENTS>
 
@@ -604,7 +603,7 @@ K2.UI = function(engine, parameters) {
                 }
             }
         }
-    }
+    };
 
     this.refresh = function(doReset) {
         // Reset everything
@@ -616,11 +615,11 @@ K2.UI = function(engine, parameters) {
         if (typeof this.zMin !== 'undefined') {
             this.refreshZ(this.zMin);
         }
-    }
+    };
 
     this.reset = function() {
         // Reset the graphic frontend
         this.engine.reset();
-    }
-}
+    };
+};
     // </REFRESH HANDLING>

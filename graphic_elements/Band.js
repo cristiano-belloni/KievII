@@ -2,7 +2,7 @@ K2.Band = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Band, K2.UIElement);
 
@@ -79,7 +79,7 @@ K2.Band.prototype.isInBand = function (x,y) {
         return false;
     }
     
-}
+};
 
 K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedown = function(x, y) {
     
@@ -163,9 +163,11 @@ K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y)
 };
 
 K2.Band.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mouseup = function(x, y) {
+    
+    var ret;
+    
     // Drag guards are reset to false
     this.leftSide = this.rightSide =  this.bottomSide = this.topSide = false;
-    var ret = undefined;
     
     // Clicked in and out inside the object. the object is selected
     if (this.inside) {

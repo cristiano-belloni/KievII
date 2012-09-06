@@ -2,7 +2,7 @@ K2.RotKnob = function (args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 // TODO should it extend Knob? Or maybe we should make a GenericKnob class?
 K2.extend(K2.RotKnob, K2.UIElement);

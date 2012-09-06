@@ -2,7 +2,7 @@ K2.UIElement = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.UIElement.prototype.getready = function(args) {
 
@@ -184,7 +184,7 @@ K2.UIElement.prototype.call_CANVAS2D = function (engine) {
     }
     engine.context.restore();
     
-}
+};
 
 K2.UIElement.prototype.getID = function() {
     return this.ID;

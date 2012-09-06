@@ -2,7 +2,7 @@ K2.Grid = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
-}
+};
 
 K2.extend(K2.Grid, K2.UIElement);
 
@@ -102,7 +102,7 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
         
         // Draw background
         context.fillStyle = this.bgColor;
-    	context.fillRect(this.xOrigin, this.yOrigin, this.width, this.height);
+        context.fillRect(this.xOrigin, this.yOrigin, this.width, this.height);
 
 		// Draw grid lines
 		context.lineWidth = this.lineWidth;
@@ -120,14 +120,14 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
 		}
 		// Draw vertical lines
 		for (var y = this.yOrigin + 0.0; y < this.yOrigin + this.height; y += columnSpace) {
-  			
-  			if (this.style === 'line') {
-  				context.moveTo(this.xOrigin, y);
-  				context.lineTo(this.xOrigin + this.width, y);
-  			}
-  			else if (this.style === 'dashed') {
-				context.dashedLine(this.xOrigin, y, this.xOrigin + this.width, y, this.dashArray);
-			}
+
+            if (this.style === 'line') {
+                context.moveTo(this.xOrigin, y);
+                context.lineTo(this.xOrigin + this.width, y);
+            }
+            else if (this.style === 'dashed') {
+                context.dashedLine(this.xOrigin, y, this.xOrigin + this.width, y, this.dashArray);
+            }
 		}
 
 		context.strokeStyle = this.lineColor;
