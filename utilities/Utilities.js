@@ -202,7 +202,7 @@ K2.GenericUtils.clone = function(obj) {
     if (obj instanceof Array) {
         copy = [];
         for (var i = 0, len = obj.length; i < len; ++i) {
-            copy[i] = clone(obj[i]);
+            copy[i] = K2.GenericUtils.clone(obj[i]);
         }
         return copy;
     }
@@ -211,7 +211,7 @@ K2.GenericUtils.clone = function(obj) {
     if (obj instanceof Object) {
         copy = {};
         for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+            if (obj.hasOwnProperty(attr)) copy[attr] = K2.GenericUtils.clone(obj[attr]);
         }
         return copy;
     }
