@@ -473,7 +473,8 @@ K2.UI = function(engine, parameters) {
                         var connDetails = { 'sender': elementID,
                                             'sendSlot': slot,
                                             'recv': recvElementID,
-                                            'recvSlot': recvSlot};
+                                            'recvSlot': recvSlot,
+                                            'ui': this};
                         // We have a callback to call.
                         value = receiverHash.callback(value, connDetails);
                     }

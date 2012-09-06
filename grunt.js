@@ -14,6 +14,7 @@ var libFiles = ['common.js',
                 'graphic_elements/RotKnob.js',
                 'graphic_elements/Slider.js',
                 'graphic_elements/Wavebox.js',
+                'graphic_elements/extras/CurveEditor.js',
                 'graphic_elements/engines/EngineFactory.js',
                 'graphic_elements/engines/CanvasUtils.js',
                 'utilities/Utilities.js'
