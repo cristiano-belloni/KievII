@@ -219,6 +219,15 @@ K2.GenericUtils.clone = function(obj) {
     throw new Error("Unable to copy obj! Its type isn't supported.");
 };
 
+K2.MathUtils = {};
+
+K2.MathUtils.linearRange = function (a, b, y, z, c) {
+    // Input:   value c between a and b
+    // Output:  value x between y and z
+    var x = (c - a) * (z - y) / (b - a) + y;
+    return x;
+};
+
 K2.CanvasUtils = {};
 
 K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
