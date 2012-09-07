@@ -6,6 +6,8 @@ var GaugeTest = {
     redrawRandom: function () {
         var newValue = Math.random();
         GaugeTest.ui.setValue ({elementID: 'testGauge', slot: 'gaugevalue', value: newValue});
+        newValue = Math.random(); 
+        GaugeTest.ui.setValue ({elementID: 'testGauge', slot: 'midgaugevalue', value: newValue});
     },
     
     main: function () {
@@ -28,7 +30,7 @@ var GaugeTest = {
         
         this.ui.addElement(new K2.Gauge(gaugeArgs));
         
-        var loop = setInterval (this.redrawRandom, 1000);
+        var loop = setInterval (this.redrawRandom, 3000);
         
         // !VIEWABLEDOCEND            
     },
