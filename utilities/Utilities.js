@@ -228,6 +228,10 @@ K2.MathUtils.linearRange = function (a, b, y, z, c) {
     return x;
 };
 
+K2.MathUtils.distance = function (x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+};
+
 K2.CanvasUtils = {};
 
 K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {

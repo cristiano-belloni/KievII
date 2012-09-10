@@ -4,6 +4,46 @@ K2.UI = function(engine, parameters) {
 
     // <EVENT HANDLING>
 
+	// http://stackoverflow.com/questions/12342438/find-coordinates-of-an-html5-canvas-click-event-with-borders/
+	this.getEventPosition = function (e, obj) {
+		
+		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingLeft, 10) || 0;
+		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingTop, 10) || 0;
+		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderLeftWidth, 10) || 0;
+		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderTopWidth, 10) || 0;
+		var html = document.body.parentNode;
+		var htmlTop = html.offsetTop;
+		var htmlLeft = html.offsetLeft;
+		
+		
+	    var element = obj,
+	        offsetX = 0,
+	        offsetY = 0,
+	        mx, my;
+	
+	    // Compute the total offset
+	    if (element.offsetParent !== undefined) {
+	        do {
+	            offsetX += element.offsetLeft;
+	            offsetY += element.offsetTop;
+	        } while ((element = element.offsetParent));
+	    }
+	
+	    // Add padding and border style widths to offset
+	    // Also add the <html> offsets in case there's a position:fixed bar
+	    offsetX += stylePaddingLeft + styleBorderLeft + htmlLeft;
+	    offsetY += stylePaddingTop + styleBorderTop + htmlTop;
+	
+	    mx = e.pageX - offsetX;
+	    my = e.pageY - offsetY;
+	
+	    // We return a simple javascript object (a hash) with x and y defined
+	    return {
+	        x: mx,
+	        y: my
+	    };
+	};
+
     // Thanks for these two functions to the noVNC project. You are great.
     // https://github.com/kanaka/noVNC/blob/master/include/util.js#L121
 
@@ -19,11 +59,12 @@ K2.UI = function(engine, parameters) {
         }
         return {'x': x, 'y': y};
     };
-
+    
     // Get mouse event position in DOM element (don't know how to use scale yet).
-    this.getEventPosition = function(e, obj, aux_e, scale) {
-        var evt, docX, docY, pos;
-        //if (!e) evt = window.event;
+    /*this.getEventPosition = function(e, obj, aux_e, scale) {
+
+		var evt, docX, docY, pos;
+
         evt = (e ? e : window.event);
         if (evt.pageX || evt.pageY) {
             docX = evt.pageX;
@@ -43,8 +84,8 @@ K2.UI = function(engine, parameters) {
             scale = 1;
         }
         return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
-    };
-
+    };*/
+    
     // Event handlers
 
 	// onMouse events

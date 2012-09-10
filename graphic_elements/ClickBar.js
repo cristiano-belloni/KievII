@@ -72,10 +72,10 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.protot
     
         if (this.isInROI (x,y)) {
             
-            if (!this.triggered) {
+            //if (!this.triggered) {
                 this.prevValue = this.values.barvalue;
                 this.triggered = true;
-            }
+            //}
             
             var clickedValue = this.calculateValue (x,y);
             
