@@ -18,8 +18,8 @@ var GaugeTest = {
             ID: "testGauge",
             left: Math.floor (this.viewWidth / 2 - this.viewWidth / 5),
             top : Math.floor (this.viewHeight / 2 - this.viewHeight / 5),
-            height: Math.floor(this.viewHeight / 5),
-            width: Math.floor(this.viewWidth / 5),
+            height: 120, //Math.floor(this.viewHeight / 5),
+            width: 120, //Math.floor(this.viewWidth / 5),
             onValueSet: function (slot, value) {
                 console.log ("Event on slot " + slot + " with value " + value);
                 this.ui.refresh();
@@ -30,7 +30,8 @@ var GaugeTest = {
         
         this.ui.addElement(new K2.Gauge(gaugeArgs));
         
-        var loop = setInterval (this.redrawRandom, 3000);
+        //var loop = setInterval (this.redrawRandom, 3000);
+        this.redrawRandom();
         
         // !VIEWABLEDOCEND            
     },
