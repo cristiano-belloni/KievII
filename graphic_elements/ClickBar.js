@@ -68,10 +68,15 @@ K2.ClickBar.prototype.calculateValue = function (x,y) {
 };
 
 
-K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.prototype.mousedown = function(x, y) {
+K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.prototype.mousedown = K2.ClickBar.prototype.hold = function(x, y) {
     
         if (this.isInROI (x,y)) {
-            this.triggered = true;
+            
+            if (!this.triggered) {
+                this.prevValue = this.values.barvalue;
+                this.triggered = true;
+            }
+            
             var clickedValue = this.calculateValue (x,y);
             
             if (clickedValue === this.values.barvalue) {
@@ -84,13 +89,15 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.protot
         
 };
 
-K2.ClickBar.prototype.drag = K2.Curve.prototype.mousemove = function(x, y) {
+K2.ClickBar.prototype.drag = function(x, y) {
 
         if (this.isInROI (x,y)) {
+            
             if (!this.triggered) {
                 this.prevValue = this.values.barvalue;
                 this.triggered = true;
             }
+            
             var clickedValue = this.calculateValue (x, y);
             
             if (clickedValue === this.values.barvalue) {
@@ -102,7 +109,21 @@ K2.ClickBar.prototype.drag = K2.Curve.prototype.mousemove = function(x, y) {
 
 };
 
-K2.ClickBar.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mouseup = function(x, y) {
+K2.ClickBar.prototype.mousemove = function (x,y) {
+    
+    if (this.isInROI (x,y) && this.triggered) {
+        
+        var clickedValue = this.calculateValue (x, y);
+            
+        if (clickedValue === this.values.barvalue) {
+            return;
+        }
+        
+        return {slot : 'barvalue', value : clickedValue};
+    }
+};
+
+K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup = function(x, y) {
     
     this.triggered = false;
             
@@ -141,16 +162,19 @@ K2.ClickBar.prototype.refresh_CANVAS2D = function(engine) {
         if (this.triggered) {
             
             if (this.values.barvalue < this.prevValue) {
+                console.log ("first");
                 this.prevDraw(engine);
                 this.diffDraw(engine);
             }
             else {
+                console.log ("second");
                 this.diffDraw(engine);
                 this.prevDraw(engine);
             }
                              
         }
         else {
+            console.log ("third");
             // Value, in color
             engine.context.fillStyle = this.color;
             engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
