@@ -71,12 +71,13 @@ K2.ClickBar.prototype.calculateValue = function (x,y) {
 K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.prototype.mousedown = function(x, y) {
     
         if (this.isInROI (x,y)) {
+            this.triggered = true;
             var clickedValue = this.calculateValue (x,y);
             
             if (clickedValue === this.values.barvalue) {
                 return;
             }            
-            this.triggered = true;
+            this.prevValue = this.values.barvalue;
             return {slot : 'barvalue', value : clickedValue};
        }
         
@@ -86,6 +87,10 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.protot
 K2.ClickBar.prototype.drag = K2.Curve.prototype.mousemove = function(x, y) {
 
         if (this.isInROI (x,y)) {
+            if (!this.triggered) {
+                this.prevValue = this.values.barvalue;
+                this.triggered = true;
+            }
             var clickedValue = this.calculateValue (x, y);
             
             if (clickedValue === this.values.barvalue) {
@@ -100,6 +105,8 @@ K2.ClickBar.prototype.drag = K2.Curve.prototype.mousemove = function(x, y) {
 K2.ClickBar.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mouseup = function(x, y) {
     
     this.triggered = false;
+            
+    return {slot : 'barvalue', value : this.values.barvalue};
     
 };
 
@@ -110,29 +117,45 @@ K2.ClickBar.prototype.setValue = function(slot, value) {
 
 };
 
+K2.ClickBar.prototype.prevDraw = function(engine) {
+    // Previous value,in prevColor
+    engine.context.fillStyle = this.prevColor;
+    engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.prevValue) * this.height,
+                                 this.width,
+                                 this.prevValue * this.height);
+};
+
+K2.ClickBar.prototype.diffDraw = function(engine) {
+    // Value, in diffColor
+    engine.context.fillStyle = this.diffColor;
+    engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
+                                 this.width,
+                                 this.values.barvalue * this.height);
+    
+};
 
 K2.ClickBar.prototype.refresh_CANVAS2D = function(engine) {
 
     if (this.isVisible === true) {
         
-        engine.context.fillStyle = this.color;
-        //engine.context.strokeStyle = this.borderColor;
-        //engine.context.lineWidth = this.thickness;
-        //var halfThickness = Math.floor (this.thickness / 2);
         if (this.triggered) {
-            engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
-                                 this.width,
-                                 this.values.barvalue * this.height);
+            
+            if (this.values.barvalue < this.prevValue) {
+                this.prevDraw(engine);
+                this.diffDraw(engine);
+            }
+            else {
+                this.diffDraw(engine);
+                this.prevDraw(engine);
+            }
+                             
         }
-        
         else {
+            // Value, in color
+            engine.context.fillStyle = this.color;
             engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
                                  this.width,
                                  this.values.barvalue * this.height);
                              }
-        /*engine.context.strokeRect (this.xOrigin + this.values.xOffset,
-                                 this.height - this.values.height - this.values.yOffset,
-                                 this.values.width,
-                                 this.values.height); */
     }
 };
