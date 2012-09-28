@@ -47,12 +47,28 @@ K2.Gauge.prototype.isInROI = function(x, y) {
 	return true;
 };
 
-K2.Gauge.prototype.tap = K2.Gauge.prototype.dragstart = K2.Gauge.prototype.mousedown = function(x, y) {
+K2.Gauge.prototype.calculateAngle = function (x,y) {
 	
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
 	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	
+	var radtan = Math.atan2 (x - centerX, y - centerY);
+	console.log('radiant atan ', radtan);
+	
+	var degreetan = radtan * (180 / Math.PI);
+	degreetan = 180 - degreetan;
+	console.log('degree atan ', degreetan);
+	
+	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
+	return range_val;
+	
+};
+
+K2.Gauge.prototype.tap = K2.Gauge.prototype.dragstart = K2.Gauge.prototype.mousedown = function(x, y) {
+	
+	
 
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
 	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
@@ -62,15 +78,7 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.dragstart = K2.Gauge.prototype.mouse
 		console.log("down / tapped Inside the dial");
 		this.triggered = true;
 
-		var radtan = Math.atan2 (x - centerX, y - centerY);
-		console.log('radiant atan ', radtan);
-		
-		var degreetan = radtan * (180 / Math.PI);
-		degreetan = 180 - degreetan;
-		console.log('degree atan ', degreetan);
-		
-		var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-		
+		var range_val = this.calculateAngle (x,y);
 		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
 		
 		return ret;
@@ -79,21 +87,21 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.dragstart = K2.Gauge.prototype.mouse
 	return undefined;
 };
 
-K2.Gauge.prototype.mouseup = function(curr_x, curr_y) {
+K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
+	
+	if (this.triggered) {
+		console.log ("triggered mousemove");
+		var range_val = this.calculateAngle (x,y);
+		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
+		return ret;
+	}
+};
 
-	var to_set = 0, ret = {};
+K2.Gauge.prototype.mouseup = function(curr_x, curr_y) {
 
 	if (this.triggered) {
 		this.triggered = false;
-
-		//ret = {'slot' : 'selected', 'value' : [curr_x, curr_y]};
-		//return ret;
-
 	}
-
-	// Action is void, button was upclicked outside its ROI or never downclicked
-	// No need to trigger anything, ignore this event.
-	return undefined;
 
 };
 
