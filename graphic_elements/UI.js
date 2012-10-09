@@ -199,12 +199,13 @@ K2.UI = function(engine, parameters) {
 		this.hammer.ontransformend = this.onHammerEvent();
 		this.hammer.onrelease = this.onHammerEvent();
 	}
-	// Hammer not present, switch to regular events
-    else {
-	    this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-	    this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-	    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
-	   }
+
+
+    this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
+	this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
+    this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
+    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
+
 
     this.mouseUp = true;
 
