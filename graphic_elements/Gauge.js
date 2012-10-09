@@ -26,14 +26,13 @@ K2.Gauge.prototype.getready = function(args) {
 
 	this.defaultSlot = 'gaugevalue';
 
-	this.partialValue = null;
+	this.prevValue = this.values.gaugevalue;
 
 	this.setWidth(args.width);
 	this.setHeight(args.height);
 
-	this.color = args.color || "lightgreen";
+	this.color = args.color || ["#47D147","#70DB70","#99E699"];
 	this.bgColor = args.bgColor || "#222";
-	this.midColor = args.midColor || "#66A666";
 
 	this.radius = args.radius || (this.width < this.height) ? Math.floor(this.width / 2) : Math.floor(this.height / 2);
 	this.thickness = args.thickness || (this.width < this.height) ? Math.floor(this.width / 3) : Math.floor(this.height / 3);
@@ -66,7 +65,7 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	
 };
 
-K2.Gauge.prototype.tap = K2.Gauge.prototype.dragstart = K2.Gauge.prototype.mousedown = function(x, y) {
+K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
 	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
@@ -77,6 +76,8 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.dragstart = K2.Gauge.prototype.mouse
 		this.triggered = true;
 
 		var range_val = this.calculateAngle (x,y);
+		
+		this.prevValue = this.values.gaugevalue;
 		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
 		
 		return ret;
@@ -90,6 +91,7 @@ K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
 	if (this.triggered) {
 		console.log ("triggered mousemove");
 		var range_val = this.calculateAngle (x,y);
+		//this.prevValue = this.values.gaugevalue;
 		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
 		return ret;
 	}
@@ -99,16 +101,14 @@ K2.Gauge.prototype.release = K2.Gauge.prototype.dragend = K2.Gauge.prototype.mou
 
 	if (this.triggered) {
 		this.triggered = false;
+		this.prevValue = this.values.gaugevalue;
+		var ret = {'slot' : 'gaugevalue', 'value' : this.values.gaugevalue};
+		return ret;
 	}
 
 };
 
 K2.Gauge.prototype.setValue = function(slot, value) {
-
-	/* if (slot === 'gaugevalue') {
-	this.partialValue = this.values.gaugevalue;
-	clearInterval(this.animationInterval);
-	} */
 
 	// Call the superclass
 	K2.Gauge.superclass.setValue.call(this, slot, value);
@@ -125,13 +125,24 @@ K2.Gauge.prototype.refresh_CANVAS2D = function(engine) {
 		// Background arc, 360 degrees
 		this.drawGauge(ctx, 1, this.bgColor);
 
-		// Middle arc, if needed
-		if ( typeof this.values.midgaugevalue !== 'null') {
-			this.drawGauge(ctx, this.values.midgaugevalue, this.midColor);
+		// Accessory arcs
+		if (this.triggered) {
+			
+			if (this.values.gaugevalue <= this.prevValue) {
+				this.drawGauge(ctx, this.prevValue, this.color[2]);
+				this.drawGauge(ctx, this.values.gaugevalue, this.color[1]);
+			}
+			else {
+				this.drawGauge(ctx, this.values.gaugevalue, this.color[2]);
+				this.drawGauge(ctx, this.prevValue, this.color[1]);
+			}
+			
 		}
-
-		// Foreground (gauge) arc, degrees [0,360] linearly interpolated from gaugevalue [0,1]
-		this.drawGauge(ctx, this.values.gaugevalue, this.color);
+		
+		else {
+			// Foreground (gauge) arc, degrees [0,360] linearly interpolated from gaugevalue [0,1]
+			this.drawGauge(ctx, this.values.gaugevalue, this.color[0]);
+		}
 
 	}
 };
