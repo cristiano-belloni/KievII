@@ -24,6 +24,9 @@ K2.Knob.prototype.getready = function(args) {
 
     this.sensitivity = args.sensitivity || 2000;
     this.imagesArray = args.imagesArray || null;
+    
+    // Can be 'atan' or 'updown'
+    this.knobMethod = args.knobMethod || 'atan';
 
     if (this.imagesArray.length < 1) {
         throw new Error('Invalid images array length, ' + this.imagesArray.length);
@@ -65,6 +68,25 @@ K2.Knob.prototype.getImage = function() {
     return this.imagesArray[ret];
 };
 
+K2.Knob.prototype.calculateAngle = function (x,y) {
+	
+	var centerX = this.xOrigin + this.width / 2;
+	var centerY = this.yOrigin + this.height / 2;
+	
+	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	
+	var radtan = Math.atan2 (x - centerX, y - centerY);
+	console.log('radiant atan ', radtan);
+	
+	var degreetan = radtan * (180 / Math.PI);
+	degreetan = 180 - degreetan;
+	console.log('degree atan ', degreetan);
+	
+	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
+	return range_val;
+	
+};
+
 // This method returns true if the point given belongs to this knob.
 K2.Knob.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
@@ -75,13 +97,19 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = function(x, y) {
+K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
     if (inROI) {
         this.start_x = x;
         this.start_y = y;
+    }
+    
+    if (this.knobMethod === 'atan') {
+		var range_val = this.calculateAngle (x,y);
+		var ret = {'slot' : 'knobvalue', 'value' : range_val};
+		return ret;
     }
 
     // No value has been changed.
@@ -101,32 +129,45 @@ K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
 
 K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) {
 
-    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
+	var ret;
 
-        // This means that the mouse is currently down.
-        var deltaY = 0,
-            temp_value,
-            to_set,
-            ret;
-
-        deltaY = curr_y - this.start_y;
-
-        temp_value = this.values.knobvalue;
-
-        // Todo set sensitivity.
-        to_set = temp_value - deltaY / this.sensitivity;
-
-        if (to_set > 1) {
-            to_set = 1;
-        }
-        if (to_set < 0) {
-            to_set = 0;
-        }
-
-        ret = {'slot' : 'knobvalue', 'value' : to_set};
-
-        return ret;
-    }
+	if (this.knobMethod === 'updown') {
+		// TODO null or typeof
+	    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
+	
+	        // This means that the mouse is currently down.
+	        var deltaY = 0,
+	            temp_value,
+	            to_set;
+	
+	        deltaY = curr_y - this.start_y;
+	
+	        temp_value = this.values.knobvalue;
+	
+	        // Todo set sensitivity.
+	        to_set = temp_value - deltaY / this.sensitivity;
+	
+	        if (to_set > 1) {
+	            to_set = 1;
+	        }
+	        if (to_set < 0) {
+	            to_set = 0;
+	        }
+	
+	        ret = {'slot' : 'knobvalue', 'value' : to_set};
+	
+	        return ret;
+	    }
+	}
+	
+	else if (this.knobMethod === 'atan') {
+		if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
+			var range_val = this.calculateAngle (curr_x, curr_y);
+			ret = {'slot' : 'knobvalue', 'value' : range_val};
+			return ret;
+		}
+	}
+	
 
     // The mouse is currently up; ignore the event notify.
     return undefined;
