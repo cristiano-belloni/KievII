@@ -62,7 +62,7 @@ K2.Button.prototype.doubletap = K2.Button.prototype.tap = K2.Button.prototype.mo
     return undefined;
 };
 
-K2.Button.prototype.release = K2.Button.prototype.mouseup = function(curr_x, curr_y) {
+K2.Button.prototype.mouseup = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
