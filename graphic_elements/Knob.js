@@ -104,14 +104,14 @@ K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.to
     if (inROI) {
         this.start_x = x;
         this.start_y = y;
+        
+        if (this.knobMethod === 'atan') {
+            var range_val = this.calculateAngle (x,y);
+            var ret = {'slot' : 'knobvalue', 'value' : range_val};
+            return ret;
+        }
     }
     
-    if (this.knobMethod === 'atan') {
-		var range_val = this.calculateAngle (x,y);
-		var ret = {'slot' : 'knobvalue', 'value' : range_val};
-		return ret;
-    }
-
     // No value has been changed.
     return undefined;
 };

@@ -14,6 +14,10 @@ var RotKnobTest = {
             left: Math.floor ((this.viewHeight - img.height) / 2),
             image : img,
             sensitivity : 5000,
+            initAngValue: -90,
+            startAngValue: 0,
+            stopAngValue: 360,
+            /* knobMethod: 'updown', */
             onValueSet: function (slot, value) {
                 this.ui.refresh();
             }.bind(this),
