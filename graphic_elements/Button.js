@@ -52,7 +52,7 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Button.prototype.doubletap = K2.Button.prototype.tap = K2.Button.prototype.mousedown = function(x, y) {
+K2.Button.prototype.mousedown = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -60,6 +60,20 @@ K2.Button.prototype.doubletap = K2.Button.prototype.tap = K2.Button.prototype.mo
         this.triggered = true;
     }
     return undefined;
+};
+
+K2.Button.prototype.touchstart = function(x, y) {
+
+    //console.log ("Click down on ", x, y);
+
+    if (this.isInROI(x, y)) {
+        
+    //Simply add 1 to the button value until it rolls back.
+    to_set = (this.values.buttonvalue + 1) % this.nButtons;
+    ret = {'slot' : 'buttonvalue', 'value' : to_set};
+    
+    return ret;
+    }
 };
 
 K2.Button.prototype.mouseup = function(curr_x, curr_y) {

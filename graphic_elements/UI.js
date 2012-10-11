@@ -182,28 +182,62 @@ K2.UI = function(engine, parameters) {
 	var renderTarget = engine.renderTarget || engine.target;
     
     this.domElement = eventTarget;
+    
+    var isEventSupported = (function(){
+    var TAGNAMES = {
+      'select':'input','change':'input',
+      'submit':'form','reset':'form',
+      'error':'img','load':'img','abort':'img'
+	};
+    function isEventSupported(eventName) {
+      var el = document.createElement(TAGNAMES[eventName] || 'div');
+      eventName = 'on' + eventName;
+      var isSupported = (eventName in el);
+      if (!isSupported) {
+        el.setAttribute(eventName, 'return;');
+        isSupported = typeof el[eventName] == 'function';
+      }
+      el = null;
+      return isSupported;
+    }
+    return isEventSupported;
+  })();
 
 	// Hammer.js is present
-	if (typeof Hammer !== 'undefined') {
-		console.log('We have hammer.js!');
-		this.hammer = new Hammer(this.domElement, {drag_min_distance: 2});
-		this.hammer.ondragstart = this.onHammerEvent();
-		this.hammer.ondrag = this.onHammerEvent();
-		this.hammer.ondragend = this.onHammerEvent();
-		this.hammer.onswipe = this.onHammerEvent();
-		this.hammer.ontap = this.onHammerEvent();
-		this.hammer.ondoubletap = this.onHammerEvent();
-		this.hammer.onhold = this.onHammerEvent();
-		this.hammer.ontransformstart = this.onHammerEvent();
-		this.hammer.ontransform = this.onHammerEvent();
-		this.hammer.ontransformend = this.onHammerEvent();
-		this.hammer.onrelease = this.onHammerEvent();
+	if (typeof Hammer === 'undefined') {
+		throw ("Hammer.js needed!");
 	}
-
-
-    this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-	this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-    this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
+	
+	this.hammer = new Hammer(this.domElement, {drag_min_distance: 2});
+	this.hammer.ondragstart = this.onHammerEvent();
+	this.hammer.ondrag = this.onHammerEvent();
+	this.hammer.ondragend = this.onHammerEvent();
+	this.hammer.onswipe = this.onHammerEvent();
+	this.hammer.ontap = this.onHammerEvent();
+	this.hammer.ondoubletap = this.onHammerEvent();
+	this.hammer.onhold = this.onHammerEvent();
+	this.hammer.ontransformstart = this.onHammerEvent();
+	this.hammer.ontransform = this.onHammerEvent();
+	this.hammer.ontransformend = this.onHammerEvent();
+	this.hammer.onrelease = this.onHammerEvent();
+	
+	if (isEventSupported('touchstart')) {
+		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
+		console.log ("touchstart supported");
+	}
+    else {
+		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
+		console.log ("no touchstart, supporting mousedown");
+	}
+	if (isEventSupported('touchend')) {
+		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
+		console.log ("touchend supported");
+    }
+    else {
+		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
+		console.log ("no touchend, supporting mouseup");
+    }
+    // TODO see if it's not superseded by ondrag
     this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
 
 

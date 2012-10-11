@@ -160,7 +160,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     
 };
 
-K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = function(x, y) {
+K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -180,7 +180,7 @@ K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = function(x, y)
     return undefined;
 };
 
-K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = function(x, y) {
+K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend = function(x, y) {
 
     // Reset the starting point.
     this.start_x = null;

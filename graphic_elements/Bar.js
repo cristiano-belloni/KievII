@@ -32,47 +32,36 @@ K2.Bar.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Bar.prototype.tap = K2.Bar.prototype.mousedown = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
-
-    if (this.isInROI(x, y)) {
-        this.triggered = true;
-    }
-    return undefined;
-};
-
-K2.Bar.prototype.release = K2.Bar.prototype.mouseup = function(curr_x, curr_y) {
+K2.Bar.prototype.tap = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
 
-    if (this.triggered) {
-        // Button is activated when cursor is still in the element ROI, otherwise action is void.
-        if (this.isInROI(curr_x, curr_y)) {
+    
+    if (this.isInROI(curr_x, curr_y)) {
 
-            var tempValue = this.values.barPos;
-            var retVal = [];
+        var tempValue = this.values.barPos;
+        var retVal = [];
 
-            if (this.orientation === 0) {
-                retVal = [curr_x, tempValue[1]];
-            }
-
-            else if (this.orientation === 1) {
-                retVal = [tempValue[0], curr_y];
-            }
-
-            else {
-                console.error('orientation invalid, this will probably break something');
-            }
-
-            // Click on button is completed, the button is no more triggered.
-            this.triggered = false;
-
-			ret = {'slot' : 'barPos', 'value' : retVal};
-            return ret;
+        if (this.orientation === 0) {
+            retVal = [curr_x, tempValue[1]];
         }
+
+        else if (this.orientation === 1) {
+            retVal = [tempValue[0], curr_y];
+        }
+
+        else {
+            console.error('orientation invalid, this will probably break something');
+        }
+
+        // Click on button is completed, the button is no more triggered.
+        this.triggered = false;
+
+		ret = {'slot' : 'barPos', 'value' : retVal};
+        return ret;
     }
+  
 
     // Action is void, button was upclicked outside its ROI or never downclicked
     // No need to trigger anything, ignore this event.
