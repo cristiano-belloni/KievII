@@ -21,6 +21,11 @@ var libFiles = ['common.js',
                 'graphic_elements/engines/CanvasUtils.js',
                 'utilities/Utilities.js'
                 ];
+var thirdParty = ['third_part/hammer.js/hammer.js'];
+
+var allFiles = libFiles.concat(thirdParty);
+
+  grunt.loadNpmTasks('grunt-strip');
 
   // Project configuration.
   grunt.initConfig({
@@ -35,7 +40,7 @@ var libFiles = ['common.js',
     },
    concat: {
     dist: {
-      src: libFiles,
+      src: allFiles,
       dest: 'kievII.js'
     }
    },
@@ -49,11 +54,19 @@ var libFiles = ['common.js',
     mangle: {toplevel: true},
     squeeze: {dead_code: false},
     codegen: {quote_keys: true}
+  },
+  strip : {
+  main : {
+    src : 'kievII.js',
+    dest : 'kievII.js',
   }
+}
    
   });
 
   // Default task.
   grunt.registerTask('default', 'lint concat min');
+  
+  grunt.registerTask('release', 'lint concat strip min');
 
 };
