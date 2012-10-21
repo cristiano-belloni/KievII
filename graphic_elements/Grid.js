@@ -108,7 +108,7 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
 		context.lineWidth = this.lineWidth;
 		
         // Draw horizontal lines
-        for (var x = this.xOrigin + 0.0; x < this.xOrigin + this.width; x += rowSpace) {
+        for (var x = this.xOrigin + 0.0; x < this.xOrigin + this.width; x += columnSpace) {
 			
 			if (this.style === 'line') {
 				context.moveTo(x, this.yOrigin);
@@ -119,7 +119,7 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
 			}
 		}
 		// Draw vertical lines
-		for (var y = this.yOrigin + 0.0; y < this.yOrigin + this.height; y += columnSpace) {
+		for (var y = this.yOrigin + 0.0; y < this.yOrigin + this.height; y += rowSpace) {
 
             if (this.style === 'line') {
                 context.moveTo(this.xOrigin, y);
