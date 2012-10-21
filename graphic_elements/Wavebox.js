@@ -222,6 +222,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 }
 
                context.fill();
+               context.closePath();
 
                context.beginPath();
 
@@ -256,6 +257,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 }
 
                 context.fill();
+                context.closePath();
             }
 
             if (false) {
