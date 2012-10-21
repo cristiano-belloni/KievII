@@ -32,7 +32,7 @@ var CurveEditor = function(parameters) {
                 // See which element are we selecting
                 for (var i = 0; i < that.status.curveArray.length; i += 1) {
                     if (that.status.curveArray[i] === element) {
-                        that.ui.setProp(element, 'curveColor', 'red');
+                        that.ui.setProp(element, 'curveColor', that.selectedCurveColor);
                         that.status.selected = i;
                     } else {
                         that.ui.setProp(that.status.curveArray[i], 'curveColor', that.curveArgsTemplate.curveColor);
@@ -101,7 +101,7 @@ var CurveEditor = function(parameters) {
         this.ui.refresh();
     };
 
-    this.addCurve = function(curveType, grade) {
+    this.addCurve = function(curveType, grade, first_point, last_point) {
         console.log("Adding a curve");
         var lastElementID;
 
@@ -117,39 +117,51 @@ var CurveEditor = function(parameters) {
 
         newCurveArgs.paintTerminalPoints = 'all';
         // Calculate terminal points type and first, last point
-        if (this.status.curveArray.length === 0) {
-            // Lower left
-            firstPoint = [0, this.height];
-        } else {
-            // Appending: calculate the terminal point
-            lastElementID = this.status.curveArray[this.status.curveArray.length - 1];
-            //Get the values from the element
-            var coordinates = (ui.getProp(lastElementID, 'values')).points;
-            firstPoint = [coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]];
-            // Set the curve to paint only its first handle
-            ui.setProp(lastElementID, 'paintTerminalPoints', 'first');
+        if (typeof first_point !== 'undefined') {
+			firstPoint = first_point;
         }
+        
+        else {
+	        if (this.status.curveArray.length === 0) {
+	            // Lower left
+	            firstPoint = [0, this.height];
+	        } else {
+	            // Appending: calculate the terminal point
+	            lastElementID = this.status.curveArray[this.status.curveArray.length - 1];
+	            //Get the values from the element
+	            var coordinates = (this.ui.getProp(lastElementID, 'values')).points;
+	            firstPoint = [coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]];
+	            // Set the curve to paint only its first handle
+	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'first');
+	        }
+	    }
 
         var xInc = Math.round(this.width / 8);
         var yInc = -Math.round(this.height / 8);
 
-        // Calculate the next "landing" point
-        lastPoint = [firstPoint[0] + xInc, firstPoint[1] + yInc];
-
-        if (lastPoint[0] > this.width) {
-            lastPoint[0] = this.width;
-        }
-        if (lastPoint[1] < 0) {
-            lastPoint[1] = 0;
-        }
-
-        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
-            // Set the curve to paint only its first handle
-            console.log("Remove something before adding stuff");
-            // Undo the previous paintTerminalPoints inference
-            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
-            return;
-        }
+		if (typeof last_point !== 'undefined') {
+				lastPoint = last_point; 
+			}
+			
+		else {	
+	        // Calculate the next "landing" point
+	        lastPoint = [firstPoint[0] + xInc, firstPoint[1] + yInc];
+	
+	        if (lastPoint[0] > this.width) {
+	            lastPoint[0] = this.width;
+	        }
+	        if (lastPoint[1] < 0) {
+	            lastPoint[1] = 0;
+	        }
+	
+	        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
+	            // Set the curve to paint only its first handle
+	            console.log("Remove something before adding stuff");
+	            // Undo the previous paintTerminalPoints inference
+	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
+	            return;
+	        }
+       }
 
         this.lastCalculatedPoint[0] = lastPoint[0];
         this.lastCalculatedPoint[1] = lastPoint[1];
@@ -299,6 +311,9 @@ var CurveEditor = function(parameters) {
     this.height = parameters.height || parameters.canvas.height;
 
     this.lastCalculatedPoint = [];
+    
+    this.selectedCurveColor = parameters.selectedCurveColor || 'red';
+
 
     //curve template
     this.curveArgsTemplate = {
