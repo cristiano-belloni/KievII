@@ -325,6 +325,14 @@ K2.UI = function(engine, parameters) {
             // TODO delete the element in the connection matrix?
         }
     };
+    
+    this.isElement = function (elementId) {
+
+        if (typeof this.elements[elementId] !== 'undefined') {
+            return true;
+        }
+        return false;
+    };
 
     // Z-Index getter and setter
     this.setZIndex = function(elementID, zIndex) {
