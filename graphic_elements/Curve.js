@@ -43,6 +43,7 @@ K2.Curve.prototype.getready = function(args) {
     this.handleClicked = null;
     this.supportPoints = [];
     this.selectStart = false;
+    this.whereHappened = [];
 
 
     // Check for correct number of arguments
@@ -142,7 +143,7 @@ K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mouse
     }
 };
 
-K2.Curve.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y) {
+K2.Curve.prototype.drag = function(curr_x, curr_y) {
 
     var ret = {},
         points;
@@ -157,6 +158,9 @@ K2.Curve.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y
             points = this.values.points.slice();
             points[this.handleClicked][0] = curr_x;
             points[this.handleClicked][1] = curr_y;
+            
+            this.whereHappened = [curr_x, curr_y];
+            
             ret = {'slot' : 'points', 'value' : points};
             return ret;
         }
@@ -224,8 +228,30 @@ K2.Curve.prototype.doubletap = function(x, y) {
 };
 
 K2.Curve.prototype.setValue = function(slot, value) {
-	// Now, we call the superclass
-    K2.Curve.superclass.setValue.call(this, slot, value);
+	var equal = true;
+	
+	if (slot === 'points') {
+		var oldValue = this.values[slot];
+		for (var i = 0; i < value.length; i += 1) {
+			for (var k = 0; k < value.length; k += 1) {
+				if (value[i][k] !== oldValue[i][k]) {
+					equal = false;
+					break;
+				}
+			}
+			if (equal === false) {
+				break;
+			}
+		}
+	}
+	else {
+		equal = false;
+	}
+	
+	if (!equal) {
+		// Now, we call the superclass
+	    K2.Curve.superclass.setValue.call(this, slot, value);
+	  }
 
 };
 
