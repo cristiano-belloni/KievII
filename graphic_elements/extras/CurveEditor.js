@@ -17,7 +17,7 @@ var CurveEditor = function(parameters) {
             // If it's not the last curve, connect the next curve to this one
             if (i < this.status.curveArray.length - 1) {
                 this.ui.connectSlots(this.status.curveArray[i + 1], 'points', this.status.curveArray[i], 'points', {
-                    'callback' : filter_func
+                    'callback' : filter_func, 'cascade': false
                 });
             }
         }
@@ -28,6 +28,12 @@ var CurveEditor = function(parameters) {
         var that = this;
         return function(slot, value, element) {
             console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            
+            // Call the optional callback
+            if (typeof that.externalCallback === 'function') {
+				that.externalCallback(slot, value, element);
+            }
+            
             if (slot === 'selected') {
                 // See which element are we selecting
                 for (var i = 0; i < that.status.curveArray.length; i += 1) {
@@ -313,6 +319,7 @@ var CurveEditor = function(parameters) {
     this.lastCalculatedPoint = [];
     
     this.selectedCurveColor = parameters.selectedCurveColor || 'red';
+    this.externalCallback = parameters.callback;
 
 
     //curve template
