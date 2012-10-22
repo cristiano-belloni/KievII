@@ -104,6 +104,7 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
         context.fillStyle = this.bgColor;
         context.fillRect(this.xOrigin, this.yOrigin, this.width, this.height);
 
+		context.beginPath();
 		// Draw grid lines
 		context.lineWidth = this.lineWidth;
 		
@@ -132,6 +133,7 @@ K2.Grid.prototype.refresh_CANVAS2D = function(engine) {
 
 		context.strokeStyle = this.lineColor;
 		context.stroke();
+		context.closePath();
     }
     
 };
