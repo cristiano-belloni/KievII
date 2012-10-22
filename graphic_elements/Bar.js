@@ -32,7 +32,7 @@ K2.Bar.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Bar.prototype.tap = function(curr_x, curr_y) {
+K2.Bar.prototype.tap = K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
