@@ -391,6 +391,11 @@ K2.UI = function(engine, parameters) {
         }
         else throw ('Could not find ID: ' + elementID + ' property: ' + prop);
     };
+    
+    // Element getter
+    this.getElement = function(elementID) {
+		return this.elements[elementID].element;
+    };
     // </ELEMENT HANDLING>
 
 
