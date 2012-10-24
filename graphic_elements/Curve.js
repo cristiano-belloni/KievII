@@ -36,6 +36,7 @@ K2.Curve.prototype.getready = function(args) {
     this.midPointColor = args.midPointColor || this.handleColor;
     this.terminalPointFill = args.terminalPointFill || null;
     this.midPointFill = args.midPointFill || null;
+    this.xMonotone = args.xMonotone || false;
     // handleSize is the tolerance when dragging handles
     this.handleSize = args.handleSize || (this.terminalPointSize > this.midPointSize) ? this.terminalPointSize : this.midPointSize;
 
@@ -143,41 +144,65 @@ K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mouse
     }
 };
 
+K2.Curve.prototype.xMonotoneFunc  = function (points) {
+	
+	if (points[0][0] > points[points.length-1][0]) {
+		
+		if (points[0][0] > this.values.points[0][0]) {
+			// First point is moving
+			points[0][0] = points[points.length-1][0];
+		}
+		else {
+			// Last point is moving
+			points[points.length-1][0] = points[0][0];
+		}
+	}
+				
+};
+
 K2.Curve.prototype.drag = function(curr_x, curr_y) {
 
     var ret = {},
         points;
 
     if (this.handleClicked !== null) {
+        // Copy the array before modifying it
+        points = K2.GenericUtils.clone (this.values.points);
+        
         // Button is activated when cursor is still in the element ROI, otherwise action is void.
         if (this.isInROI(curr_x, curr_y)) {
             // Click on button is completed, the button is no more triggered.
             this.triggered = false;
-            // Copy the array before modifying it
-            // TODO this is a shallow copy
-            points = this.values.points.slice();
+                        
             points[this.handleClicked][0] = curr_x;
             points[this.handleClicked][1] = curr_y;
             
             this.whereHappened = [curr_x, curr_y];
-            
-            ret = {'slot' : 'points', 'value' : points};
-            return ret;
+                        
         }
         else {
-            // Out of ROI, end this here
-            // Copy the array before modifying it
-            // TODO this is a shallow copy
-            points = this.values.points.slice();
+            // Out of ROI
             // Calculate where to stop
-            points[this.handleClicked][0] = (curr_x < this.ROILeft + this.ROIWidth) ? curr_x : (this.ROILeft + this.ROIWidth);
-            points[this.handleClicked][0] = (curr_x > this.ROILeft) ? curr_x : this.ROILeft;
-            points[this.handleClicked][1] = (curr_y < this.ROITop + this.ROIHeight) ? curr_y : (this.ROITop + this.ROIHeight);
-            points[this.handleClicked][1] = (curr_y < this.ROITop) ? curr_y : this.ROITop;
-            // Stop the drag action
-            this.handleClicked = null;
+            points[this.handleClicked][0] = curr_x;
+            points[this.handleClicked][1] = curr_y;
+            
+            if (curr_x > (this.ROILeft + this.ROIWidth)) {
+                points[this.handleClicked][0] = this.ROILeft + this.ROIWidth;
+            }
+            if (curr_x < this.ROILeft) {
+                points[this.handleClicked][0] = this.ROILeft;
+            }
+            
+            if (curr_y > (this.ROITop + this.ROIHeight)) {
+                points[this.handleClicked][0] = this.ROITop + this.ROIHeight;
+            }
+            if (curr_y < this.ROITop) {
+                points[this.handleClicked][0] = this.ROITop;
+            }
 
         }
+        ret = {'slot' : 'points', 'value' : points};
+        return ret;
     }
 
     // Action is void, button was upclicked outside its ROI or never downclicked
@@ -231,6 +256,7 @@ K2.Curve.prototype.setValue = function(slot, value) {
 	var equal = true;
 	
 	if (slot === 'points') {
+		
 		var oldValue = this.values[slot];
 		for (var i = 0; i < value.length; i += 1) {
 			for (var k = 0; k < value.length; k += 1) {
@@ -247,6 +273,10 @@ K2.Curve.prototype.setValue = function(slot, value) {
 	else {
 		equal = false;
 	}
+	
+	if (this.xMonotone) {
+	   this.xMonotoneFunc(value);
+	   }
 	
 	if (!equal) {
 		// Now, we call the superclass

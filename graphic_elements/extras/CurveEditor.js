@@ -21,6 +21,18 @@ var CurveEditor = function(parameters) {
                 });
             }
         }
+        
+        if (this.xMonotone) {
+            // If xMonotone, set the elements' ROI
+            for (i = 0; i < this.status.curveArray.length - 1; i += 1) {
+                // The current element: ROI width 'til the next element starts
+                var currElement = this.ui.getElement(this.status.curveArray[i]);
+                var nextElement = this.ui.getElement(this.status.curveArray[i+1]);
+                currElement.ROIWidth = nextElement.values.points[0][0] - currElement.ROILeft;
+                // The next element: ROI left 'til the current element starts
+                nextElement.ROILeft = currElement.values.points[0][0];
+            }
+        }
     };
 
     // One callback for all
@@ -320,7 +332,8 @@ var CurveEditor = function(parameters) {
     
     this.selectedCurveColor = parameters.selectedCurveColor || 'red';
     this.externalCallback = parameters.callback;
-
+    
+    this.xMonotone = parameters.xMonotone;
 
     //curve template
     this.curveArgsTemplate = {
@@ -341,6 +354,7 @@ var CurveEditor = function(parameters) {
         midPointFill : parameters.midPointFill || 'E6965A',
         isListening : parameters.isListening || true,
         transparency : parameters.transparency || 0.8,
+        xMonotone: parameters.xMonotone,
         onValueSet : this.callback()
     };
 
