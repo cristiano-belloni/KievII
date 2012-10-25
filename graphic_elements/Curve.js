@@ -176,8 +176,6 @@ K2.Curve.prototype.drag = function(curr_x, curr_y) {
                         
             points[this.handleClicked][0] = curr_x;
             points[this.handleClicked][1] = curr_y;
-            
-            this.whereHappened = [curr_x, curr_y];
                         
         }
         else {
@@ -201,6 +199,7 @@ K2.Curve.prototype.drag = function(curr_x, curr_y) {
             }
 
         }
+        this.whereHappened = [points[this.handleClicked][0], points[this.handleClicked][1]];
         ret = {'slot' : 'points', 'value' : points};
         return ret;
     }
@@ -305,6 +304,34 @@ K2.Curve.prototype.refresh_CANVAS2D = function(engine) {
             this.paintPoints(context, this.values.points, parameters);
         }
     
+};
+
+K2.Curve.prototype.getCurvePoints = function (numPoints) {
+        // Returns an array of numPoints x,y coordinates
+        
+        var step = 1 / numPoints;
+        var temp = [];
+        for (var t = 0; t <= 1; t = t + step) {
+            var p = this[this.curveType].P(t, this.values.points);
+            temp.push(p);
+        }
+        return temp;
+};
+
+K2.Curve.prototype.getCurveYPoints = function (numPoints, mulFactor) {
+        // Returns an array of numPoints y coordinates     
+        
+        if (typeof mulFactor === 'undefined') {
+            mulFactor = 1;
+        }
+        
+        var step = 1 / numPoints;
+        var temp = [];
+        for (var t = 0; t <= 1; t = t + step) {
+            var p = this[this.curveType].P(t, this.values.points)[1] * mulFactor;
+            temp.push(p);
+        }
+        return temp;
 };
 
 K2.Curve.prototype.getPoint = function(index) {
