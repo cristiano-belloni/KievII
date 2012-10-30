@@ -1,52 +1,60 @@
-K2.Band = function(args) {
+K2.Area = function(args) {
     if (arguments.length) {
         this.getready(args);
     }
 };
 
-K2.extend(K2.Band, K2.UIElement);
+K2.extend(K2.Area, K2.UIElement);
 
 
-K2.Band.prototype.getready = function(args) {
+K2.Area.prototype.getready = function(args) {
 
     var valueName, i;
 
      // Call the constructor from the superclass.
-    K2.Band.superclass.getready.call(this, args);
+    K2.Area.superclass.getready.call(this, args);
 
-    // A band has its starting point, height, width and color.
+    // A Area has its starting point, height, width and color.
     this.values = { 'width'     : 0,
                     'height'    : 0,
                     'selected'  : [],
                     'xOffset'   : 0,
-                    'yOffset'   : 0};
+                    'yOffset'   : 0,
+                    'doubletap'	: [],
+                    'held'		: []
+                    };
 
     this.defaultSlot = 'height';
     
     this.color = args.color || 'black';
     this.borderColor = args.borderColor || 'green';
+    
     this.proximity = Math.floor(args.proximity) || 10;
     this.thickness = Math.floor(args.thickness) || this.proximity;
+    // Can paint the borders
     this.borders = args.borders || {top: true, bottom: true, right: true, left: true};
-    this.move = args.move || true;
+    // Can drag the borders
+    this.drag = args.drag || {top: true, bottom: true, right: true, left: true};
+    // Move can be 'none', 'x', 'y', 'all'
+    this.move = args.move || 'all';
+    
+    // TODO ROI
+    
     var height = args.height || 0;
-    var width = args.width || 0; 
-    this.setWidth(width);
-    this.setHeight(height);
+    var width = args.width || 0;
+    
+    this.values.width = width;
+    this.values.height = height;
+    
+    var xOffset = args.left || 0;
+    var yOffset = args.top || 0;
+    
+    this.values.xOffset = xOffset;
+    this.values.yOffset = yOffset;
 
 };
 
-K2.Band.prototype.isInROI = function(x, y) {
-// TODO to reflect the bounding box of the element ?
-    if ((x > this.ROILeft) && (y > this.ROITop)) {
-        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
-        }
-    }
-
-    return false;
-};
-
-K2.Band.prototype.isInBand = function (x,y) {
+K2.Area.prototype.isInArea = function (x,y) {
     var xInside = false;
     var yInside = false;
     
@@ -62,12 +70,12 @@ K2.Band.prototype.isInBand = function (x,y) {
     }
     
     if (this.values.height > 0) {
-        if ((y > this.height - (this.values.yOffset + this.values.height)) && (y < this.height - this.values.yOffset)) {
+        if ((y > this.values.yOffset) && (y < this.values.height + this.values.yOffset)) {
             yInside = true;
         }
     }
     else {
-        if ((y < this.height - (this.values.yOffset + this.values.height)) && (y > this.height - this.values.yOffset)) {
+        if ((y < this.values.yOffset) && (y > this.values.height + this.values.yOffset)) {
             yInside = true;
         }
     }
@@ -81,7 +89,7 @@ K2.Band.prototype.isInBand = function (x,y) {
     
 };
 
-K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedown = function(x, y) {
+K2.Area.prototype.tap = K2.Area.prototype.dragstart = K2.Area.prototype.mousedown = function(x, y) {
     
     /*if (this.isInROI(x, y)) {*/
         
@@ -89,10 +97,10 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
         var left_max_prox = this.values.xOffset + this.proximity;
         var right_min_prox = this.values.xOffset + this.values.width - this.proximity;
         var right_max_prox = this.values.xOffset + this.values.width + this.proximity;
-        var bottom_max_prox = this.height - this.values.yOffset + this.proximity;
-        var bottom_min_prox = this.height - this.values.yOffset - this.proximity;
-        var top_max_prox = this.height - (this.values.yOffset + this.values.height) + this.proximity;
-        var top_min_prox = this.height - (this.values.yOffset + this.values.height) - this.proximity;
+        var bottom_max_prox = this.values.height + this.values.yOffset + this.proximity;
+        var bottom_min_prox = this.values.height + this.values.yOffset - this.proximity;
+        var top_max_prox = this.values.yOffset + this.proximity;
+        var top_min_prox = this.values.yOffset - this.proximity;
         
         // Test side proximity
         if ((x > left_min_prox) &&  x < (left_max_prox)) {
@@ -116,7 +124,7 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
             console.log ("Top side click detected");
         }
         
-        if (this.isInBand (x,y)) {
+        if (this.isInArea (x,y)) {
             console.log ("clicked inside!");
             this.inside = true;
             this.startPoint = [x,y];
@@ -124,7 +132,7 @@ K2.Band.prototype.tap = K2.Band.prototype.dragstart = K2.Band.prototype.mousedow
         else this.inside = false;
 };
 
-K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y) {
+K2.Area.prototype.drag = K2.Area.prototype.mousemove = function(curr_x, curr_y) {
 
     var ret = [];
        
@@ -138,12 +146,14 @@ K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y)
     }
     
     if (this.bottomSide && this.borders.bottom) {
-        ret.push ({slot: 'height', value : this.values.height + (curr_y - (this.height - this.values.yOffset))});
-        ret.push ({slot : 'yOffset', value : this.height - curr_y});
+        console.log ("bottom");
+        ret.push ({slot: 'height', value : (this.values.height + (curr_y - (this.values.yOffset + this.values.height)))});
     }
     
     if (this.topSide && this.borders.top && !this.bottomSide) {
-        ret.push ({slot : 'height', value : (this.height - curr_y - this.values.yOffset)});
+        console.log ("top | height: " + this.values.height + " yOffset " + this.values.yOffset + " curr_y " + curr_y);
+        ret.push ({slot : 'yOffset', value : curr_y});
+        ret.push ({slot : 'height', value : (this.values.height + (this.values.yOffset - curr_y))});
     }
     
     if (ret.length > 0) {
@@ -151,18 +161,29 @@ K2.Band.prototype.drag = K2.Curve.prototype.mousemove = function(curr_x, curr_y)
         return ret;
     }
     
-    if (this.inside && this.move) {
-        var xDelta = curr_x - this.startPoint[0];
-        var yDelta = this.startPoint[1] - curr_y;
-        this.startPoint = [curr_x, curr_y];
-        return ([{slot : 'xOffset', value : this.values.xOffset + xDelta}, {slot : 'yOffset', value : this.values.yOffset + yDelta}]);
+    // Move the element
+    if (this.inside) {
+        if (this.move !== 'none') {
+            
+            var xDelta = curr_x - this.startPoint[0];
+            var yDelta = curr_y - this.startPoint[1];
+            this.startPoint = [curr_x, curr_y];
+
+            if (this.move === 'all') {
+                return ([{slot : 'xOffset', value : this.values.xOffset + xDelta}, {slot : 'yOffset', value : this.values.yOffset + yDelta}]);
+            }
+            else if (this.move === 'x') {
+                return ({slot : 'xOffset', value : this.values.xOffset + xDelta});
+            }
+            else if (this.move === 'y') {
+                return ({slot : 'yOffset', value : this.values.yOffset + yDelta});
+            } 
+        }
     }
-    
-    return undefined;
 
 };
 
-K2.Band.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mouseup = function(x, y) {
+K2.Area.prototype.release = K2.Area.prototype.dragend = K2.Area.prototype.mouseup = function(x, y) {
     
     var ret;
     
@@ -171,7 +192,7 @@ K2.Band.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mous
     
     // Clicked in and out inside the object. the object is selected
     if (this.inside) {
-        if (this.isInBand (x,y)) {
+        if (this.isInArea (x,y)) {
            ret = {slot : 'selected', value : [x, y]}; 
         }
     }
@@ -181,14 +202,28 @@ K2.Band.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mous
     
 };
 
-K2.Band.prototype.setValue = function(slot, value) {
+K2.Area.prototype.hold = function(x, y) {
+	if (this.isInArea(x, y)) {
+		//Area is held
+	    var ret = {'slot' : 'held', 'value' : [x, y]};
+	    return ret;
+   }
+};
+
+K2.Area.prototype.doubletap = function(x, y) {
+	if (this.isInArea(x, y)) {
+		return {'slot' : 'doubletap', 'value' : [x, y]};
+	}
+};
+
+K2.Area.prototype.setValue = function(slot, value) {
     // Superclass
-    K2.Band.superclass.setValue.call(this, slot, value);
+    K2.Area.superclass.setValue.call(this, slot, value);
 
 };
 
 
-K2.Band.prototype.refresh_CANVAS2D = function(engine) {
+K2.Area.prototype.refresh_CANVAS2D = function(engine) {
 
     if (this.isVisible === true) {
         
@@ -197,12 +232,42 @@ K2.Band.prototype.refresh_CANVAS2D = function(engine) {
         engine.context.lineWidth = this.thickness;
         var halfThickness = Math.floor (this.thickness / 2);
         engine.context.fillRect (this.xOrigin + this.values.xOffset + halfThickness,
-                                 this.height - this.values.height - this.values.yOffset + halfThickness,
+                                 this.values.yOffset + halfThickness,
                                  this.values.width - halfThickness * 2,
                                  this.values.height - halfThickness * 2);
         engine.context.strokeRect (this.xOrigin + this.values.xOffset,
-                                 this.height - this.values.height - this.values.yOffset,
+                                 this.values.yOffset,
                                  this.values.width,
                                  this.values.height);
+    }
+};
+
+K2.Area.prototype.getXCoord = function() {
+    return this.values.xOrigin;
+};
+
+K2.Area.prototype.getYCoord = function() {
+    return this.values.yOrigin;
+};
+
+K2.Area.prototype.getWidth = function() {
+    return this.values.width;
+};
+
+K2.Area.prototype.getHeight = function() {
+    return this.values.height;
+};
+
+K2.Area.prototype.setHeight = function(height) {
+    this.values.height = height;
+    if (typeof this.ROIHeight === 'undefined') {
+        this.ROIHeight = height;
+    }
+};
+
+K2.Area.prototype.setWidth = function(width) {
+    this.values.width = width;
+    if (typeof this.ROIWidth === 'undefined') {
+        this.ROIWidth = width;
     }
 };
