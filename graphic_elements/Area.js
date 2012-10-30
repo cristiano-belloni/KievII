@@ -38,6 +38,10 @@ K2.Area.prototype.getready = function(args) {
     // Move can be 'none', 'x', 'y', 'all'
     this.move = args.move || 'all';
     
+    this.xMonotone = args.xMonotone || false;
+    this.yMonotone = args.yMonotone || false;
+    
+    
     // TODO ROI
     
     var height = args.height || 0;
@@ -103,22 +107,22 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = K2.Area.prototype.mousedow
         var top_min_prox = this.values.yOffset - this.proximity;
         
         // Test side proximity
-        if ((x > left_min_prox) &&  x < (left_max_prox)) {
+        if ((x > left_min_prox) &&  x < (left_max_prox) && this.drag.left === true) {
             // We're next to the left side
             this.leftSide = true;
             console.log ("Left side click detected");
         }
-        if ((x > right_min_prox) &&  x < (right_max_prox)) {
+        if ((x > right_min_prox) &&  x < (right_max_prox) && this.drag.right === true) {
             // We're next to the right side
             this.rightSide = true;
             console.log ("Right side click detected");
         }
-        if ((y > bottom_min_prox) &&  y < (bottom_max_prox)) {
+        if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.drag.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
             console.log ("Bottom side click detected");
         }
-        if ((y > top_min_prox) &&  y < (top_max_prox)) {
+        if ((y > top_min_prox) &&  y < (top_max_prox) && this.drag.top === true) {
             // We're next to the top side
             this.topSide = true;
             console.log ("Top side click detected");
@@ -135,25 +139,64 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = K2.Area.prototype.mousedow
 K2.Area.prototype.drag = K2.Area.prototype.mousemove = function(curr_x, curr_y) {
 
     var ret = [];
+    var newWidth, newHeight;
+    
+    if ((this.xMonotone) && (this.values.width < 0)) {
+        this.values.width = 0;
+        return;
+    }
+    if ((this.yMonotone) && (this.values.height < 0)) {
+        this.values.height = 0;
+        return;
+    }
        
     if (this.leftSide && this.borders.left) {
-        ret.push ({slot: 'width', value : this.values.width - (curr_x - this.values.xOffset)});
-        ret.push ({slot : 'xOffset', value : curr_x});
+        
+        newWidth = this.values.width - (curr_x - this.values.xOffset);
+        var newX = curr_x;
+        
+        if ((this.xMonotone) && (newWidth < 0)) {
+            newWidth = 0;
+            newX = this.values.xOffset;
+        }
+        
+        ret.push ({slot: 'width', value : newWidth});
+        ret.push ({slot : 'xOffset', value : newX});
     }
     
     if (this.rightSide && this.borders.right && !this.leftSide) {
-        ret.push ({slot : 'width', value : (curr_x - this.values.xOffset)});
+        newWidth = curr_x - this.values.xOffset;
+        
+        if ((this.xMonotone) && (newWidth < 0)) {
+            newWidth = 0;
+        }
+        
+        ret.push ({slot : 'width', value : newWidth});
     }
     
     if (this.bottomSide && this.borders.bottom) {
-        console.log ("bottom");
-        ret.push ({slot: 'height', value : (this.values.height + (curr_y - (this.values.yOffset + this.values.height)))});
+        
+        newHeight = (this.values.height + (curr_y - (this.values.yOffset + this.values.height)));
+        
+        if ((this.yMonotone) && (newHeight < 0)) {
+            newHeight = 0;
+        }
+        
+        ret.push ({slot: 'height', value : newHeight});
     }
     
     if (this.topSide && this.borders.top && !this.bottomSide) {
-        console.log ("top | height: " + this.values.height + " yOffset " + this.values.yOffset + " curr_y " + curr_y);
-        ret.push ({slot : 'yOffset', value : curr_y});
-        ret.push ({slot : 'height', value : (this.values.height + (this.values.yOffset - curr_y))});
+        
+        newHeight = this.values.height + (this.values.yOffset - curr_y);
+        var newY = curr_y;
+        
+        if ((this.yMonotone) && (newHeight < 0)) {
+            newHeight = 0;
+            newY = this.values.yOffset;
+        }
+        
+        ret.push ({slot : 'yOffset', value : newY});
+        ret.push ({slot : 'height', value : newHeight});
     }
     
     if (ret.length > 0) {
