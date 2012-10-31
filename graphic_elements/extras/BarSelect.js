@@ -18,25 +18,39 @@ var BarSelect = function(parameters) {
             if (slot === 'dragStart') {
                 console.log ('Storing dragStart value ', value);
                 that.dragStart = value;
-            }
-            
-            if (slot === 'dragEnd') {
-                console.log ('dragEnd, creating an Area ', value);
-                that.dragEnd = value;
+                
                 var newArea = K2.GenericUtils.clone(that.areaArgsTemplate);
                 newArea.ID = 'area' + that.status.nextNumber++;
                 
                 var areaElement = new K2.Area(newArea);
                 
                 areaElement.values.xOffset = that.dragStart[0];
-                areaElement.values.width = that.dragEnd[0] - that.dragStart[0];
-                
-                console.log ('that.dragStart, that.dragEnd, newArea.left, newArea.width', that.dragStart, that.dragEnd, newArea.left, newArea.width);
+                areaElement.values.width = 0;
                 
                 that.ui.addElement(areaElement);
+                that.currentAreaElement = areaElement;
                 
                 // Insert the element into the status array
                 that.status.areaArray.splice(that.status.selected + 1, 0, newArea.ID);
+                
+            }
+            
+            if (slot === 'barPos') {
+                
+                if (that.currentAreaElement !== null) {
+                    var width = value[0] - that.dragStart[0];
+                    that.currentAreaElement.values.width = width;
+                }
+            }
+            
+            if (slot === 'dragEnd') {
+                
+                if (that.currentAreaElement !== null) {
+                    var width = value[0] - that.dragStart[0];
+                    that.currentAreaElement.values.width = width;
+                    that.currentAreaElement = null;
+                }
+                
             }
             
             
@@ -54,6 +68,8 @@ var BarSelect = function(parameters) {
         selected : null,
         nextNumber : 0
     };
+    
+    this.currentAreaElement = null; 
 
     this.Z_OFFSET = parameters.zOffset || 0;
 
@@ -72,7 +88,7 @@ var BarSelect = function(parameters) {
         height : parameters.defaultHeight || this.height,
         thickness : parameters.thickness || 2,
         color : parameters.color || "black",
-        borderColor: parameters.borderColor || "crimson",
+        borderColor: parameters.borderColor || "gray",
         borders: {top: false, bottom: false, right: false, left: false},
         move: parameters.move || 'none',
         drag: {top: false, bottom: false, right: false, left: false},
