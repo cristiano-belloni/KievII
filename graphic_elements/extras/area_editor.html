@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Curve Editor</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <script type="text/javascript" src="../../kievII.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+  <body>
+      <form action="">
+	      <button id="addbutton" type="button" onclick="addBB(this.form)">Add</button>
+      	  <button id="removebutton" type="button" onclick="removeBB()">Remove</button>
+	      <button id="clearbutton" type="button" onclick="clearBB()">CLEAR ALL</button>
+	  </form>
+      <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
+      <script type="text/javascript">
+    
+        var ui;
+        var plugin_canvas;
+        
+        // Initialize K2.UI
+        plugin_canvas = document.getElementById("plugin");
+        ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas}, {'breakOnFirstEvent': true});
+        
+        // Initialize Curve
+        areaEditor = new AreaEditor ({ui: ui, canvas: plugin_canvas});
+        
+        function addBB (frm) {
+            areaEditor.addArea();
+        }
+        
+        function removeBB () {
+            areaEditor.removeArea();
+        }
+        
+        function clearBB () {
+            areaEditor.clearArea();
+        }
+        
+                
+    </script>
+  </body>
+</html>

@@ -11,7 +11,10 @@ K2.Bar.prototype.getready = function(args) {
     // Call the constructor from the superclass.
     K2.Bar.superclass.getready.call(this, args);
 
-    this.values = {'barPos' : []};
+    this.values = {'barPos' : [],
+                   'dragStart': [],
+                   'dragEnd': []
+                   };
     this.defaultSlot = 'barPos';
 
     this.setWidth(args.width);
@@ -69,6 +72,20 @@ K2.Bar.prototype.tap = K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
 };
 
+K2.Bar.prototype.dragend = function(curr_x, curr_y) {
+    if (this.isInROI(curr_x, curr_y)) {
+        ret = {'slot' : 'dragEnd', 'value' : [curr_x, curr_y]};
+        return ret;
+    }
+};
+
+K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
+    if (this.isInROI(curr_x, curr_y)) {
+        ret = {'slot' : 'dragStart', 'value' : [curr_x, curr_y]};
+        return ret;
+    }
+};
+
 K2.Bar.prototype.setValue = function(slot, value) {
 
 	console.log('Setting ' + slot + ' to ' + value);
@@ -81,6 +98,7 @@ K2.Bar.prototype.setValue = function(slot, value) {
             this.values.barPos[1] = value[1];
         }
     }
+    else this.values[slot] = value;
 };
 
 K2.Bar.prototype.refresh_CANVAS2D = function(engine) {
