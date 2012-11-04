@@ -18,7 +18,7 @@ var libFiles = ['common.js',
                 'graphic_elements/Wavebox.js',
                 'graphic_elements/extras/CurveEditor.js',
                 'graphic_elements/extras/AreaEditor.js',
-                'graphic_elements/extras/BarSelector.js',
+                'graphic_elements/extras/BarSelect.js',
                 'graphic_elements/engines/EngineFactory.js',
                 'graphic_elements/engines/CanvasUtils.js',
                 'utilities/Utilities.js'

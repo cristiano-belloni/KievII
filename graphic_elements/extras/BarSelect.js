@@ -5,6 +5,7 @@ var BarSelect = function(parameters) {
         var that = this;
         return function(slot, value, element) {
             console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            var width;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -16,9 +17,9 @@ var BarSelect = function(parameters) {
                 that.dragStart = value;
                 
                 if (that.areaElement === null) {
-                	if (that.ui.isElement(that.areaArgsTemplate.ID)) {
-                		that.ui.removeElement(that.areaArgsTemplate.ID);
-                	}
+					if (that.ui.isElement(that.areaArgsTemplate.ID)) {
+						that.ui.removeElement(that.areaArgsTemplate.ID);
+					}
 	                var newArea = K2.GenericUtils.clone(that.areaArgsTemplate);
 	                that.areaElement = new K2.Area(newArea);
                 }
@@ -28,15 +29,12 @@ var BarSelect = function(parameters) {
                 
                 that.ui.addElement(that.areaElement);
                 
-                // Insert the element into the status array
-                that.status.areaArray.splice(that.status.selected + 1, 0, newArea.ID);
-                
             }
             
             if (slot === 'barPos') {
                 
                 if (that.areaElement !== null) {
-                    var width = value[0] - that.dragStart[0];
+                    width = value[0] - that.dragStart[0];
                     that.areaElement.values.width = width;
                 }
             }
@@ -44,7 +42,7 @@ var BarSelect = function(parameters) {
             if (slot === 'dragEnd') {
                 
                 if (that.areaElement !== null) {
-                    var width = value[0] - that.dragStart[0];
+                    width = value[0] - that.dragStart[0];
                     that.areaElement.values.width = width;
                     that.areaElement = null;
                 }
@@ -57,12 +55,6 @@ var BarSelect = function(parameters) {
     
     this.ui = parameters.ui;
     this.plugin_canvas = parameters.canvas;
-
-    this.status = {
-        areaArray : [],
-        selected : null,
-        nextNumber : 0
-    };
     
     this.areaElement = null; 
 
