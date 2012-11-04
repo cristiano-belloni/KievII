@@ -1,9 +1,5 @@
 var BarSelect = function(parameters) {
 
-    this.reorganizeElements = function() {
-        
-    };
-
     // One callback for all
     this.callback = function() {
         var that = this;
@@ -19,16 +15,18 @@ var BarSelect = function(parameters) {
                 console.log ('Storing dragStart value ', value);
                 that.dragStart = value;
                 
-                var newArea = K2.GenericUtils.clone(that.areaArgsTemplate);
-                newArea.ID = 'area' + that.status.nextNumber++;
+                if (that.areaElement === null) {
+                	if (that.ui.isElement(that.areaArgsTemplate.ID)) {
+                		that.ui.removeElement(that.areaArgsTemplate.ID);
+                	}
+	                var newArea = K2.GenericUtils.clone(that.areaArgsTemplate);
+	                that.areaElement = new K2.Area(newArea);
+                }
                 
-                var areaElement = new K2.Area(newArea);
+                that.areaElement.values.xOffset = that.dragStart[0];
+                that.areaElement.values.width = 0;
                 
-                areaElement.values.xOffset = that.dragStart[0];
-                areaElement.values.width = 0;
-                
-                that.ui.addElement(areaElement);
-                that.currentAreaElement = areaElement;
+                that.ui.addElement(that.areaElement);
                 
                 // Insert the element into the status array
                 that.status.areaArray.splice(that.status.selected + 1, 0, newArea.ID);
@@ -37,25 +35,22 @@ var BarSelect = function(parameters) {
             
             if (slot === 'barPos') {
                 
-                if (that.currentAreaElement !== null) {
+                if (that.areaElement !== null) {
                     var width = value[0] - that.dragStart[0];
-                    that.currentAreaElement.values.width = width;
+                    that.areaElement.values.width = width;
                 }
             }
             
             if (slot === 'dragEnd') {
                 
-                if (that.currentAreaElement !== null) {
+                if (that.areaElement !== null) {
                     var width = value[0] - that.dragStart[0];
-                    that.currentAreaElement.values.width = width;
-                    that.currentAreaElement = null;
+                    that.areaElement.values.width = width;
+                    that.areaElement = null;
                 }
                 
             }
             
-            
-            //console.log("Reorganizing elements");
-            //that.reorganizeElements();
             that.ui.refresh();
         };
     };
@@ -69,7 +64,7 @@ var BarSelect = function(parameters) {
         nextNumber : 0
     };
     
-    this.currentAreaElement = null; 
+    this.areaElement = null; 
 
     this.Z_OFFSET = parameters.zOffset || 0;
 
@@ -81,35 +76,34 @@ var BarSelect = function(parameters) {
     
     // area template
     this.areaArgsTemplate = {
-        ID : '',
+        ID : 'tempArea',
         top : 0,
         left : 0,
         width : parameters.defaultWidth || this.width,
         height : parameters.defaultHeight || this.height,
-        thickness : parameters.thickness || 2,
-        color : parameters.color || "black",
-        borderColor: parameters.borderColor || "gray",
+        thickness : parameters.areaThickness || 2,
+        color : parameters.areaColor || "black",
+        borderColor: parameters.areaBorderColor || "gray",
         borders: {top: false, bottom: false, right: false, left: false},
         move: parameters.move || 'none',
         drag: {top: false, bottom: false, right: false, left: false},
         xMonotone: true,
         yMonotone: true,
-        isListening : parameters.isListening || true,
-        transparency : parameters.transparency || 0.5,
+        transparency : parameters.areaTransparency || 0.5,
         onValueSet : callback
     };
     
     barArgs = {
-        ID: "testBar",
+        ID: "selectBar",
         left: 0,
         top : 0,
-        thickness: 2,
+        thickness: parameters.barThickness || 2,
         height: this.height,
         width: this.width,
         onValueSet: callback,
-        barColor: 'red',
-        transparency: 0.8,
-        isListening: true
+        barColor: parameters.barColor || 'red',
+        transparency: parameters.barTransparency || 0.8,
+        isListening: parameters.isListening || true
     };
         
     this.ui.addElement(new K2.Bar(barArgs));

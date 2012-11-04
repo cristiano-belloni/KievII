@@ -140,15 +140,6 @@ K2.Area.prototype.drag = K2.Area.prototype.mousemove = function(curr_x, curr_y) 
 
     var ret = [];
     var newWidth, newHeight;
-    
-    if ((this.xMonotone) && (this.values.width < 0)) {
-        this.values.width = 0;
-        return;
-    }
-    if ((this.yMonotone) && (this.values.height < 0)) {
-        this.values.height = 0;
-        return;
-    }
        
     if (this.leftSide && this.borders.left) {
         

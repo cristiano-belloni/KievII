@@ -9,10 +9,7 @@
     
   </head>
   <body>
-      <form action="">
-          <input type="radio" name="buttontype" value="select" /> Select
-          <input type="radio" name="buttontype" value="deselect" /> Deselect
-      </form>
+      
       <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
       <script type="text/javascript">
     
@@ -23,16 +20,8 @@
         plugin_canvas = document.getElementById("plugin");
         ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas}, {'breakOnFirstEvent': true});
         
-        // Initialize Curve
+        // Initialize BarSelect
         barSelector = new BarSelect ({ui: ui, canvas: plugin_canvas});
-        
-        function parseSelectRadio (frm) { 
-            for (i = 0; i < frm.buttontype.length; i++) {
-                if (frm.buttontype[i].checked) {
-                    return frm.buttontype[i].value;
-                }
-            }
-        }
                 
     </script>
   </body>
