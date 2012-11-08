@@ -1,5 +1,37 @@
 var CurveEditor = function(parameters) {
-
+    
+    this.setVisible = function (value) {
+        
+        for (var i = 0; i < this.status.curveArray.length; i += 1) {
+            this.ui.setVisible(this.status.curveArray[i], value);
+        }
+        
+    };
+    
+    this.setzIndex = function (value) {
+        
+        this.Z_OFFSET = value;
+        this.reorganizeElements();
+        
+        this.ui.refresh();
+        
+    };
+    
+    this.setTransparency = function (value) {
+        
+        for (var i = 0; i < this.status.curveArray.length; i += 1) {
+            var element = this.ui.getElement (this.status.curveArray[i]);
+            element.transparency = value;
+        }
+        this.ui.refresh();
+    };
+    
+    this.setListening = function (value) {
+        for (var i = 0; i < this.status.curveArray.length; i += 1) {
+            this.ui.setListening (this.status.curveArray[i], value);
+        }
+    };
+    
     this.reorganizeElements = function() {
         var filter_func = function(value, connDetails) {
             // last point of the receiver is first point of the sender
