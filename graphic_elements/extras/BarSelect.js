@@ -1,16 +1,54 @@
-var BarSelect = function(parameters) {
-
+var BarSelect = function (parameters) {
+	
+	this.setVisible = function () {
+		var value, element;
+		if (arguments.length === 1) {
+			// set visibility to both elements
+			value = arguments[0];
+			this.ui.setVisible ('tempArea', value);
+			this.ui.setVisible ('selectBar', value);
+		}
+		else if (arguments.length === 2) {
+		    // set visibility separately
+			element = arguments[0];
+			value = arguments[1];
+			this.ui.setVisible (element, value);
+		}
+	};
+	
+	this.setTransparency = function (value) {
+        
+        // set transparency to both elements
+        this.areaArgsTemplate.transparency = value;
+        this.barArgs.transparency = value;
+        var bar = this.ui.getElement ("selectBar");
+        bar.transparency = value;
+        var tempArea = this.ui.getElement ("tempArea");
+        tempArea.transparency = value;
+        
+    };
+    
+    this.setzIndex = function (value) {
+        
+        // set zIndex to both elements
+        this.zIndex = value;
+        
+        this.ui.setZIndex("tempArea", value);
+        this.ui.setZIndex("selectBar", value + 1);
+        
+    };
+    
+    this.setListening = function (value) {
+        this.ui.setListening ('tempArea', value);
+        this.ui.setListening ('selectBar', value);
+    };
+	
     // One callback for all
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
             console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             var width;
-            
-            // Call the optional callback
-            if (typeof that.externalCallback === 'function') {
-                that.externalCallback(slot, value, element);
-            }
             
             if (slot === 'dragStart') {
                 console.log ('Storing dragStart value ', value);
@@ -27,15 +65,28 @@ var BarSelect = function(parameters) {
                 that.areaElement.values.xOffset = that.dragStart[0];
                 that.areaElement.values.width = 0;
                 
-                that.ui.addElement(that.areaElement);
+                that.selectStart = that.dragStart[0];
+                that.selectWidth = 0;
+                
+                that.ui.addElement(that.areaElement, {zIndex: this.zIndex});
                 
             }
             
             if (slot === 'barPos') {
+
+				if (that.dragStart === null) {
+					// Positioned without dragging; de-select
+					if (that.areaElement === null) {
+						if (that.ui.isElement(that.areaArgsTemplate.ID)) {
+							that.ui.removeElement(that.areaArgsTemplate.ID);
+						}
+					}
+				}
                 
                 if (that.areaElement !== null) {
                     width = value[0] - that.dragStart[0];
                     that.areaElement.values.width = width;
+                    that.selectWidth = width;
                 }
             }
             
@@ -44,9 +95,16 @@ var BarSelect = function(parameters) {
                 if (that.areaElement !== null) {
                     width = value[0] - that.dragStart[0];
                     that.areaElement.values.width = width;
+                    that.selectWidth = width;
+                    that.dragStart = null;
                     that.areaElement = null;
                 }
                 
+            }
+            
+            // Call the optional callback
+            if (typeof that.externalCallback === 'function') {
+                that.externalCallback(slot, value, element);
             }
             
             that.ui.refresh();
@@ -58,7 +116,8 @@ var BarSelect = function(parameters) {
     
     this.areaElement = null; 
 
-    this.Z_OFFSET = parameters.zOffset || 0;
+    // TODO TODO TODO
+    this.zIndex = parameters.zIndex || 0;
 
     this.width = parameters.width || parameters.canvas.width;
     this.height = parameters.height || parameters.canvas.height;
@@ -82,10 +141,15 @@ var BarSelect = function(parameters) {
         xMonotone: true,
         yMonotone: true,
         transparency : parameters.areaTransparency || 0.5,
+        isListening: parameters.isListening || true,
         onValueSet : callback
     };
     
-    barArgs = {
+    if (parameters.areaThickness === 0) {
+        areaArgsTemplate.thickness = 0;
+    }
+    
+    this.barArgs = {
         ID: "selectBar",
         left: 0,
         top : 0,
@@ -98,7 +162,7 @@ var BarSelect = function(parameters) {
         isListening: parameters.isListening || true
     };
         
-    this.ui.addElement(new K2.Bar(barArgs));
+    this.ui.addElement(new K2.Bar(this.barArgs), {zIndex: this.zIndex + 1});
     
     this.ui.refresh();
 };
