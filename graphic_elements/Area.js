@@ -31,6 +31,11 @@ K2.Area.prototype.getready = function(args) {
     
     this.proximity = Math.floor(args.proximity) || 10;
     this.thickness = Math.floor(args.thickness) || this.proximity;
+    
+    if (args.thickness === 0) {
+		this.thickness = 0;
+    }
+    
     // Can paint the borders
     this.borders = args.borders || {top: true, bottom: true, right: true, left: true};
     // Can drag the borders
@@ -269,10 +274,12 @@ K2.Area.prototype.refresh_CANVAS2D = function(engine) {
                                  this.values.yOffset + halfThickness,
                                  this.values.width - halfThickness * 2,
                                  this.values.height - halfThickness * 2);
-        engine.context.strokeRect (this.xOrigin + this.values.xOffset,
-                                 this.values.yOffset,
-                                 this.values.width,
-                                 this.values.height);
+        if (this.thickness > 0) {
+			engine.context.strokeRect (	this.xOrigin + this.values.xOffset,
+										this.values.yOffset,
+										this.values.width,
+										this.values.height);
+		}
     }
 };
 
