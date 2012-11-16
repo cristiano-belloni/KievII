@@ -240,6 +240,9 @@ K2.UI = function(engine, parameters) {
     // TODO see if it's not superseded by ondrag
     this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
 
+    // Add listeners for mouseover and mouseout
+    this.domElement.addEventListener('mouseover', this.onMouseEvent(), true);
+    this.domElement.addEventListener('mouseout', this.onMouseEvent(), true);
 
     this.mouseUp = true;
 
