@@ -192,10 +192,10 @@ K2.Curve.prototype.drag = function(curr_x, curr_y) {
             }
             
             if (curr_y > (this.ROITop + this.ROIHeight)) {
-                points[this.handleClicked][0] = this.ROITop + this.ROIHeight;
+                points[this.handleClicked][1] = this.ROITop + this.ROIHeight;
             }
             if (curr_y < this.ROITop) {
-                points[this.handleClicked][0] = this.ROITop;
+                points[this.handleClicked][1] = this.ROITop;
             }
 
         }
@@ -210,7 +210,13 @@ K2.Curve.prototype.drag = function(curr_x, curr_y) {
 
 };
 
-K2.Curve.prototype.release = K2.Curve.prototype.dragend = K2.Curve.prototype.mouseup = function(x, y) {
+K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
+    var ret = this.drag (x,y);
+    this.handleClicked = null;
+    return ret;
+};
+
+K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
 	this.handleClicked = null;
 	// check the selection-end
 	// check if the point is "on" the curve plot
