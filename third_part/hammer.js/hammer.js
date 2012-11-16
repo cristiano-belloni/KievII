@@ -1,6 +1,6 @@
 /*
  * Hammer.JS
- * version 0.6.1
+ * version 0.6.3
  * author: Eight Media
  * https://github.com/EightMedia/hammer.js
  * Licensed under the MIT license.
@@ -72,7 +72,7 @@ function Hammer(element, options, undefined)
     // holds the exact angle that has been moved
     var _angle = 0;
 
-    // holds the diraction that has been moved
+    // holds the direction that has been moved
     var _direction = 0;
 
     // holds position movement for sliding
@@ -144,7 +144,7 @@ function Hammer(element, options, undefined)
 
 
     /**
-     * destory events
+     * destroy events
      * @return  void
      */
     this.destroy = function() {
@@ -338,7 +338,8 @@ function Hammer(element, options, undefined)
         // fired on touchend
         swipe : function(event)
         {
-            if(!_pos.move) {
+            //Do not allow a swipe event to be fired when in a transform state.
+            if (!_pos.move || _gesture === "transform") {
                 return;
             }
 
@@ -449,11 +450,21 @@ function Hammer(element, options, undefined)
                     _pos.center = {  x: ((_pos.move[0].x + _pos.move[1].x) / 2) - _offset.left,
                         y: ((_pos.move[0].y + _pos.move[1].y) / 2) - _offset.top };
 
+                    if(_first)
+                        _pos.startCenter = _pos.center;
+
+                    var _distance_x = _pos.center.x - _pos.startCenter.x;
+                    var _distance_y = _pos.center.y - _pos.startCenter.y;
+                    _distance = Math.sqrt(_distance_x*_distance_x + _distance_y*_distance_y);
+
                     var event_obj = {
                         originalEvent   : event,
                         position        : _pos.center,
                         scale           : scale,
-                        rotation        : rotation
+                        rotation        : rotation,
+                        distance        : _distance,
+                        distanceX       : _distance_x,
+                        distanceY       : _distance_y,
                     };
 
                     // on the first time trigger the start event
@@ -619,7 +630,10 @@ function Hammer(element, options, undefined)
                         originalEvent   : event,
                         position        : _pos.center,
                         scale           : calculateScale(_pos.start, _pos.move),
-                        rotation        : calculateRotation(_pos.start, _pos.move)
+                        rotation        : calculateRotation(_pos.start, _pos.move),
+                        distance        : _distance,
+                        distanceX       : _distance_x,
+                        distanceY       : _distance_y
                     });
                 }
                 else {
@@ -628,10 +642,13 @@ function Hammer(element, options, undefined)
 
                 _prev_gesture = _gesture;
 
-                // trigger release event
+                // trigger release event. 
+                // "release" by default doesn't return the co-ords where your 
+                // finger was released. "position" will return "the last touched co-ords"
                 triggerEvent("release", {
                     originalEvent   : event,
-                    gesture         : _gesture
+                    gesture         : _gesture,
+                    position        : _pos.move || _pos.start
                 });
 
                 // reset vars
