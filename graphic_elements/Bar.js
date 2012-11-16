@@ -58,9 +58,6 @@ K2.Bar.prototype.tap = K2.Bar.prototype.drag = function(curr_x, curr_y) {
             console.error('orientation invalid, this will probably break something');
         }
 
-        // Click on button is completed, the button is no more triggered.
-        this.triggered = false;
-
 		ret = {'slot' : 'barPos', 'value' : retVal};
         return ret;
     }
@@ -72,8 +69,13 @@ K2.Bar.prototype.tap = K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
 };
 
-K2.Bar.prototype.dragend = function(curr_x, curr_y) {
+K2.Bar.prototype.dragend = K2.Bar.prototype.swipe = function(curr_x, curr_y) {
     if (this.isInROI(curr_x, curr_y)) {
+        ret = {'slot' : 'dragEnd', 'value' : [curr_x, curr_y]};
+        return ret;
+    }
+    else {
+        // equivalent to mouseOut + triggered === true
         ret = {'slot' : 'dragEnd', 'value' : [curr_x, curr_y]};
         return ret;
     }
