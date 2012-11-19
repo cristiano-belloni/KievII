@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>KievII - Examples</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <script src="assets/js/rainbow/rainbow-custom.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="../KievII/kievII.js"></script>
+	<script type="text/javascript">
+    function highlightCode (code, divName) {
+        console.log ("Highlighting ", /*code,*/ divName);
+        var div = document.createElement('div');
+            div.innerHTML = '<pre><code data-language="javascript">' + code + '</code></pre>';
+            Rainbow.color(div, function() {
+                document.getElementById(divName).appendChild(div);
+            });
+            console.log ("Highlighted ", /*code,*/ divName);
+    }
+    </script>
+	
+	<script type="text/javascript" >
+	var START_TOKEN = '// !VIEWABLEDOCSTART',
+		END_TOKEN = '// !VIEWABLEDOCEND';
+	</script>
+
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/rainbow/themes/obsidian.css" rel="stylesheet" type="text/css">
+    <link href="css/kievii.css" rel="stylesheet" type="text/css">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+	<body>
+	
+	<div class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">KievII</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Examples<b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#gaugetest">Gauge</a></li>
+                    <li><a href="#curvetest">Curve</a></li>
+                    <li><a href="#bartest">Bar</a></li>
+                    <li><a href="#rotknobtest">RotKnob</a></li>
+                  </ul>
+              </li>
+              <li class="divider-vertical"></li>
+              <li><a href="#code">Code</a></li>
+              <li class="divider-vertical"></li>
+              <li><a href="http://twitter.com/kievII_library"><i class="icon-user icon-white"></i> KievII on Twitter</a></li>
+              <li><a href="http://bitterspring.net/blog"><i class="icon-globe icon-white"></i> Author's blog</a></li>
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contacts<b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="mailto:janesconference@bitterspring.net"><i class="icon-envelope"></i> Author's E-mail</a></li>
+                    <li><a href="http://twitter.com/janesconference"><i class="icon-user"></i> Author's Twitter</a></li>
+                    <li><a href="http://groups.google.com/group/kievii"><i class="icon-globe"></i> Google Group</a></li>
+                  </ul>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+<div class="container">
+
+<h2>Examples</h2>
+	  <a name="docs"></a>
+	  
+	  <hr />
+	  
+	  <div class="row">
+	  	
+	  	<!-- START OF DOCS -->
+	  	
+	  	<!-- ROTKNOB ELEMENT -->
+        <div class="span12" id="rotknobtest">
+            <h3>RotKnob Element</h3>
+                <div class="row">
+                <div class="span6">
+                    <h4>Code</h4>
+                    <!-- <pre> <code data-language="javascript" id="rotknob_code"> </code> </pre> -->
+                    <div id="rotknob_code"> </div>
+                </div>
+                <div class="span4">
+                <h4>Example</h4>
+                    <canvas style="background-color: black;" id="rotknob_canvas" width="150" height="150"></canvas>
+                    <script type="text/javascript">
+                    
+                    $.ajax({
+                      url: '../KievII/tests/RotKnob/rotknobtest.js',
+                      dataType: 'script',
+                      cache: true, // otherwise will get fresh copy every page load
+                      success: function(data, textStatus, jqxhr) {
+                        var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
+                        var dataEnd = data.indexOf(END_TOKEN);
+                        var code = data.substr(dataStart, dataEnd - dataStart);
+                        
+                        highlightCode (code, 'rotknob_code');    
+                            
+                        RotKnobTest.init(document.getElementById('rotknob_canvas'), ['../KievII/tests/RotKnob/assets/img/white_big.png']);
+                      }
+                    });
+                            
+                    </script>
+                
+                </div>
+            </div>
+        </div>
+	  	
+	  	<!-- GAUGE ELEMENT -->
+        <div class="span12" id="gaugetest">
+        	<h3>Gauge Element</h3>
+        	 	<div class="row">
+	        	<div class="span6">
+		        	<h4>Code</h4>
+		        	<div id="gauge_code"> </div>
+				</div>
+				<div class="span4">
+				<h4>Example</h4>
+		        	<canvas style="background-color: black;" id="gauge_canvas" width="300" height="300"></canvas>
+		        			        	
+		        	<script type="text/javascript">	        
+		        	
+					$.ajax({
+                          url: '../KievII/tests/Gauge/gaugetest.js',
+                          dataType: 'script',
+                          cache: true, // otherwise will get fresh copy every page load
+                          success: function(data, textStatus, jqxhr) {
+                            var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
+                            var dataEnd = data.indexOf(END_TOKEN);
+                            var code = data.substr(dataStart, dataEnd - dataStart);
+                            highlightCode (code, 'gauge_code');  
+                            GaugeTest.init(document.getElementById('gauge_canvas'));
+                          }
+                    });
+					
+			    	</script>
+		    	</div>
+	    	</div>
+        </div>
+        
+        
+       	<!-- CURVE ELEMENT -->
+        <div class="span12" id="curvetest">
+        	<h3>Curve Element</h3>
+        	 	<div class="row">
+	        	<div class="span6">
+		        	<h4>Code</h4>
+		        	<div id="curve_code"> </div>
+				</div>
+				<div class="span4">
+				<h4>Example</h4>
+		        	<canvas style="background-color: black;" id="curve_canvas" width="500" height="300"></canvas>
+		        	<script type="text/javascript">
+		        	
+      			    $.ajax({
+                      url: '../KievII/tests/Curve/curvetest.js',
+                      dataType: 'script',
+                      cache: true, // otherwise will get fresh copy every page load
+                      success: function(data, textStatus, jqxhr) {
+				   		var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
+				   		var dataEnd = data.indexOf(END_TOKEN);
+				   		var code = data.substr(dataStart, dataEnd - dataStart);
+				   		highlightCode (code, 'curve_code');  
+				   		CurveTest.init(document.getElementById('curve_canvas'));
+				      }
+					});
+			                
+			   		</script>
+			    
+		    	</div>
+	    	</div>
+        </div>
+        
+        <!-- AREA ELEMENT -->
+        <div class="span12" id="curvetest">
+            <h3>Area Element</h3>
+                <div class="row">
+                <div class="span6">
+                    <h4>Code</h4>
+                    <div id="area_code"> </div>
+                </div>
+                <div class="span4">
+                <h4>Example</h4>
+                    <canvas style="background-color: black;" id="area_canvas" width="500" height="500"></canvas>
+                    <script type="text/javascript">
+                    
+                    $.ajax({
+                      url: '../KievII/tests/Area/areatest.js',
+                      dataType: 'script',
+                      cache: true, // otherwise will get fresh copy every page load
+                      success: function(data, textStatus, jqxhr) {
+                        var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
+                        var dataEnd = data.indexOf(END_TOKEN);
+                        var code = data.substr(dataStart, dataEnd - dataStart);
+                        highlightCode (code, 'area_code');  
+                        AreaTest.init(document.getElementById('area_canvas'));
+                      }
+                    });
+                            
+                    </script>
+                
+                </div>
+            </div>
+        </div>
+        
+        <!-- BAR ELEMENT -->
+        <div class="span12" id="bartest">
+            <h3>Bar Element</h3>
+                <div class="row">
+                <div class="span6">
+                    <h4>Code</h4>
+                    <div id="bar_code"> </div>
+                </div>
+                <div class="span4">
+                <h4>Example</h4>
+                    <canvas style="background-color: black;" id="bar_canvas" width="500" height="200"></canvas>
+                    <script type="text/javascript">
+                    
+                    $.ajax({
+                      url: '../KievII/tests/Bar/bartest.js',
+                      dataType: 'script',
+                      cache: true, // otherwise will get fresh copy every page load
+                      success: function(data, textStatus, jqxhr) {
+                        var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
+                        var dataEnd = data.indexOf(END_TOKEN);
+                        var code = data.substr(dataStart, dataEnd - dataStart);
+                        highlightCode (code, 'bar_code');  
+                        BarTest.init(document.getElementById('bar_canvas'));
+                      }
+                    });
+                            
+                    </script>
+                
+                </div>
+            </div>
+        </div>
+        
+        
+        
+   	</div>
+	  
+</div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript">
+         $('.dropdown-toggle').dropdown();
+     </script>
+	  
+	</body>
+</html>

@@ -1,0 +1,28 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+.centeredImage {
+    
+    text-align:center;
+    margin-top:0px;
+    margin-bottom:0px;
+    padding:0px;
+}
+#kievHero {
+    padding:20px;
+    border-radius: 3px;
+    background-color: #F0F0F0;
+}
+
+/* Gradient color1 - color2 - color1 */
+        
+hr.style-one {
+    border: 0;
+    height: 1px;
+    background: #333;
+    background-image: -webkit-linear-gradient(left, #ccc, #333, #ccc); 
+    background-image:    -moz-linear-gradient(left, #ccc, #333, #ccc); 
+    background-image:     -ms-linear-gradient(left, #ccc, #333, #ccc); 
+    background-image:      -o-linear-gradient(left, #ccc, #333, #ccc); 
+}

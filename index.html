@@ -1,245 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="author" content="Jane's Conference" />
-<meta name="copyright" content="Licensed under MIT." />
-<meta name="description" content="KievII is a javascript library that aims to help develop audio web applications" />
-<meta name="robots" content="all" />
-<title>KievII Library</title>
-<link rel="stylesheet" href="css/master.min.css" />
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-
-<script type="text/javascript" src="http://use.typekit.com/flo5dyw.js"></script>
-<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-
-<!-- Analytics -->
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-5007623-5']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
-</head>
-<body>
-<!--<a href="https://github.com/janesconference/KievII" title="Fork KievII on github"><img style="position: absolute; right: +0px; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>-->
-<div class="container_12">
-  <div class="grid_4">
-  
-	<script src="http://widgets.twimg.com/j/2/widget.js"></script>
-	<script>
-	new TWTR.Widget({
-	  version: 2,
-	  type: 'faves',
-	  rpp: 10,
-	  interval: 6000,
-	  title: 'Latest News',
-	  subject: 'Kiev II',
-	  width: 250,
-	  height: 190,
-	  theme: {
-	    shell: {
-	      background: '#d20000',
-	      color: '#ffffff'
-	    },
-	    tweets: {
-	      background: '#ffffff',
-	      color: '#444444',
-	      links: '#737373'
-	    }
-	  },
-	  features: {
-	    scrollbar: true,
-	    loop: false,
-	    live: true,
-	    hashtags: true,
-	    timestamp: true,
-	    avatars: true,
-	    behavior: 'all'
-	  }
-	}).render().setUser('KievII_library').start();
+  <head>
+    <meta charset="utf-8">
+    <title>KievII</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <script src="assets/js/rainbow/rainbow-custom.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	
+	<script type="text/javascript" >
+	var START_TOKEN = '// !VIEWABLEDOCSTART',
+		END_TOKEN = '// !VIEWABLEDOCEND';
 	</script>
 
-  </div>
-  
-   <!-- end .grid_4 -->
-  <div class="grid_4 align_center">
-    <img src="img/logo.png" alt="KievII" />
-  </div>
-  
-  <div class="grid_4">
-                        <div id ="boxed_content">
-                            <p> Download Kiev II </p>
-                            <div id="boxed_content_2">
-                                <p>
-                                    <a href='https://github.com/janesconference/KievII/zipball/v0.3.01'><img alt='Kiev II stable (0.3)' src='img/github64_st.png'/></a>
-                                    <br/>
-                                    Stable version <a href='https://github.com/janesconference/KievII/zipball/v0.3.01'>(0.3.01)</a>
-                                </p>
-                                <hr />
-                                <p>
-                                    <a href='https://github.com/janesconference/KievII/zipball/master'><img alt='Kiev II develop' src='img/github64_dev.png'/></a>
-                                    <br/>
-                                    Develop version <a href='https://github.com/janesconference/KievII/zipball/master'>(master)</a>
-                                </p>
-                            </div>
-                        </div>
-  </div>
-  
-  <hr />
-  <div class="grid_8 prefix_4">
-	<div id="menu">
-                            <ul>
-                                <li><a href="https://github.com/janesconference/KievII" target="_blank">Source Code</a></li>
-                                <li><a href="https://github.com/janesconference/KievII/wiki" target="_blank">Documentation</a></li>
-								<li><a href="#Apps">Apps</a></li>
-								<li><a href="http://groups.google.com/group/kievii" target="_blank">Google Groups</a></li>
-                            </ul>
-                        </div>
-  </div>
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/rainbow/themes/obsidian.css" rel="stylesheet" type="text/css">
+    <link href="css/kievii.css" rel="stylesheet" type="text/css">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-  <hr />
-  <div class="grid_10">
-    <h3>
-      KievII
-    </h3>
-    <p>
-		<strong>KievII</strong> is a GUI and audio/DSP library written in Javascript, aiming to be used by web audio applications developers.
-    </p>
-  </div>
-  <!-- end .grid_11 -->
-  <div class="grid_2 align_right">
-  <p>
-			<a href='http://www.pledgie.com/campaigns/14967'><img alt='Click here to lend your support to: Support KievII Javascript Audio Library and make a donation at www.pledgie.com !' src='img/pledgie.gif' border='0' /></a>
-			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-			<input type="hidden" name="cmd" value="_s-xclick">
-			<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-			">
-			<input type="image" src="https://www.paypalobjects.com/WEBSCR-640-20110401-1/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-			<img alt="" border="0" src="https://www.paypalobjects.com/WEBSCR-640-20110401-1/it_IT/i/scr/pixel.gif" width="1" height="1">
-			</form>
-  </div>
-  <!-- end .grid_1-->
-  <hr />
-  
-  <div class="grid_8">
-    <h3>
-      Technologies and Compatibility
-    </h3>
-    <p>
-      <strong>KievII</strong> is designed to be agnostic to the graphical layer.<br />
-      Currently, it uses <a href="https://developer.mozilla.org/en/HTML/Canvas" target="_blank">HTML5 Canvas</a> as a rendering engine. Demo applications use <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension" target="_blank">Mozilla Audio API</a> and <a href="http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html" target="_blank">Web Audio API</a>.
-	</p>
-  </div>
-  <!-- end .grid_8 -->
-  <div class="grid_4">
-    <h3>
-      Documentation
-    </h3>
-    <p>
-      You can find a Wiki <a href="https://github.com/janesconference/KievII/wiki" target="_blank">here</a> to get started, or you can check the examples in
-	  the <a href="https://github.com/janesconference/KievII" target="_blank">source code</a>.
-    </p>
-  </div>
-  <!-- end .grid_4 -->
-  <hr />
-  <div class="grid_8">
-    <h3>
-      Collaborate / Contribute
-    </h3>
-      <p><strong>Checkout</strong> or fork the code <a href="https://github.com/janesconference/KievII" target="_blank">here</a> and help develop and improve KievII.</p>
-      <p><strong>Developers</strong> and <strong>Graphic Designers</strong> are welcome. We're in great need of audio-related vectors and bitmaps (graphic elements, knobs, sliders, equalizers, you name it). If you like the idea of seeing your designs in our demos / applications, please contact us!</p>
-      <p><strong>Donations</strong> If you are so cool to contribute to KievII with money (open donation), there's a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=US&item_name=KievII%20PayPal%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" class="body">Paypal link</a> or a <a href="http://www.pledgie.com/campaigns/14967">Pledgie link</a> for that. Thank you.</p> 
-  </div>
-  <!-- end .grid_8 -->
-  <div class="grid_4">
-    <h3>
-      Contacts and Help
-    </h3>
-    <p>
-      You can follow the library on <a href="https://twitter.com/#!/kievii_library" target="_blank">Twitter</a>, ask support and questions on KievII's <a href="http://groups.google.com/group/kievii" target="_blank">Google Group</a>, or you can directly contact <a href="mailto:janesconference@bitterspring.net">the author</a>.
-    </p>
-  </div>
-  <!-- end .grid_4 -->
-  <hr />
-  <div class="grid_8 align_left"><a name="Apps"></a>
-  <p>
-  <a href="http://bitterspring.net/ms/morningstar/" target="_blank">
-  <img src="img/morningstar_screenshot.png" alt="Morning Star" /> </a>
-  </p>
-  </div>
-  <!-- end .grid_8 -->
-  <div class="grid_4">
-    <h3>
-      Morning Star
-    </h3>
-    <p>
-        <a href="http://bitterspring.net/ms/morningstar/" target="_blank">Morning Star</a> is a monophonic bassline synthesizer controlled by a step sequencer.<br />
-        The GUI is rendered correctly in any browser that properly supports <a href="http://dev.w3.org/html5/spec/Overview.html" target="_blank">HTML5 Canvas</a>.
-    </p>
-    <p>
-        Sound is supported both in <a href="http://www.google.com/chrome" target="_blank">Google Chrome</a> with <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html" target="_blank">Web Audio API</a> support and <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Mozilla Firefox</a>
-        with <a href="https://wiki.mozilla.org/Audio_Data_API">Audio Data API</a> support (Firefox 4+).
-    </p>
-    <p>
-        There is a <a href="http://bitterspring.net/blog/" target="_blank">blog</a> post with a presentation / brief user guide for Morning Star <a href="http://bitterspring.net/blog/2012/01/25/morning-star-synth-0-1-released/" target="_blank">here</a>.
-    </p>
-    <p>
-       Morning Star source code can be found <a href="https://github.com/janesconference/MorningStar" target="_blank">here</a>.
-    </p>
-  </div>
-  <!-- end .grid_4 -->
-  <hr />
-  <div class="grid_4">
-    <h3>
-      Voron
-    </h3>
-    <p>
-      <a href="https://developer.mozilla.org/en-US/demos/detail/voron" target="_blank">Voron</a> is a real-time pitchshifter and low-pass filter effect. The GUI is rendered in any browser that supports HTML5 Canvas.
-    </p>
-    <p>
-      Voron supports <a href="https://developer.mozilla.org/en/Introducing_the_Audio_API_Extension" target="_blank">Mozilla Audio API</a> (Mozilla Firefox
-	  <a href="http://www.mozilla.com/it/firefox/" target="_blank">4+</a>).
-    </p>
-    <p>To use it, Turn on the pitchshifter and/or the low pass filter with their ON/OFF buttons to apply the effects and turn the knobs to
-       change the effects parameters. Voron starts "clean" (ie. no effect applied). "Discrete" button switches from semitones shifting (ON) to cents shifting (OFF) and vice-versa.
-    </p>
-    <p>
-       Voron source code can be found <a href="https://github.com/janesconference/Voron" target="_blank">here</a>.
-    </p>
-  </div>
-  <!-- end .grid_4 -->
-  <div class="grid_8 align_right">
-  <p>
-  <a href="https://developer.mozilla.org/en-US/demos/detail/voron" target="_blank">
-  <img src="img/voron_screenshot.png" alt="Voron" /> </a>
-  </p>
-  </div>
-  <!-- end .grid_8 -->
-  <hr />
-  <div class="grid_5">
-    <small>
-      <a href="http://validator.w3.org/check/referer">HTML</a> - <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> - <a href="http://www.contentquality.com/mynewtester/cynthia.exe?Url1=http://kievii.net/">508</a>.
-    </small>
-  </div>
-  <div class="grid_2 align_center">
-  </div>
-  <div class="grid_5 align_right">
-    <small>
-      Licensed under <a href="http://www.opensource.org/licenses/mit-license.php" rel="license">MIT</a>.
-    </small>
-  </div>
-  <div class="clear">
-  </div>
-</div>
-<!-- end .container_12 -->
-</body>
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div id="mainNavbar" class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">KievII</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#started">Get Started</a></li>
+              <li><a href="#apps">Apps</a></li>
+              <li class="divider-vertical"></li>
+              <li><a href="examples.html">Examples</a></li>
+              <li><a href="#code">Code</a></li>
+              <li class="divider-vertical"></li>
+              <li><a href="http://twitter.com/kievII_library"><i class="icon-user icon-white"></i> KievII on Twitter</a></li>
+              <li><a href="http://bitterspring.net/blog"><i class="icon-globe icon-white"></i> Author's blog</a></li>
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contacts<b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="mailto:janesconference@bitterspring.net"><i class="icon-envelope"></i> Author's E-mail</a></li>
+                    <li><a href="http://twitter.com/janesconference"><i class="icon-user"></i> Author's Twitter</a></li>
+                    <li><a href="http://groups.google.com/group/kievii"><i class="icon-globe"></i> Google Group</a></li>
+                  </ul>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" id='kievHero'>
+      	<!-- <img src="img/logo.png" style="float: right" alt="KievII" /> -->
+	      	<div class="row">
+		        <div class="span4">
+		        	<img class="centeredImage" style="max-width:80%;" src="img/logo_gear.png" alt="KievII" />
+		        </div>
+		        <div class="span6">
+			        <h1>KievII</h1>
+			        <p>GUI and audio/DSP Javascript library, for web and mobile audio applications developers.</p>
+			        
+			        <div class="btn-group">
+			          <button class="btn btn-success btn-large dropdown-toggle" data-toggle="dropdown"> <i class="icon-download icon-white"></i> Download KievII <span class="caret"></span></button>
+			          <ul class="dropdown-menu">
+			            <li><a href='https://github.com/janesconference/KievII/zipball/v0.3.01'>Download stable (0.3.01)</a></li>
+			            <li><a href="#">Download stable-minified (0.3.01)</a></li>
+			            <li><a href='https://github.com/janesconference/KievII/zipball/v0.3.01'>Download unstable (HEAD)</a></li>
+			            <li class="divider"></li>
+			            <li><a href='https://github.com/janesconference/KievII/'>Go to source code</a></li>
+			          </ul>
+			        </div><!-- /btn-group -->
+		        </div>
+	      	</div>
+	      </div>
+      
+      <div id="mainContent">
+      
+          <h1 id="started">Get Started</h2>
+    	  
+    	  <div class="row">
+    	  	
+    	  	<!-- START OF GETTINGSTARTED -->
+    	  	
+    		  	<!--  Including -->
+    	        <div class="span12">
+    	        	<h4>Include KievII</h4>
+    			        	<pre> <code data-language="html" id="knob_code">
+    &lt;script type='text/javascript' src='kievII.min.js'&gt; &lt;/script&gt;
+    			        	</code> </pre>
+    			</div>
+    			<div class="span12">        	
+    	        	<h4>Create a KievII UI</h4>
+    	        	<pre> <code data-language="javascript" id="knob_code">
+    // Get your Canvas Element ID	        		
+    var targetCanvas = document.getElementById("your_canvas");
+    // Create a new KievII UI
+    var ui = new K2.UI ({type: 'CANVAS2D', target: targetCanvas});
+    	        	</code> </pre>
+    	       </div>
+    	       <div class="span12"> 	
+    	        	<h4>Add an Element to the UI</h4>
+                    <pre> <code data-language="javascript" id="knob_code">
+    // Set the element arguments
+    var ElementArgs = {
+                ID: 'elementID',
+                /* Set the element-specific arguments here (...) */
+                onValueSet: function (slot, value, element) {
+                    /* This is the element callback, 
+                     * called when one of the element's slots
+                     * gets changed */
+                    ui.refresh();
+                }
+            };
+    // Add element to the UI
+    ui.addElement(new K2.UIElement(gaugeArgs, {zIndex: ... }));
+                    </code> </pre>
+                    
+                    <p class="well"> <span class="label label-warning">hint</span> See the <a href="examples.html">examples page</a> for a quick overview of the available elements and techniques</p>
+                </div>
+                <div class="span12">    
+                    <h4>Remove an Element from the UI</h4>
+                    <pre> <code data-language="javascript" id="knob_code">
+    // Remove element from the UI
+    ui.removeElement('elementID');
+                    </code> </pre>
+    	        </div>
+    
+            </div>
+	  
+    	  <hr class='style-one'/>
+    	  
+    	  <h1 id="apps"> Applications <small> (made with KievII)</small></h2>
+    	  
+    	  <div class="row-fluid">
+            <ul class="thumbnails">
+              <li class="span4">
+                <div class="thumbnail">
+                  <img src="img/morningstar_screenshot.png" alt="Morning Star">
+                  <div class="caption">
+                    <h3>Morning Star synth</h3>
+                    <p>Morning Star is a monophonic bassline synthesizer controlled by a step sequencer.</p>
+                    <p>Supports <a href="https://developer.mozilla.org/en-US/docs/Introducing_the_Audio_API_Extension"> Mozilla Audio API</a> and <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html"> Web Audio API</a></p>
+                      <p><a href="http://bitterspring.net/ms/morningstar/" class="btn btn-inverse">Launch Morning Star</a> 
+                         <a href="https://github.com/janesconference/MorningStar" class="btn">See Source Code</a></p>
+                  </div>
+                </div>
+              </li>
+              <li class="span4">
+                <div class="thumbnail">
+                  <img src="img/voron_screenshot.png" alt="Voron">
+                  <div class="caption">
+                    <h3>Voron</h3>
+                    <p>Voron is a real-time pitchshifter and low-pass filter effect</p>
+                    <p>Supports <a href="https://developer.mozilla.org/en-US/docs/Introducing_the_Audio_API_Extension"> Mozilla Audio API</a></p>
+                    <p><a href="https://developer.mozilla.org/en-US/demos/detail/voron" class="btn btn-inverse">Launch Voron</a>
+                       <a href="https://github.com/janesconference/Voron" class="btn">See Source Code</a></p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+    	  
+      <hr />
+      
+      <footer>
+        <p>&copy; Bitterspring.net 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="bootstrap/js/bootstrap.js"></script>
+     
+     <script type="text/javascript">
+         $('.dropdown-toggle').dropdown();
+     </script>
+     
+  </body>
 </html>
+
+
+<!-- <div class="span4">
+          <h2>Contribute</h2>
+           <p class ="well">You can clone or fork the code <a href="https://github.com/janesconference/KievII" target="_blank">on GitHub</a> to help develop and improve KievII. <br /> <br />
+           <span class="label label-inverse">Donations</span> If you are so cool to contribute to KievII with money with an open donation, you can do so with <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=US&item_name=KievII%20PayPal%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted">Paypal</a> or <a href="http://www.pledgie.com/campaigns/14967">Pledgie</a>. Thank you.
+           </p>
+</div> -->
