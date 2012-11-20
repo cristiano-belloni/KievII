@@ -10,8 +10,8 @@ var RotKnobTest = {
         
         var knobArgs = {
             ID: "test_knob",
-            top: Math.floor ((this.viewWidth - img.width) / 2) ,
-            left: Math.floor ((this.viewHeight - img.height) / 2),
+            left: Math.floor ((this.viewWidth - img.width) / 2) ,
+            top: Math.floor ((this.viewHeight - img.height) / 2),
             image : img,
             sensitivity : 5000,
             initAngValue: -90,
