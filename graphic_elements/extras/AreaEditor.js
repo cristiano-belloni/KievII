@@ -177,7 +177,7 @@ var AreaEditor = function(parameters) {
         color : parameters.color || "black",
         borders: parameters.borders || {top: true, bottom: true, right: true, left: true},
         move: parameters.move || 'x',
-        drag: {top: true, bottom: false, right: true, left: true},
+        dragBorders: {top: true, bottom: false, right: true, left: true},
         xMonotone: true,
         yMonotone: true,
         isListening : parameters.isListening || true,

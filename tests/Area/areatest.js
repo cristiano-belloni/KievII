@@ -20,7 +20,6 @@ var AreaTest = {
             color: 'orange',
             borderColor: 'crimson',
             transparency: 0.9,
-            move: 'all',
             drag: {top: true, bottom: true, right: true, left: true},
             isListening: true,
         };

@@ -137,7 +137,7 @@ var BarSelect = function (parameters) {
         borderColor: parameters.areaBorderColor || "gray",
         borders: {top: false, bottom: false, right: false, left: false},
         move: parameters.move || 'none',
-        drag: {top: false, bottom: false, right: false, left: false},
+        dragBorders: {top: false, bottom: false, right: false, left: false},
         xMonotone: true,
         yMonotone: true,
         transparency : parameters.areaTransparency || 0.5,

@@ -39,7 +39,7 @@ K2.Area.prototype.getready = function(args) {
     // Can paint the borders
     this.borders = args.borders || {top: true, bottom: true, right: true, left: true};
     // Can drag the borders
-    this.drag = args.drag || {top: true, bottom: true, right: true, left: true};
+    this.dragBorders = args.dragBorders || {top: true, bottom: true, right: true, left: true};
     // Move can be 'none', 'x', 'y', 'all'
     this.move = args.move || 'all';
     
@@ -98,7 +98,7 @@ K2.Area.prototype.isInArea = function (x,y) {
     
 };
 
-K2.Area.prototype.tap = K2.Area.prototype.dragstart = K2.Area.prototype.mousedown = function(x, y) {
+K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
     
     /*if (this.isInROI(x, y)) {*/
         
@@ -112,22 +112,22 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = K2.Area.prototype.mousedow
         var top_min_prox = this.values.yOffset - this.proximity;
         
         // Test side proximity
-        if ((x > left_min_prox) &&  x < (left_max_prox) && this.drag.left === true) {
+        if ((x > left_min_prox) &&  x < (left_max_prox) && this.dragBorders.left === true) {
             // We're next to the left side
             this.leftSide = true;
             console.log ("Left side click detected");
         }
-        if ((x > right_min_prox) &&  x < (right_max_prox) && this.drag.right === true) {
+        if ((x > right_min_prox) &&  x < (right_max_prox) && this.dragBorders.right === true) {
             // We're next to the right side
             this.rightSide = true;
             console.log ("Right side click detected");
         }
-        if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.drag.bottom === true) {
+        if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.dragBorders.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
             console.log ("Bottom side click detected");
         }
-        if ((y > top_min_prox) &&  y < (top_max_prox) && this.drag.top === true) {
+        if ((y > top_min_prox) &&  y < (top_max_prox) && this.dragBorders.top === true) {
             // We're next to the top side
             this.topSide = true;
             console.log ("Top side click detected");
@@ -141,7 +141,7 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = K2.Area.prototype.mousedow
         else this.inside = false;
 };
 
-K2.Area.prototype.drag = K2.Area.prototype.mousemove = function(curr_x, curr_y) {
+K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, curr_y) {
 
     var ret = [];
     var newWidth, newHeight;
