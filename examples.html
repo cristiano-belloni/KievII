@@ -33,12 +33,14 @@
     <link href="assets/css/rainbow/themes/obsidian.css" rel="stylesheet" type="text/css">
     <link href="css/kievii.css" rel="stylesheet" type="text/css">
 	
-	<!--<style>
-	.thumbnails li {
-	    width: 370px;
-	    background: red;
+	<style>
+	.thumbnails {
+	    text-align: center
 	}
-	</style> -->
+	.thumbnail .caption {
+	    text-align: left
+	}
+	</style>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -110,13 +112,16 @@
          $('.dropdown-toggle').dropdown();
 		 
 		 var kiev2TestURL = '../KievII/tests/'; 
-		 var buildArray = [["RotKnob", ['../KievII/tests/RotKnob/assets/img/white_big.png'], 1, '<p>Knob lorem ipsum</p>'],
+		 var buildArray = [
+		                  ["RotKnob", ['../KievII/tests/RotKnob/assets/img/white_big.png'], 1, '<p>Knob lorem ipsum</p>'],
 		                  ["Gauge", undefined, 1, '<p>Gauge Lorem ipsum</p>'],
 		                  ["Curve", undefined, 1, '<p>Curve Lorem ipsum</p>'],
 		                  ["Area", undefined, 1, '<p>Area lorem ipsum</p>'],
 		                  ["Bar", undefined, 1, '<p>Bar lorem ipsum</p>'],
 		                  ["ClickBar", undefined, 1, '<p>ClickBar lorem ipsum</p>'],
-		                  ["Button", ['../KievII/tests/Button/assets/img/state0.png', '../KievII/tests/Button/assets/img/state1.png', '../KievII/tests/Button/assets/img/state2.png'], 1, '<p>Three-state button lorem ipsum</p>']
+		                  ["Button", ['../KievII/tests/Button/assets/img/state0.png', '../KievII/tests/Button/assets/img/state1.png', '../KievII/tests/Button/assets/img/state2.png'], 1, '<p>Three-state button lorem ipsum</p>'],
+		                  /* ["HSlider", ['../KievII/tests/HSlider/assets/img/h_slider_slot.png', '../KievII/tests/HSlider/assets/img/h_slider_handle.png'], 2, '<p>Slider lorem ipsum</p>'] */
+		                  ["Wavebox", undefined, 1, '<p>Wavebox Lorem ipsum</p>'],
 		                  ];
 		 
 		 var columnCounter = 0;      
@@ -135,7 +140,7 @@
 		      html += '<li class="span' + cE[2] * 4 + '"> <div class="thumbnail">';
 		      /* TODO width, height, class */
 		      var canvas_name = cE[0].toLowerCase() + '_canvas';
-		      html += '<canvas class="exampleCanvas" width="360" height="340" id="' + canvas_name + '"></canvas>';
+		      html += '<canvas class="exampleCanvas" width="' + 360 * cE[2] + '" height="340" id="' + canvas_name + '"></canvas>';
 		      html += '<div class="caption">';
 		      html += '<h3>' + cE[0] + '</h3>';
 		      html += cE[3];
