@@ -32,6 +32,13 @@
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/rainbow/themes/obsidian.css" rel="stylesheet" type="text/css">
     <link href="css/kievii.css" rel="stylesheet" type="text/css">
+	
+	<!--<style>
+	.thumbnails li {
+	    width: 370px;
+	    background: red;
+	}
+	</style> -->
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -98,7 +105,7 @@
             <ul class="thumbnails">
               <li class="span4">
                 <div class="thumbnail">
-                  <canvas style="background-color: black;" id="rotknob_canvas" width="360" height="340"></canvas>
+                  <canvas style="background-color: black; max-width: 100%" width="360" height="340" id="rotknob_canvas"></canvas>
                   <div class="caption">
                       <script type="text/javascript">
                         $.ajax({
@@ -122,7 +129,7 @@
               </li>
               <li class="span4">
                 <div class="thumbnail">
-                  <canvas style="background-color: black;" id="gauge_canvas" width="360" height="340"></canvas>
+                  <canvas style="background-color: black; max-width: 100%" id="gauge_canvas" width="360" height="340"></canvas>
                   <div class="caption">
                       <script type="text/javascript">
                         $.ajax({
@@ -146,7 +153,7 @@
               </li>
               <li class="span4">
                 <div class="thumbnail">
-                  <canvas style="background-color: black;" id="curve_canvas" width="360" height="340"></canvas>
+                  <canvas style="background-color: black; max-width: 100%" id="curve_canvas" width="360" height="340"></canvas>
                   <div class="caption">
                       <script type="text/javascript">
                         $.ajax({
@@ -175,7 +182,7 @@
             <ul class="thumbnails">
               <li class="span4">
                 <div class="thumbnail">
-                  <canvas style="background-color: black;" id="area_canvas" width="360" height="340"></canvas>
+                  <canvas style="background-color: black; max-width: 100%" id="area_canvas" width="360" height="340"></canvas>
                   <div class="caption">
                       <script type="text/javascript">
                         $.ajax({
@@ -199,7 +206,7 @@
               </li>
               <li class="span4">
                 <div class="thumbnail">
-                  <canvas style="background-color: black;" id="bar_canvas" width="360" height="340"></canvas>
+                  <canvas style="background-color: black; max-width: 100%" id="bar_canvas" width="360" height="340"></canvas>
                   <div class="caption">
                       <script type="text/javascript">
                         $.ajax({
@@ -223,7 +230,7 @@
               </li>
               <li class="span4">
                 <div class="thumbnail">
-                  <canvas style="background-color: black;" id="curve_canvas" width="360" height="340"></canvas>
+                  <canvas style="background-color: black; max-width: 100%" id="another_canvas" width="360" height="340"></canvas>
                   <div class="caption">
                       <script type="text/javascript">
                         /*$.ajax({
@@ -256,6 +263,33 @@
      <script src="bootstrap/js/bootstrap.js"></script>
      <script type="text/javascript">
          $('.dropdown-toggle').dropdown();
+		 // Global
+		 /* oldcanvasWidth = null;
+		 function respondCanvas() {
+			 var c = $('#gauge_canvas');
+			 var container = $(c).parent();
+			 
+			 var newWidth = $(c).css('width');
+			 var newHeight = $(c).css('height');
+			 
+			 var containerWidth = $(container).css('width');
+			 if (containerWidth > newWidth) {
+				 newWidth = containerWidth;
+			 }
+			 
+			 console.log (newWidth, newHeight);
+			 if (newWidth !== oldcanvasWidth) {
+			 	c.attr('width', newWidth ); //max width
+				c.attr('height', newHeight );
+				oldcanvasWidth = newWidth;
+				GaugeTest.init(document.getElementById('gauge_canvas'));
+			}
+			 
+		 }
+		 
+		 //Run function when browser  resize
+		 $(window).resize( respondCanvas ); */
+		 
      </script>
 	  
 	</body>
