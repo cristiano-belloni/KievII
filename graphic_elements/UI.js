@@ -36,6 +36,22 @@ K2.UI = function(engine, parameters) {
 	
 	    mx = e.pageX - offsetX;
 	    my = e.pageY - offsetY;
+		
+		// this returns in element's css value
+		// var cssWidth = window.getComputedStyle (obj, null).getPropertyValue("width");
+		// var cssHeight = window.getComputedStyle (obj, null).getPropertyValue("height");
+		
+		var cssWidth  = obj.offsetWidth;
+		var cssHeight = obj.offsetHeight;
+		
+		var attrWidth = obj.getAttribute("width");
+		var attrHeight = obj.getAttribute("height");
+		var widthScale = attrWidth / cssWidth;
+		var heightScale = attrHeight / cssHeight;
+		//console.log ('*** SCALE', widthScale, heightScale);
+		
+		mx *= widthScale;
+		my *= heightScale;
 	
 	    // We return a simple javascript object (a hash) with x and y defined
 	    return {
