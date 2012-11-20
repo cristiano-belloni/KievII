@@ -20,9 +20,10 @@ K2.ClickBar.prototype.getready = function(args) {
 
     this.defaultSlot = 'barvalue';
     
-    this.color = args.color || 'black';
-    this.diffColor = args.diffColor || 'LightGray';
-    this.prevColor = args.prevColor || 'DarkGray';
+    this.color = args.color || 'orangered';
+    this.lightColor = args.diffColor || 'darkorange';
+    this.lighterColor = args.prevColor || 'orange';
+    this.lightestColor = args.prevColor || '#FFBE00';
     this.landingHeight = args.landingHeight || 20;
 
     var height = args.height || 0;
@@ -68,7 +69,7 @@ K2.ClickBar.prototype.calculateValue = function (x,y) {
 };
 
 
-K2.ClickBar.prototype.tap = K2.ClickBar.prototype.dragstart = K2.ClickBar.prototype.mousedown = K2.ClickBar.prototype.hold = function(x, y) {
+K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown = function(x, y) {
     
         if (this.isInROI (x,y)) {
             
@@ -109,19 +110,6 @@ K2.ClickBar.prototype.drag = function(x, y) {
 
 };
 
-K2.ClickBar.prototype.mousemove = function (x,y) {
-    
-    if (this.isInROI (x,y) && this.triggered) {
-        
-        var clickedValue = this.calculateValue (x, y);
-            
-        if (clickedValue === this.values.barvalue) {
-            return;
-        }
-        
-        return {slot : 'barvalue', value : clickedValue};
-    }
-};
 
 K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup = function(x, y) {
     
@@ -138,23 +126,6 @@ K2.ClickBar.prototype.setValue = function(slot, value) {
 
 };
 
-K2.ClickBar.prototype.prevDraw = function(engine) {
-    // Previous value,in prevColor
-    engine.context.fillStyle = this.prevColor;
-    engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.prevValue) * this.height,
-                                 this.width,
-                                 this.prevValue * this.height);
-};
-
-K2.ClickBar.prototype.diffDraw = function(engine) {
-    // Value, in diffColor
-    engine.context.fillStyle = this.diffColor;
-    engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
-                                 this.width,
-                                 this.values.barvalue * this.height);
-    
-};
-
 K2.ClickBar.prototype.refresh_CANVAS2D = function(engine) {
 
     if (this.isVisible === true) {
@@ -162,19 +133,28 @@ K2.ClickBar.prototype.refresh_CANVAS2D = function(engine) {
         if (this.triggered) {
             
             if (this.values.barvalue < this.prevValue) {
-                console.log ("first");
-                this.prevDraw(engine);
-                this.diffDraw(engine);
+                engine.context.fillStyle = this.lightestColor;
+                engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.prevValue) * this.height,
+                                 this.width,
+                                 this.prevValue * this.height);
+                engine.context.fillStyle = this.lightColor;
+                engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
+                                 this.width,
+                                 this.values.barvalue * this.height);
             }
             else {
-                console.log ("second");
-                this.diffDraw(engine);
-                this.prevDraw(engine);
+                engine.context.fillStyle = this.lightColor;
+                engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,
+                                 this.width,
+                                 this.values.barvalue * this.height);
+                engine.context.fillStyle = this.lighterColor;
+                engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.prevValue) * this.height,
+                                 this.width,
+                                 this.prevValue * this.height);
             }
                              
         }
         else {
-            console.log ("third");
             // Value, in color
             engine.context.fillStyle = this.color;
             engine.context.fillRect (this.xOrigin, this.yOrigin + (1 - this.values.barvalue) * this.height,

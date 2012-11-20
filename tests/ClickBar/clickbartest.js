@@ -6,31 +6,28 @@ var ClickBarTest = {
     main: function () {
         
         // !VIEWABLEDOCSTART
+        var barWidth =  Math.floor(this.viewWidth / 80 * 8);
+        var spaceWidth = Math.floor(this.viewWidth / 90 * 2);
         
         var clickBarArgs = {
             ID: "testClickBar",
-            left : this.viewWidth / 5,
+            left : 0,
             top : this.viewHeight / 5,
             height: this.viewHeight / 5 * 3,
-            width: this.viewWidth / 5,
+            width: barWidth,
             onValueSet: function (slot, value) {
                 console.log ("Event on slot " + slot + " with value " + value);
                 this.ui.refresh();
             }.bind(this),
-            color: 'black',
             isListening: true
         };
         
-        this.ui.addElement(new K2.ClickBar(clickBarArgs));
-        
-        clickBarArgs.ID = "testClickBar2";
-        clickBarArgs.left += this.viewWidth / 5 + 10;
-        
-        this.ui.addElement(new K2.ClickBar(clickBarArgs));
-        
-        this.ui.setValue ({elementID: 'testClickBar', slot: 'barvalue', value: 0.5});
-        this.ui.setValue ({elementID: 'testClickBar2', slot: 'barvalue', value: 0.7});
-        
+        for (var i = 0; i < 8; i += 1) {
+            clickBarArgs.ID = "testClickBar" + i;
+            clickBarArgs.left = (i * barWidth + (i+1) * spaceWidth);
+            this.ui.addElement(new K2.ClickBar(clickBarArgs));
+            this.ui.setValue ({elementID: clickBarArgs.ID, slot: 'barvalue', value: (0.1 * i) + 0.1});
+        }        
         // !VIEWABLEDOCEND            
     },
     
