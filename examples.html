@@ -166,6 +166,14 @@
 		 
 		 $('#mainContainer').append(html);
 		 
+		 var versionInfo = '';
+		 if (typeof K2.version !== 'undefined') {
+		      versionInfo = '<small class="muted pull-right">KievII version: ' + K2.version + '</small>';
+		  }
+		 
+		 html = '<footer><p>&copy; Bitterspring.net 2012 ' + versionInfo + '</p></footer>';
+		 $('#mainContainer').append(html);
+		 
      </script>
 	  
 	</body>
