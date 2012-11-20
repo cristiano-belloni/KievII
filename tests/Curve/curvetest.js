@@ -6,68 +6,49 @@ var CurveTest = {
     main: function () {
         
         // !VIEWABLEDOCSTART
+        var vW = this.viewWidth;
+        var vH = this.viewHeight;
         
         var curveArgs = {
                 ID: "hCos",
                 top: 0,
                 left: 0,
-                width: 800,
-                height:700,
+                width: vW,
+                height: vH,
                 curveType: "halfcosine",
-                thickness: 5,
-                curveColor: "02B51F",
-                handleColor: "A81B32",
-                helperColor: "gray",
-                curveLabels: true,
-                midPointSize: 8,
+                curveColor: "orange",
+                thickness: vH * 0.01,
                 paintTerminalPoints: 'first',
-                terminalPointSize: 15,
-                terminalPointColor: 'black',
-                terminalPointFill: '015C10',
-                midPointFill: 'E6965A',
-                //points: [120, 280, 280, 130, 420, 280, 580, 130, 600, 140],
-                points: [60, 280, 280, 130],
+                points: [vW * 0.1, vH * 0.5, vW * 0.25, vH * 0.25],
                 isListening: true
             };
         
         curveArgs.onValueSet = function (slot, value, element) {
-            console.log ("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value);
-            CurveTest.ui.refresh();
-        };
-
-            var curveElement = new K2.Curve(curveArgs);
-            
-            curveArgs.ID = "smooth";
-            curveArgs.curveType = "smooth";
-            //curveArgs.paintTerminalPoints = 'first';
-            curveArgs.points = [280, 130, 310, 180];
-            
-            var curveElement2 = new K2.Curve(curveArgs);
-            
-            curveArgs.ID = "bez4";
-            curveArgs.curveType = "bezier";
-            //curveArgs.paintTerminalPoints = 'all';
-            curveArgs.points = [310, 180, 420, 280, 580, 130, 600, 140, 650, 210];
-            var curveElement3 = new K2.Curve(curveArgs);
-            
-            curveArgs.ID = "line";
-            curveArgs.curveType = "linear";
-            curveArgs.paintTerminalPoints = 'all';
-            curveArgs.points = [650, 210, 680, 100];
-            var curveElement4 = new K2.Curve(curveArgs);
-            
-            /* curveArgs.ID = "curve_test_5";
-            curveArgs.curveType = "hermite";
-            curveArgs.points = [680, 100, 700, 110, 720, 160, 760, 88];
-            var curveElement5 = new Curve(curveArgs); */
-            
-            this.ui.addElement(curveElement);
-            this.ui.addElement(curveElement2);
-            this.ui.addElement(curveElement3);
-            this.ui.addElement(curveElement4);
-            //ui.addElement(curveElement5);
-            
             this.ui.refresh();
+        }.bind(this);
+
+        var curveElement = new K2.Curve(curveArgs);
+        
+        curveArgs.ID = "smooth";
+        curveArgs.curveType = "smooth";
+        curveArgs.points = [vW * 0.25, vH * 0.25, vW * 0.5, vH * 0.5]; 
+        var curveElement2 = new K2.Curve(curveArgs);
+        
+        curveArgs.ID = "bez4";
+        curveArgs.curveType = "bezier";
+        curveArgs.paintTerminalPoints = 'all';
+        curveArgs.points = [vW * 0.5, vH * 0.5, 
+                            vW * 0.5 , vH * 0.75, 
+                            vW * 0.625, vH * 0.125, 
+                            vW * 0.75, vH * 0.875, 
+                            vW * 0.9, vH * 0.5];
+        var curveElement3 = new K2.Curve(curveArgs);
+        
+        this.ui.addElement(curveElement);
+        this.ui.addElement(curveElement2);
+        this.ui.addElement(curveElement3);
+
+        this.ui.refresh();
         // !VIEWABLEDOCEND            
     },
     

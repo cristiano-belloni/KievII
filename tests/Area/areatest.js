@@ -11,25 +11,29 @@ var AreaTest = {
             ID: "testArea",
             left: 0,
             top : 0,
-            thickness:8,
+            thickness:6,
             height: this.viewHeight,
             width: this.viewWidth,
             onValueSet: function (slot, value) {
-                console.log ("Event on slot " + slot + " with value " + value);
                 this.ui.refresh();
             }.bind(this),
-            color: 'black',
-            transparency: 0.5,
+            color: 'orange',
+            borderColor: 'crimson',
+            transparency: 0.9,
+            move: 'all',
+            drag: {top: true, bottom: true, right: true, left: true},
             isListening: true,
-            /* move: 'y' */
         };
         
         this.ui.addElement(new K2.Area(areaArgs));
         
-        this.ui.setValue ({elementID: 'testArea', slot: 'xOffset', value: 0});
-        this.ui.setValue ({elementID: 'testArea', slot: 'yOffset', value: 20});
-        this.ui.setValue ({elementID: 'testArea', slot: 'width', value: 100});
-        this.ui.setValue ({elementID: 'testArea', slot: 'height', value: 200});
+        var w = this.viewWidth * 0.2, h = this.viewHeight * 0.2;
+        var x = w, y = h * 2;
+         
+        this.ui.setValue ({elementID: 'testArea', slot: 'xOffset', value: x});
+        this.ui.setValue ({elementID: 'testArea', slot: 'yOffset', value: y});
+        this.ui.setValue ({elementID: 'testArea', slot: 'width', value: w});
+        this.ui.setValue ({elementID: 'testArea', slot: 'height', value: h});
         this.ui.refresh();
         // !VIEWABLEDOCEND            
     },

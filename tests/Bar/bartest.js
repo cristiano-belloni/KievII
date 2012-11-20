@@ -6,8 +6,7 @@ var BarTest = {
     main: function () {
         
         // !VIEWABLEDOCSTART
-        
-        barArgs = {
+        var barArgs = {
             ID: "testBar",
             left: 0,
             top : 0,
@@ -15,7 +14,6 @@ var BarTest = {
             height: this.viewHeight,
             width: this.viewWidth,
             onValueSet: function (slot, value) {
-                console.log ("Event on slot " + slot + " with value " + value);
                 this.ui.refresh();
             }.bind(this),
             barColor: 'red',
@@ -24,7 +22,9 @@ var BarTest = {
         };
         
         this.ui.addElement(new K2.Bar(barArgs));
-        
+        this.ui.setValue ( {elementID: 'testBar',
+                            slot: 'barPos',
+                            value: [this.viewWidth / 5, 0]});
         this.ui.refresh();
         // !VIEWABLEDOCEND            
     },

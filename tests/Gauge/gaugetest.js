@@ -1,50 +1,44 @@
 var GaugeTest = {
-    
-    name: 'GaugeTest',
-    ui: null,
-    
-    redrawRandom: function () {
-        var newValue = Math.random();
-        GaugeTest.ui.setValue ({elementID: 'testGauge', slot: 'gaugevalue', value: newValue});
-        newValue = Math.random(); 
-        GaugeTest.ui.setValue ({elementID: 'testGauge', slot: 'midgaugevalue', value: newValue});
-    },
-    
-    main: function () {
-        
+
+    name : 'GaugeTest',
+    ui : null,
+
+    main : function() {
+
         // !VIEWABLEDOCSTART
-        
         var gaugeArgs = {
-            ID: "testGauge",
-            left: Math.floor (this.viewWidth / 2 - this.viewWidth / 5),
-            top : Math.floor (this.viewHeight / 2 - this.viewHeight / 5),
-            height: 120, //Math.floor(this.viewHeight / 5),
-            width: 120, //Math.floor(this.viewWidth / 5),
-            onValueSet: function (slot, value) {
-                console.log ("Event on slot " + slot + " with value " + value);
+            ID : "testGauge",
+            left : Math.floor(this.viewWidth * 0.5 - this.viewWidth * 0.2),
+            top : Math.floor(this.viewHeight * 0.5 - this.viewHeight * 0.2),
+            height : 120,
+            width : 120,
+            onValueSet : function(slot, value) {
                 this.ui.refresh();
             }.bind(this),
-            /* transparency: 0.5, */
-            isListening: true
+            isListening : true
         };
-        
+
         this.ui.addElement(new K2.Gauge(gaugeArgs));
-        
-        //var loop = setInterval (this.redrawRandom, 3000);
-        this.redrawRandom();
-        
-        // !VIEWABLEDOCEND            
+        this.ui.setValue({
+            elementID : 'testGauge',
+            slot : 'gaugevalue',
+            value : 0.2
+        });
+        this.ui.refresh();
+        // !VIEWABLEDOCEND
     },
-    
-    init: function (canvas) {
-    
-                                               
+
+    init : function(canvas) {
+
         this.viewWidth = canvas.width;
         this.viewHeight = canvas.height;
-        
-        this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
-        
+
+        this.ui = new K2.UI({
+            type : 'CANVAS2D',
+            target : canvas
+        });
+
         this.main();
-        
+
     }
 }
