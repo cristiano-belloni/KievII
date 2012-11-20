@@ -94,168 +94,13 @@
       </div>
     </div>
 
-<div class="container">
+<div class="container" id='mainContainer'>
 
 <h2>Examples</h2>
-	  <a name="docs"></a>
 	  
 	  <hr />
         
-        <div class="row-fluid">
-            <ul class="thumbnails">
-              <li class="span4">
-                <div class="thumbnail">
-                  <canvas style="background-color: black; max-width: 100%" width="360" height="340" id="rotknob_canvas"></canvas>
-                  <div class="caption">
-                      <script type="text/javascript">
-                        $.ajax({
-                          url: '../KievII/tests/RotKnob/rotknobtest.js',
-                          dataType: 'script',
-                          cache: true, // otherwise will get fresh copy every page load
-                          success: function(data, textStatus, jqxhr) {
-                            //var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
-                            //var dataEnd = data.indexOf(END_TOKEN);
-                            //var code = data.substr(dataStart, dataEnd - dataStart);
-                            //highlightCode (code, 'rotknob_code');    
-                            RotKnobTest.init(document.getElementById('rotknob_canvas'), ['../KievII/tests/RotKnob/assets/img/white_big.png']);
-                          }
-                        });
-                    </script>
-                    <h3>RotKnob</h3>
-                    <p>Knob lorem ipsum</p>
-                      <p><a href="#" class="btn btn-inverse">Code</a></p>
-                  </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail">
-                  <canvas style="background-color: black; max-width: 100%" id="gauge_canvas" width="360" height="340"></canvas>
-                  <div class="caption">
-                      <script type="text/javascript">
-                        $.ajax({
-                          url: '../KievII/tests/Gauge/gaugetest.js',
-                          dataType: 'script',
-                          cache: true, // otherwise will get fresh copy every page load
-                          success: function(data, textStatus, jqxhr) {
-                            //var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
-                            //var dataEnd = data.indexOf(END_TOKEN);
-                            //var code = data.substr(dataStart, dataEnd - dataStart);
-                            //highlightCode (code, 'rotknob_code');    
-                            GaugeTest.init(document.getElementById('gauge_canvas'));
-                          }
-                        });
-                    </script>
-                    <h3>Gauge</h3>
-                    <p>Gauge lorem ipsum</p>
-                    <p><a href="#" class="btn btn-inverse">Code</a></p>
-                  </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail">
-                  <canvas style="background-color: black; max-width: 100%" id="curve_canvas" width="360" height="340"></canvas>
-                  <div class="caption">
-                      <script type="text/javascript">
-                        $.ajax({
-                          url: '../KievII/tests/Curve/curvetest.js',
-                          dataType: 'script',
-                          cache: true, // otherwise will get fresh copy every page load
-                          success: function(data, textStatus, jqxhr) {
-                            //var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
-                            //var dataEnd = data.indexOf(END_TOKEN);
-                            //var code = data.substr(dataStart, dataEnd - dataStart);
-                            //highlightCode (code, 'rotknob_code');    
-                            CurveTest.init(document.getElementById('curve_canvas'));
-                          }
-                        });
-                    </script>
-                    <h3>Curve</h3>
-                    <p>Curve lorem ipsum</p>
-                    <p><a href="#" class="btn btn-inverse">Code</a></p>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="row-fluid">
-            <ul class="thumbnails">
-              <li class="span4">
-                <div class="thumbnail">
-                  <canvas style="background-color: black; max-width: 100%" id="area_canvas" width="360" height="340"></canvas>
-                  <div class="caption">
-                      <script type="text/javascript">
-                        $.ajax({
-                          url: '../KievII/tests/Area/areatest.js',
-                          dataType: 'script',
-                          cache: true, // otherwise will get fresh copy every page load
-                          success: function(data, textStatus, jqxhr) {
-                            //var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
-                            //var dataEnd = data.indexOf(END_TOKEN);
-                            //var code = data.substr(dataStart, dataEnd - dataStart);
-                            //highlightCode (code, 'rotknob_code');    
-                            AreaTest.init(document.getElementById('area_canvas'));
-                          }
-                        });
-                    </script>
-                    <h3>Area</h3>
-                    <p>Area lorem ipsum</p>
-                      <p><a href="#" class="btn btn-inverse">Code</a></p>
-                  </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail">
-                  <canvas style="background-color: black; max-width: 100%" id="bar_canvas" width="360" height="340"></canvas>
-                  <div class="caption">
-                      <script type="text/javascript">
-                        $.ajax({
-                          url: '../KievII/tests/Bar/bartest.js',
-                          dataType: 'script',
-                          cache: true, // otherwise will get fresh copy every page load
-                          success: function(data, textStatus, jqxhr) {
-                            //var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
-                            //var dataEnd = data.indexOf(END_TOKEN);
-                            //var code = data.substr(dataStart, dataEnd - dataStart);
-                            //highlightCode (code, 'rotknob_code');    
-                            BarTest.init(document.getElementById('bar_canvas'));
-                          }
-                        });
-                    </script>
-                    <h3>Bar</h3>
-                    <p>Bar lorem ipsum</p>
-                    <p><a href="#" class="btn btn-inverse">Code</a></p>
-                  </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail">
-                  <canvas style="background-color: black; max-width: 100%" id="another_canvas" width="360" height="340"></canvas>
-                  <div class="caption">
-                      <script type="text/javascript">
-                        /*$.ajax({
-                          url: '../KievII/tests/Curve/curvetest.js',
-                          dataType: 'script',
-                          cache: true, // otherwise will get fresh copy every page load
-                          success: function(data, textStatus, jqxhr) {
-                            //var dataStart = (data.indexOf(START_TOKEN) + START_TOKEN.length) || 0;
-                            //var dataEnd = data.indexOf(END_TOKEN);
-                            //var code = data.substr(dataStart, dataEnd - dataStart);
-                            //highlightCode (code, 'rotknob_code');    
-                            CurveTest.init(document.getElementById('curve_canvas'));
-                          }
-                        });*/
-                    </script>
-                    <h3>Another</h3>
-                    <p>Another lorem ipsum</p>
-                    <p><a href="#" class="btn btn-inverse">Code</a></p>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-	  
-</div>
+</div>        
 
     <!-- Le javascript
     ================================================== -->
@@ -263,32 +108,55 @@
      <script src="bootstrap/js/bootstrap.js"></script>
      <script type="text/javascript">
          $('.dropdown-toggle').dropdown();
-		 // Global
-		 /* oldcanvasWidth = null;
-		 function respondCanvas() {
-			 var c = $('#gauge_canvas');
-			 var container = $(c).parent();
-			 
-			 var newWidth = $(c).css('width');
-			 var newHeight = $(c).css('height');
-			 
-			 var containerWidth = $(container).css('width');
-			 if (containerWidth > newWidth) {
-				 newWidth = containerWidth;
-			 }
-			 
-			 console.log (newWidth, newHeight);
-			 if (newWidth !== oldcanvasWidth) {
-			 	c.attr('width', newWidth ); //max width
-				c.attr('height', newHeight );
-				oldcanvasWidth = newWidth;
-				GaugeTest.init(document.getElementById('gauge_canvas'));
-			}
-			 
-		 }
 		 
-		 //Run function when browser  resize
-		 $(window).resize( respondCanvas ); */
+		 var kiev2TestURL = '../KievII/tests/'; 
+		 var buildArray = [["RotKnob", ['../KievII/tests/RotKnob/assets/img/white_big.png'], 1, '<p>Knob lorem ipsum</p>'],
+		                  ["Gauge", undefined, 1, '<p>Gauge Lorem ipsum</p>'],
+		                  ["Curve", undefined, 1, '<p>Curve Lorem ipsum</p>'],
+		                  ["Area", undefined, 1, '<p>Area lorem ipsum</p>'],
+		                  ["Bar", undefined, 1, '<p>Bar lorem ipsum</p>']];
+		 
+		 var columnCounter = 0;      
+		 var html = '';
+		            
+		 for (var i = 0; i < buildArray.length; i += 1) {
+		     var cE = buildArray[i];
+		     if ((i % 3) === 0) {
+		         if (i !== 0) {
+		             html += '</div>';
+		             html += '</ul>';
+		          }
+		          html += '<div class="row-fluid">';
+                  html += '<ul class="thumbnails">';
+		      }
+		      html += '<li class="span' + cE[2] * 4 + '"> <div class="thumbnail">';
+		      /* TODO width, height, class */
+		      var canvas_name = cE[0].toLowerCase() + '_canvas';
+		      html += '<canvas class="exampleCanvas" width="360" height="340" id="' + canvas_name + '"></canvas>';
+		      html += '<div class="caption">';
+		      html += '<h3>' + cE[0] + '</h3>';
+		      html += cE[3];
+		      var url = kiev2TestURL + cE[0] + '/' + cE[0].toLowerCase() + 'test.js';
+		      /* TODO */
+		      html += '<p><a href="' + url + '" class="btn btn-inverse">Code</a></p>';
+		      html += '</div></div></li>';
+		      
+		      (function (object_name, canvas_name, parameters) {
+    		      $.ajax({
+                    url: url,
+                    dataType: 'script',
+                    cache: true, // otherwise will get fresh copy every page load
+                    success: function(data, textStatus, jqxhr) {
+                        window[object_name].init(document.getElementById(canvas_name), parameters);
+                    }
+                  });
+               })(cE[0]+'Test', canvas_name, cE[1]);
+		 }
+		 html += '</div>';
+         html += '</ul>';
+		 console.log (html);
+		 
+		 $('#mainContainer').append(html);
 		 
      </script>
 	  

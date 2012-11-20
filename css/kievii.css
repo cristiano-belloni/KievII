@@ -15,6 +15,11 @@ body {
     background-color: #F0F0F0;
 }
 
+.exampleCanvas {
+    background-color: black;
+    max-width: 100%
+}
+
 /* Gradient color1 - color2 - color1 */
         
 hr.style-one {
