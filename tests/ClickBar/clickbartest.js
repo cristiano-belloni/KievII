@@ -16,7 +16,6 @@ var ClickBarTest = {
             height: this.viewHeight / 5 * 3,
             width: barWidth,
             onValueSet: function (slot, value) {
-                console.log ("Event on slot " + slot + " with value " + value);
                 this.ui.refresh();
             }.bind(this),
             isListening: true
