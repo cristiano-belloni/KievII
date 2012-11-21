@@ -1,6 +1,6 @@
-var HSliderTest = {
+var SliderTest = {
     
-    name: 'HSliderTest',
+    name: 'SliderTest',
     ui: null,
     
     main: function () {
