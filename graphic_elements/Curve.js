@@ -211,6 +211,10 @@ K2.Curve.prototype.drag = function(curr_x, curr_y) {
 };
 
 K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
+    if ((x < 0) && (y < 0)) {
+        // This seems to be an Hammer.js bug in mobile. Need to investigate
+        return;
+    }
     var ret = this.drag (x,y);
     this.handleClicked = null;
     return ret;
