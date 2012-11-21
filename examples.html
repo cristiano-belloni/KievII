@@ -48,7 +48,7 @@
     <![endif]-->
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="/assets/ico/favicon.ico">
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
@@ -98,9 +98,7 @@
 
 <div class="container" id='mainContainer'>
 
-<h2>Examples</h2>
-	  
-	  <hr />
+<h2>Base Elements</h2>
         
 </div>        
 
@@ -110,60 +108,64 @@
      <script src="bootstrap/js/bootstrap.js"></script>
      <script type="text/javascript">
          $('.dropdown-toggle').dropdown();
+         
+         function buildSection (buildArray, baseUrl) {
+             var html = '';
+                    
+             for (var i = 0; i < buildArray.length; i += 1) {
+                 var cE = buildArray[i];
+                 if ((i % 3) === 0) {
+                     if (i !== 0) {
+                         html += '</div>';
+                         html += '</ul>';
+                      }
+                      html += '<div class="row-fluid">';
+                      html += '<ul class="thumbnails">';
+                  }
+                  html += '<li class="span' + cE[2] * 4 + '"> <div class="thumbnail">';
+                  /* TODO width, height, class */
+                  var canvas_name = cE[0].toLowerCase() + '_canvas';
+                  html += '<canvas class="exampleCanvas" width="' + 360 * cE[2] + '" height="340" id="' + canvas_name + '"></canvas>';
+                  html += '<div class="caption">';
+                  html += '<h3>' + cE[0] + '</h3>';
+                  html += '<p>' + cE[3];
+                  var url = baseUrl + cE[0] + '/' + cE[0].toLowerCase() + 'test.js';
+                  /* TODO */
+                  html += '<a href="' + url + '" class="btn btn-inverse btn-small pull-right">Code</a></p>';
+                  html += '</div></div></li>';
+                  
+                  (function (object_name, canvas_name, parameters) {
+                      $.ajax({
+                        url: url,
+                        dataType: 'script',
+                        cache: true, // otherwise will get fresh copy every page load
+                        success: function(data, textStatus, jqxhr) {
+                            window[object_name].init(document.getElementById(canvas_name), parameters);
+                        }
+                      });
+                   })(cE[0]+'Test', canvas_name, cE[1]);
+             }
+             html += '</div>';
+             html += '</ul>';
+             return html;
+         }
 		 
 		 var kiev2TestURL = '../KievII/tests/'; 
-		 var buildArray = [
-		                  ["RotKnob", ['../KievII/tests/RotKnob/assets/img/white_big.png'], 1, '<p>Knob lorem ipsum</p>'],
-		                  ["Gauge", undefined, 1, '<p>Gauge Lorem ipsum</p>'],
-		                  ["Curve", undefined, 1, '<p>Curve Lorem ipsum</p>'],
-		                  ["Area", undefined, 1, '<p>Area lorem ipsum</p>'],
-		                  ["Bar", undefined, 1, '<p>Bar lorem ipsum</p>'],
-		                  ["ClickBar", undefined, 1, '<p>ClickBar lorem ipsum</p>'],
-		                  ["Button", ['../KievII/tests/Button/assets/img/state0.png', '../KievII/tests/Button/assets/img/state1.png', '../KievII/tests/Button/assets/img/state2.png'], 1, '<p>Three-state button lorem ipsum</p>'],
-		                  /* ["HSlider", ['../KievII/tests/HSlider/assets/img/h_slider_slot.png', '../KievII/tests/HSlider/assets/img/h_slider_handle.png'], 2, '<p>Slider lorem ipsum</p>'] */
-		                  ["Wavebox", undefined, 1, '<p>Wavebox Lorem ipsum</p>'],
+		 var baseElementsArray = [
+		                  ["RotKnob", ['../KievII/tests/RotKnob/assets/img/white_big.png'], 1, 'Single-image rotating knob'],
+		                  ["Gauge", undefined, 1, 'Gauge-like selector'],
+		                  ["Curve", undefined, 1, 'Two half-cosine and a Bezier^4 curve'],
+		                  ["Area", undefined, 1, 'Draggable and resizable area'],
+		                  ["Bar", undefined, 1, 'Positionable bar'],
+		                  ["ClickBar", undefined, 1, 'Eight ClickBar selectors in a row'],
+		                  ["Button", ['../KievII/tests/Button/assets/img/state0.png', '../KievII/tests/Button/assets/img/state1.png', '../KievII/tests/Button/assets/img/state2.png'], 1, '3-state button with images'],
+		                  ["HSlider", ['../KievII/tests/HSlider/assets/img/hsliderslot.png', '../KievII/tests/HSlider/assets/img/hsliderhandle.png'], 1, 'Slider w/ images (also available in vertical)'],
+		                  ["Wavebox", undefined, 1, 'Custom waveform visualization'],
 		                  ];
 		 
 		 var columnCounter = 0;      
-		 var html = '';
-		            
-		 for (var i = 0; i < buildArray.length; i += 1) {
-		     var cE = buildArray[i];
-		     if ((i % 3) === 0) {
-		         if (i !== 0) {
-		             html += '</div>';
-		             html += '</ul>';
-		          }
-		          html += '<div class="row-fluid">';
-                  html += '<ul class="thumbnails">';
-		      }
-		      html += '<li class="span' + cE[2] * 4 + '"> <div class="thumbnail">';
-		      /* TODO width, height, class */
-		      var canvas_name = cE[0].toLowerCase() + '_canvas';
-		      html += '<canvas class="exampleCanvas" width="' + 360 * cE[2] + '" height="340" id="' + canvas_name + '"></canvas>';
-		      html += '<div class="caption">';
-		      html += '<h3>' + cE[0] + '</h3>';
-		      html += cE[3];
-		      var url = kiev2TestURL + cE[0] + '/' + cE[0].toLowerCase() + 'test.js';
-		      /* TODO */
-		      html += '<p><a href="' + url + '" class="btn btn-inverse">Code</a></p>';
-		      html += '</div></div></li>';
-		      
-		      (function (object_name, canvas_name, parameters) {
-    		      $.ajax({
-                    url: url,
-                    dataType: 'script',
-                    cache: true, // otherwise will get fresh copy every page load
-                    success: function(data, textStatus, jqxhr) {
-                        window[object_name].init(document.getElementById(canvas_name), parameters);
-                    }
-                  });
-               })(cE[0]+'Test', canvas_name, cE[1]);
-		 }
-		 html += '</div>';
-         html += '</ul>';
-		 console.log (html);
 		 
+		 var html = buildSection (baseElementsArray, kiev2TestURL);
 		 $('#mainContainer').append(html);
 		 
 		 var versionInfo = '';
