@@ -11,7 +11,7 @@ var AreaTest = {
             ID: "testArea",
             left: 0,
             top : 0,
-            thickness:6,
+            thickness:8,
             height: this.viewHeight,
             width: this.viewWidth,
             onValueSet: function (slot, value) {
