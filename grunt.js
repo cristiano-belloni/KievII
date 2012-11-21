@@ -54,7 +54,7 @@ var allFiles = libFiles.concat(thirdParty);
     }
   },
   uglify: {
-    mangle: {toplevel: true},
+    mangle: {toplevel: false},
     squeeze: {dead_code: false},
     codegen: {quote_keys: true}
   },
