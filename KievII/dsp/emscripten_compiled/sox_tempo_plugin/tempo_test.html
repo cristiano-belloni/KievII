@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Tempo Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="tempo.js"></script>
+    <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+  </head>
+  <body>
+    <audio id="a1"
+           src="../../../audio/sound_files/ein.ogg"
+           controls>
+    </audio>
+    <script type="text/javascript">
+
+        /* Load something */
+        var a1 = document.getElementById('a1'),
+        buffer = [];
+
+        function loadedMetadata() {
+          // Mute a1 audio.
+          a1.volume = 0;
+          a1.addEventListener("MozAudioAvailable", audioAvailable, false);
+        }
+
+        function audioAvailable(event) {
+
+          var length_now = buffer.length;
+          // It isn't the best way to concatenate Float32Arrays, I'm afraid,
+          // but it works way better than Float32Concat (probably memory issues)
+          for (var i = 0; i < event.frameBuffer.length; i += 1) {
+               buffer [length_now + i] = event.frameBuffer[i];
+           }
+
+          //buffer = Float32Concat (buffer, event.frameBuffer);
+
+          //console.log(buffer.length, " ", event.time, " to ", event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels, " seconds of ", a1.duration);
+          //This isn't precise and I don't know why
+          if (a1.duration <= (event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels)) {
+                  process (buffer);
+              }
+        }
+
+        a1.addEventListener('loadedmetadata', loadedMetadata, false);
+
+        // Utility, thanks to Frédéric Hamidi
+
+        function Float32Concat(first, second)
+            {
+                var firstLength = first.length;
+                var result = new Float32Array(firstLength + second.length);
+
+                result.set(first);
+                result.set(second, firstLength);
+
+                return result;
+            }
+
+        // Process
+
+        function process (buffer) {
+
+            var j = 0;
+            var k = 0;
+            var BUFSIZE = 4096;
+            var buffers = [];
+            var a2 = new Audio();
+            var samplesBuffer = [];
+            a2.mozSetup(a1.mozChannels, a1.mozSampleRate);
+            a2.volume = 1;
+            
+            console.log ("Process entered, buffer is long ", buffer.length, " that is about ", buffer.length / BUFSIZE, " iterations");
+
+            // Create tempo
+            var tempo_instance = _tempo_create(a1.mozChannels);
+            console.log ("Tempo instance created");
+
+            /*static void tempo_setup(tempo_t * t,
+            double sample_rate, int quick_search, double factor,
+            double segment_ms, double search_ms, double overlap_ms)*/
+
+            // We're using default values from http://sox.sourceforge.net/sox.html
+            _tempo_setup (tempo_instance, a1.mozSampleRate, 0, 0.5, 82, 14.68, 12);
+            console.log ("Tempo instance is set up");
+
+            while ( k < buffer.length) {
+
+                // tempo_input.
+                // input_res is a pointer where to store the float values.
+                // Second parameter is always NULL
+                // Third parameter is the number of samples in input
+
+                var input_res = _tempo_input(tempo_instance, null, BUFSIZE);
+                // console.log ("Tempo input called, returned pointer where to store the samples@ HEAP[", input_res,"]");
+
+                // Now we got to store buffer.length worth of samples in HEAP[input_res]
+                for (var i = 0; i < BUFSIZE; i+=1) {
+                    HEAP[input_res+i] = buffer[k + i];
+                }
+
+                // Now we can process the values.
+                _tempo_process(tempo_instance);
+                //console.log ("Tempo processed");
+
+                // tempo_output
+                // arrayOut is a pointer from where we take the samples
+                // Second parameter is always NULL
+                // third parameters gives us the number of samples to take.
+                // but, it must be == to buffer.length
+
+                var samplesSize = 0;
+                var ptr_to_size = Pointer_make([0]);// null, ALLOC_STACK);
+                HEAP[ptr_to_size] = BUFSIZE;
+
+                var arrayOut_ptr = _tempo_output(tempo_instance, null, ptr_to_size);
+
+                var arrayOut = HEAP[arrayOut_ptr];
+                samplesSize = HEAP[ptr_to_size];
+
+                //console.log ("Size seems ", samplesSize);
+
+                var samplesBuffer = HEAP.slice(arrayOut, arrayOut + samplesSize);
+
+                /*for (var z = 0; z < samplesSize; z += 1) {
+                    samplesBuffer[z] = HEAP[arrayOut + z];
+                }*/
+
+                //console.log ("Output array seems ", arrayOut);
+
+                k += BUFSIZE;
+                j +=1;
+                //console.log ("Ended iteration ", j, " and k is ", k, " of length ", buffer.length);
+
+                //console.log ("Enqueuing, ", samplesBuffer.length, " bytes");
+                buffers.push(samplesBuffer);
+
+                // If there's buffered data, write that
+                /*while(buffers.length > 0) {
+                    var fifo_buffer = buffers.shift();
+                    var written = a2.mozWriteAudio(fifo_buffer);
+                    //console.log ("Written ", written, " bytes to audio output.")
+                    // If all data wasn't written, keep it in the buffers:
+                    if(written < fifo_buffer.length) {
+                        buffers.unshift(fifo_buffer.slice(written));
+                        //console.log ("break");
+                        break;
+                    }
+                }*/
+
+            }
+
+            console.log ("Why do you die here??");
+
+            _tempo_flush(tempo_instance);
+
+            var arrayOut_ptr = _tempo_output(tempo_instance, null, ptr_to_size);
+
+            var arrayOut = HEAP[arrayOut_ptr];
+            var samplesSize = HEAP[ptr_to_size];
+
+            console.log ("Size seems ", samplesSize);
+
+            samplesBuffer = HEAP.slice(arrayOut, arrayOut + samplesSize);
+
+
+            buffers.push(samplesBuffer);
+
+            // Time to flush.
+            // If there's buffered data, write that
+            while(buffers.length > 0) {
+                var fifo_buffer = buffers.shift();
+                var written = a2.mozWriteAudio(fifo_buffer);
+                console.log ("Written ", written, " bytes to audio output.")
+                // If all data wasn't written, keep it in the buffers:
+                if(written < fifo_buffer.length) {
+                    buffers.unshift(fifo_buffer.slice(written));
+                    break;
+                }
+            }
+        }
+
+    </script>
+    </body>
+</html>

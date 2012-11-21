@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Z-Index Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../utilities/utilities.js"></script>
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Button.js"></script>
+    <script type="text/javascript" src="../../../Knob.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+  </head>
+  <body>
+    <canvas id="plugin" width="300" height="300"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var ui;
+
+        /* INIT */
+        var plugin_canvas = document.getElementById("plugin");
+
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_canvas}
+                                               );
+
+        ui = new UI (plugin_canvas, CWrapper, {breakOnFirstEvent: true});
+
+        // LOAD IMAGES
+
+        var MAX_KNOB_IMAGE_NUM = 60,
+            knobImgLocation = "../../images/BigKnob/",
+            knobImgArray = [],
+            knobArgs;
+
+        // Shared arguments to the Knob constructor.
+        (function () {
+            for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
+                var prefix = "";
+                if (i < 10) {
+                    prefix = "0";
+                }
+                knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
+            }
+        }());
+                                               
+         var mulArgs = { multipleImages:
+                            [
+                                {ID: "ztest_button_image_loader", imageNames: ["button1_1.png", "button1_2.png"]},
+                                {ID : "ztest_knob_image_loader", imageNames: knobImgArray}
+                            ],
+                         onComplete: afterLoading
+                     }
+
+         var mImageLoader = new loadMultipleImages (mulArgs);
+                                           
+    function afterLoading (loaders) {
+
+        /* BUTTON 1 */
+
+        //Button
+        var button1Args = {
+            ID: "test_button_1",
+            top: 0,
+            left: 0,
+            imagesArray : loaders["ztest_button_image_loader"].images
+        };
+        button1Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 1 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                ui.refresh();
+            };
+        }();
+        var button1 = new Button(button1Args);
+
+        /* BUTTON 2 */
+
+        //var button1_img_array = ["button0_1.png", "button0_2.png"];
+
+        //Button
+        var button2Args = {
+            ID: "test_button_2",
+            top: 50,
+            left: 50,
+            imagesArray : loaders["ztest_button_image_loader"].images
+        };
+        button2Args.onValueSet = function () {
+            var that = this;
+            return function (slot, value) {
+                console.log ("onValueSet Button 2 callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                ui.refresh();
+            };
+        }();
+        var button2 = new Button(button2Args);
+
+        knobArgs = {
+            ID: "knob",
+            top: 30,
+            left: 30,
+            imagesArray : loaders["ztest_knob_image_loader"].images,
+            sensitivity : 5000,
+            onValueSet : function () {ui.refresh()}
+        };
+        //onValueSet = undefined
+        var knob = new Knob(knobArgs);
+
+        /* ADD UI */
+        ui.addElement(button1,{zIndex: 0});
+        ui.addElement(button2,{zIndex: 5});
+        ui.addElement(knob, {zIndex: 10});
+        button1.setValue("buttonvalue", 0);
+        button2.setValue("buttonvalue", 0);
+        knob.setValue("knobvalue", 0);
+        ui.refresh();
+
+        }
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Curve Editor</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <script type="text/javascript" src="../../kievII.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+  <body>
+      <form action="">
+		  <input type="radio" name="buttontype" value="linear" /> linear
+	      <input type="radio" name="buttontype" value="halfcosine" /> halfcosine
+	      <input type="radio" name="buttontype" value="smooth" /> smooth
+	      <input type="radio" name="buttontype" value="bezier2" /> bezier2
+	      <input type="radio" name="buttontype" value="bezier3" /> bezier3
+	      <button id="addbutton" type="button" onclick="addCB(this.form)">Add</button>
+      	  <button id="removebutton" type="button" onclick="removeCB()">Remove</button>
+	      <button type="button" onclick="applyCB(this.form)">Apply</button>
+	      <button id="clearbutton" type="button" onclick="clearCB()">CLEAR ALL</button>
+	  </form>
+      <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
+      <script type="text/javascript">
+    
+        var ui;
+        var plugin_canvas;
+        
+        // Initialize K2.UI
+        plugin_canvas = document.getElementById("plugin");
+        ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas}, {'breakOnFirstEvent': true});
+        
+        // Initialize Curve
+        curveEditor = new CurveEditor ({ui: ui, canvas: plugin_canvas});
+        
+        function parseCurveType (frm) { 
+            var curveType = null;
+            var grade = null;
+                
+                for (i = 0; i < frm.buttontype.length; i++) {
+                    if (frm.buttontype[i].checked) {
+                        curveType = frm.buttontype[i].value;
+                    }
+                }
+                
+                if (curveType === null) curveType = 'linear';
+                
+                console.log ('Add: curve type is ' + curveType);
+                
+                if (curveType.indexOf('bezier') == 0) {
+                    var grade = parseInt(curveType.charAt(6), 10);
+                    curveType = 'bezier';
+                    console.log ("Curve is bezier and grade is " + grade);
+                }
+                
+                return [curveType, grade];
+        }
+        
+        function addCB (frm) {
+            var parsed = parseCurveType (frm);
+            curveEditor.addCurve(parsed[0], parsed[1]);
+        }
+        
+        function removeCB () {
+            curveEditor.removeCurve();
+        }
+        
+        function clearCB () {
+            curveEditor.clearCurve();
+        }
+        
+        function applyCB (frm) {
+            var parsed = parseCurveType (frm);
+            curveEditor.modifyCurve(parsed[0], parsed[1]);
+        }
+                
+    </script>
+  </body>
+</html>

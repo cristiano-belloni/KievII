@@ -1,0 +1,108 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Wavebox Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Wavebox.js"></script>
+    <script type="text/javascript" src="../../../Background.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+  </head>
+  <body>
+    <audio id="a1"
+           src="../../../../audio/sound_files/german_numbers.ogg"
+           controls>
+    </audio>
+    <canvas id="plugin" width="800" height="650"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var ui;
+
+        /* INIT */
+        var plugin_canvas = document.getElementById("plugin");
+
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: plugin_canvas}
+                                               );
+
+        ui = new UI (plugin_canvas, CWrapper);
+
+        //Wave box.
+        var waveboxArgs = {
+            ID: "test_wavebox",
+            top: 0,
+            left: 0,
+            width: 800,
+            height:600,
+            objParms: {
+                    pathColor: '#000',
+                    pathDimension: 3
+                }
+        };
+
+        var waveBox = new Wavebox(waveboxArgs);
+        ui.addElement(waveBox);
+
+        /* Load something */
+        var a1 = document.getElementById('a1'),
+        buffer = [];
+
+        function loadedMetadata() {
+          // Mute a1 audio.
+          a1.volume = 0;
+          a1.addEventListener("MozAudioAvailable", audioAvailable, false);
+        }
+
+        function audioAvailable(event) {
+          
+          var length_now = buffer.length;
+          // It isn't the best way to concatenate Float32Arrays, I'm afraid,
+          // but it works way better than Float32Concat (probably memory issues)
+          for (var i = 0; i < event.frameBuffer.length; i += 1) {
+               buffer [length_now + i] = event.frameBuffer[i];
+           }
+
+          //buffer = Float32Concat (buffer, event.frameBuffer);
+
+          //console.log(buffer.length, " ", event.time, " to ", event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels, " seconds of ", a1.duration);
+          //This isn't precise and I don't know why
+          if (a1.duration <= (event.time + (event.frameBuffer.length / a1.mozSampleRate)  / a1.mozChannels)) {
+                  waveBox.setValue ("waveboxsignal", buffer);
+                  ui.refresh();
+                  //Set start value to +1/4 and endvalue to -1/5
+                  setTimeout ( "waveBox.setValue ('startsample', parseInt (buffer.length / 4, 10));", 2000 );
+                  setTimeout ( "waveBox.setValue ('endsample', buffer.length - parseInt (buffer.length / 5, 10));", 3000);
+                  //waveBox.setValue ("startsample", parseInt (buffer.length / 4, 10));
+                  //waveBox.setValue ("endsample", buffer.length - parseInt (buffer.length / 5, 10));
+              }              
+        }
+
+        a1.addEventListener('loadedmetadata', loadedMetadata, false);
+
+        // Utility, thanks to Frédéric Hamidi
+        // This destroys performance, maybe due to memory collection.
+
+        function Float32Concat(first, second)
+            {
+                var firstLength = first.length;
+                var result = new Float32Array(firstLength + second.length);
+
+                result.set(first);
+                result.set(second, firstLength);
+
+                return result;
+            }
+
+
+    </script>
+  </body>
+</html>

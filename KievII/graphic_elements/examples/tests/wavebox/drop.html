@@ -1,0 +1,152 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wavebox test with drag & drop</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../../../kievII.js"></script>
+    </head>
+    <body>
+        <div id="dropbox"><span id="droplabel">Drop file here...</span></div>
+        <canvas id="plugin" width="800" height="700"></canvas>
+        
+        <script type="text/javascript">
+            
+            function successCallback (decoded) {
+                console.log ("Success!");
+                document.getElementById("droplabel").innerHTML = "Successfully decoded file";
+                
+                var decoded_arrayL = decoded.getChannelData (0);
+                var decoded_arrayR = decoded.getChannelData (1);
+                console.log ("I got the data! ", decoded_arrayL.length, decoded_arrayL[0], decoded_arrayL[1000], decoded_arrayL[3000], decoded_arrayL[10000]);
+
+                // Initialize UI
+                var plugin_canvas = document.getElementById("plugin");
+                ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas});
+
+                // Wavebox parameters
+                var waveboxArgs = {
+                    ID: "wavebox_L",
+                    top: 0,
+                    left: 0,
+                    width: 200,
+                    height: 800,
+                    orientation: 1,
+                    isListening: true,
+					waveColor: '#CC0000'
+                };
+                
+                waveboxArgs.onValueSet = function () {
+	                var that = this;
+	                return function (slot, value) {
+	                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+	                    ui.refresh();
+	                };
+            	}();
+
+                var waveBox_L = new K2.Wavebox(waveboxArgs);
+
+                waveboxArgs.ID = "wavebox_R";
+                waveboxArgs.left = 400;
+                var waveBox_R = new K2.Wavebox(waveboxArgs);
+
+                ui.addElement(waveBox_L);
+                ui.addElement(waveBox_R);
+
+                var d_buffer = [];
+                var k = 0;
+
+                /* Decimate here.
+                for (var i = 0; i < decoded_arrayL.length; i += 1000) {
+                    d_buffer[k] = decoded_arrayL[i];
+                    k += 1;
+                }
+                console.log ("d_buffer is ", d_buffer.length);
+
+                //waveBox.setValue ("waveboxsignal", d_buffethis.values.startsample + bin_index * bin_sizer);
+                */
+
+                waveBox_L.setValue ("waveboxsignal", decoded_arrayL);
+                waveBox_R.setValue ("waveboxsignal", decoded_arrayR);
+
+                ui.refresh();
+
+                /* alert ("Continue");
+
+                waveBox_L.setValue ('startsample', parseInt (decoded_arrayL.length / 4, 10));
+                waveBox_L.setValue ('endsample', decoded_arrayL.length - parseInt (decoded_arrayL.length / 5, 10));
+                waveBox_R.setValue ('startsample', parseInt (decoded_arrayR.length / 4, 10));
+                waveBox_R.setValue ('endsample', decoded_arrayR.length - parseInt (decoded_arrayR.length / 5, 10));
+
+                ui.refresh(); */
+                
+            }
+            
+            function errorCallback () {
+                document.getElementById("droplabel").innerHTML = "Error decoding file";
+                console.log ("Error!");
+            }   
+            
+            function handleReaderLoad(evt) {
+                /* var img = document.getElementById("preview");
+                img.src = evt.target.result; */
+                console.log (evt);
+                
+                document.getElementById("droplabel").innerHTML = "Decoding file";
+                
+                context.decodeAudioData(evt.target.result, successCallback, errorCallback);
+                
+            }
+            
+            function handleFiles (files) {
+                
+                var file = files[0];
+
+                document.getElementById("droplabel").innerHTML = "Loading " + file.name;
+
+                var reader = new FileReader();
+
+                // init the reader event handlers
+                reader.onload = handleReaderLoad;
+
+                // begin the read operation
+                reader.readAsArrayBuffer(file);
+            }
+ 
+            function drop (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+ 
+                var files = evt.dataTransfer.files;
+                var count = files.length;
+ 
+                // Only call the handler if 1 or more files was dropped.
+                if (count > 0)
+                handleFiles(files);
+            }
+ 
+            function noopHandler(evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+            }
+            
+            var dropbox = document.getElementById("dropbox")
+ 
+            // init event handlers
+            dropbox.addEventListener("dragenter", noopHandler, false);
+            dropbox.addEventListener("dragexit", noopHandler, false);
+            dropbox.addEventListener("dragover", noopHandler, false);
+            dropbox.addEventListener("drop", drop, false);
+            
+            context = new webkitAudioContext();
+            source = context.createBufferSource();
+
+            // Connect audio processing graph
+            source.connect(context.destination);
+            
+        </script>
+    </body>
+</html>

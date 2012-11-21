@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recursion Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../utilities/utilities.js"></script>
+    <script type="text/javascript" src="../../../Element.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Knob.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+  </head>
+  <body>
+    <canvas id="recursion_canvas" width="300" height="300"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+        var ui;
+
+        /* INIT */
+
+        var recursion_canvas = document.getElementById("recursion_canvas");
+
+        var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                               {canvas: recursion_canvas}
+                                               );
+
+        ui = new UI (recursion_canvas, CWrapper);
+
+        var MAX_KNOB_IMAGE_NUM = 60,
+            knobImgLocation = "../../images/BigKnob/",
+            knobImgArray = [],
+            knobArgs = [],
+            knob = [];
+
+            // Shared arguments to the Knob constructor.
+        (function () {
+            for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
+                var prefix = "";
+                if (i < 10) {
+                    prefix = "0";
+                }
+                knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
+            }
+        }());
+
+        var imageLoader = new loadImageArray ({ID : "recursiontest_image_loader",
+                                               imageNames: knobImgArray,
+                                               onComplete: imagesCompleted,
+                                               onSingle: imageSingle,
+                                               onError: imageError});
+        function imageSingle (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
+        }
+
+        function imageError (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.error, " on ", st.total," has errors, src is ", loaderStatus.obj.src);
+        }
+
+        function imagesCompleted (loaderStatus) {
+
+            if (loaderStatus.status.error !== 0) {
+                throw new Error(loaderStatus.status.error + " elements failed to load on loader " + loaderStatus.status.id);
+            }
+
+            // KNOBS
+            var NKNOBS = 3
+
+            for (var i=0; i < NKNOBS; i+=1) {
+
+                knobArgs[i] = {
+                    ID: "knob" + i,
+                    top: 100,
+                    left: i * 100,
+                    imagesArray : loaderStatus.imagesArray,
+                    sensitivity : 5000,
+                    onValueSet: function (slot, value, ID) {console.log (slot, value, ID); ui.refresh()}
+                };
+
+                knob[i] = new Knob(knobArgs[i]);
+                
+                ui.addElement(knob[i], {zIndex: 10});
+                ui.setValue ({elementID: knobArgs[i].ID,
+                              value: 0});
+            }
+
+            // Set the connections
+            // 0 controls 1, 1 controls 2 and 2 controls 0, without entering in an infinite loop.
+
+            // 0 -> 1
+            ui.connectSlots("knob0", "knobvalue", "knob1", "knobvalue", {callback: function (value) {return 1-value;}});
+            // 1 -> 0
+            ui.connectSlots("knob1", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return 1-value;}});
+            // 1 -> 2
+            ui.connectSlots("knob1", "knobvalue", "knob2", "knobvalue", {callback: function (value) {return value * 0.5;}});
+            // 2 -> 0
+            ui.connectSlots("knob2", "knobvalue", "knob0", "knobvalue", {callback: function (value) {return value;}});
+
+            ui.refresh();
+        }
+
+    </script>
+  </body>
+</html>

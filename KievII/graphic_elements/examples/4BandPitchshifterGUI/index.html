@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../../Element.js"></script>
+    <script type="text/javascript" src="../../UI.js"></script>
+    <script type="text/javascript" src="../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../Background.js"></script>
+    <script type="text/javascript" src="../../Knob.js"></script>
+    <script type="text/javascript" src="../../Label.js"></script>
+    <script type="text/javascript" src="../../Multiband.js"></script>
+    <script type="text/javascript" src="../../NonOverlappingMultiknob.js"></script>
+    <title>4 Band Pitchshifter GUI example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <canvas id="plugin" width="640" height="450"></canvas>
+    <script type="text/javascript">
+
+        // This should fix "console not defined" problem.
+        if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+
+
+        var mouseUp = true;
+        var startedonknob = undefined;
+        var knobtype = undefined;
+        var start_x = undefined;
+        var start_y = undefined;
+        var plugin_context;
+        var ui = undefined;
+
+        // Number of medium knob image frames.
+        var medium_knobs_images = 39;
+        var small_knobs_images = 36;
+
+        // Number of knobs.
+        var num_pitch_knobs = 4;
+        var num_vol_knobs = 4;
+        var num_band_knobs = 8;
+
+        // Initial knob values.
+        var pitch_def_value = 0.5;
+        var vol_def_value = 1.0;
+
+        // Coordinates for pitch knobs.
+        pitch1_coord_array = [51, 140];
+        pitch2_coord_array = [129, 140];
+        pitch3_coord_array = [206, 140];
+        pitch4_coord_array = [284, 140];
+
+        // Coordinates for volume knobs.
+        vol1_coord_array = [51, 291];
+        vol2_coord_array = [129, 291];
+        vol3_coord_array = [206, 291];
+        vol4_coord_array = [284, 291];
+
+        //Coordinates for frequency multiknob.
+        var multiknob_coordinates = new Array(8);
+
+        multiknob_coordinates[0] = [385,220];
+        multiknob_coordinates[1] = [385,302];
+        multiknob_coordinates[2] = [442,220];
+        multiknob_coordinates[3] = [442,302];
+        multiknob_coordinates[4] = [501,220];
+        multiknob_coordinates[5] = [501,302];
+        multiknob_coordinates[6] = [557,220];
+        multiknob_coordinates[7] = [557,302];
+
+        var knob = {"pitch1" : undefined,
+                "pitch2" : undefined,
+                "pitch3" : undefined,
+                "pitch4" : undefined,
+                "vol1" : undefined,
+                "vol2" : undefined,
+                "vol3" : undefined,
+                "vol4" : undefined};
+
+        var label = {"labelpitch1" : undefined,
+                "labelpitch2" : undefined,
+                "labelpitch3" : undefined,
+                "labelpitch4" : undefined,
+                "labelvol1" : undefined,
+                "labelvol2" : undefined,
+                "labelvol3" : undefined,
+                "labelvol4" : undefined};
+
+        var multiknob = undefined;
+
+        function knob_name (basename, knob_n) {
+            // Not general
+            if (knob_n < 10) {
+                knob_n = "0" + knob_n ;
+            }
+            var name = basename + knob_n;
+            return name;
+        }
+
+        //This is the array of image names
+        var medknob_img_array = [];
+
+        var images_location = "../images/"
+
+        //Generate all the medium knob image names
+        for (i = 0; i <= medium_knobs_images; i++) {
+            var filename = images_location + knob_name ("knob_med_", i + 1) + ".png";
+            medknob_img_array[i] = filename;
+        }
+
+        var smallknob_img_array = [];
+
+        //Generate all the medium knob image names
+        for (i = 0; i <= small_knobs_images; i++) {
+            var filename = images_location + knob_name ("mini_knob_med_", i + 1) + ".png";
+            smallknob_img_array[i] = filename;
+        }
+
+        /* INIT */
+
+        var plugin_canvas = document.getElementById("plugin");
+        plugin_context = plugin_canvas.getContext("2d");
+
+        ui = new UI (plugin_canvas.offsetTop, plugin_canvas.offsetTop);
+
+        /* CONSTRUCTORS */
+
+        // BACKGROUND
+        var bgArgs = {
+            image:images_location + "PSGUI2.png"
+        };
+
+        var gui = new Background("BackgroundUI", [0,0], bgArgs);
+
+        //LABELS
+        var labelArgs = {
+            wh : [54,18]
+        };
+
+        label["labelpitch1"] = new Label("labelpitch1", [46, 203], labelArgs);
+        label["labelpitch2"] = new Label("labelpitch2", [122, 203], labelArgs);
+        label["labelpitch3"] = new Label("labelpitch3", [201, 203], labelArgs);
+        label["labelpitch4"] = new Label("labelpitch4", [278, 203], labelArgs);
+        label["labelvol1"] = new Label("labelvol1", [46, 355], labelArgs);
+        label["labelvol2"] = new Label("labelvol2", [122, 355], labelArgs);
+        label["labelvol3"] = new Label("labelvol3", [201, 355], labelArgs);
+        label["labelvol4"] = new Label("labelvol4", [278, 355], labelArgs);
+
+        var knobArgs = {
+            images : medknob_img_array,
+            sensitivity : 2000
+        };
+
+        // KNOBS
+        knob["pitch1"] = new Knob("pitch1", pitch1_coord_array, knobArgs);
+        knob["pitch2"] = new Knob("pitch2", pitch2_coord_array, knobArgs);
+        knob["pitch3"] = new Knob("pitch3", pitch3_coord_array, knobArgs);
+        knob["pitch4"] = new Knob("pitch4", pitch4_coord_array, knobArgs);
+
+        knob["vol1"] = new Knob("vol1", vol1_coord_array, knobArgs);
+        knob["vol2"] = new Knob("vol2", vol2_coord_array, knobArgs);
+        knob["vol3"] = new Knob("vol3", vol3_coord_array, knobArgs);
+        knob["vol4"] = new Knob("vol4", vol4_coord_array, knobArgs);
+        
+        //MULTIBAND
+        var multibandXY = [389, 37];
+        var MBArgs = {
+            nBands : 4,
+            wh : [217, 133],
+            colorRange : 70
+        };
+
+        var multiband = new Multiband("multiband", multibandXY , MBArgs);
+
+        var MKArgs = {
+            coordinates : multiknob_coordinates,
+            images : smallknob_img_array
+        };
+
+        //MULTIKNOB
+        var multiknob = new NonOverlappingMultiknob("bandsknob", [385,220], MKArgs);
+
+        /* END OF CONSTRUCTORS */
+        
+        /* Initializer */
+        var knob_complete = undefined;
+        var bg_complete = undefined;
+        var mk_complete = undefined;
+
+        setTimeout(splashScreen, 100);
+
+        function splashScreen () {
+            console.log("Executing Initializer");
+
+            knob_complete = true;
+            for (var j in knob) {
+                if (knob[j].isComplete() == false) {
+                    console.log("Knob ", j, " is not complete.");
+                    knob_complete = false;
+                    break;
+                }
+                console.log("Knob ", j, " is complete.");
+            }
+
+            bg_complete = gui.isComplete();
+
+            console.log("BG completeness: ", bg_complete);
+
+            mk_complete = multiknob.isComplete();
+
+            console.log("MK completeness: ", mk_complete);
+                    
+            if ((knob_complete == true) && (bg_complete == true) && (mk_complete == true)) {
+                console.log ("Everything complete. Keeping on");
+                keepON();
+            }
+
+            else {
+                console.log ("Not Everything is complete. Setting another timeout");
+                setTimeout(splashScreen, 100);
+             }
+         }
+
+function keepON () {
+
+        var imageDisplayer = new CanvasDrawImage (plugin_context);
+        ui.addElement(gui, imageDisplayer, false);
+
+        //TODO find a serious method for refreshing things.
+        gui.refresh();
+
+        // Create a text displayer for the labels.
+        var textDisplayer = new CanvasDrawText (plugin_context);
+        textDisplayer.setFont ("14px sans-serif");
+        textDisplayer.setFillStyle('#A8CB83');
+        textDisplayer.setTextStyle('#000');
+
+
+        for (var name in label) {
+            ui.addElement(label[name], textDisplayer, false);
+            label[name].setValue ("labelvalue", pitch_def_value);
+            // Refresh is done inside the setValue member function
+            // label[name].refresh();
+        }
+
+
+        for (var name in knob) {
+            knob[name].setClickable(true);
+            ui.addElement(knob[name], imageDisplayer);
+            knob[name].setValue("knobvalue", pitch_def_value);
+        }
+
+        multiknob.setClickable(true);
+        ui.addElement(multiknob, imageDisplayer);
+        
+        multiknob.setValue("knobvalue7", 0.9);
+        multiknob.setValue("knobvalue6", 0.6);
+        multiknob.setValue("knobvalue5", 0.5);
+        multiknob.setValue("knobvalue4", 0.4);
+        multiknob.setValue("knobvalue3", 0.3);
+        multiknob.setValue("knobvalue2", 0.2);
+        multiknob.setValue("knobvalue1", 0.1);
+        multiknob.setValue("knobvalue0", 0);
+
+        //Create a drawing context for the multiband.
+        var bandDisplayer = new CanvasDrawRect (plugin_context);
+        bandDisplayer.setFillStyle('#377A0F');
+        bandDisplayer.setClearStyle('#76FF33');
+        ui.addElement(multiband, bandDisplayer);
+
+        multiband.setValue("3ep", 0.8);
+        multiband.setValue("3sp", 0.6);
+        multiband.setValue("2ep", 0.5);
+        multiband.setValue("2sp", 0.4);
+        multiband.setValue("1ep", 0.3);
+        multiband.setValue("1sp", 0.2);
+        multiband.setValue("0ep", 0.1);
+        multiband.setValue("0sp", 0);
+
+        multiband.setValue("0height", knob["vol1"].getValue("knobvalue"));
+        multiband.setValue("1height", knob["vol2"].getValue("knobvalue"));
+        multiband.setValue("2height", knob["vol3"].getValue("knobvalue"));
+        multiband.setValue("3height", knob["vol4"].getValue("knobvalue"));
+
+        multiband.setValue("0color", knob["pitch1"].getValue("knobvalue"));
+        multiband.setValue("1color", knob["pitch2"].getValue("knobvalue"));
+        multiband.setValue("2color", knob["pitch3"].getValue("knobvalue"));
+        multiband.setValue("3color", knob["pitch4"].getValue("knobvalue"));
+
+        //Connect pitch knobs with labels and multiband. TODO do it algorithmically
+        ui.connectSlots("pitch1", "knobvalue", "labelpitch1", "labelvalue");
+        ui.connectSlots("pitch1", "knobvalue", "multiband", "0color");
+        ui.connectSlots("pitch2", "knobvalue", "labelpitch2", "labelvalue");
+        ui.connectSlots("pitch2", "knobvalue", "multiband", "1color");
+        ui.connectSlots("pitch3", "knobvalue", "labelpitch3", "labelvalue");
+        ui.connectSlots("pitch3", "knobvalue", "multiband", "2color");
+        ui.connectSlots("pitch4", "knobvalue", "labelpitch4", "labelvalue");
+        ui.connectSlots("pitch4", "knobvalue", "multiband", "3color");
+
+        //Connect vol knobs with labels and multiband. TODO do it algorithmically
+        ui.connectSlots("vol1", "knobvalue", "labelvol1", "labelvalue");
+        ui.connectSlots("vol1", "knobvalue", "multiband", "0height");
+        ui.connectSlots("vol2", "knobvalue", "labelvol2", "labelvalue");
+        ui.connectSlots("vol2", "knobvalue", "multiband", "1height");
+        ui.connectSlots("vol3", "knobvalue", "labelvol3", "labelvalue");
+        ui.connectSlots("vol3", "knobvalue", "multiband", "2height");
+        ui.connectSlots("vol4", "knobvalue", "labelvol4", "labelvalue");
+        ui.connectSlots("vol4", "knobvalue", "multiband", "3height");
+
+        //Connect band knobs with multiband. TODO do it algorithmically
+        ui.connectSlots("bandsknob", "knobvalue0", "multiband", "0sp");
+        ui.connectSlots("bandsknob", "knobvalue1", "multiband", "0ep");
+        ui.connectSlots("bandsknob", "knobvalue2", "multiband", "1sp");
+        ui.connectSlots("bandsknob", "knobvalue3", "multiband", "1ep");
+        ui.connectSlots("bandsknob", "knobvalue4", "multiband", "2sp");
+        ui.connectSlots("bandsknob", "knobvalue5", "multiband", "2ep");
+        ui.connectSlots("bandsknob", "knobvalue6", "multiband", "3sp");
+        ui.connectSlots("bandsknob", "knobvalue7", "multiband", "3ep");
+
+        document.addEventListener("mousedown", ui.onMouseDownFunc(), true);
+        document.addEventListener("mouseup", ui.onMouseUpFunc(), true);
+        document.addEventListener("mousemove", ui.onMouseMoveFunc(), true);
+
+}
+
+    </script>
+  </body>
+</html>

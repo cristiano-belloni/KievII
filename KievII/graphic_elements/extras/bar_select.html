@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Bar Selector</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../kievII.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+  <body>
+      
+      <canvas style="border: 1px solid gray;" id="plugin" width="800" height="600"></canvas>
+      <script type="text/javascript">
+    
+        var ui;
+        var plugin_canvas;
+        
+        // Initialize K2.UI
+        plugin_canvas = document.getElementById("plugin");
+        ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas}, {'breakOnFirstEvent': true});
+        
+        // Initialize BarSelect
+        barSelector = new BarSelect ({ui: ui, canvas: plugin_canvas});
+                
+    </script>
+  </body>
+</html>

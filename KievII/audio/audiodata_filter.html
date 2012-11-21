@@ -1,0 +1,38 @@
+<!--
+Read/write data with audiodata.js
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--
+    Shit I don't like this.
+    -->
+    <script src="http://github.com/notmasteryet/audiodata/raw/master/audiodata.js"></script>
+    <script>
+
+    function initialize() {
+        console.log ("initialize");
+        var audio = document.getElementById("a1");
+        var source = new AudioDataSource(audio);
+        var outputDestination = new AudioDataDestination();
+        //Set auto latency.
+        outputDestination.autoLatency = true;
+        //Otherwise you hear the first signal, too.
+        audio.volume = 0;
+        console.log ("volume 0");
+        var filter = new AudioDataLowPassFilter(outputDestination, 200.0);
+        console.log ("added the filter ", filter);
+        source.readAsync(filter);
+    }
+
+    if (typeof console=="undefined"){console={log:function(A){var B=false;if(B){alert(A)}}}}
+    window.addEventListener("load", initialize, false);
+
+      </script>
+  </head>
+  <body>
+      <audio id="a1" src="sound_files/german_numbers.ogg" controls></audio>
+  </body>
+</html>

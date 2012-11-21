@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Grid test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../kievII.js"></script>
+  </head>
+  <body>
+      <canvas id="grid" width="800" height="700"></canvas>
+      <script type="text/javascript">
+          
+        function init () {
+            
+            var plugin_canvas = document.getElementById("grid");
+
+            ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas});
+
+            // the Grid
+            var gridArgs = {
+                ID: "grid",
+                top: 0,
+                left: 0,
+                width: 501,
+                height: 501,
+                rows: 10,
+                columns: 10,
+                /*style: 'dashed',*/
+                /*lineColor: 'red',*/
+                bgColor: 'black',
+                lineWidth: 0.5
+            };
+
+            var grid = new K2.Grid(gridArgs);
+            
+            ui.addElement(grid);            
+            ui.refresh();
+
+        }
+        
+        init();
+    </script>
+  </body>
+</html>

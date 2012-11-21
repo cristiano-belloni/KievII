@@ -1,0 +1,134 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Wavebox with async loader</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../initial.js"></script>
+    <script type="text/javascript" src="../../../UIElement.js"></script>
+    <script type="text/javascript" src="../../../UI.js"></script>
+    <script type="text/javascript" src="../../../Wavebox.js"></script>
+    <script type="text/javascript" src="../../../Background.js"></script>
+    <script type="text/javascript" src="../../../wrappers/CanvasDraw.js"></script>
+    <script type="text/javascript" src="../../../wrappers/Wrappers.js"></script>
+    <script type="text/javascript" src="../../../../third_part/EightMedia-hammer.js/hammer.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+      <canvas id="plugin" width="800" height="700"></canvas>
+      <script type="text/javascript">
+          
+        function successCallback (decoded) {
+            
+            console.log ("Success!");
+            
+            var decoded_arrayL = decoded.getChannelData (0);
+            var decoded_arrayR = decoded.getChannelData (1);
+            console.log ("I got the data! ", decoded_arrayL.length, decoded_arrayL[0], decoded_arrayL[1000], decoded_arrayL[3000], decoded_arrayL[10000]);
+
+            // Wavebox stuff
+            var plugin_canvas = document.getElementById("plugin");
+
+            var CWrapper = K2WRAPPER.createWrapper("CANVAS_WRAPPER",
+                                                   {canvas: plugin_canvas}
+                                                   );
+
+            ui = new K2.UI (plugin_canvas, CWrapper);
+
+            //Wave box.
+            var waveboxArgs = {
+                ID: "wavebox_L",
+                top: 0,
+                left: 0,
+                width: 800,
+                height:150,
+                isListening: true,
+                objParms: {
+                        pathColor: '#000',
+                        pathDimension: 0.2
+                    }
+            };
+            
+            waveboxArgs.onValueSet = function () {
+                var that = this;
+                return function (slot, value) {
+                    console.log ("onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+                    ui.refresh();
+                };
+            }();
+
+            var waveBox_L = new K2.Wavebox(waveboxArgs);
+            
+            waveboxArgs.ID = "wavebox_R";
+            waveboxArgs.top = 400;
+            var waveBox_R = new K2.Wavebox(waveboxArgs);
+
+            ui.addElement(waveBox_L);
+            ui.addElement(waveBox_R);
+
+            var d_buffer = [];
+            var k = 0;
+
+            /* Decimate here.
+            for (var i = 0; i < decoded_arrayL.length; i += 1000) {
+                d_buffer[k] = decoded_arrayL[i];
+                k += 1;
+            }
+            console.log ("d_buffer is ", d_buffer.length);
+
+            //waveBox.setValue ("waveboxsignal", d_buffer);
+            */
+
+            waveBox_L.setValue ("waveboxsignal", decoded_arrayL);
+            waveBox_R.setValue ("waveboxsignal", decoded_arrayR);
+            
+            ui.refresh();
+
+            /* alert ("Continue");
+            
+            waveBox_L.setValue ('startsample', parseInt (decoded_arrayL.length / 4, 10));
+            waveBox_L.setValue ('endsample', decoded_arrayL.length - parseInt (decoded_arrayL.length / 5, 10));
+            waveBox_R.setValue ('startsample', parseInt (decoded_arrayR.length / 4, 10));
+            waveBox_R.setValue ('endsample', decoded_arrayR.length - parseInt (decoded_arrayR.length / 5, 10));
+
+            ui.refresh(); */
+
+        }
+        
+        function errorCallback () {
+            console.log ("Error!");
+        }
+
+        function loadAudioBuffer(url) {
+            // Load asynchronously
+            var request = new XMLHttpRequest();
+            request.open("GET", url, true);
+            request.responseType = "arraybuffer";
+
+            request.onload = function() { 
+                //audioBuffer = context.createBuffer(request.response, false /*true*/);
+                context.decodeAudioData(request.response, successCallback, errorCallback);
+            }
+
+            request.send();
+        }
+
+        function initAudio() {
+            context = new webkitAudioContext();
+
+            source = context.createBufferSource();
+
+
+            // Connect audio processing graph
+            source.connect(context.destination);
+
+            loadAudioBuffer("human-voice.mp4");
+
+        }
+        initAudio();
+    </script>
+  </body>
+</html>

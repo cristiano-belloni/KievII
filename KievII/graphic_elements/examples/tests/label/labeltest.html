@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Label Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../../../../kievII.js"></script>
+  </head>
+  <body>
+    <canvas id="plugin" width="300" height="300"></canvas>
+    <script type="text/javascript">
+
+        var ui;
+
+        var imageLoader = new loadImageArray ({ID : "labeltest_image_loader",
+                                               imageNames: ["bg.png"],
+                                               onComplete: imagesCompleted,
+                                               onError: imageError});
+
+        function imageSingle (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.loaded, " on ", st.total," was loaded, src is ", loaderStatus.obj.src);
+        }
+
+        function imageError (loaderStatus) {
+            var st = loaderStatus.status;
+            console.log ("Image number ", st.error, " on ", st.total," has errors, src is ", loaderStatus.obj.src);
+        }
+
+        function imagesCompleted (loaderStatus) {
+
+        /* INIT */
+            var plugin_canvas = document.getElementById("plugin");
+
+            ui = new K2.UI ({type: 'CANVAS2D', target: plugin_canvas});
+
+            var labelArgs = {
+                ID: 'label',
+                top: 10,
+                left: 20,
+                width: 200,
+                height: 48,
+                textColor: "yellow",
+                objParms: {
+                    font: "12pt Arial",
+                    textBaseline: "top",
+                    textAlign: "left"
+                }
+            };
+
+            var backgroundArgs = {
+                ID: 'background',
+                top: 0,
+                left: 0,
+                image: loaderStatus.imagesArray[0]
+            }
+
+            var label = new K2.Label (labelArgs);
+            var background = new K2.Background (backgroundArgs);
+
+            ui.addElement(background);
+            ui.addElement (label, {zIndex: 5});
+
+            label.setValue("labelvalue", "This is a label, testing this label 0");
+            
+            var i = 1
+	        var timer = setInterval(function() {
+	            ui.setValue(
+	                { elementID: "label", slot: "labelvalue", value: ("This is a label, testing this label " + i++) }
+	             );
+	             ui.refresh();
+	        }, 1000);
+            
+            ui.refresh();
+        }
+
+    </script>
+  </body>
+</html>
