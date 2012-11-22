@@ -11,6 +11,9 @@ var ConnectTest = {
         this.gaugeThickness = Math.floor(this.gaugeDim / 4);
         this.barWOffset = this.gaugeWOffset * 2 + this.gaugeDim; // Bar width offset: 3/4 width
         this.barWidth = this.viewWidth - this.barWOffset;
+        this.labelFontSize = Math.floor(this.gaugeDim / 5);
+        this.labelBarFontSize = this.labelFontSize;
+        this.labelBarOffset = this.barWOffset;
         
         var gaugeArgs = {
             ID : "testGauge",
@@ -41,13 +44,29 @@ var ConnectTest = {
         
         var gaugeLabelArgs = {
             ID: 'gaugeLabel',
-            top: 10,
-            left: 20,
-            width: 200,
-            height: 48,
+            top: Math.floor(this.viewHeight / 2) - this.labelFontSize,
+            left: this.gaugeWOffset + this.labelFontSize * 1.2,
+            width: this.gaugeDim,
+            height: this.labelFontSize,
             textColor: "white",
+            transparency: 0.8,
             objParms: {
-                font: "12pt Arial",
+                font: this.labelFontSize + "pt Arial",
+                textBaseline: "top",
+                textAlign: "left"
+            }
+        };
+        
+        var barLabelArgs = {
+            ID: 'barLabel',
+            top: this.viewHeight / 10 - this.labelBarFontSize,
+            left: this.labelBarOffset,
+            width: 200,
+            height: this.labelBarFontSize,
+            textColor: "white",
+            transparency: 0.8,
+            objParms: {
+                font: this.labelBarFontSize + "pt Arial",
                 textBaseline: "top",
                 textAlign: "left"
             }
@@ -56,6 +75,7 @@ var ConnectTest = {
         this.ui.addElement(new K2.Bar(barArgs));
         this.ui.addElement(new K2.Gauge(gaugeArgs));
         this.ui.addElement(new K2.Label (gaugeLabelArgs));
+        this.ui.addElement(new K2.Label (barLabelArgs));
         
 		
         var filter_fromGauge = function(value, connDetails) {				
@@ -76,6 +96,14 @@ var ConnectTest = {
             var labelValue = numberValue.toPrecision(3);
             return labelValue;
        };
+       
+       var filter_barLabel = function(value, connDetails) {
+            // connDetails.sender: testBar connDetails.receiver: barLabel                               
+            var numberValue = value[0];
+            var labelValue = numberValue.toPrecision(3);
+            labelValue = numberValue.toFixed(0) + ' / ' + Math.round(ConnectTest.barWidth) + ' pixels';
+            return labelValue;
+       };
 			
         /* Set the connection chain */
         this.ui.connectSlots("testGauge", 'gaugevalue', "gaugeLabel", 'labelvalue', {
@@ -86,6 +114,9 @@ var ConnectTest = {
         });
         this.ui.connectSlots("testBar", 'barPos', "testGauge", 'gaugevalue', {
             'callback' : filter_fromBar
+        });
+        this.ui.connectSlots("testBar", 'barPos', "barLabel", 'labelvalue', {
+            'callback' : filter_barLabel
         });
         
         /* This starts the connection chain */
