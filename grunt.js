@@ -44,13 +44,13 @@ var allFiles = libFiles.concat(thirdParty);
    concat: {
     dist: {
       src: allFiles,
-      dest: 'kievII.js'
+      dest: 'dist/kievII.js'
     }
    },
    min: {
     dist: {
-      src: 'kievII.js',
-      dest: 'kievII.min.js'
+      src: 'dist/kievII.js',
+      dest: 'dist/kievII.min.js'
     }
   },
   uglify: {
@@ -60,8 +60,8 @@ var allFiles = libFiles.concat(thirdParty);
   },
   strip : {
   main : {
-    src : 'kievII.js',
-    dest : 'kievII.js',
+    src : 'dist/kievII.js',
+    dest : 'dist/kievII.js',
   }
 }
    
