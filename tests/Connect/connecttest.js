@@ -25,6 +25,8 @@ var ConnectTest = {
             isListening : true
         };
 		
+		/* These functions don't refresh on callback, because cascade on
+		 * connectSlots() is true by deafult */
         var barArgs = {
             ID: "testBar",
             left: this.barWOffset,
@@ -32,50 +34,66 @@ var ConnectTest = {
             thickness: 8,
             height: Math.floor (this.viewHeight / 1),
             width: this.barWidth,
-            onValueSet: function (slot, value) {
-                this.ui.refresh();
-            }.bind(this),
             barColor: 'red',
             transparency: 0.5,
             isListening: true
         };
         
+        var gaugeLabelArgs = {
+            ID: 'gaugeLabel',
+            top: 10,
+            left: 20,
+            width: 200,
+            height: 48,
+            textColor: "white",
+            objParms: {
+                font: "12pt Arial",
+                textBaseline: "top",
+                textAlign: "left"
+            }
+        };
+        
         this.ui.addElement(new K2.Bar(barArgs));
-        this.ui.setValue ( {elementID: 'testBar',
-                            slot: 'barPos',
-                            value: [0]});
-
         this.ui.addElement(new K2.Gauge(gaugeArgs));
-        this.ui.setValue({
-            elementID : 'testGauge',
-            slot : 'gaugevalue',
-            value : 0
-        });
+        this.ui.addElement(new K2.Label (gaugeLabelArgs));
+        
 		
-        var filter_fromGauge = function(value, connDetails) {
-			
-			if (connDetails.sender === 'testGauge') {								
-				// sender: gauge receiver: bar
-				var barValue = ConnectTest.barWidth *  value;
-	            return [barValue, 0];
-			}
+        var filter_fromGauge = function(value, connDetails) {				
+			// connDetails.sender: testGauge connDetails.receiver: testBar
+			var barValue = ConnectTest.barWidth *  value;
+            return [barValue, 0];
 	   };
 	   
-       var filter_fromBar = function(value, connDetails) {			
-			if (connDetails.sender === 'testBar') {								
-				// sender: bar receiver: gauge
-				var gaugeValue = value[0] / ConnectTest.barWidth;
-	            return gaugeValue;
-			}
+       var filter_fromBar = function(value, connDetails) {										
+			// connDetails.sender: testBar connDetails.receiver: testGauge
+			var gaugeValue = value[0] / ConnectTest.barWidth;
+            return gaugeValue;
 		};
+		
+		var filter_gaugeLabel = function(value, connDetails) {
+            // connDetails.sender: testGauge connDetails.receiver: gaugeLabel                               
+            var numberValue = new Number(value * 100);
+            var labelValue = numberValue.toPrecision(3);
+            return labelValue;
+       };
 			
+        /* Set the connection chain */
+        this.ui.connectSlots("testGauge", 'gaugevalue', "gaugeLabel", 'labelvalue', {
+            'callback' : filter_gaugeLabel
+        });
         this.ui.connectSlots("testGauge", 'gaugevalue', "testBar", 'barPos', {
             'callback' : filter_fromGauge
         });
         this.ui.connectSlots("testBar", 'barPos', "testGauge", 'gaugevalue', {
             'callback' : filter_fromBar
         });
-		
+        
+        /* This starts the connection chain */
+		this.ui.setValue({
+            elementID : 'testGauge',
+            slot : 'gaugevalue',
+            value : 0.146
+        });
         this.ui.refresh();
 
     },
