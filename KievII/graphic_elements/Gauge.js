@@ -34,8 +34,8 @@ K2.Gauge.prototype.getready = function(args) {
 	this.color = args.color || ["#47D147","#70DB70","#99E699"];
 	this.bgColor = args.bgColor || "#222";
 
-	this.radius = args.radius || (this.width < this.height) ? Math.floor(this.width / 2) : Math.floor(this.height / 2);
-	this.thickness = args.thickness || (this.width < this.height) ? Math.floor(this.width / 3) : Math.floor(this.height / 3);
+	this.radius = args.radius || ((this.width < this.height) ? Math.floor(this.width / 2) : Math.floor(this.height / 2));
+	this.thickness = args.thickness || ((this.width < this.height) ? Math.floor(this.width / 3) : Math.floor(this.height / 3));
 
 	this.animationInterval = null;
 

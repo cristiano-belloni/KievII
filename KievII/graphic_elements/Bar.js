@@ -35,55 +35,101 @@ K2.Bar.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Bar.prototype.tap = K2.Bar.prototype.drag = function(curr_x, curr_y) {
+K2.Bar.prototype.isInROIX = function(x) {
+    if ((x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth))) {
+            return true;
+        }
+    return false;
+};
 
-    var to_set = 0,
-        ret = {};
+K2.Bar.prototype.isInROIY = function(y) {
+    if ((y > this.ROITop) && (y < (this.ROITop + this.ROIHeight))) {
+            return true;
+        }
+    return false;
+};
 
+K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
+    var retVal;
     
-    if (this.isInROI(curr_x, curr_y)) {
-
-        var tempValue = this.values.barPos;
-        var retVal = [];
-
-        if (this.orientation === 0) {
-            retVal = [curr_x, tempValue[1]];
+    var tempValue = this.values.barPos;
+    
+    if (this.orientation === 0) {
+        if (! this.isInROIY (curr_y)) {
+            return;
         }
-
-        else if (this.orientation === 1) {
-            retVal = [tempValue[0], curr_y];
+        retVal = [curr_x - this.xOrigin, tempValue[1]];
+        if (retVal[0] > this.width) {
+            retVal[0] = this.width;
         }
-
-        else {
-            console.error('orientation invalid, this will probably break something');
+        if (retVal[0] < 0) {
+            retVal[0] = 0;
         }
+    }
 
-		ret = {'slot' : 'barPos', 'value' : retVal};
+    else if (this.orientation === 1) {
+        if (! this.isInROIY (curr_x)) {
+            return;
+        }
+        retVal = [tempValue[0], curr_y - this.yOrigin];
+        if (retVal[1] > this.height) {
+            retVal[1] = this.height;
+        }
+        if (retVal[1] < 0) {
+            retVal[1] = 0;
+        }
+    }
+    
+    return retVal;
+};
+
+K2.Bar.prototype.mousedown = K2.Bar.prototype.touchstart = function (curr_x, curr_y) {
+    // Must be (strictly) in ROI
+    if (! this.isInROI (curr_x, curr_y)) {
+        return;
+    }
+    
+    this.started = true;
+    
+    var retVal = this.commonDrag (curr_x, curr_y);
+    
+    if (typeof retVal !== 'undefined') {
+        ret = {'slot' : 'barPos', 'value' : retVal};
         return ret;
     }
-  
+};
 
-    // Action is void, button was upclicked outside its ROI or never downclicked
-    // No need to trigger anything, ignore this event.
-    return undefined;
+K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
+    if (!this.started) {
+        return;
+    }
+    var retVal = this.commonDrag (curr_x, curr_y);
+    
+    if (typeof retVal !== 'undefined') {
+        ret = {'slot' : 'barPos', 'value' : retVal};
+        return ret;
+    }
 };
 
 K2.Bar.prototype.dragend = K2.Bar.prototype.swipe = function(curr_x, curr_y) {
-    if (this.isInROI(curr_x, curr_y)) {
-        ret = {'slot' : 'dragEnd', 'value' : [curr_x, curr_y]};
-        return ret;
+    
+    if (!this.started) {
+        return;
     }
-    else {
-        // equivalent to mouseOut + triggered === true
-        ret = {'slot' : 'dragEnd', 'value' : [curr_x, curr_y]};
+    this.started = false;
+    
+    var retVal = this.commonDrag (curr_x, curr_y);
+    
+    if (typeof retVal !== 'undefined') {
+        ret = [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
         return ret;
     }
 };
 
 K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
     if (this.isInROI(curr_x, curr_y)) {
-        ret = {'slot' : 'dragStart', 'value' : [curr_x, curr_y]};
+        ret = {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
         return ret;
     }
 };

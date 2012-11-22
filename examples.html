@@ -98,7 +98,15 @@
 
 <div class="container" id='mainContainer'>
 
-<h2>Base Elements</h2>
+<div class="container" id='baseContainer'>
+    <h2>Basic Graphical Elements</h2>
+    <hr />
+</div>
+
+<!-- <div class="container" id='techContainer'>
+    <h2>Techniques</h2>
+    <hr />
+</div> -->
         
 </div>        
 
@@ -166,15 +174,23 @@
 		 var columnCounter = 0;      
 		 
 		 var html = buildSection (baseElementsArray, kiev2TestURL);
-		 $('#mainContainer').append(html);
+		 $('#baseContainer').append(html);
 		 
+		 var techniquesArray = [
+		                          ["Connect", undefined, 3, 'The Gauge element is connected to the Bar element with the <code>connectSlots()</code> function, and vice-versa'],
+		                          ];
+		                          
+		 /*html = buildSection (techniquesArray, kiev2TestURL);
+         $('#techContainer').append(html);*/
+		                          
+		 // Version Footer
 		 var versionInfo = '';
-		 if (typeof K2.version !== 'undefined') {
-		      versionInfo = '<small class="muted pull-right">KievII version: ' + K2.version + '</small>';
-		  }
-		 
-		 html = '<footer><p>&copy; Bitterspring.net 2012 ' + versionInfo + '</p></footer>';
-		 $('#mainContainer').append(html);
+         if (typeof K2.version !== 'undefined') {
+              versionInfo = '<small class="muted pull-right">KievII version: ' + K2.version + '</small>';
+          }
+         
+         html = '<footer><p>&copy; Bitterspring.net 2012 ' + versionInfo + '</p></footer>';
+         $('#mainContainer').append(html);
 		 
      </script>
 	  
