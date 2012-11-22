@@ -497,7 +497,8 @@ K2.UI = function(engine, parameters) {
             value,
             slot,
             fireCallback,
-            history;
+            history,
+            recvValue;
 
         // Default parameters
         if (typeof setParms.elementID === 'undefined') {
@@ -584,7 +585,7 @@ K2.UI = function(engine, parameters) {
                                             'recvSlot': recvSlot,
                                             'ui': this};
                         // We have a callback to call.
-                        value = receiverHash.callback(value, connDetails);
+                        recvValue = receiverHash.callback(value, connDetails);
                     }
 
                     // Check if consequent setValue()s should have cascading
@@ -598,7 +599,7 @@ K2.UI = function(engine, parameters) {
                     }
 
                     // Recursively calls itself, keeping an history in the stack
-                    this.setValue({elementID: recvElementID, slot: recvSlot, value: value, history: hist, fireCallback: fire_conn_callback});
+                    this.setValue({elementID: recvElementID, slot: recvSlot, value: recvValue, history: hist, fireCallback: fire_conn_callback});
                 }
             }
         }
