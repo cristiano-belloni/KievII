@@ -35,7 +35,14 @@ OSCHandler = function (proxyServer, udpServers) {
     this.proxyConnected = false;
     
     if (this.proxyServer !== null) {
-        this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
+        
+        try {
+            this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
+        }
+        catch (e) {
+            console.error ("io.connect failed. No proxy server?");
+            return;
+        }
         this.socket.on('admin', function (data) {
             
             // TODO check the version and the ID

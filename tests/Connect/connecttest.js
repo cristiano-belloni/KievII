@@ -12,7 +12,7 @@ var ConnectTest = {
         this.barWOffset = this.gaugeWOffset * 2 + this.gaugeDim; // Bar width offset: 3/4 width
         this.barWidth = this.viewWidth - this.barWOffset;
         this.labelFontSize = Math.floor(this.gaugeDim / 5);
-        this.labelBarFontSize = this.labelFontSize;
+        this.labelBarFontSize = this.viewHeight / 3;
         this.labelBarOffset = this.barWOffset;
         
         var gaugeArgs = {
@@ -34,7 +34,7 @@ var ConnectTest = {
             ID: "testBar",
             left: this.barWOffset,
             top : 0,
-            thickness: 8,
+            thickness: Math.floor(this.barWidth / 20),
             height: Math.floor (this.viewHeight / 1),
             width: this.barWidth,
             barColor: 'red',
@@ -101,7 +101,7 @@ var ConnectTest = {
             // connDetails.sender: testBar connDetails.receiver: barLabel                               
             var numberValue = value[0];
             var labelValue = numberValue.toPrecision(3);
-            labelValue = numberValue.toFixed(0) + ' / ' + Math.round(ConnectTest.barWidth) + ' pixels';
+            labelValue = numberValue.toFixed(0) + '/' + Math.round(ConnectTest.barWidth) + ' pixels';
             return labelValue;
        };
 			
