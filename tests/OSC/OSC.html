@@ -29,7 +29,8 @@
         <canvas style="border: 1px solid gray; background: black;" id="client1_canvas" width="450" height="300"></canvas>
         <canvas style="border: 1px solid gray; background: black;" id="client2_canvas" width="450" height="300"></canvas>
         <script>
-            OSCTest.init(document.getElementById('client1_canvas'), document.getElementById('client2_canvas'));
+            OSCTest.init(document.getElementById('client1_canvas'));
+            OSCTest.init(document.getElementById('client2_canvas'));
         </script>
     </body>
 </html>

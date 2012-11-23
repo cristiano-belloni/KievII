@@ -3,13 +3,23 @@ var OSCTest = {
     name: 'OSCTest',
     ui1: null,
     ui2: null,
-
-    init: function (canvas1, canvas2) {
+    canvasNumber: 0,
+    canvasArr: [],
+    
+    init: function () {
         
-        this.viewWidth1 = canvas1.width;
-        this.viewHeight1 = canvas1.height;
-        this.viewWidth2 = canvas2.width;
-        this.viewHeight2 = canvas2.height;
+        for (var i = 0; i < arguments.length; i+=1) {
+            this.canvasArr.push(arguments[i]);
+        }
+        if (this.canvasArr.length < 2) {
+            console.log ("Re-call init(), " + (2 - this.canvasArr.length) + ' arguments to go');
+            return;
+        }
+        
+        this.viewWidth1 = this.canvasArr[0].width;
+        this.viewHeight1 = this.canvasArr[0].height;
+        this.viewWidth2 = this.canvasArr[1].width;
+        this.viewHeight2 = this.canvasArr[1].height;
         
         this.proxyServer = {host: 'localhost', port: 1488};
         this.udpHosts = [{host: 'localhost', port: 8806}];
@@ -58,8 +68,8 @@ var OSCTest = {
                                                }
                                                });
         
-        this.ui1 = new K2.UI ({type: 'CANVAS2D', target: canvas1});
-        this.ui2 = new K2.UI ({type: 'CANVAS2D', target: canvas2});
+        this.ui1 = new K2.UI ({type: 'CANVAS2D', target: this.canvasArr[0]});
+        this.ui2 = new K2.UI ({type: 'CANVAS2D', target: this.canvasArr[1]});
         
         var barWidth =  Math.floor(this.viewWidth1 / 40 * 8);
         var spaceWidth = Math.floor(this.viewWidth1 / 50 * 2);
