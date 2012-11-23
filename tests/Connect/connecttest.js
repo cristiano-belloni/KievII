@@ -12,8 +12,8 @@ var ConnectTest = {
         this.barWOffset = this.gaugeWOffset * 2 + this.gaugeDim; // Bar width offset: 3/4 width
         this.barWidth = this.viewWidth - this.barWOffset;
         this.labelFontSize = Math.floor(this.gaugeDim / 5);
-        this.labelBarFontSize = this.viewHeight / 3;
-        this.labelBarOffset = this.barWOffset;
+        this.labelBarFontSize = Math.floor(this.viewHeight / 4.2);
+        this.labelBarOffset = this.barWOffset / 50 * 51;
         
         var gaugeArgs = {
             ID : "testGauge",
@@ -34,7 +34,7 @@ var ConnectTest = {
             ID: "testBar",
             left: this.barWOffset,
             top : 0,
-            thickness: Math.floor(this.barWidth / 20),
+            thickness: Math.floor(this.barWidth / 30),
             height: Math.floor (this.viewHeight / 1),
             width: this.barWidth,
             barColor: 'red',
@@ -59,7 +59,7 @@ var ConnectTest = {
         
         var barLabelArgs = {
             ID: 'barLabel',
-            top: this.viewHeight / 10 - this.labelBarFontSize,
+            top: this.viewHeight / 1.8 - this.labelBarFontSize,
             left: this.labelBarOffset,
             width: 200,
             height: this.labelBarFontSize,
@@ -100,8 +100,17 @@ var ConnectTest = {
        var filter_barLabel = function(value, connDetails) {
             // connDetails.sender: testBar connDetails.receiver: barLabel                               
             var numberValue = value[0];
-            var labelValue = numberValue.toPrecision(3);
-            labelValue = numberValue.toFixed(0) + '/' + Math.round(ConnectTest.barWidth) + ' pixels';
+            var labelValue = Math.floor(numberValue);
+            if (labelValue < 100) {
+                if (labelValue < 10) {
+                    labelValue = '0' + labelValue;
+                }
+                labelValue = '0' + labelValue;
+            }
+            else {
+                labelValue = '' + labelValue;
+            }
+            labelValue = labelValue + '/' + Math.round(ConnectTest.barWidth);
             return labelValue;
        };
 			
