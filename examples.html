@@ -107,7 +107,7 @@
 </div>
 
 <div class="container" id='combContainer'>
-    <h2>Element connections / communication</h2>
+    <h2>Element connection / communication</h2>
     <hr />
 </div>
         
@@ -208,9 +208,9 @@
 		 $('#baseContainer').append(html);
 		 
 		 var combArray = [
-		                          {name: "OSC", args: undefined, span: 3, caption: 'The bars control the curve on the right via OSC', title: 'OSC Client - 1)', canvas: 'osc1', init: false, load: false},
+		                          {name: "OSC", args: undefined, span: 3, caption: 'The bars control the curve on the right via OSC', title: 'OSC Client - 1', canvas: 'osc1', init: false, load: false},
 		                          {name: "OSC", args: undefined, span: 3, caption: 'The curve points control the bars on the left via OSC', title: 'OSC Client - 2', canvas: 'osc2', init: false, load: false},
-		                          {name: "Connect", args: undefined, span: 3, caption: 'The Gauge element is connected to the Bar element with the <code>connectSlots()</code> function, and vice-versa', title: 'Slot Connection'},
+		                          {name: "Connect", args: undefined, span: 3, caption: 'This gauge, bar and labels are connected with <code>connectSlots()</code>', title: 'Slot Connection'},
 		                 ];
 		                          
 		 html = buildSection (combArray, kiev2TestURL);
