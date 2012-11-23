@@ -34,7 +34,7 @@ var ConnectTest = {
             ID: "testBar",
             left: this.barWOffset,
             top : 0,
-            thickness: 8,
+            thickness: Math.floor(this.barWidth / 20),
             height: Math.floor (this.viewHeight / 1),
             width: this.barWidth,
             barColor: 'red',
@@ -59,12 +59,12 @@ var ConnectTest = {
         
         var barLabelArgs = {
             ID: 'barLabel',
-            top: this.viewHeight / 2  - this.labelBarFontSize,
+            top: this.viewHeight / 10 - this.labelBarFontSize,
             left: this.labelBarOffset,
             width: 200,
             height: this.labelBarFontSize,
             textColor: "white",
-            transparency: 0.5,
+            transparency: 0.8,
             objParms: {
                 font: this.labelBarFontSize + "pt Arial",
                 textBaseline: "top",
@@ -101,7 +101,7 @@ var ConnectTest = {
             // connDetails.sender: testBar connDetails.receiver: barLabel                               
             var numberValue = value[0];
             var labelValue = numberValue.toPrecision(3);
-            labelValue = numberValue.toFixed(0) + ' / ' + Math.round(ConnectTest.barWidth);
+            labelValue = numberValue.toFixed(0) + '/' + Math.round(ConnectTest.barWidth) + ' pixels';
             return labelValue;
        };
 			

@@ -2446,6 +2446,8 @@ K2.ClickBar.prototype.getready = function(args) {
     // A ClickBar has its starting point, height, width and color.
     this.values = { 'barvalue': null
                   };
+                  
+    this.prevValue = null;
 
     this.defaultSlot = 'barvalue';
     
@@ -2503,7 +2505,7 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.proto
         if (this.isInROI (x,y)) {
             
             //if (!this.triggered) {
-                this.prevValue = this.values.barvalue;
+                //this.prevValue = this.values.barvalue;
                 this.triggered = true;
             //}
             
@@ -2512,7 +2514,7 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.proto
             if (clickedValue === this.values.barvalue) {
                 return;
             }            
-            this.prevValue = this.values.barvalue;
+            //this.prevValue = this.values.barvalue;
             return {slot : 'barvalue', value : clickedValue};
        }
         
@@ -2543,8 +2545,12 @@ K2.ClickBar.prototype.drag = function(x, y) {
 K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup = function(x, y) {
     
     this.triggered = false;
-            
-    return {slot : 'barvalue', value : this.values.barvalue};
+
+    // ClickBar reacts on any release event. Check if the value has changed
+    if (this.prevValue !== this.values.barvalue) {
+        this.prevValue = this.values.barvalue;
+        return {slot : 'barvalue', value : this.values.barvalue};
+    }
     
 };
 
