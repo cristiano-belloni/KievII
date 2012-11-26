@@ -117,28 +117,26 @@
     			<div class="span12">        	
     	        	<h4>Create a KievII UI</h4>
     	        	<pre> <code data-language="javascript" id="knob_code">
-    // Get your Canvas Element ID	        		
-    var targetCanvas = document.getElementById("your_canvas");
-    // Create a new KievII UI
-    var ui = new K2.UI ({type: 'CANVAS2D', target: targetCanvas});
+// Get your Canvas Element ID	        		
+var targetCanvas = document.getElementById("your_canvas");
+// Create a new KievII UI
+var ui = new K2.UI ({type: 'CANVAS2D', target: targetCanvas});
     	        	</code> </pre>
     	       </div>
     	       <div class="span12"> 	
     	        	<h4>Add an Element to the UI</h4>
                     <pre> <code data-language="javascript" id="knob_code">
-    // Set the element arguments
-    var ElementArgs = {
-                ID: 'elementID',
-                /* Set the element-specific arguments here (...) */
-                onValueSet: function (slot, value, element) {
-                    /* This is the element callback, 
-                     * called when one of the element's slots
-                     * gets changed */
-                    ui.refresh();
-                }
-            };
-    // Add element to the UI
-    ui.addElement(new K2.UIElement(gaugeArgs, {zIndex: ... }));
+// Set the element arguments
+var ElementArgs = {
+            ID: 'elementID',
+            /* Set the element-specific arguments here (...) */
+            onValueSet: function (slot, value, element) {
+                /* element callback, called when a slot gets changed */
+                ui.refresh();
+            }
+        };
+// Add element to the UI
+ui.addElement(new K2.UIElement(gaugeArgs, {zIndex: ... }));
                     </code> </pre>
                     
                     <p class="well"> <span class="label label-warning">hint</span> See the <a href="examples.html">examples page</a> for a quick overview of the available elements and techniques</p>
@@ -146,8 +144,8 @@
                 <div class="span12">    
                     <h4>Remove an Element from the UI</h4>
                     <pre> <code data-language="javascript" id="knob_code">
-    // Remove element from the UI
-    ui.removeElement('elementID');
+// Remove element from the UI
+ui.removeElement('elementID');
                     </code> </pre>
     	        </div>
     
