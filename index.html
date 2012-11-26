@@ -128,13 +128,13 @@ var ui = new K2.UI ({type: 'CANVAS2D', target: targetCanvas});
                     <pre> <code data-language="javascript" id="knob_code">
 // Set the element arguments
 var ElementArgs = {
-            ID: 'elementID',
-            /* Set the element-specific arguments here (...) */
-            onValueSet: function (slot, value, element) {
-                /* element callback, called when a slot gets changed */
-                ui.refresh();
-            }
-        };
+    ID: 'elementID',
+    /* Set the element-specific arguments here (...) */
+    onValueSet: function (slot, value, element) {
+        /* element callback, called when a slot gets changed */
+        ui.refresh();
+    }
+};
 // Add element to the UI
 ui.addElement(new K2.UIElement(gaugeArgs, {zIndex: ... }));
                     </code> </pre>
