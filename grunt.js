@@ -22,7 +22,8 @@ var libFiles = ['common.js',
                 'graphic_elements/extras/BarSelect.js',
                 'graphic_elements/engines/EngineFactory.js',
                 'graphic_elements/engines/CanvasUtils.js',
-                'utilities/Utilities.js'
+                'utilities/Utilities.js',
+		'amd.js'
                 ];
 var thirdParty = ['third_part/hammer.js/hammer.js'];
 

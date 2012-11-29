@@ -5121,6 +5121,12 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.drawImage(args.image, args.x, args.y);
     ctx.restore();
 };
+if (typeof window.define === "function" && window.define.amd) {
+  window.define("K2", [], function() {
+    return K2;
+  });
+}
+
 /*
  * Hammer.JS
  * version 0.6.3
