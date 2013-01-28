@@ -22,19 +22,19 @@
     </head>
 
     <body>
-        <canvas style="border: 1px solid gray;" id="knob_canvas" width="300" height="300"></canvas>
+        <canvas style="border: 1px solid gray; background: black" id="knob_canvas" width="300" height="300"></canvas>
         <script type="text/javascript">
             var MAX_KNOB_IMAGE_NUM = 60,
-                knobImgLocation = "assets/img/",
-                knobImgArray = [];
+                //knobImgLocation = "assets/img/",
+                knobImgArray = ["assets/img/tiledKnob.png"];
                 
-                for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
+                /*for (var i = 0; i <= MAX_KNOB_IMAGE_NUM; i++) {
                     var prefix = '';
                     if (i < 10) {
                         prefix = '0';
                     }
                     knobImgArray[i] = knobImgLocation + "BigKnob" + prefix + i + ".png";
-                }
+                }*/
                 
                 KnobTest.init(document.getElementById('knob_canvas'), knobImgArray);
         </script>

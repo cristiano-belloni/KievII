@@ -10,10 +10,13 @@ var KnobTest = {
         
         var knobArgs = {
             ID: "test_knob",
-            top: Math.floor ((this.viewWidth - images[0].width) / 2) ,
-            left: Math.floor ((this.viewHeight - images[0].height) / 2),
+            top: Math.floor ((this.viewWidth - 50) / 2) ,
+            left: Math.floor ((this.viewHeight - 50) / 2),
             imagesArray : images,
             sensitivity : 5000,
+            tileWidth: 50,
+            tileHeight: 50,
+            imageNum: 50,
             onValueSet: function (slot, value) {
                 this.ui.refresh();
             }.bind(this),
