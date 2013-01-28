@@ -209,7 +209,7 @@ K2.Knob.prototype.refresh_CANVAS2D = function(engine) {
         }
         else if (this.imagesArray.length == 1) {
             var sx = 0;
-            var sy = tileHeight * this.getImageNum();
+            var sy = this.height * this.getImageNum();
             engine.context.drawImage(this.imagesArray[0], sx, sy, this.width, this.height, this.xOrigin, this.yOrigin, this.width, this.height);
         }
     }
