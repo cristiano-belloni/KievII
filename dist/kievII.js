@@ -536,19 +536,19 @@ K2.UI = function(engine, parameters) {
 	
 	if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-		0;
+		console.log ("touchstart supported");
 	}
     else {
 		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-		0;
+		console.log ("no touchstart, supporting mousedown");
 	}
 	if (isEventSupported('touchend')) {
 		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
-		0;
+		console.log ("touchend supported");
     }
     else {
 		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-		0;
+		console.log ("no touchend, supporting mouseup");
     }
     // TODO see if it's not superseded by ondrag
     this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
@@ -1148,26 +1148,26 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         if ((x > left_min_prox) &&  x < (left_max_prox) && this.dragBorders.left === true) {
             // We're next to the left side
             this.leftSide = true;
-            0;
+            console.log ("Left side click detected");
         }
         if ((x > right_min_prox) &&  x < (right_max_prox) && this.dragBorders.right === true) {
             // We're next to the right side
             this.rightSide = true;
-            0;
+            console.log ("Right side click detected");
         }
         if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.dragBorders.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
-            0;
+            console.log ("Bottom side click detected");
         }
         if ((y > top_min_prox) &&  y < (top_max_prox) && this.dragBorders.top === true) {
             // We're next to the top side
             this.topSide = true;
-            0;
+            console.log ("Top side click detected");
         }
         
         if (this.isInArea (x,y)) {
-            0;
+            console.log ("clicked inside!");
             this.inside = true;
             this.startPoint = [x,y];
         }
@@ -2162,7 +2162,7 @@ K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
 
 K2.Bar.prototype.setValue = function(slot, value) {
 
-	0;
+	console.log('Setting ' + slot + ' to ' + value);
 
     if (slot == 'barPos') {
         if (value[0] <= this.width) {
@@ -2469,11 +2469,11 @@ K2.ClickBar.prototype.getready = function(args) {
 
 K2.ClickBar.prototype.isInROI = function(x, y) {
 
-    0;
+    console.log ('y = ', y, "roitop = ", this.ROITop);
     if ((x >= this.ROILeft) && (y >= this.ROITop - this.landingHeight)) {
-            0;
+            console.log ("1st");
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight + this.landingHeight))) {
-            0;
+            console.log ("In ROI!");
             return true;
         }
     }
@@ -2484,9 +2484,9 @@ K2.ClickBar.prototype.isInROI = function(x, y) {
 K2.ClickBar.prototype.calculateValue = function (x,y) {
     
     var clickedHeigth = y - this.yOrigin;
-    0; 
+    console.log ("heigth on click is ", clickedHeigth, " pixels"); 
     var clickedValue = 1 - (clickedHeigth / this.height);
-    0;
+    console.log ("for a value of ", clickedValue, " (", clickedHeigth, " / ", this.height, ")");
         
     if (clickedValue > this.maxValue) {
         clickedValue = this.maxValue;
@@ -2652,14 +2652,14 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	0;
+	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	0;
+	console.log('radiant atan ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
-	0;
+	console.log('degree atan ', degreetan);
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	return range_val;
@@ -2669,11 +2669,11 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
-	0;
+	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
 	
 	if ((dist > this.radius - this.thickness / 2) && (dist < this.radius + this.thickness / 2)) {
 		
-		0;
+		console.log("down / tapped Inside the dial");
 		this.triggered = true;
 
 		var range_val = this.calculateAngle (x,y);
@@ -2690,7 +2690,7 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touch
 K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
 	
 	if (this.triggered) {
-		0;
+		console.log ("triggered mousemove");
 		var range_val = this.calculateAngle (x,y);
 		//this.prevValue = this.values.gaugevalue;
 		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
@@ -2936,21 +2936,30 @@ K2.Knob.prototype.getready = function(args) {
     
     // Can be 'atan' or 'updown'
     this.knobMethod = args.knobMethod || 'atan';
+    
+    var width = 0,
+        height = 0;
 
     if (this.imagesArray.length < 1) {
         throw new Error('Invalid images array length, ' + this.imagesArray.length);
     }
+    
+    if (this.imagesArray.length == 1) {
+        width = args.tileWidth;
+        height = args.tileHeight;
+        this.imageNum = args.imageNum;
+    }
 
-    var width = 0,
-        height = 0;
-
-    // Calculate maximum width and height.
-    for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
-        if (this.imagesArray[i].width > width) {
-            width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > height) {
-            height = this.imagesArray[i].height;
+    else {
+        this.imageNum = this.imagesArray.length;
+        // Calculate maximum width and height.
+        for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
+            if (this.imagesArray[i].width > width) {
+                width = this.imagesArray[i].width;
+            }
+            if (this.imagesArray[i].height > height) {
+                height = this.imagesArray[i].height;
+            }
         }
     }
 
@@ -2967,7 +2976,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imagesArray.length - 1));
+    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
     return ret;
 };
 
@@ -2982,14 +2991,14 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	0;
+	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	0;
+	console.log('radiant atan ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
-	0;
+	console.log('degree atan ', degreetan);
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	return range_val;
@@ -3101,10 +3110,17 @@ K2.Knob.prototype.refresh_CANVAS2D = function(engine) {
 
     // Draw if visible.
     if (this.isVisible === true) {
-        // Get the image to draw
-        var imageNum = this.getImageNum();
-        // Draw the image on the canvas
-        engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        if (this.imagesArray.length > 1) {
+            // Get the image to draw
+            var imageNum = this.getImageNum();
+            // Draw the image on the canvas
+            engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        }
+        else if (this.imagesArray.length == 1) {
+            var sx = 0;
+            var sy = tileHeight * this.getImageNum();
+            engine.context.drawImage(this.imagesArray[0], sx, sy, this.width, this.height, this.xOrigin, this.yOrigin, this.width, this.height);
+        }
     }
     
 };
@@ -3269,16 +3285,16 @@ K2.RotKnob.prototype.getRangedAmount = function (angle) {
     var endAngOffset = this.stopAngValue - this.initAngValue;
     var startAngOffset = this.startAngValue - this.initAngValue;
     
-    0;
+    console.log ("start -> end", startAngOffset, endAngOffset);
     
     if ((angle > this.initAngValue) && (startAngOffset < 0)) {
-        0;
+        console.log ("Angle now is", angle);
         angle = -(360 - angle);
     }
     
     var rangedAng = K2.MathUtils.linearRange(startAngOffset, endAngOffset, 0, 1, angle);
     
-    0;
+    console.log ("knob value", rangedAng);
     
     if (rangedAng < 0) {
         rangedAng = 0;
@@ -3307,10 +3323,10 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var centerX = this.xOrigin + this.width / 2;
     var centerY = this.yOrigin + this.height / 2;
     
-    0;
+    console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
     
     var radtan = Math.atan2 (x - centerX, y - centerY);
-    0;
+    console.log('radiant atan ', radtan);
     
     var degreetan = radtan * (180 / Math.PI);
     degreetan = 180 - degreetan;
@@ -3323,7 +3339,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     }
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
-    0;
+    console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
     
     var range_val = this.getRangedAmount (Math.floor(degreeOffset));
     
@@ -3444,7 +3460,7 @@ K2.RotKnob.prototype.setValue = function(slot, value) {
         stepped_new_value = value;
     }
 
-    0;
+    console.log('Value is: ', stepped_new_value);
 
     // Now, we call the superclass
     K2.RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
@@ -3766,7 +3782,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
             }
 
             else {
-                0;
+                console.error('orientation invalid, this will probably break something');
             }
 
             // Click on button is completed, the button is no more triggered.
@@ -3784,7 +3800,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
 
 K2.Wavebox.prototype.setValue = function(slot, value) {
 
-	0;
+	console.log('Setting ' + slot + ' to ' + value);
 
     // Won't call the parent: this element has a custom way to set values.
 
@@ -3839,11 +3855,11 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if (slot == 'yPos') {
         if (value <= this.height) {
-            0;
+            console.log('Setting yPos to ' + value);
             this.values.yPos = value;
         }
         else {
-            0;
+            console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
         }
     }
 };
@@ -3880,7 +3896,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 binFunction = this.calculateBinNone;
             }
             else {
-                0;
+                console.log('Error: no binMethod!');
             }
 
             var i = 0;
@@ -4125,7 +4141,7 @@ var CurveEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            0;
+            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4188,7 +4204,7 @@ var CurveEditor = function(parameters) {
 
                 that.status.curveArray.splice(that.status.selected + 1, 0, newCurveArgs.ID);
             }
-            0;
+            console.log("Reorganizing elements");
             that.reorganizeElements();
             that.ui.refresh();
         };
@@ -4206,7 +4222,7 @@ var CurveEditor = function(parameters) {
     };
 
     this.addCurve = function(curveType, grade, first_point, last_point) {
-        0;
+        console.log("Adding a curve");
         var lastElementID;
 
         // Get a deep copy of the template object
@@ -4260,7 +4276,7 @@ var CurveEditor = function(parameters) {
 	
 	        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
 	            // Set the curve to paint only its first handle
-	            0;
+	            console.log("Remove something before adding stuff");
 	            // Undo the previous paintTerminalPoints inference
 	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
 	            return;
@@ -4301,7 +4317,7 @@ var CurveEditor = function(parameters) {
         var prevID;
         
         if (this.status.selected !== null) {
-            0;
+            console.log("Deleting selected curve " + this.status.selected);
 
             //arr = arr.filter(function(){return true});
 
@@ -4346,7 +4362,7 @@ var CurveEditor = function(parameters) {
         var i;
         if (this.status.selected !== null) {
 
-            0;
+            console.log("Transforming selected curve " + this.status.selected);
 
             var bezierN = grade;
 
@@ -4357,11 +4373,11 @@ var CurveEditor = function(parameters) {
 
             if (curveNow === curveType) {
                 if (curveType !== 'bezier') {
-                    0;
+                    console.log("Identical type, doing nothing");
                     return;
                 } else {
                     if (bezierN === curveGrade) {
-                        0;
+                        console.log("Identical type and grade, doing nothing");
                         return;
                     }
                 }
@@ -4486,7 +4502,7 @@ var AreaEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            0;
+            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4555,7 +4571,7 @@ var AreaEditor = function(parameters) {
     };
 
     this.addArea = function(width, height) {
-        0;
+        console.log("Adding an area");
         var lastElement;
 
         // Get a deep copy of the template object
@@ -4682,11 +4698,11 @@ var BarSelect = function (parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            0;
+            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             var width;
             
             if (slot === 'dragStart') {
-                0;
+                console.log ('Storing dragStart value ', value);
                 that.dragStart = value;
                 
                 if (that.areaElement === null) {
@@ -5216,7 +5232,7 @@ K2.OSC.Decoder.prototype.decode = function (msg) {
         }
     }
     catch (e) {
-        0;
+        console.log("can't decode incoming message: " + e.message);
     }
 };
 
@@ -5262,13 +5278,13 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
         }
         catch (e) {
-            0;
+            console.error ("io.connect failed. No proxy server?");
             return;
         }
         this.socket.on('admin', function (data) {
             
             // TODO check the version and the ID
-            0;
+            console.log("Received an admin message: ", data);
             // Let's assume everything is OK
             this.proxyOK = true;
             
@@ -5284,7 +5300,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             // OSC is received from the server
             // Transform it in an array
             var oscArray =  Array.prototype.slice.call(data.osc, 0);
-            0;
+            console.log ("received osc from the server: " + oscArray);
             
             // Send it to the local clients
             this.sendLocalMessage (oscArray);
@@ -5292,7 +5308,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('disconnect', function (data) {
             
-            0;
+            console.log ("socket disconnected");
             this.proxyConnected = false;
             this.proxyOK = false;
             
@@ -5300,7 +5316,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('connect', function (data) {
             
-            0;
+            console.log ("socket connected");
             this.proxyConnected = true;
             
         }.bind(this));
@@ -5319,7 +5335,7 @@ K2.OSCHandler.prototype.unregisterClient = function (clientID) {
 K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     // Try to decode it
     var received = this.OSCDecoder.decode (oscMessage);
-    0;
+    console.log ("decoded OSC = " + received);
     
     // Send it to the callbacks, except for the clientID one
     for (var client in this.localClients) {

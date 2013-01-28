@@ -27,21 +27,30 @@ K2.Knob.prototype.getready = function(args) {
     
     // Can be 'atan' or 'updown'
     this.knobMethod = args.knobMethod || 'atan';
+    
+    var width = 0,
+        height = 0;
 
     if (this.imagesArray.length < 1) {
         throw new Error('Invalid images array length, ' + this.imagesArray.length);
     }
+    
+    if (this.imagesArray.length == 1) {
+        width = args.tileWidth;
+        height = args.tileHeight;
+        this.imageNum = args.imageNum;
+    }
 
-    var width = 0,
-        height = 0;
-
-    // Calculate maximum width and height.
-    for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
-        if (this.imagesArray[i].width > width) {
-            width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > height) {
-            height = this.imagesArray[i].height;
+    else {
+        this.imageNum = this.imagesArray.length;
+        // Calculate maximum width and height.
+        for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
+            if (this.imagesArray[i].width > width) {
+                width = this.imagesArray[i].width;
+            }
+            if (this.imagesArray[i].height > height) {
+                height = this.imagesArray[i].height;
+            }
         }
     }
 
@@ -58,7 +67,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imagesArray.length - 1));
+    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
     return ret;
 };
 
@@ -192,10 +201,17 @@ K2.Knob.prototype.refresh_CANVAS2D = function(engine) {
 
     // Draw if visible.
     if (this.isVisible === true) {
-        // Get the image to draw
-        var imageNum = this.getImageNum();
-        // Draw the image on the canvas
-        engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        if (this.imagesArray.length > 1) {
+            // Get the image to draw
+            var imageNum = this.getImageNum();
+            // Draw the image on the canvas
+            engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        }
+        else if (this.imagesArray.length == 1) {
+            var sx = 0;
+            var sy = tileHeight * this.getImageNum();
+            engine.context.drawImage(this.imagesArray[0], sx, sy, this.width, this.height, this.xOrigin, this.yOrigin, this.width, this.height);
+        }
     }
     
 };

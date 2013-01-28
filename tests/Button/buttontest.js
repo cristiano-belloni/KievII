@@ -17,7 +17,7 @@ var ButtonTest = {
             onValueSet: function (slot, value) {
                 this.ui.refresh();
             }.bind(this),
-            isClickable: true
+            isListening: true
         };
         
         this.ui.addElement(new K2.Button(buttonArgs));
