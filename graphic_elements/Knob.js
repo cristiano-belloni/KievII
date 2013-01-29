@@ -81,6 +81,10 @@ K2.Knob.prototype.getImage = function() {
 };
 
 K2.Knob.prototype.calculateAngle = function (x,y) {
+    
+    // IMPORTANT: THE FIRST KNOB IMAGE MUST BE THE 0 POSITION
+    // 0 POSITION IS THE BOTTOM INTERSECTION WITH THE UNITARY CIRCUMFERENCE
+	// TODO MAKE IT PARAMETRIC
 	
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
@@ -96,7 +100,6 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	console.log ('radiant atan, normalized, is ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
-	//degreetan = 180 - degreetan;
 	console.log('degree atan is', degreetan);
 	
 	// now we have a value from 0 to 360, where 0 is the lowest 
