@@ -28,6 +28,9 @@ K2.Knob.prototype.getready = function(args) {
     // Can be 'atan' or 'updown'
     this.knobMethod = args.knobMethod || 'atan';
     
+    // In degrees, only important when knobMethod is 'atan'
+    this.bottomAngularOffset = args.bottomAngularOffset;
+    
     var width = 0,
         height = 0;
 
@@ -86,12 +89,36 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
 	console.log('radiant atan ', radtan);
+	// normalize arctan
+	if (radtan < 0) {
+        radtan += (2 * Math.PI);
+    }
+	console.log ('radiant atan, normalized, is ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
-	degreetan = 180 - degreetan;
-	console.log('degree atan ', degreetan);
+	//degreetan = 180 - degreetan;
+	console.log('degree atan is', degreetan);
+	
+	// now we have a value from 0 to 360, where 0 is the lowest 
+	// intersection with the circumference. degree increases anticlockwise
+	// Make it clockwise:
+	degreetan = 360 - degreetan;
+	
+	if (typeof this.bottomAngularOffset !== 'undefined') {
+	    // Knob starts and ends with an (angular) symmetrical offset, calculated
+	    // from the 0 degrees intersection 
+	    // This is quite common in audio knobs
+	    degreetan = K2.MathUtils.linearRange(0, 360, -this.bottomAngularOffset, 360 + this.bottomAngularOffset, degreetan);
+	    if (degreetan < 0) {
+	        degreetan = 0;
+	    }
+	    if (degreetan > 360) {
+	        degreetan = 360;
+	    }
+	}
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
+	console.log ('value is', range_val);
 	return range_val;
 	
 };

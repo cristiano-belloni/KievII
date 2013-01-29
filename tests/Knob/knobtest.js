@@ -17,6 +17,7 @@ var KnobTest = {
             tileWidth: 50,
             tileHeight: 50,
             imageNum: 50,
+            bottomAngularOffset: 33,
             onValueSet: function (slot, value) {
                 this.ui.refresh();
             }.bind(this),
