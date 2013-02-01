@@ -2328,6 +2328,14 @@ K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, cu
 
 };
 
+K2.Button.prototype.mouseout = function (curr_x, curr_y) {
+    // On immediate, this count as a mouseup (undo)
+    // On persistent, this counts as nothing (undo)
+    if (this.mode === 'immediate') {
+        return this.mouseup (curr_x, curr_y);
+    }
+};
+
 // Setters
 K2.Button.prototype.setValue = function(slot, value) {
 
