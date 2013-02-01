@@ -2229,6 +2229,7 @@ K2.Button.prototype.getready = function(args) {
 
     this.triggered = false;
 
+    this.mode = args.mode || 'persistent';
     this.imagesArray = args.imagesArray;
 
     if (this.imagesArray.length < 1) {
@@ -2258,17 +2259,26 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Button.prototype.mousedown = function(x, y) {
+K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
+        if (this.mode === 'persistent') {
+            return undefined;
+        }
+        else if (this.mode === 'immediate') {
+            //Simply add 1 to the button value until it rolls back.
+            to_set = (this.values.buttonvalue + 1) % this.nButtons;
+            ret = {'slot' : 'buttonvalue', 'value' : to_set};
+            return ret;
+        } 
     }
-    return undefined;
+    
 };
 
-K2.Button.prototype.touchstart = function(x, y) {
+/*K2.Button.prototype.touchstart = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2280,27 +2290,37 @@ K2.Button.prototype.touchstart = function(x, y) {
     
     return ret;
     }
-};
+};*/
 
-K2.Button.prototype.mouseup = function(curr_x, curr_y) {
+K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
 
-    if (this.triggered) {
-        // Button is activated when cursor is still in the element ROI, otherwise action is void.
-        if (this.isInROI(curr_x, curr_y)) {
-
-            //Simply add 1 to the button value until it rolls back.
-            to_set = (this.values.buttonvalue + 1) % this.nButtons;
-            ret = {'slot' : 'buttonvalue', 'value' : to_set};
-
-            // Click on button is completed, the button is no more triggered.
-            this.triggered = false;
-
-            return ret;
+    if (this.mode === 'persistent') {
+        if (this.triggered) {
+            // Button is activated when cursor is still in the element ROI, otherwise action is void.
+            if (this.isInROI(curr_x, curr_y)) {
+    
+                //Simply add 1 to the button value until it rolls back.
+                to_set = (this.values.buttonvalue + 1) % this.nButtons;
+                ret = {'slot' : 'buttonvalue', 'value' : to_set};
+    
+                // Click on button is completed, the button is no more triggered.
+                this.triggered = false;
+    
+                return ret;
+            }
         }
     }
+    
+    else if (this.mode === 'immediate') {
+        if (this.triggered) {
+            to_set = (this.values.buttonvalue - 1) % this.nButtons;
+            ret = {'slot' : 'buttonvalue', 'value' : to_set};
+            return ret;
+        }
+    } 
 
     // Action is void, button was upclicked outside its ROI or never downclicked
     // No need to trigger anything, ignore this event.
@@ -2990,6 +3010,10 @@ K2.Knob.prototype.getImage = function() {
 };
 
 K2.Knob.prototype.calculateAngle = function (x,y) {
+    
+    // IMPORTANT: THE FIRST KNOB IMAGE MUST BE THE 0 POSITION
+    // 0 POSITION IS THE BOTTOM INTERSECTION WITH THE UNITARY CIRCUMFERENCE
+	// TODO MAKE IT PARAMETRIC
 	
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
@@ -3005,7 +3029,6 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	console.log ('radiant atan, normalized, is ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
-	//degreetan = 180 - degreetan;
 	console.log('degree atan is', degreetan);
 	
 	// now we have a value from 0 to 360, where 0 is the lowest 
