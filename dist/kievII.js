@@ -2318,6 +2318,8 @@ K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, cu
         if (this.triggered) {
             to_set = (this.values.buttonvalue - 1) % this.nButtons;
             ret = {'slot' : 'buttonvalue', 'value' : to_set};
+            // Click on button is completed, the button is no more triggered.
+            this.triggered = false;
             return ret;
         }
     } 
