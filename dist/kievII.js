@@ -5655,11 +5655,14 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.restore();
 };
 if (typeof window.define === "function" && window.define.amd) {
+  console.log ("AMD detected, returning define");  
   window.define("kievII", [], function() {
+    console.log ("KievII: returning K2 object inside the define (AMD detected)");
     return K2;
   });
 }
 else {
+    console.log ("KievII: setting window.K2 (no AMD)");
     window.kievII = window.K2 = K2;
 }
 
