@@ -5656,7 +5656,7 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
 };
 if (typeof window.define === "function" && window.define.amd) {
   window.define("kievII", [], function() {
-    return kievII;
+    return K2;
   });
 }
 else {
