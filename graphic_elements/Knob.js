@@ -27,21 +27,33 @@ K2.Knob.prototype.getready = function(args) {
     
     // Can be 'atan' or 'updown'
     this.knobMethod = args.knobMethod || 'atan';
+    
+    // In degrees, only important when knobMethod is 'atan'
+    this.bottomAngularOffset = args.bottomAngularOffset;
+    
+    var width = 0,
+        height = 0;
 
     if (this.imagesArray.length < 1) {
         throw new Error('Invalid images array length, ' + this.imagesArray.length);
     }
+    
+    if (this.imagesArray.length == 1) {
+        width = args.tileWidth;
+        height = args.tileHeight;
+        this.imageNum = args.imageNum;
+    }
 
-    var width = 0,
-        height = 0;
-
-    // Calculate maximum width and height.
-    for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
-        if (this.imagesArray[i].width > width) {
-            width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > height) {
-            height = this.imagesArray[i].height;
+    else {
+        this.imageNum = this.imagesArray.length;
+        // Calculate maximum width and height.
+        for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
+            if (this.imagesArray[i].width > width) {
+                width = this.imagesArray[i].width;
+            }
+            if (this.imagesArray[i].height > height) {
+                height = this.imagesArray[i].height;
+            }
         }
     }
 
@@ -58,7 +70,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imagesArray.length - 1));
+    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
     return ret;
 };
 
@@ -69,6 +81,10 @@ K2.Knob.prototype.getImage = function() {
 };
 
 K2.Knob.prototype.calculateAngle = function (x,y) {
+    
+    // IMPORTANT: THE FIRST KNOB IMAGE MUST BE THE 0 POSITION
+    // 0 POSITION IS THE BOTTOM INTERSECTION WITH THE UNITARY CIRCUMFERENCE
+	// TODO MAKE IT PARAMETRIC
 	
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
@@ -77,12 +93,35 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
 	console.log('radiant atan ', radtan);
+	// normalize arctan
+	if (radtan < 0) {
+        radtan += (2 * Math.PI);
+    }
+	console.log ('radiant atan, normalized, is ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
-	degreetan = 180 - degreetan;
-	console.log('degree atan ', degreetan);
+	console.log('degree atan is', degreetan);
+	
+	// now we have a value from 0 to 360, where 0 is the lowest 
+	// intersection with the circumference. degree increases anticlockwise
+	// Make it clockwise:
+	degreetan = 360 - degreetan;
+	
+	if (typeof this.bottomAngularOffset !== 'undefined') {
+	    // Knob starts and ends with an (angular) symmetrical offset, calculated
+	    // from the 0 degrees intersection 
+	    // This is quite common in audio knobs
+	    degreetan = K2.MathUtils.linearRange(0, 360, -this.bottomAngularOffset, 360 + this.bottomAngularOffset, degreetan);
+	    if (degreetan < 0) {
+	        degreetan = 0;
+	    }
+	    if (degreetan > 360) {
+	        degreetan = 360;
+	    }
+	}
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
+	console.log ('value is', range_val);
 	return range_val;
 	
 };
@@ -192,10 +231,17 @@ K2.Knob.prototype.refresh_CANVAS2D = function(engine) {
 
     // Draw if visible.
     if (this.isVisible === true) {
-        // Get the image to draw
-        var imageNum = this.getImageNum();
-        // Draw the image on the canvas
-        engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        if (this.imagesArray.length > 1) {
+            // Get the image to draw
+            var imageNum = this.getImageNum();
+            // Draw the image on the canvas
+            engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        }
+        else if (this.imagesArray.length == 1) {
+            var sx = 0;
+            var sy = this.height * this.getImageNum();
+            engine.context.drawImage(this.imagesArray[0], sx, sy, this.width, this.height, this.xOrigin, this.yOrigin, this.width, this.height);
+        }
     }
     
 };

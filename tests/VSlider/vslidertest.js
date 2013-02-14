@@ -1,6 +1,6 @@
-var KnobTest = {
+var VSliderTest = {
     
-    name: 'KnobTest',
+    name: 'VSliderTest',
     ui: null,
     
     main: function () {
@@ -8,24 +8,21 @@ var KnobTest = {
         // !VIEWABLEDOCSTART
         var images = this.imageLoader.imagesArray;
         
-        var knobArgs = {
-            ID: "test_knob",
-            top: Math.floor ((this.viewWidth - 50) / 2) ,
-            left: Math.floor ((this.viewHeight - 50) / 2),
-            imagesArray : images,
-            sensitivity : 5000,
-            tileWidth: 50,
-            tileHeight: 50,
-            imageNum: 50,
-            bottomAngularOffset: 33,
+        vSliderArgs = {
+            ID: "vTestSlider",
+            left: Math.floor ((this.viewWidth - images[1].width) / 2),
+            top : Math.floor ((this.viewHeight - images[0].height) / 2),
+            sliderImg: images[0],
+            knobImg: images[1],
             onValueSet: function (slot, value) {
                 this.ui.refresh();
             }.bind(this),
+            type:"vertical",
             isListening: true
         };
         
-        this.ui.addElement(new K2.Knob(knobArgs));
-        this.ui.setValue({elementID: "test_knob", value: 0});
+        this.ui.addElement(new K2.Slider(vSliderArgs));
+        this.ui.setValue({elementID: "vTestSlider", value: 0.5});
         this.ui.refresh();
         // !VIEWABLEDOCEND            
     },
@@ -38,7 +35,7 @@ var KnobTest = {
         
         this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
         
-        var imageLoader = new loadImageArray ({ID : "knobTestLoader",
+        var imageLoader = new loadImageArray ({ID : "v_sliderTestLoader",
                                                imageNames: images,
                                                onComplete: imagesCompleted.bind(this),
                                                onSingle: imageSingle.bind(this),

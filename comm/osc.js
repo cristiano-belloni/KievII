@@ -1,8 +1,10 @@
+K2.OSC = {};
+
 ////////////////////
 // OSC Message
 ////////////////////
 
-function Message (address) {
+K2.OSC.Message = function (address) {
     this.address = address;
     this.typetags = '';
     this.args = [];
@@ -15,37 +17,37 @@ function Message (address) {
                 this.typetags += arg.typetag;
                 this.args.push(arg);
             } else {
-                throw new Error("don't know how to encode object " + arg)
+                throw new Error("don't know how to encode object " + arg);
             }
             break;
         case 'number':
             if (Math.floor(arg) == arg) {
-                this.typetags += TInt.prototype.typetag;
-                this.args.push(new TInt(Math.floor(arg)));
+                this.typetags += K2.OSC.TInt.prototype.typetag;
+                this.args.push(new K2.OSC.TInt(Math.floor(arg)));
             } else {
-                this.typetags += TFloat.prototype.typetag;
-                this.args.push(new TFloat(arg));
+                this.typetags += K2.OSC.TFloat.prototype.typetag;
+                this.args.push(new K2.OSC.TFloat(arg));
             }
             break;
         case 'string':
-            this.typetags += TString.prototype.typetag;
-            this.args.push(new TString(arg));
+            this.typetags += K2.OSC.TString.prototype.typetag;
+            this.args.push(new K2.OSC.TString(arg));
             break;
         default:
             throw new Error("don't know how to encode " + arg);
         }
     }
-}
+};
 
-Message.prototype = {
+K2.OSC.Message.prototype = {
     toBinary: function () {
-        var address = new TString(this.address);
+        var address = new K2.OSC.TString(this.address);
         var binary = [];
         var tempArray =  [];
         tempArray = address.encode();
         binary = binary.concat(tempArray);
         if (this.typetags) {
-            var typetags = new TString(',' + this.typetags);
+            var typetags = new K2.OSC.TString(',' + this.typetags);
             tempArray = typetags.encode();
             binary = binary.concat(tempArray);
             for (var i = 0; i < this.args.length; i++) {
@@ -54,21 +56,21 @@ Message.prototype = {
             }
         }
         return binary;
-    },
-}
+    }
+};
 
 // Bundle does not work yet (uses message.append, which no longer exists)
-var Bundle = function (address, time) {
-    Message.call(this, address);
+K2.OSC.Bundle = function (address, time) {
+    K2.OSC.Message.call(this, address);
     this.timetag = time || 0;
-}
+};
 
-Bundle.prototype.append = function (arg) {
+K2.OSC.Bundle.prototype.append = function (arg) {
     var binary;
     if (arg instanceof Message) {
-        binary = new TBlob(arg.toBinary());
+        binary = new K2.OSC.TBlob(arg.toBinary());
     } else {
-        var msg = new Message(this.address);
+        var msg = new K2.OSC.Message(this.address);
         if (typeof(arg) == 'Object') {
             if (arg.addr) {
                 msg.address = arg.addr;
@@ -79,15 +81,15 @@ Bundle.prototype.append = function (arg) {
         } else {
             msg.append(arg);
         }
-        binary = new TBlob(msg.toBinary());
+        binary = new K2.OSC.TBlob(msg.toBinary());
     }
     this.message += binary;
     this.typetags += 'b';
 };
 
-Bundle.prototype.toBinary = function () {
-    var binary = new TString('#bundle');
-    binary = binary.concat(new TTimeTag(this.timetag));
+K2.OSC.Bundle.prototype.toBinary = function () {
+    var binary = new K2.OSC.TString('#bundle');
+    binary = binary.concat(new K2.OSC.TTimeTag(this.timetag));
     binary = binary.concat(this.message);
     return binary;
 };
@@ -96,10 +98,10 @@ Bundle.prototype.toBinary = function () {
 // OSC Encoder
 ////////////////////
 
-var Encoder = function () {
-}
+K2.OSC.Encoder = function () {
+};
 
-Encoder.prototype = {
+K2.OSC.Encoder.prototype = {
     encode: function () {
         var binary;
         if (arguments[0].toBinary) {
@@ -107,18 +109,18 @@ Encoder.prototype = {
         } else {
             // cheesy
             var message = {};
-            Message.apply(message, arguments)
-            binary = Message.prototype.toBinary.call(message);
+            K2.OSC.Message.apply(message, arguments);
+            binary = K2.OSC.Message.prototype.toBinary.call(message);
         }
         return binary;
     }
-}
+};
 
 ////////////////////
 // OSC Message encoding and decoding functions
 ////////////////////
 
-function ShortBuffer(type, buf, requiredLength)
+K2.OSC.ShortBuffer = function (type, buf, requiredLength)
 {
     this.type = "ShortBuffer";
     var message = "buffer [";
@@ -130,10 +132,10 @@ function ShortBuffer(type, buf, requiredLength)
     }
     message += "] too short for " + type + ", " + requiredLength + " bytes required";
     this.message = message;
-}
+};
 
-function TString (value) { this.value = value; }
-TString.prototype = {
+K2.OSC.TString = function (value) { this.value = value; };
+K2.OSC.TString.prototype = {
     typetag: 's',
     decode: function (data) {
         var end = 0;
@@ -151,18 +153,18 @@ TString.prototype = {
         // This works in the browser
         this.value  = String.fromCharCode.apply(null, data.slice(0,end));
         
-        var nextData = parseInt(Math.ceil((end + 1) / 4.0) * 4);
+        var nextData = parseInt(Math.ceil((end + 1) / 4.0) * 4, 10);
         return data.slice(nextData);
     },
     encode: function () {
-        var len = Math.ceil((this.value.length + 1) / 4.0) * 4;
+        var len = Math.ceil((this.value.length + 1) / 4.0, 10) * 4;
         var tempBuf = new Array (len);
         return Struct.PackTo('>' + len + 's', tempBuf, 0, [ this.value ]);
     }
-}
+};
 
-function TInt (value) { this.value = value; }
-TInt.prototype = {
+K2.OSC.TInt = function (value) { this.value = value; };
+K2.OSC.TInt.prototype = {
     typetag: 'i',
     decode: function (data) {
         if (data.length < 4) {
@@ -176,10 +178,10 @@ TInt.prototype = {
         var tempArray = new Array(4);
         return Struct.PackTo('>i', tempArray, 0, [ this.value ]);
     }
-}
+};
 
-function TTime (value) { this.value = value; }
-TTime.prototype = {
+K2.OSC.TTime = function (value) { this.value = value; };
+K2.OSC.TTime.prototype = {
     typetag: 't',
     decode: function (data) {
         if (data.length < 8) {
@@ -191,10 +193,10 @@ TTime.prototype = {
     encode: function (buf, pos) {
         return Struct.PackTo('>LL', buf, pos, this.value);
     }
-}
+};
 
-function TFloat (value) { this.value = value; }
-TFloat.prototype = {
+K2.OSC.TFloat = function (value) { this.value = value; };
+K2.OSC.TFloat.prototype = {
     typetag: 'f',
     decode: function (data) {
         if (data.length < 4) {
@@ -205,28 +207,28 @@ TFloat.prototype = {
         return data.slice(4);
     },
     encode: function () {
-    	var tempArray = new Array(4);
+        var tempArray = new Array(4);
         return Struct.PackTo('>f', tempArray, 0, [ this.value ]);
     }
-}
+};
 
-function TBlob (value) { this.value = value; }
-TBlob.prototype = {
+K2.OSC.TBlob = function (value) { this.value = value; };
+K2.OSC.TBlob.prototype = {
     typetag: 'b',
     decode: function (data) {
         var length = Struct.Unpack('>i', data.slice(0, 4))[0];
-        var nextData = parseInt(Math.ceil((length) / 4.0) * 4) + 4;
+        var nextData = parseInt(Math.ceil((length) / 4.0) * 4, 10) + 4;
         this.value = data.slice(4, length + 4);
         return data.slice(nextData);
     },
     encode: function (buf, pos) {
-        var len = Math.ceil((this.value.length) / 4.0) * 4;
+        var len = Math.ceil((this.value.length) / 4.0, 10) * 4;
         return Struct.PackTo('>i' + len + 's', buf, pos, [len, this.value]);
     }
-}
+};
 
-function TDouble (value) { this.value = value; }
-TDouble.prototype = {
+K2.OSC.TDouble = function (value) { this.value = value; };
+K2.OSC.TDouble.prototype = {
     typetag: 'd',
     decode: function (data) {
         if (data.length < 8) {
@@ -238,32 +240,32 @@ TDouble.prototype = {
     encode: function (buf, pos) {
         return Struct.PackTo('>d', buf, pos, [ this.value ]);
     }
-}
+};
 
 // for each OSC type tag we use a specific constructor function to decode its respective data
-var tagToConstructor = { 'i': function () { return new TInt },
-                         'f': function () { return new TFloat },
-                         's': function () { return new TString },
-                         'b': function () { return new TBlob },
-                         'd': function () { return new TDouble } };
+K2.OSC.tagToConstructor = { 'i': function () { return new K2.OSC.TInt(); },
+                         'f': function () { return new K2.OSC.TFloat(); },
+                         's': function () { return new K2.OSC.TString(); },
+                         'b': function () { return new K2.OSC.TBlob(); },
+                         'd': function () { return new K2.OSC.TDouble(); } };
                          
-function decodeBundle (data) {
+K2.OSC.decodeBundle = function (data) {
     
     var bundle = [];
     var bundleElement = {time: null, args: []};
     
     // Decode the time tag
-    var timeTag = new TTime;
+    var timeTag = new K2.OSC.TTime();
     data = timeTag.decode(data);
     bundleElement.time = timeTag.value;
     
     while (data.length > 0) { 
         // Get the data length
-        var dataLen = new TInt;
+        var dataLen = new K2.OSC.TInt();
         data = dataLen.decode(data);
         
         // Decode the next message 
-        var message = decode(data.slice(0, dataLen.value));
+        var message = K2.OSC.decode(data.slice(0, dataLen.value));
         
         // push it into the bundleElement
         bundleElement.args.push(message);
@@ -273,27 +275,27 @@ function decodeBundle (data) {
     }
     bundle.push(bundleElement);
     return bundle;
-}
+};
 
-function decode (data) {
+K2.OSC.decode = function (data) {
     // this stores the decoded data as an array
     var message = [];
 
     // we start getting the <address> and <rest> of OSC msg /<address>\0<rest>\0<typetags>\0<data>
-    var address = new TString;
+    var address = new K2.OSC.TString();
     data = address.decode(data);
 
     message.push(address.value);
     
     if (address.value === "#bundle") {
         // A bundle was detected, let's parse it
-        return decodeBundle (data);
+        return K2.OSC.decodeBundle (data);
     }
 
     // if we have rest, maybe we have some typetags... let see...
     if (data.length > 0) {
         // now we advance on the old rest, getting <typetags>
-        var typetags = new TString;
+        var typetags = new K2.OSC.TString();
         data = typetags.decode(data);
         typetags = typetags.value;
         // so we start building our message list
@@ -302,7 +304,7 @@ function decode (data) {
             throw "invalid type tag in incoming OSC message, must start with comma";
         }
         for (var i = 1; i < typetags.length; i++) {
-            var constructor = tagToConstructor[typetags[i]];
+            var constructor = K2.OSC.tagToConstructor[typetags[i]];
             if (!constructor) {
                 throw "Unsupported OSC type tag " + typetags[i] + " in incoming message";
             }
@@ -319,16 +321,16 @@ function decode (data) {
 // OSC Decoder
 ////////////////////
 
-var Decoder = function() {
+K2.OSC.Decoder = function() {
     
     
-}
+};
 
-Decoder.prototype.decode = function (msg) {
+K2.OSC.Decoder.prototype.decode = function (msg) {
     
     // we decode the message getting a beautiful array with the form:
     // [<address>, <typetags>, <values>*]
-    var decoded = decode(msg);
+    var decoded = K2.OSC.decode(msg);
     try {
         if (decoded) {
             return decoded;
@@ -337,4 +339,4 @@ Decoder.prototype.decode = function (msg) {
     catch (e) {
         console.log("can't decode incoming message: " + e.message);
     }
-}
+};

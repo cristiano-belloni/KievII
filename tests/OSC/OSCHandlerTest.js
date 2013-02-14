@@ -5,7 +5,7 @@ var OSCHandlerTest = {
         var proxyServer = {host: 'localhost', port: 1488};
         var udpHosts = [{host: 'localhost', port: 8806}];
         
-        var handler = new OSCHandler (proxyServer, udpHosts);
+        var handler = new K2.OSCHandler (proxyServer, udpHosts);
         
         /* localclient = {clientID, oscCallback, isListening} */
         var client1 = handler.registerClient ({clientID : "client1",
@@ -26,9 +26,9 @@ var OSCHandlerTest = {
         var i = 0;
         
          var sendMessages = function ()  {
-            var msg1 = new Message('/lp/dest/1', 'oscTest', i, 55, 7.88787);
-            var msg2 = new Message('/lp/dest/2', 'oscTest', i, 55, 7.88787);
-            var msg3 = new Message('/lp/dest/3', 'oscTest', i, 55, 7.88787);
+            var msg1 = new K2.OSC.Message('/lp/dest/1', 'oscTest', i, 55, 7.88787);
+            var msg2 = new K2.OSC.Message('/lp/dest/2', 'oscTest', i, 55, 7.88787);
+            var msg3 = new K2.OSC.Message('/lp/dest/3', 'oscTest', i, 55, 7.88787);
             client1.sendOSC(msg1);
             client2.sendOSC(msg2);
             client3.sendOSC(msg3);

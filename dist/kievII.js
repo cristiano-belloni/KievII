@@ -536,19 +536,19 @@ K2.UI = function(engine, parameters) {
 	
 	if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-		0;
+		console.log ("touchstart supported");
 	}
     else {
 		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-		0;
+		console.log ("no touchstart, supporting mousedown");
 	}
 	if (isEventSupported('touchend')) {
 		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
-		0;
+		console.log ("touchend supported");
     }
     else {
 		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-		0;
+		console.log ("no touchend, supporting mouseup");
     }
     // TODO see if it's not superseded by ondrag
     this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
@@ -1148,26 +1148,26 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         if ((x > left_min_prox) &&  x < (left_max_prox) && this.dragBorders.left === true) {
             // We're next to the left side
             this.leftSide = true;
-            0;
+            console.log ("Left side click detected");
         }
         if ((x > right_min_prox) &&  x < (right_max_prox) && this.dragBorders.right === true) {
             // We're next to the right side
             this.rightSide = true;
-            0;
+            console.log ("Right side click detected");
         }
         if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.dragBorders.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
-            0;
+            console.log ("Bottom side click detected");
         }
         if ((y > top_min_prox) &&  y < (top_max_prox) && this.dragBorders.top === true) {
             // We're next to the top side
             this.topSide = true;
-            0;
+            console.log ("Top side click detected");
         }
         
         if (this.isInArea (x,y)) {
-            0;
+            console.log ("clicked inside!");
             this.inside = true;
             this.startPoint = [x,y];
         }
@@ -2162,7 +2162,7 @@ K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
 
 K2.Bar.prototype.setValue = function(slot, value) {
 
-	0;
+	console.log('Setting ' + slot + ' to ' + value);
 
     if (slot == 'barPos') {
         if (value[0] <= this.width) {
@@ -2229,6 +2229,7 @@ K2.Button.prototype.getready = function(args) {
 
     this.triggered = false;
 
+    this.mode = args.mode || 'persistent';
     this.imagesArray = args.imagesArray;
 
     if (this.imagesArray.length < 1) {
@@ -2258,17 +2259,26 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Button.prototype.mousedown = function(x, y) {
+K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
+        if (this.mode === 'persistent') {
+            return undefined;
+        }
+        else if (this.mode === 'immediate') {
+            //Simply add 1 to the button value until it rolls back.
+            to_set = (this.values.buttonvalue + 1) % this.nButtons;
+            ret = {'slot' : 'buttonvalue', 'value' : to_set};
+            return ret;
+        } 
     }
-    return undefined;
+    
 };
 
-K2.Button.prototype.touchstart = function(x, y) {
+/*K2.Button.prototype.touchstart = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2280,32 +2290,52 @@ K2.Button.prototype.touchstart = function(x, y) {
     
     return ret;
     }
-};
+};*/
 
-K2.Button.prototype.mouseup = function(curr_x, curr_y) {
+K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
 
-    if (this.triggered) {
-        // Button is activated when cursor is still in the element ROI, otherwise action is void.
-        if (this.isInROI(curr_x, curr_y)) {
-
-            //Simply add 1 to the button value until it rolls back.
-            to_set = (this.values.buttonvalue + 1) % this.nButtons;
-            ret = {'slot' : 'buttonvalue', 'value' : to_set};
-
-            // Click on button is completed, the button is no more triggered.
-            this.triggered = false;
-
-            return ret;
+    if (this.mode === 'persistent') {
+        if (this.triggered) {
+            // Button is activated when cursor is still in the element ROI, otherwise action is void.
+            if (this.isInROI(curr_x, curr_y)) {
+    
+                //Simply add 1 to the button value until it rolls back.
+                to_set = (this.values.buttonvalue + 1) % this.nButtons;
+                ret = {'slot' : 'buttonvalue', 'value' : to_set};
+    
+                // Click on button is completed, the button is no more triggered.
+                this.triggered = false;
+    
+                return ret;
+            }
         }
     }
+    
+    else if (this.mode === 'immediate') {
+        if (this.triggered) {
+            to_set = (this.values.buttonvalue - 1) % this.nButtons;
+            ret = {'slot' : 'buttonvalue', 'value' : to_set};
+            // Click on button is completed, the button is no more triggered.
+            this.triggered = false;
+            return ret;
+        }
+    } 
 
     // Action is void, button was upclicked outside its ROI or never downclicked
     // No need to trigger anything, ignore this event.
     return undefined;
 
+};
+
+K2.Button.prototype.mouseout = function (curr_x, curr_y) {
+    // On immediate, this count as a mouseup (undo)
+    // On persistent, this counts as nothing (undo)
+    if (this.mode === 'immediate') {
+        return this.mouseup (curr_x, curr_y);
+    }
 };
 
 // Setters
@@ -2469,11 +2499,11 @@ K2.ClickBar.prototype.getready = function(args) {
 
 K2.ClickBar.prototype.isInROI = function(x, y) {
 
-    0;
+    console.log ('y = ', y, "roitop = ", this.ROITop);
     if ((x >= this.ROILeft) && (y >= this.ROITop - this.landingHeight)) {
-            0;
+            console.log ("1st");
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight + this.landingHeight))) {
-            0;
+            console.log ("In ROI!");
             return true;
         }
     }
@@ -2484,9 +2514,9 @@ K2.ClickBar.prototype.isInROI = function(x, y) {
 K2.ClickBar.prototype.calculateValue = function (x,y) {
     
     var clickedHeigth = y - this.yOrigin;
-    0; 
+    console.log ("heigth on click is ", clickedHeigth, " pixels"); 
     var clickedValue = 1 - (clickedHeigth / this.height);
-    0;
+    console.log ("for a value of ", clickedValue, " (", clickedHeigth, " / ", this.height, ")");
         
     if (clickedValue > this.maxValue) {
         clickedValue = this.maxValue;
@@ -2652,14 +2682,14 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	0;
+	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	0;
+	console.log('radiant atan ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
-	0;
+	console.log('degree atan ', degreetan);
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	return range_val;
@@ -2669,11 +2699,11 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
-	0;
+	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
 	
 	if ((dist > this.radius - this.thickness / 2) && (dist < this.radius + this.thickness / 2)) {
 		
-		0;
+		console.log("down / tapped Inside the dial");
 		this.triggered = true;
 
 		var range_val = this.calculateAngle (x,y);
@@ -2690,7 +2720,7 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touch
 K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
 	
 	if (this.triggered) {
-		0;
+		console.log ("triggered mousemove");
 		var range_val = this.calculateAngle (x,y);
 		//this.prevValue = this.values.gaugevalue;
 		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
@@ -2936,21 +2966,33 @@ K2.Knob.prototype.getready = function(args) {
     
     // Can be 'atan' or 'updown'
     this.knobMethod = args.knobMethod || 'atan';
+    
+    // In degrees, only important when knobMethod is 'atan'
+    this.bottomAngularOffset = args.bottomAngularOffset;
+    
+    var width = 0,
+        height = 0;
 
     if (this.imagesArray.length < 1) {
         throw new Error('Invalid images array length, ' + this.imagesArray.length);
     }
+    
+    if (this.imagesArray.length == 1) {
+        width = args.tileWidth;
+        height = args.tileHeight;
+        this.imageNum = args.imageNum;
+    }
 
-    var width = 0,
-        height = 0;
-
-    // Calculate maximum width and height.
-    for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
-        if (this.imagesArray[i].width > width) {
-            width = this.imagesArray[i].width;
-        }
-        if (this.imagesArray[i].height > height) {
-            height = this.imagesArray[i].height;
+    else {
+        this.imageNum = this.imagesArray.length;
+        // Calculate maximum width and height.
+        for (var i = 0, len = this.imagesArray.length; i < len; i += 1) {
+            if (this.imagesArray[i].width > width) {
+                width = this.imagesArray[i].width;
+            }
+            if (this.imagesArray[i].height > height) {
+                height = this.imagesArray[i].height;
+            }
         }
     }
 
@@ -2967,7 +3009,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imagesArray.length - 1));
+    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
     return ret;
 };
 
@@ -2978,20 +3020,47 @@ K2.Knob.prototype.getImage = function() {
 };
 
 K2.Knob.prototype.calculateAngle = function (x,y) {
+    
+    // IMPORTANT: THE FIRST KNOB IMAGE MUST BE THE 0 POSITION
+    // 0 POSITION IS THE BOTTOM INTERSECTION WITH THE UNITARY CIRCUMFERENCE
+	// TODO MAKE IT PARAMETRIC
 	
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	0;
+	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	0;
+	console.log('radiant atan ', radtan);
+	// normalize arctan
+	if (radtan < 0) {
+        radtan += (2 * Math.PI);
+    }
+	console.log ('radiant atan, normalized, is ', radtan);
 	
 	var degreetan = radtan * (180 / Math.PI);
-	degreetan = 180 - degreetan;
-	0;
+	console.log('degree atan is', degreetan);
+	
+	// now we have a value from 0 to 360, where 0 is the lowest 
+	// intersection with the circumference. degree increases anticlockwise
+	// Make it clockwise:
+	degreetan = 360 - degreetan;
+	
+	if (typeof this.bottomAngularOffset !== 'undefined') {
+	    // Knob starts and ends with an (angular) symmetrical offset, calculated
+	    // from the 0 degrees intersection 
+	    // This is quite common in audio knobs
+	    degreetan = K2.MathUtils.linearRange(0, 360, -this.bottomAngularOffset, 360 + this.bottomAngularOffset, degreetan);
+	    if (degreetan < 0) {
+	        degreetan = 0;
+	    }
+	    if (degreetan > 360) {
+	        degreetan = 360;
+	    }
+	}
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
+	console.log ('value is', range_val);
 	return range_val;
 	
 };
@@ -3101,10 +3170,17 @@ K2.Knob.prototype.refresh_CANVAS2D = function(engine) {
 
     // Draw if visible.
     if (this.isVisible === true) {
-        // Get the image to draw
-        var imageNum = this.getImageNum();
-        // Draw the image on the canvas
-        engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        if (this.imagesArray.length > 1) {
+            // Get the image to draw
+            var imageNum = this.getImageNum();
+            // Draw the image on the canvas
+            engine.context.drawImage(this.imagesArray[imageNum], this.xOrigin, this.yOrigin);
+        }
+        else if (this.imagesArray.length == 1) {
+            var sx = 0;
+            var sy = this.height * this.getImageNum();
+            engine.context.drawImage(this.imagesArray[0], sx, sy, this.width, this.height, this.xOrigin, this.yOrigin, this.width, this.height);
+        }
     }
     
 };
@@ -3269,16 +3345,16 @@ K2.RotKnob.prototype.getRangedAmount = function (angle) {
     var endAngOffset = this.stopAngValue - this.initAngValue;
     var startAngOffset = this.startAngValue - this.initAngValue;
     
-    0;
+    console.log ("start -> end", startAngOffset, endAngOffset);
     
     if ((angle > this.initAngValue) && (startAngOffset < 0)) {
-        0;
+        console.log ("Angle now is", angle);
         angle = -(360 - angle);
     }
     
     var rangedAng = K2.MathUtils.linearRange(startAngOffset, endAngOffset, 0, 1, angle);
     
-    0;
+    console.log ("knob value", rangedAng);
     
     if (rangedAng < 0) {
         rangedAng = 0;
@@ -3307,10 +3383,10 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var centerX = this.xOrigin + this.width / 2;
     var centerY = this.yOrigin + this.height / 2;
     
-    0;
+    console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
     
     var radtan = Math.atan2 (x - centerX, y - centerY);
-    0;
+    console.log('radiant atan ', radtan);
     
     var degreetan = radtan * (180 / Math.PI);
     degreetan = 180 - degreetan;
@@ -3323,7 +3399,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     }
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
-    0;
+    console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
     
     var range_val = this.getRangedAmount (Math.floor(degreeOffset));
     
@@ -3444,7 +3520,7 @@ K2.RotKnob.prototype.setValue = function(slot, value) {
         stepped_new_value = value;
     }
 
-    0;
+    console.log('Value is: ', stepped_new_value);
 
     // Now, we call the superclass
     K2.RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
@@ -3766,7 +3842,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
             }
 
             else {
-                0;
+                console.error('orientation invalid, this will probably break something');
             }
 
             // Click on button is completed, the button is no more triggered.
@@ -3784,7 +3860,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
 
 K2.Wavebox.prototype.setValue = function(slot, value) {
 
-	0;
+	console.log('Setting ' + slot + ' to ' + value);
 
     // Won't call the parent: this element has a custom way to set values.
 
@@ -3839,11 +3915,11 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if (slot == 'yPos') {
         if (value <= this.height) {
-            0;
+            console.log('Setting yPos to ' + value);
             this.values.yPos = value;
         }
         else {
-            0;
+            console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
         }
     }
 };
@@ -3880,7 +3956,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 binFunction = this.calculateBinNone;
             }
             else {
-                0;
+                console.log('Error: no binMethod!');
             }
 
             var i = 0;
@@ -4125,7 +4201,7 @@ var CurveEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            0;
+            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4188,7 +4264,7 @@ var CurveEditor = function(parameters) {
 
                 that.status.curveArray.splice(that.status.selected + 1, 0, newCurveArgs.ID);
             }
-            0;
+            console.log("Reorganizing elements");
             that.reorganizeElements();
             that.ui.refresh();
         };
@@ -4206,7 +4282,7 @@ var CurveEditor = function(parameters) {
     };
 
     this.addCurve = function(curveType, grade, first_point, last_point) {
-        0;
+        console.log("Adding a curve");
         var lastElementID;
 
         // Get a deep copy of the template object
@@ -4260,7 +4336,7 @@ var CurveEditor = function(parameters) {
 	
 	        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
 	            // Set the curve to paint only its first handle
-	            0;
+	            console.log("Remove something before adding stuff");
 	            // Undo the previous paintTerminalPoints inference
 	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
 	            return;
@@ -4301,7 +4377,7 @@ var CurveEditor = function(parameters) {
         var prevID;
         
         if (this.status.selected !== null) {
-            0;
+            console.log("Deleting selected curve " + this.status.selected);
 
             //arr = arr.filter(function(){return true});
 
@@ -4346,7 +4422,7 @@ var CurveEditor = function(parameters) {
         var i;
         if (this.status.selected !== null) {
 
-            0;
+            console.log("Transforming selected curve " + this.status.selected);
 
             var bezierN = grade;
 
@@ -4357,11 +4433,11 @@ var CurveEditor = function(parameters) {
 
             if (curveNow === curveType) {
                 if (curveType !== 'bezier') {
-                    0;
+                    console.log("Identical type, doing nothing");
                     return;
                 } else {
                     if (bezierN === curveGrade) {
-                        0;
+                        console.log("Identical type and grade, doing nothing");
                         return;
                     }
                 }
@@ -4486,7 +4562,7 @@ var AreaEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            0;
+            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4555,7 +4631,7 @@ var AreaEditor = function(parameters) {
     };
 
     this.addArea = function(width, height) {
-        0;
+        console.log("Adding an area");
         var lastElement;
 
         // Get a deep copy of the template object
@@ -4682,11 +4758,11 @@ var BarSelect = function (parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            0;
+            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
             var width;
             
             if (slot === 'dragStart') {
-                0;
+                console.log ('Storing dragStart value ', value);
                 that.dragStart = value;
                 
                 if (that.areaElement === null) {
@@ -4877,6 +4953,463 @@ if (CP.lineTo) {
         this.restore();
     };
 }
+K2.OSC = {};
+
+////////////////////
+// OSC Message
+////////////////////
+
+K2.OSC.Message = function (address) {
+    this.address = address;
+    this.typetags = '';
+    this.args = [];
+
+    for (var i = 1; i < arguments.length; i++) {
+        var arg = arguments[i];
+        switch (typeof arg) {
+        case 'object':
+            if (arg.typetag) {
+                this.typetags += arg.typetag;
+                this.args.push(arg);
+            } else {
+                throw new Error("don't know how to encode object " + arg);
+            }
+            break;
+        case 'number':
+            if (Math.floor(arg) == arg) {
+                this.typetags += K2.OSC.TInt.prototype.typetag;
+                this.args.push(new K2.OSC.TInt(Math.floor(arg)));
+            } else {
+                this.typetags += K2.OSC.TFloat.prototype.typetag;
+                this.args.push(new K2.OSC.TFloat(arg));
+            }
+            break;
+        case 'string':
+            this.typetags += K2.OSC.TString.prototype.typetag;
+            this.args.push(new K2.OSC.TString(arg));
+            break;
+        default:
+            throw new Error("don't know how to encode " + arg);
+        }
+    }
+};
+
+K2.OSC.Message.prototype = {
+    toBinary: function () {
+        var address = new K2.OSC.TString(this.address);
+        var binary = [];
+        var tempArray =  [];
+        tempArray = address.encode();
+        binary = binary.concat(tempArray);
+        if (this.typetags) {
+            var typetags = new K2.OSC.TString(',' + this.typetags);
+            tempArray = typetags.encode();
+            binary = binary.concat(tempArray);
+            for (var i = 0; i < this.args.length; i++) {
+                tempArray = this.args[i].encode();
+                binary = binary.concat(tempArray);
+            }
+        }
+        return binary;
+    }
+};
+
+// Bundle does not work yet (uses message.append, which no longer exists)
+K2.OSC.Bundle = function (address, time) {
+    K2.OSC.Message.call(this, address);
+    this.timetag = time || 0;
+};
+
+K2.OSC.Bundle.prototype.append = function (arg) {
+    var binary;
+    if (arg instanceof Message) {
+        binary = new K2.OSC.TBlob(arg.toBinary());
+    } else {
+        var msg = new K2.OSC.Message(this.address);
+        if (typeof(arg) == 'Object') {
+            if (arg.addr) {
+                msg.address = arg.addr;
+            }
+            if (arg.args) {
+                msg.append.apply(arg.args);
+            }
+        } else {
+            msg.append(arg);
+        }
+        binary = new K2.OSC.TBlob(msg.toBinary());
+    }
+    this.message += binary;
+    this.typetags += 'b';
+};
+
+K2.OSC.Bundle.prototype.toBinary = function () {
+    var binary = new K2.OSC.TString('#bundle');
+    binary = binary.concat(new K2.OSC.TTimeTag(this.timetag));
+    binary = binary.concat(this.message);
+    return binary;
+};
+
+////////////////////
+// OSC Encoder
+////////////////////
+
+K2.OSC.Encoder = function () {
+};
+
+K2.OSC.Encoder.prototype = {
+    encode: function () {
+        var binary;
+        if (arguments[0].toBinary) {
+            binary = arguments[0].toBinary();
+        } else {
+            // cheesy
+            var message = {};
+            K2.OSC.Message.apply(message, arguments);
+            binary = K2.OSC.Message.prototype.toBinary.call(message);
+        }
+        return binary;
+    }
+};
+
+////////////////////
+// OSC Message encoding and decoding functions
+////////////////////
+
+K2.OSC.ShortBuffer = function (type, buf, requiredLength)
+{
+    this.type = "ShortBuffer";
+    var message = "buffer [";
+    for (var i = 0; i < buf.length; i++) {
+        if (i) {
+            message += ", ";
+        }
+        message += buf.charCodeAt(i);
+    }
+    message += "] too short for " + type + ", " + requiredLength + " bytes required";
+    this.message = message;
+};
+
+K2.OSC.TString = function (value) { this.value = value; };
+K2.OSC.TString.prototype = {
+    typetag: 's',
+    decode: function (data) {
+        var end = 0;
+        while (data[end] && end < data.length) {
+            end++;
+        }
+        if (end == data.length) {
+            throw Error("OSC string not null terminated");
+        }
+        
+        //TODO
+        //http://nodejs.org/docs/v0.4.7/api/buffers.html#buffer.toString
+        //this.value = data.toString('ascii', 0, end);
+        
+        // This works in the browser
+        this.value  = String.fromCharCode.apply(null, data.slice(0,end));
+        
+        var nextData = parseInt(Math.ceil((end + 1) / 4.0) * 4, 10);
+        return data.slice(nextData);
+    },
+    encode: function () {
+        var len = Math.ceil((this.value.length + 1) / 4.0, 10) * 4;
+        var tempBuf = new Array (len);
+        return Struct.PackTo('>' + len + 's', tempBuf, 0, [ this.value ]);
+    }
+};
+
+K2.OSC.TInt = function (value) { this.value = value; };
+K2.OSC.TInt.prototype = {
+    typetag: 'i',
+    decode: function (data) {
+        if (data.length < 4) {
+            throw new ShortBuffer('int', data, 4);
+        }
+
+        this.value = Struct.Unpack('>i', data.slice(0, 4))[0];
+        return data.slice(4);
+    },
+    encode: function () {
+        var tempArray = new Array(4);
+        return Struct.PackTo('>i', tempArray, 0, [ this.value ]);
+    }
+};
+
+K2.OSC.TTime = function (value) { this.value = value; };
+K2.OSC.TTime.prototype = {
+    typetag: 't',
+    decode: function (data) {
+        if (data.length < 8) {
+            throw new ShortBuffer('time', data, 8);
+        }
+        this.value = Struct.Unpack('>LL', data.slice(0, 8))[0];
+        return data.slice(8);
+    },
+    encode: function (buf, pos) {
+        return Struct.PackTo('>LL', buf, pos, this.value);
+    }
+};
+
+K2.OSC.TFloat = function (value) { this.value = value; };
+K2.OSC.TFloat.prototype = {
+    typetag: 'f',
+    decode: function (data) {
+        if (data.length < 4) {
+            throw new ShortBuffer('float', data, 4);
+        }
+
+        this.value = Struct.Unpack('>f', data.slice(0, 4))[0];
+        return data.slice(4);
+    },
+    encode: function () {
+        var tempArray = new Array(4);
+        return Struct.PackTo('>f', tempArray, 0, [ this.value ]);
+    }
+};
+
+K2.OSC.TBlob = function (value) { this.value = value; };
+K2.OSC.TBlob.prototype = {
+    typetag: 'b',
+    decode: function (data) {
+        var length = Struct.Unpack('>i', data.slice(0, 4))[0];
+        var nextData = parseInt(Math.ceil((length) / 4.0) * 4, 10) + 4;
+        this.value = data.slice(4, length + 4);
+        return data.slice(nextData);
+    },
+    encode: function (buf, pos) {
+        var len = Math.ceil((this.value.length) / 4.0, 10) * 4;
+        return Struct.PackTo('>i' + len + 's', buf, pos, [len, this.value]);
+    }
+};
+
+K2.OSC.TDouble = function (value) { this.value = value; };
+K2.OSC.TDouble.prototype = {
+    typetag: 'd',
+    decode: function (data) {
+        if (data.length < 8) {
+            throw new ShortBuffer('double', data, 8);
+        }
+        this.value = Struct.Unpack('>d', data.slice(0, 8))[0];
+        return data.slice(8);
+    },
+    encode: function (buf, pos) {
+        return Struct.PackTo('>d', buf, pos, [ this.value ]);
+    }
+};
+
+// for each OSC type tag we use a specific constructor function to decode its respective data
+K2.OSC.tagToConstructor = { 'i': function () { return new K2.OSC.TInt(); },
+                         'f': function () { return new K2.OSC.TFloat(); },
+                         's': function () { return new K2.OSC.TString(); },
+                         'b': function () { return new K2.OSC.TBlob(); },
+                         'd': function () { return new K2.OSC.TDouble(); } };
+                         
+K2.OSC.decodeBundle = function (data) {
+    
+    var bundle = [];
+    var bundleElement = {time: null, args: []};
+    
+    // Decode the time tag
+    var timeTag = new K2.OSC.TTime();
+    data = timeTag.decode(data);
+    bundleElement.time = timeTag.value;
+    
+    while (data.length > 0) { 
+        // Get the data length
+        var dataLen = new K2.OSC.TInt();
+        data = dataLen.decode(data);
+        
+        // Decode the next message 
+        var message = K2.OSC.decode(data.slice(0, dataLen.value));
+        
+        // push it into the bundleElement
+        bundleElement.args.push(message);
+        
+        // advance in the data array
+        data = data.slice(dataLen.value);
+    }
+    bundle.push(bundleElement);
+    return bundle;
+};
+
+K2.OSC.decode = function (data) {
+    // this stores the decoded data as an array
+    var message = [];
+
+    // we start getting the <address> and <rest> of OSC msg /<address>\0<rest>\0<typetags>\0<data>
+    var address = new K2.OSC.TString();
+    data = address.decode(data);
+
+    message.push(address.value);
+    
+    if (address.value === "#bundle") {
+        // A bundle was detected, let's parse it
+        return K2.OSC.decodeBundle (data);
+    }
+
+    // if we have rest, maybe we have some typetags... let see...
+    if (data.length > 0) {
+        // now we advance on the old rest, getting <typetags>
+        var typetags = new K2.OSC.TString();
+        data = typetags.decode(data);
+        typetags = typetags.value;
+        // so we start building our message list
+
+        if (typetags[0] != ',') {
+            throw "invalid type tag in incoming OSC message, must start with comma";
+        }
+        for (var i = 1; i < typetags.length; i++) {
+            var constructor = K2.OSC.tagToConstructor[typetags[i]];
+            if (!constructor) {
+                throw "Unsupported OSC type tag " + typetags[i] + " in incoming message";
+            }
+            var argument = constructor();
+            data = argument.decode(data);
+            message.push(argument.value);
+        }
+    }
+
+    return message;
+};
+
+////////////////////
+// OSC Decoder
+////////////////////
+
+K2.OSC.Decoder = function() {
+    
+    
+};
+
+K2.OSC.Decoder.prototype.decode = function (msg) {
+    
+    // we decode the message getting a beautiful array with the form:
+    // [<address>, <typetags>, <values>*]
+    var decoded = K2.OSC.decode(msg);
+    try {
+        if (decoded) {
+            return decoded;
+        }
+    }
+    catch (e) {
+        console.log("can't decode incoming message: " + e.message);
+    }
+};
+
+K2.OSCClient = function (localClient, oscHandler) {
+    
+    this.oscHandler = oscHandler;
+    this.clientID = localClient.clientID;
+    this.oscCallback = localClient.oscCallback;
+    this.isListening =  localClient.isListening || true;
+};
+
+K2.OSCClient.prototype.sendOSC = function (oscMessage, args) {
+    // Encode it
+    var binaryMsg = this.oscHandler.OSCEncoder.encode(oscMessage);
+    var flags = args;
+    
+    if (typeof args === 'undefined') {
+        flags = {sendRemote : true, sendLocal : true};
+    }
+    if (flags.sendRemote !== false) {
+        if (this.oscHandler.proxyOK === true) {
+            this.oscHandler.socket.emit('osc', { osc: binaryMsg });
+        }
+    }
+    if (flags.sendLocal !== false) {
+        this.oscHandler.sendLocalMessage.apply (this.oscHandler, [binaryMsg, this.clientID]);
+    }
+};
+
+K2.OSCHandler = function (proxyServer, udpServers) {
+
+    this.localClients = {};
+    this.OSCDecoder = new K2.OSC.Decoder();
+    this.OSCEncoder = new K2.OSC.Encoder();
+    this.udpServers = udpServers || null;
+    this.proxyServer = proxyServer || null;
+    this.proxyOK = false;
+    this.proxyConnected = false;
+    
+    if (this.proxyServer !== null) {
+        
+        try {
+            this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
+        }
+        catch (e) {
+            console.error ("io.connect failed. No proxy server?");
+            return;
+        }
+        this.socket.on('admin', function (data) {
+            
+            // TODO check the version and the ID
+            console.log("Received an admin message: ", data);
+            // Let's assume everything is OK
+            this.proxyOK = true;
+            
+            // Send the host list to the server, if any
+            if (this.udpServers !== null) {
+                this.socket.emit ('admin', {type: 'udphosts', content: this.udpServers});
+            }
+            
+        }.bind(this));
+        
+        this.socket.on ('osc', function (data) {
+            
+            // OSC is received from the server
+            // Transform it in an array
+            var oscArray =  Array.prototype.slice.call(data.osc, 0);
+            console.log ("received osc from the server: " + oscArray);
+            
+            // Send it to the local clients
+            this.sendLocalMessage (oscArray);
+        }.bind(this));
+        
+        this.socket.on ('disconnect', function (data) {
+            
+            console.log ("socket disconnected");
+            this.proxyConnected = false;
+            this.proxyOK = false;
+            
+        }.bind(this));
+        
+        this.socket.on ('connect', function (data) {
+            
+            console.log ("socket connected");
+            this.proxyConnected = true;
+            
+        }.bind(this));
+    }
+};
+/* localclient = {clientID, oscCallback, isListening} */
+K2.OSCHandler.prototype.registerClient = function (localClient) {
+    this.localClients[localClient.clientID] = new K2.OSCClient (localClient, this);
+    return this.localClients[localClient.clientID];
+};
+
+K2.OSCHandler.prototype.unregisterClient = function (clientID) {
+    delete this.localClients[clientID];
+};
+
+K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
+    // Try to decode it
+    var received = this.OSCDecoder.decode (oscMessage);
+    console.log ("decoded OSC = " + received);
+    
+    // Send it to the callbacks, except for the clientID one
+    for (var client in this.localClients) {
+        if (this.localClients.hasOwnProperty(client)) {
+            var currClient = this.localClients[client];
+            if ((currClient.clientID !== clientID) && (currClient.isListening)) {
+                if (typeof currClient.oscCallback === 'function') {
+                    currClient.oscCallback(received);
+                }
+            }
+        }
+    }
+};
+
 function loadImageArray(args) {
 
     this.onCompletion = function() {
@@ -5121,6 +5654,18 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.drawImage(args.image, args.x, args.y);
     ctx.restore();
 };
+if (typeof window.define === "function" && window.define.amd) {
+  console.log ("AMD detected, setting define");  
+  window.define("kievII", [], function() {
+    console.log ("KievII: returning K2 object inside the define (AMD detected)");
+    return K2;
+  });
+}
+else {
+    console.log ("KievII: setting window.K2 (no AMD)");
+    window.kievII = window.K2 = K2;
+}
+
 /*
  * Hammer.JS
  * version 0.6.3

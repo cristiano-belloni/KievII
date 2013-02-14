@@ -1,12 +1,12 @@
-OSCClient = function (localClient, oscHandler) {
+K2.OSCClient = function (localClient, oscHandler) {
     
     this.oscHandler = oscHandler;
     this.clientID = localClient.clientID;
     this.oscCallback = localClient.oscCallback;
     this.isListening =  localClient.isListening || true;
-}
+};
 
-OSCClient.prototype.sendOSC = function (oscMessage, args) {
+K2.OSCClient.prototype.sendOSC = function (oscMessage, args) {
     // Encode it
     var binaryMsg = this.oscHandler.OSCEncoder.encode(oscMessage);
     var flags = args;
@@ -22,13 +22,13 @@ OSCClient.prototype.sendOSC = function (oscMessage, args) {
     if (flags.sendLocal !== false) {
         this.oscHandler.sendLocalMessage.apply (this.oscHandler, [binaryMsg, this.clientID]);
     }
-}
+};
 
-OSCHandler = function (proxyServer, udpServers) {
+K2.OSCHandler = function (proxyServer, udpServers) {
 
     this.localClients = {};
-    this.OSCDecoder = new Decoder();
-    this.OSCEncoder = new Encoder();
+    this.OSCDecoder = new K2.OSC.Decoder();
+    this.OSCEncoder = new K2.OSC.Encoder();
     this.udpServers = udpServers || null;
     this.proxyServer = proxyServer || null;
     this.proxyOK = false;
@@ -85,16 +85,16 @@ OSCHandler = function (proxyServer, udpServers) {
     }
 };
 /* localclient = {clientID, oscCallback, isListening} */
-OSCHandler.prototype.registerClient = function (localClient) {
-    this.localClients[localClient.clientID] = new OSCClient (localClient, this);
+K2.OSCHandler.prototype.registerClient = function (localClient) {
+    this.localClients[localClient.clientID] = new K2.OSCClient (localClient, this);
     return this.localClients[localClient.clientID];
 };
 
-OSCHandler.prototype.unregisterClient = function (clientID) {
+K2.OSCHandler.prototype.unregisterClient = function (clientID) {
     delete this.localClients[clientID];
 };
 
-OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
+K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     // Try to decode it
     var received = this.OSCDecoder.decode (oscMessage);
     console.log ("decoded OSC = " + received);
