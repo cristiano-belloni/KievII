@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 // var libFiles = ['common.js', 'graphic_elements/**/*.js', 'utilities/**/*.js'];
 var libFiles = ['common.js',
-		'version.js',
+		        'version.js',
                 'graphic_elements/UIElement.js',
                 'graphic_elements/UI.js',
                 'graphic_elements/Area.js',
