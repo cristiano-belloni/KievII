@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>KievII</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <script src="assets/js/rainbow/rainbow-custom.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/obsidian.css" rel="stylesheet" type="text/css">
+    <link href="css/kievii.css" rel="stylesheet" type="text/css">
+	
+	<style>
+	body {
+		background-color: rgb(43, 42, 42);
+	}
+	hr {
+		background-color: rgb(201, 201, 201);
+		height: 2px;
+	}
+	#imagedesc .thumbnail {
+		background-color: whitesmoke;
+	}
+	#imagedesc img {
+		border:2px solid #000000;
+	}
+	</style>
+	
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div id="mainNavbar" class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">KievII Host</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="index.html">KievII Library</a></li>
+              <li><a href="https://github.com/janesconference/KievIIHost">KievII Host <small>(github.com)</small></a></li>
+              <li><a href="https://github.com/janesconference/KievIIPlugins">Plugins <small>(github.com)</small></a></li>
+              <li class="divider-vertical"></li>
+              <li><a href="http://twitter.com/kievII_library"><i class="icon-user icon-white"></i> KievII on Twitter</a></li>
+              <li><a href="http://bitterspring.net/blog"><i class="icon-globe icon-white"></i> Author's blog</a></li>
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contacts<b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="mailto:janesconference@bitterspring.net"><i class="icon-envelope"></i> Author's E-mail</a></li>
+                    <li><a href="http://twitter.com/janesconference"><i class="icon-user"></i> Author's Twitter</a></li>
+                    <li><a href="http://groups.google.com/group/kievii"><i class="icon-globe"></i> Google Group</a></li>
+                  </ul>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" id='kievHostHero'>
+      	<!-- <img src="img/logo.png" style="float: right" alt="KievII" /> -->
+	      	<div class="row">
+		        <div class="span4">
+		        	<img class="centeredImage" style="max-width:80%;" src="img/logo_gear.png" alt="KievII" />
+		        </div>
+		        <div class="span6">
+			        <h1>KievII Host</h1>
+			        <p>Open Audio Plugin Host, based on Web Audio API</p>
+			        
+			        
+			          <a href="http://bitterspring.net/k2h/" class="btn btn-success btn-large" target = "_blank"> Launch KievII Host <small>v0.1.0</small> <i class="icon-play icon-white"></i> </a>
+			        
+			        <hr />
+			        <h6>Help KievII Host stay alive! Contribute with Paypal or Pledgie</h6>
+			        <h6><a class="btn btn-warning" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GVLGLRWSQU9F8&lc=US&item_name=KievII%20PayPal%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted">Paypal Donation</a> <a class="btn btn-warning" href="http://pledgie.com/campaigns/14967">Pledgie Donation</a></h6>
+		        </div>
+	      	</div>
+	      </div>
+		  
+		  <section id="gendesc">
+		  		<div class="row-fluid section-row">
+					<div class="span6 well">
+		  	  	  		<h2>What is KievII Host</h2>
+						<hr />
+		            	<p>KievII Host is an host application for KievII Audio Plugins. The plugins are loaded dynamically from <a href="https://github.com/janesconference/KievIIPlugins">a Github repository</a>, using the <a href="http://developer.github.com/v3/">GitHub API</a> and <a href="http://requirejs.org/">requirejs</a>.</p>
+						<p>Plugins use the <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">Web Audio API</a>. Therefore, to use KievII Host, you'll need a <a href="http://caniuse.com/#feat=audio-api">Web Audio API enabled browser</a>. Plugin in and out audio channels can be connected at will by the user. Plugins can communicate between them via <a href="http://opensoundcontrol.org/">Open Sound Control</a> (with <a href="https://github.com/janesconference/KievII/tree/master/comm">this implementation</a>).</p>
+					</div>
+					<div class="span6 well">
+		  	  	  		<h2>Write a KievII Host plugin</h2>
+						<hr />
+		            	<p>The K2H plugin specification is under active developement and its open to change and suggestions (just file an entry in KievII Host project <a href="https://github.com/janesconference/KievIIHost/issues">issue section</a>). For a preliminary overview on how to develop a plugin, take a look at this <a href="http://bitterspring.net/blog/2013/02/17/kievii-host-plugins/">blog post.</a></p>
+					</div>
+					
+				</div>
+		  </section>
+		  <section id="imagedesc">
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Input / output plugins</h2>
+							<hr />
+							<p>These plugins are loaded as soon as KievII Host starts. They are slightly different from other plugins, because they're preloaded at start, there can be only one instance of them and they're persistent (you can't close them).</p>
+							<p>These plugins are not part of the plugin repository: they're implemented in the host (they're local) and are automatically loaded before all the other plugins.</p>
+							<p>They represent, respectively, the external audio source (for example, the microphone in in your sound card) and the final audio source (the speaker out of your soundcard). Every plugin, or chain of plugins, must be connected to the audio output plugin to actually hear its audio output(s), and every plugin that is connected to the audio in plugin will receive the external audio in stream in real time.</p>
+							<p>In most browser, you can activate the Audio In plugin by allowing the browser to use the Web Audio Input (tipically, a message bar will be displayed by the browser, asking to allow the audio input and prompting the user to select which audio in has to be used). Depending on the version of the browser, you might need to <a href="http://www.phpied.com/webaudio-live-input/">enable Web Audio Input</a>.</p>
+							<p>If the Audio input plugin is not (yet) activated, the Audio Plugin will display a ticked-off microphone icon.</p>
+								
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/inout.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Adding and deleting plugins</h2>
+							<hr />
+							<p>You can add new instance of a plugin using the Add Plugin button located in the top bar of the interface. The plugin will load its resources, if any, and it will be added to the workspace. You can delete an instance of a plugin (and delete all its connections) clicking on the &times button located in the top right of the window title bar. </p>
+							<p>Please note that many instances of the same plugin can be added to the workspace: each one will work indipendently from the others</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/plugmenu.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Connecting plugins</h2>
+							<hr />
+							<p>You can connect plugins by dragging one of their audio outputs (black dots) to another plugin's audio input (white dots). While dragging an output, all the plugin inputs will be highlighted, to provide a visual aid.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/connecting.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Connected plugins</h2>
+							<hr />
+							<p>When two plugins respective output and input are connected, the line between them will remain attached, even if you move the plugin windows (by dragging on their titlebar). At audio level, the audio output stream of the connecting plugin will be passed as an input to the receiving plugin.</p>
+							<p>
+								A connection can be destroyed either by double clicking on it, by dragging it off the audio input connector or by removing one of the connected plugin instances from the workspace (using the &times button). When a plugin is removed, all of its connections are destroyed.
+							</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/connected.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Multiple input connections</h2>
+							<hr />
+							<p>A plugin audio output can have only one connection departing from it, while a plugin audio input can have multiple connections entering it (this is by design). When a plugin has more than one connection connected to one of its input, the corresponding audio streams will be automatically mixed.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/doubleend.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Duplicating audio outputs</h2>
+							<hr />
+							<p>Since a plugin audio output can have only one connection departing from it, there is a plugin to exactly duplicate an audio output. Just connect the audio output you want to duplicate to the <a href="https://github.com/janesconference/KievIIPlugins/tree/master/plugins/Duplicator">Duplicator</a> plugin's input, and you will have a pair of identical outputs on the other side. You can chain Duplicators at will.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/duplicator.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Mixing audio sources</h2>
+							<hr />
+							<p><a href="https://github.com/janesconference/KievIIPlugins/tree/master/plugins/KMX-001">KMX-001</a> is a simple mixer plugin, with 4 input channels. You can adjust the channel level with the sliders and the channel gains and trim with the corresponding knobs. You can also set the master output volume with the Master Volume knob.</p>
+							<p>The channel sliders affect the input level, while the trim knobs affect the channel output level (that is, after the Low, Mid and High gains are applied). Any trim value greater than the middle value will amplify the channel output.
+							</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/kmx.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Playing audio samples</h2>
+							<hr />
+							<p><a href="https://github.com/janesconference/KievIIPlugins/tree/master/plugins/KSP-001">KSP-001</a> is a simple sample player. To load a sample, just drag and drop an audio file on top of it. When decoded, the sample waveform will appear on the plugin screen. You can then play it back with the keyboard.</p>
+							<p>The original sample will be mapped to the first key (leftmost C). Every other key will play back the sample with its speed adjusted to match the pitch difference.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/ksp.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Changing the pitch</h2>
+							<hr />
+							<p>KSP-001 will map the sample to the first key and just change the playback speed (and the pitch) if you press the other keys. To change the pitch of an audio source without changing the playback time, use <a href="https://github.com/janesconference/KievIIPlugins/tree/master/plugins/Voron">Voron</a>, a phase-vocoder based pitch shifter. The big knob changes the pitch from -1 oct (min value) to +1 oct (max value). If the disc / cont switch is set to "continuous", the pitch shifting will be continuous, when turning the knob. If it is set to "discrete", it will be applied in steps of semitones.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/voron.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Wah Wah</h2>
+							<hr />
+							<p>Tuna Wah-Wah is a Wah Wah plugin implemented on top of the excellent <a href="https://github.com/Dinahmoe/tuna">Tuna</a> library by <a href="www.dinahmoe.com">DinahMoe</a>. Its GUI maps the parameters of a WahWah node (minus the bypass parameter, that will be implemented in the future, probably host-side).</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/delay2.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Delay</h2>
+							<hr />
+							<p>Tuna Delay is a delay plugin, implemented on top of the <a href="https://github.com/Dinahmoe/tuna">Tuna</a> delay node.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/delay.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Phaser</h2>
+							<hr />
+							<p>A phaser, yet another plugin in the <a href="https://github.com/Dinahmoe/tuna">Tuna</a> plugin series (phaser node).</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/phaser.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>Tremolo</h2>
+							<hr />
+							<p>This is the <a href="https://github.com/Dinahmoe/tuna">Tuna</a> Tremolo plugin (tremolo node).</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/tremolo.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
+							<h2>BBC Ring Modulator</h2>
+							<hr />
+							<p><a href="https://github.com/janesconference/KievIIPlugins/tree/master/plugins/BBCRingModulator">This</a> is an effect inspired to the BBC site implementation of their vintage <a href="http://webaudio.prototyping.bbc.co.uk/ring-modulator/">Ring Modulator</a></p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/bbc.png">
+		                  </a>
+		                </div>
+		            </div>
+			</section>
+      
+      
+      <footer>
+        <p>&copy; KievII.net / Bitterspring.net 2013</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="bootstrap/js/bootstrap.js"></script>
+     
+     <script type="text/javascript">
+         $('.dropdown-toggle').dropdown();
+     </script>
+     
+  </body>
+</html>

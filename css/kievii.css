@@ -20,6 +20,10 @@ body {
     max-width: 100%
 }
 
+.section-row {
+	margin-bottom: 20px;
+}
+
 /* Gradient color1 - color2 - color1 */
         
 hr.style-one {
