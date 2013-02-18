@@ -107,7 +107,17 @@
 		  	  	  		<h2>What is KievII Host</h2>
 						<hr />
 		            	<p>KievII Host is an host application for KievII Audio Plugins. The plugins are loaded dynamically from <a href="https://github.com/janesconference/KievIIPlugins">a Github repository</a>, using the <a href="http://developer.github.com/v3/">GitHub API</a> and <a href="http://requirejs.org/">requirejs</a>.</p>
-						<p>Plugins use the <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">Web Audio API</a>. Therefore, to use KievII Host, you'll need a <a href="http://caniuse.com/#feat=audio-api">Web Audio API enabled browser</a>. Plugin in and out audio channels can be connected at will by the user. Plugins can communicate between them via <a href="http://opensoundcontrol.org/">Open Sound Control</a> (with <a href="https://github.com/janesconference/KievII/tree/master/comm">this implementation</a>).</p>
+						<p>Plugins use the <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">Web Audio API</a>. Therefore, to use KievII Host, you'll need a <a href="http://caniuse.com/#feat=audio-api">Web Audio API enabled browser</a> <em>(you'll need to <a href="http://updates.html5rocks.com/2012/09/Live-Web-Audio-Input-Enabled">enable Web Audio Input in chrome://flags</a> to use the WAI functionality, too. Plus, Safari 6 seems not to be supporting WAI yet).</em>
+						    <p>Plugin in and out audio channels can be connected at will by the user. Plugins can communicate between them via <a href="http://opensoundcontrol.org/">Open Sound Control</a> (with <a href="https://github.com/janesconference/KievII/tree/master/comm">this implementation</a>).</p>
+						<div class="alert alert-error fade in">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <p><strong>Important info:</strong> Chrome on Linux has some known issues with Web Audio API:</p>
+                                <ul>
+                                    <li>Duplicating gain nodes doubles playback pitch (see <a href="http://stackoverflow.com/questions/14756907/web-audio-node-connected-to-two-gain-nodes-connected-to-destination-duplicates">this bug on stackoverflow</a>).</li>
+                                    <li>Chrome on Linux seemingly doesn't support Web Audio input, even setting the right chrome flags (it seems that <a href="http://updates.html5rocks.com/2012/09/Live-Web-Audio-Input-Enabled">WAI is only supported in OSX and Windows</a>, btw).</li>
+                                    <li>BBC Modulator performs poorly on Chrome / Linux (<a href="http://t.co/EEy3LaeZ">the original BBC implementation presents that kind of problems too</a>).</li>
+                                </ul>
+                        </div>
 					</div>
 					<div class="span6 well">
 		  	  	  		<h2>Write a KievII Host plugin</h2>
