@@ -92,7 +92,7 @@
 			        <p>Open Audio Plugin Host, based on Web Audio API</p>
 			        
 			        
-			          <a href="http://bitterspring.net/k2h/" class="btn btn-success btn-large" target = "_blank"> Launch KievII Host <small>v0.1.2</small> <i class="icon-play icon-white"></i> </a>
+			          <a href="http://bitterspring.net/k2h/" class="btn btn-success btn-large" target = "_blank"> Launch KievII Host <small>v0.1.3</small> <i class="icon-play icon-white"></i> </a>
 			        
 			        <hr />
 			        <h6>Help KievII Host stay alive! Contribute with Paypal or Pledgie</h6>
@@ -134,9 +134,10 @@
 							<hr />
 							<p>These plugins are loaded as soon as KievII Host starts. They are slightly different from other plugins, because they're preloaded at start, there can be only one instance of them and they're persistent (you can't close them).</p>
 							<p>These plugins are not part of the plugin repository: they're implemented in the host (they're local) and are automatically loaded before all the other plugins.</p>
-							<p>They represent, respectively, the external audio source (for example, the microphone in in your sound card) and the final audio source (the speaker out of your soundcard). Every plugin, or chain of plugins, must be connected to the audio output plugin to actually hear its audio output(s), and every plugin that is connected to the audio in plugin will receive the external audio in stream in real time.</p>
+							<p>They represent, respectively, the external audio source (for example, the microphone in in your sound card) and the final audio destination (the speaker out of your soundcard).</p>
 							<p>In most browser, you can activate the Audio In plugin by allowing the browser to use the Web Audio Input (tipically, a message bar will be displayed by the browser, asking to allow the audio input and prompting the user to select which audio in has to be used). Depending on the version of the browser, you might need to <a href="http://www.phpied.com/webaudio-live-input/">enable Web Audio Input</a>.</p>
 							<p>If the Audio input plugin is not (yet) activated, the Audio Plugin will display a ticked-off microphone icon.</p>
+							<p>You can click on the Audio Out viewport to change the visualization mode (currently volume, frequency spectrum and none).</p>
 								
 						</div>
 		                <div class = "span6">
@@ -211,6 +212,18 @@
 		            </div>
 		            <div class="row-fluid section-row">
 						<div class = "span6 well">
+							<h2>Coding, right in the GUI</h2>
+							<hr />
+							<p>CodeEdit is a plugin that allows you to code directly your plugin. It is a one-input, one-output plugin that gives you an environment in which <code>this.source</code> and <code>this.dest</code> are the input and output <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#AudioNode-section">nodes</a>, while <code>this.context</code> is the <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#AudioContext-section">Web Audio context</a>. From there, you can code your effect or instrument right in the plugin GUI, or just experiment with Web Audio API. Just press Cmd-S to execute your code.</p>
+						</div>
+		                <div class = "span6">
+		                  <a href="#" class="thumbnail">
+		                    <img src="./assets/images/k2h/codeedit.png">
+		                  </a>
+		                </div>
+		            </div>
+		            <div class="row-fluid section-row">
+						<div class = "span6 well">
 							<h2>Mixing audio sources</h2>
 							<hr />
 							<p><a href="https://github.com/janesconference/KievIIPlugins/tree/master/plugins/KMX-001">KMX-001</a> is a simple mixer plugin, with 4 input channels. You can adjust the channel level with the sliders and the channel gains and trim with the corresponding knobs. You can also set the master output volume with the Master Volume knob.</p>
@@ -245,6 +258,18 @@
                         <div class = "span6">
                           <a href="#" class="thumbnail">
                             <img src="./assets/images/k2h/mstar.png">
+                          </a>
+                        </div>
+                    </div>
+		            <div class="row-fluid section-row">
+                        <div class = "span6 well">
+                            <h2>Matt Diamond's Drone</h2>
+                            <hr />
+                            <p>This is a K2 Plugin implementation of <a href="http://matt-diamond.com/">Matt Diamond</a>'s <a href="http://matt-diamond.com/drone.html">Javascript Drone</a>, modified to avoid interrupting sound while changing frequencies. I love drones and I loved Matt's implementation, so here's the plugin version.</p>
+                        </div>
+                        <div class = "span6">
+                          <a href="#" class="thumbnail">
+                            <img src="./assets/images/k2h/mddrone.png">
                           </a>
                         </div>
                     </div>
