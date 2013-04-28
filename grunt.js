@@ -27,9 +27,8 @@ var libFiles = ['common.js',
                 'utilities/Utilities.js',
 		        'amd.js'
                 ];
-var thirdParty = ['third_part/hammer.js/hammer.js'];
 
-var allFiles = libFiles.concat(thirdParty);
+var allFiles = libFiles;
 
   grunt.loadNpmTasks('grunt-strip');
 
