@@ -1,0 +1,13 @@
+{
+  "name": "KievII",
+  "version": "0.5.0",
+  "main": "dist/kievII.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "hammerjs": "#1.0.5"
+  },
+}
