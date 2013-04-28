@@ -1,3 +1,5 @@
+(function () {
+
 /* The K2 element! */
 var K2 = {};
 

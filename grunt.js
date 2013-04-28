@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
-// var libFiles = ['common.js', 'graphic_elements/**/*.js', 'utilities/**/*.js'];
-var libFiles = ['common.js',
-		        'version.js',
+var before = ['common.js'];
+var after = ['amd.js'];
+var libFiles = ['version.js',
                 'graphic_elements/UIElement.js',
                 'graphic_elements/UI.js',
                 'graphic_elements/Area.js',
@@ -25,10 +25,9 @@ var libFiles = ['common.js',
                 'comm/osc.js',
                 'comm/OSCHandler.js',
                 'utilities/Utilities.js',
-		        'amd.js'
-                ];
+		        ];
 
-var allFiles = libFiles;
+var allFiles = before.concat(libFiles, after);
 
   grunt.loadNpmTasks('grunt-strip');
 
@@ -37,18 +36,20 @@ var allFiles = libFiles;
     lint: {
       all: libFiles
     },
-    jshint: {
-      options: {
-        browser: true,
-        smarttabs: true,
-      }
-    },
    concat: {
     dist: {
       src: allFiles,
       dest: 'dist/kievII.js'
     }
    },
+    jshint: {
+        beforeconcat: libFiles,
+        afterconcat: ['dist/kievII.js'],
+          options: {
+              browser: true,
+              smarttabs: true,
+          }
+      },
    min: {
     dist: {
       src: 'dist/kievII.js',
@@ -70,8 +71,8 @@ var allFiles = libFiles;
   });
 
   // Default task.
-  grunt.registerTask('default', 'lint concat min');
+  grunt.registerTask('default', 'concat lint min');
   
-  grunt.registerTask('release', 'lint concat strip min');
+  grunt.registerTask('release', 'concat lint strip min');
 
 };

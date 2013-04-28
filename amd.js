@@ -9,3 +9,5 @@ else {
     console.log ("KievII: setting window.K2 (no AMD)");
     window.kievII = window.K2 = K2;
 }
+
+})();

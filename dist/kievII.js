@@ -1,3 +1,5 @@
+(function () {
+
 /* The K2 element! */
 var K2 = {};
 
@@ -536,19 +538,19 @@ K2.UI = function(engine, parameters) {
 	
 	if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-		console.log ("touchstart supported");
+		0;
 	}
     else {
 		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-		console.log ("no touchstart, supporting mousedown");
+		0;
 	}
 	if (isEventSupported('touchend')) {
 		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
-		console.log ("touchend supported");
+		0;
     }
     else {
 		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-		console.log ("no touchend, supporting mouseup");
+		0;
     }
     // TODO see if it's not superseded by ondrag
     this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
@@ -1148,26 +1150,26 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         if ((x > left_min_prox) &&  x < (left_max_prox) && this.dragBorders.left === true) {
             // We're next to the left side
             this.leftSide = true;
-            console.log ("Left side click detected");
+            0;
         }
         if ((x > right_min_prox) &&  x < (right_max_prox) && this.dragBorders.right === true) {
             // We're next to the right side
             this.rightSide = true;
-            console.log ("Right side click detected");
+            0;
         }
         if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.dragBorders.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
-            console.log ("Bottom side click detected");
+            0;
         }
         if ((y > top_min_prox) &&  y < (top_max_prox) && this.dragBorders.top === true) {
             // We're next to the top side
             this.topSide = true;
-            console.log ("Top side click detected");
+            0;
         }
         
         if (this.isInArea (x,y)) {
-            console.log ("clicked inside!");
+            0;
             this.inside = true;
             this.startPoint = [x,y];
         }
@@ -2162,7 +2164,7 @@ K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
 
 K2.Bar.prototype.setValue = function(slot, value) {
 
-	console.log('Setting ' + slot + ' to ' + value);
+	0;
 
     if (slot == 'barPos') {
         if (value[0] <= this.width) {
@@ -2499,11 +2501,11 @@ K2.ClickBar.prototype.getready = function(args) {
 
 K2.ClickBar.prototype.isInROI = function(x, y) {
 
-    console.log ('y = ', y, "roitop = ", this.ROITop);
+    0;
     if ((x >= this.ROILeft) && (y >= this.ROITop - this.landingHeight)) {
-            console.log ("1st");
+            0;
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight + this.landingHeight))) {
-            console.log ("In ROI!");
+            0;
             return true;
         }
     }
@@ -2514,9 +2516,9 @@ K2.ClickBar.prototype.isInROI = function(x, y) {
 K2.ClickBar.prototype.calculateValue = function (x,y) {
     
     var clickedHeigth = y - this.yOrigin;
-    console.log ("heigth on click is ", clickedHeigth, " pixels"); 
+    0; 
     var clickedValue = 1 - (clickedHeigth / this.height);
-    console.log ("for a value of ", clickedValue, " (", clickedHeigth, " / ", this.height, ")");
+    0;
         
     if (clickedValue > this.maxValue) {
         clickedValue = this.maxValue;
@@ -2682,14 +2684,14 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	0;
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	console.log('radiant atan ', radtan);
+	0;
 	
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
-	console.log('degree atan ', degreetan);
+	0;
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	return range_val;
@@ -2699,11 +2701,11 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
-	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
+	0;
 	
 	if ((dist > this.radius - this.thickness / 2) && (dist < this.radius + this.thickness / 2)) {
 		
-		console.log("down / tapped Inside the dial");
+		0;
 		this.triggered = true;
 
 		var range_val = this.calculateAngle (x,y);
@@ -2720,7 +2722,7 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touch
 K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
 	
 	if (this.triggered) {
-		console.log ("triggered mousemove");
+		0;
 		var range_val = this.calculateAngle (x,y);
 		//this.prevValue = this.values.gaugevalue;
 		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
@@ -3028,18 +3030,18 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	0;
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	console.log('radiant atan ', radtan);
+	0;
 	// normalize arctan
 	if (radtan < 0) {
         radtan += (2 * Math.PI);
     }
-	console.log ('radiant atan, normalized, is ', radtan);
+	0;
 	
 	var degreetan = radtan * (180 / Math.PI);
-	console.log('degree atan is', degreetan);
+	0;
 	
 	// now we have a value from 0 to 360, where 0 is the lowest 
 	// intersection with the circumference. degree increases anticlockwise
@@ -3060,7 +3062,7 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	}
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-	console.log ('value is', range_val);
+	0;
 	return range_val;
 	
 };
@@ -3345,16 +3347,16 @@ K2.RotKnob.prototype.getRangedAmount = function (angle) {
     var endAngOffset = this.stopAngValue - this.initAngValue;
     var startAngOffset = this.startAngValue - this.initAngValue;
     
-    console.log ("start -> end", startAngOffset, endAngOffset);
+    0;
     
     if ((angle > this.initAngValue) && (startAngOffset < 0)) {
-        console.log ("Angle now is", angle);
+        0;
         angle = -(360 - angle);
     }
     
     var rangedAng = K2.MathUtils.linearRange(startAngOffset, endAngOffset, 0, 1, angle);
     
-    console.log ("knob value", rangedAng);
+    0;
     
     if (rangedAng < 0) {
         rangedAng = 0;
@@ -3383,10 +3385,10 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var centerX = this.xOrigin + this.width / 2;
     var centerY = this.yOrigin + this.height / 2;
     
-    console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+    0;
     
     var radtan = Math.atan2 (x - centerX, y - centerY);
-    console.log('radiant atan ', radtan);
+    0;
     
     var degreetan = radtan * (180 / Math.PI);
     degreetan = 180 - degreetan;
@@ -3399,7 +3401,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     }
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
-    console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
+    0;
     
     var range_val = this.getRangedAmount (Math.floor(degreeOffset));
     
@@ -3520,7 +3522,7 @@ K2.RotKnob.prototype.setValue = function(slot, value) {
         stepped_new_value = value;
     }
 
-    console.log('Value is: ', stepped_new_value);
+    0;
 
     // Now, we call the superclass
     K2.RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
@@ -3842,7 +3844,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
             }
 
             else {
-                console.error('orientation invalid, this will probably break something');
+                0;
             }
 
             // Click on button is completed, the button is no more triggered.
@@ -3860,7 +3862,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
 
 K2.Wavebox.prototype.setValue = function(slot, value) {
 
-	console.log('Setting ' + slot + ' to ' + value);
+	0;
 
     // Won't call the parent: this element has a custom way to set values.
 
@@ -3915,11 +3917,11 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if (slot == 'yPos') {
         if (value <= this.height) {
-            console.log('Setting yPos to ' + value);
+            0;
             this.values.yPos = value;
         }
         else {
-            console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
+            0;
         }
     }
 };
@@ -3956,7 +3958,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 binFunction = this.calculateBinNone;
             }
             else {
-                console.log('Error: no binMethod!');
+                0;
             }
 
             var i = 0;
@@ -4201,7 +4203,7 @@ var CurveEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4264,7 +4266,7 @@ var CurveEditor = function(parameters) {
 
                 that.status.curveArray.splice(that.status.selected + 1, 0, newCurveArgs.ID);
             }
-            console.log("Reorganizing elements");
+            0;
             that.reorganizeElements();
             that.ui.refresh();
         };
@@ -4282,7 +4284,7 @@ var CurveEditor = function(parameters) {
     };
 
     this.addCurve = function(curveType, grade, first_point, last_point) {
-        console.log("Adding a curve");
+        0;
         var lastElementID;
 
         // Get a deep copy of the template object
@@ -4336,7 +4338,7 @@ var CurveEditor = function(parameters) {
 	
 	        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
 	            // Set the curve to paint only its first handle
-	            console.log("Remove something before adding stuff");
+	            0;
 	            // Undo the previous paintTerminalPoints inference
 	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
 	            return;
@@ -4377,7 +4379,7 @@ var CurveEditor = function(parameters) {
         var prevID;
         
         if (this.status.selected !== null) {
-            console.log("Deleting selected curve " + this.status.selected);
+            0;
 
             //arr = arr.filter(function(){return true});
 
@@ -4422,7 +4424,7 @@ var CurveEditor = function(parameters) {
         var i;
         if (this.status.selected !== null) {
 
-            console.log("Transforming selected curve " + this.status.selected);
+            0;
 
             var bezierN = grade;
 
@@ -4433,11 +4435,11 @@ var CurveEditor = function(parameters) {
 
             if (curveNow === curveType) {
                 if (curveType !== 'bezier') {
-                    console.log("Identical type, doing nothing");
+                    0;
                     return;
                 } else {
                     if (bezierN === curveGrade) {
-                        console.log("Identical type and grade, doing nothing");
+                        0;
                         return;
                     }
                 }
@@ -4562,7 +4564,7 @@ var AreaEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4631,7 +4633,7 @@ var AreaEditor = function(parameters) {
     };
 
     this.addArea = function(width, height) {
-        console.log("Adding an area");
+        0;
         var lastElement;
 
         // Get a deep copy of the template object
@@ -4758,11 +4760,11 @@ var BarSelect = function (parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             var width;
             
             if (slot === 'dragStart') {
-                console.log ('Storing dragStart value ', value);
+                0;
                 that.dragStart = value;
                 
                 if (that.areaElement === null) {
@@ -5292,7 +5294,7 @@ K2.OSC.Decoder.prototype.decode = function (msg) {
         }
     }
     catch (e) {
-        console.log("can't decode incoming message: " + e.message);
+        0;
     }
 };
 
@@ -5338,13 +5340,13 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
         }
         catch (e) {
-            console.error ("io.connect failed. No proxy server?");
+            0;
             return;
         }
         this.socket.on('admin', function (data) {
             
             // TODO check the version and the ID
-            console.log("Received an admin message: ", data);
+            0;
             // Let's assume everything is OK
             this.proxyOK = true;
             
@@ -5360,7 +5362,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             // OSC is received from the server
             // Transform it in an array
             var oscArray =  Array.prototype.slice.call(data.osc, 0);
-            console.log ("received osc from the server: " + oscArray);
+            0;
             
             // Send it to the local clients
             this.sendLocalMessage (oscArray);
@@ -5368,7 +5370,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('disconnect', function (data) {
             
-            console.log ("socket disconnected");
+            0;
             this.proxyConnected = false;
             this.proxyOK = false;
             
@@ -5376,7 +5378,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('connect', function (data) {
             
-            console.log ("socket connected");
+            0;
             this.proxyConnected = true;
             
         }.bind(this));
@@ -5395,7 +5397,7 @@ K2.OSCHandler.prototype.unregisterClient = function (clientID) {
 K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     // Try to decode it
     var received = this.OSCDecoder.decode (oscMessage);
-    console.log ("decoded OSC = " + received);
+    0;
     
     // Send it to the callbacks, except for the clientID one
     for (var client in this.localClients) {
@@ -5655,794 +5657,15 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.restore();
 };
 if (typeof window.define === "function" && window.define.amd) {
-  console.log ("AMD detected, setting define");  
+  0;  
   window.define("kievII", [], function() {
-    console.log ("KievII: returning K2 object inside the define (AMD detected)");
+    0;
     return K2;
   });
 }
 else {
-    console.log ("KievII: setting window.K2 (no AMD)");
+    0;
     window.kievII = window.K2 = K2;
 }
 
-/*
- * Hammer.JS
- * version 0.6.3
- * author: Eight Media
- * https://github.com/EightMedia/hammer.js
- * Licensed under the MIT license.
- */
-function Hammer(element, options, undefined)
-{
-    var self = this;
-
-    var defaults = {
-        // prevent the default event or not... might be buggy when false
-        prevent_default    : false,
-        css_hacks          : true,
-
-        swipe              : true,
-        swipe_time         : 200,   // ms
-        swipe_min_distance : 20, // pixels
-
-        drag               : true,
-        drag_vertical      : true,
-        drag_horizontal    : true,
-        // minimum distance before the drag event starts
-        drag_min_distance  : 20, // pixels
-
-        // pinch zoom and rotation
-        transform          : true,
-        scale_treshold     : 0.1,
-        rotation_treshold  : 15, // degrees
-
-        tap                : true,
-        tap_double         : true,
-        tap_max_interval   : 300,
-        tap_max_distance   : 10,
-        tap_double_distance: 20,
-
-        hold               : true,
-        hold_timeout       : 500
-    };
-    options = mergeObject(defaults, options);
-
-    // some css hacks
-    (function() {
-        if(!options.css_hacks) {
-            return false;
-        }
-
-        var vendors = ['webkit','moz','ms','o',''];
-        var css_props = {
-            "userSelect": "none",
-            "touchCallout": "none",
-            "userDrag": "none",
-            "tapHighlightColor": "rgba(0,0,0,0)"
-        };
-
-        var prop = '';
-        for(var i = 0; i < vendors.length; i++) {
-            for(var p in css_props) {
-                prop = p;
-                if(vendors[i]) {
-                    prop = vendors[i] + prop.substring(0, 1).toUpperCase() + prop.substring(1);
-                }
-                element.style[ prop ] = css_props[p];
-            }
-        }
-    })();
-
-    // holds the distance that has been moved
-    var _distance = 0;
-
-    // holds the exact angle that has been moved
-    var _angle = 0;
-
-    // holds the direction that has been moved
-    var _direction = 0;
-
-    // holds position movement for sliding
-    var _pos = { };
-
-    // how many fingers are on the screen
-    var _fingers = 0;
-
-    var _first = false;
-
-    var _gesture = null;
-    var _prev_gesture = null;
-
-    var _touch_start_time = null;
-    var _prev_tap_pos = {x: 0, y: 0};
-    var _prev_tap_end_time = null;
-
-    var _hold_timer = null;
-
-    var _offset = {};
-
-    // keep track of the mouse status
-    var _mousedown = false;
-
-    var _event_start;
-    var _event_move;
-    var _event_end;
-
-    var _has_touch = ('ontouchstart' in window);
-
-
-    /**
-     * option setter/getter
-     * @param   string  key
-     * @param   mixed   value
-     * @return  mixed   value
-     */
-    this.option = function(key, val) {
-        if(val != undefined) {
-            options[key] = val;
-        }
-
-        return options[key];
-    };
-
-
-    /**
-     * angle to direction define
-     * @param  float    angle
-     * @return string   direction
-     */
-    this.getDirectionFromAngle = function( angle ) {
-        var directions = {
-            down: angle >= 45 && angle < 135, //90
-            left: angle >= 135 || angle <= -135, //180
-            up: angle < -45 && angle > -135, //270
-            right: angle >= -45 && angle <= 45 //0
-        };
-
-        var direction, key;
-        for(key in directions){
-            if(directions[key]){
-                direction = key;
-                break;
-            }
-        }
-        return direction;
-    };
-
-
-    /**
-     * destroy events
-     * @return  void
-     */
-    this.destroy = function() {
-        if(_has_touch) {
-            removeEvent(element, "touchstart touchmove touchend touchcancel", handleEvents);
-        }
-        // for non-touch
-        else {
-            removeEvent(element, "mouseup mousedown mousemove", handleEvents);
-            removeEvent(element, "mouseout", handleMouseOut);
-        }
-    };
-
-
-    /**
-     * count the number of fingers in the event
-     * when no fingers are detected, one finger is returned (mouse pointer)
-     * @param  event
-     * @return int  fingers
-     */
-    function countFingers( event )
-    {
-        // there is a bug on android (until v4?) that touches is always 1,
-        // so no multitouch is supported, e.g. no, zoom and rotation...
-        return event.touches ? event.touches.length : 1;
-    }
-
-
-    /**
-     * get the x and y positions from the event object
-     * @param  event
-     * @return array  [{ x: int, y: int }]
-     */
-    function getXYfromEvent( event )
-    {
-        event = event || window.event;
-
-        // no touches, use the event pageX and pageY
-        if(!_has_touch) {
-            var doc = document,
-                body = doc.body;
-
-            return [{
-                x: event.pageX || event.clientX + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && doc.clientLeft || 0 ),
-                y: event.pageY || event.clientY + ( doc && doc.scrollTop || body && body.scrollTop || 0 ) - ( doc && doc.clientTop || body && doc.clientTop || 0 )
-            }];
-        }
-        // multitouch, return array with positions
-        else {
-            var pos = [], src;
-            for(var t=0, len=event.touches.length; t<len; t++) {
-                src = event.touches[t];
-                pos.push({ x: src.pageX, y: src.pageY });
-            }
-            return pos;
-        }
-    }
-
-
-    /**
-     * calculate the angle between two points
-     * @param   object  pos1 { x: int, y: int }
-     * @param   object  pos2 { x: int, y: int }
-     */
-    function getAngle( pos1, pos2 )
-    {
-        return Math.atan2(pos2.y - pos1.y, pos2.x - pos1.x) * 180 / Math.PI;
-    }
-
-    /**
-     * calculate the distance between two points
-     * @param   object  pos1 { x: int, y: int }
-     * @param   object  pos2 { x: int, y: int }
-     */
-    function getDistance( pos1, pos2 )
-    {
-        var x = pos2.x - pos1.x, y = pos2.y - pos1.y;
-        return Math.sqrt((x * x) + (y * y));
-    }
-
-
-    /**
-     * calculate the scale size between two fingers
-     * @param   object  pos_start
-     * @param   object  pos_move
-     * @return  float   scale
-     */
-    function calculateScale(pos_start, pos_move)
-    {
-        if(pos_start.length == 2 && pos_move.length == 2) {
-            var start_distance = getDistance(pos_start[0], pos_start[1]);
-            var end_distance = getDistance(pos_move[0], pos_move[1]);
-            return end_distance / start_distance;
-        }
-
-        return 0;
-    }
-
-
-    /**
-     * calculate the rotation degrees between two fingers
-     * @param   object  pos_start
-     * @param   object  pos_move
-     * @return  float   rotation
-     */
-    function calculateRotation(pos_start, pos_move)
-    {
-        if(pos_start.length == 2 && pos_move.length == 2) {
-            var start_rotation = getAngle(pos_start[1], pos_start[0]);
-            var end_rotation = getAngle(pos_move[1], pos_move[0]);
-            return end_rotation - start_rotation;
-        }
-
-        return 0;
-    }
-
-
-    /**
-     * trigger an event/callback by name with params
-     * @param string name
-     * @param array  params
-     */
-    function triggerEvent( eventName, params )
-    {
-        // return touches object
-        params.touches = getXYfromEvent(params.originalEvent);
-        params.type = eventName;
-
-        // trigger callback
-        if(isFunction(self["on"+ eventName])) {
-            self["on"+ eventName].call(self, params);
-        }
-    }
-
-
-    /**
-     * cancel event
-     * @param   object  event
-     * @return  void
-     */
-
-    function cancelEvent(event)
-    {
-        event = event || window.event;
-        if(event.preventDefault){
-            event.preventDefault();
-            event.stopPropagation();
-        }else{
-            event.returnValue = false;
-            event.cancelBubble = true;
-        }
-    }
-
-
-    /**
-     * reset the internal vars to the start values
-     */
-    function reset()
-    {
-        _pos = {};
-        _first = false;
-        _fingers = 0;
-        _distance = 0;
-        _angle = 0;
-        _gesture = null;
-    }
-
-
-    var gestures = {
-        // hold gesture
-        // fired on touchstart
-        hold : function(event)
-        {
-            // only when one finger is on the screen
-            if(options.hold) {
-                _gesture = 'hold';
-                clearTimeout(_hold_timer);
-
-                _hold_timer = setTimeout(function() {
-                    if(_gesture == 'hold') {
-                        triggerEvent("hold", {
-                            originalEvent   : event,
-                            position        : _pos.start
-                        });
-                    }
-                }, options.hold_timeout);
-            }
-        },
-
-        // swipe gesture
-        // fired on touchend
-        swipe : function(event)
-        {
-            //Do not allow a swipe event to be fired when in a transform state.
-            if (!_pos.move || _gesture === "transform") {
-                return;
-            }
-
-            // get the distance we moved
-            var _distance_x = _pos.move[0].x - _pos.start[0].x;
-            var _distance_y = _pos.move[0].y - _pos.start[0].y;
-            _distance = Math.sqrt(_distance_x*_distance_x + _distance_y*_distance_y);
-
-            // compare the kind of gesture by time
-            var now = new Date().getTime();
-            var touch_time = now - _touch_start_time;
-
-            if(options.swipe && (options.swipe_time > touch_time) && (_distance > options.swipe_min_distance)) {
-                // calculate the angle
-                _angle = getAngle(_pos.start[0], _pos.move[0]);
-                _direction = self.getDirectionFromAngle(_angle);
-
-                _gesture = 'swipe';
-
-                var position = { x: _pos.move[0].x - _offset.left,
-                    y: _pos.move[0].y - _offset.top };
-
-                var event_obj = {
-                    originalEvent   : event,
-                    position        : position,
-                    direction       : _direction,
-                    distance        : _distance,
-                    distanceX       : _distance_x,
-                    distanceY       : _distance_y,
-                    angle           : _angle
-                };
-
-                // normal slide event
-                triggerEvent("swipe", event_obj);
-            }
-        },
-
-
-        // drag gesture
-        // fired on mousemove
-        drag : function(event)
-        {
-            // get the distance we moved
-            var _distance_x = _pos.move[0].x - _pos.start[0].x;
-            var _distance_y = _pos.move[0].y - _pos.start[0].y;
-            _distance = Math.sqrt(_distance_x * _distance_x + _distance_y * _distance_y);
-
-            // drag
-            // minimal movement required
-            if(options.drag && (_distance > options.drag_min_distance) || _gesture == 'drag') {
-                // calculate the angle
-                _angle = getAngle(_pos.start[0], _pos.move[0]);
-                _direction = self.getDirectionFromAngle(_angle);
-
-                // check the movement and stop if we go in the wrong direction
-                var is_vertical = (_direction == 'up' || _direction == 'down');
-                if(((is_vertical && !options.drag_vertical) || (!is_vertical && !options.drag_horizontal))
-                    && (_distance > options.drag_min_distance)) {
-                    return;
-                }
-
-                _gesture = 'drag';
-
-                var position = { x: _pos.move[0].x - _offset.left,
-                    y: _pos.move[0].y - _offset.top };
-
-                var event_obj = {
-                    originalEvent   : event,
-                    position        : position,
-                    direction       : _direction,
-                    distance        : _distance,
-                    distanceX       : _distance_x,
-                    distanceY       : _distance_y,
-                    angle           : _angle
-                };
-
-                // on the first time trigger the start event
-                if(_first) {
-                    triggerEvent("dragstart", event_obj);
-
-                    _first = false;
-                }
-
-                // normal slide event
-                triggerEvent("drag", event_obj);
-
-                cancelEvent(event);
-            }
-        },
-
-
-        // transform gesture
-        // fired on touchmove
-        transform : function(event)
-        {
-            if(options.transform) {
-                if(countFingers(event) != 2) {
-                    return false;
-                }
-
-                var rotation = calculateRotation(_pos.start, _pos.move);
-                var scale = calculateScale(_pos.start, _pos.move);
-
-                if(_gesture != 'drag' &&
-                    (_gesture == 'transform' || Math.abs(1-scale) > options.scale_treshold || Math.abs(rotation) > options.rotation_treshold)) {
-                    _gesture = 'transform';
-
-                    _pos.center = {  x: ((_pos.move[0].x + _pos.move[1].x) / 2) - _offset.left,
-                        y: ((_pos.move[0].y + _pos.move[1].y) / 2) - _offset.top };
-
-                    if(_first)
-                        _pos.startCenter = _pos.center;
-
-                    var _distance_x = _pos.center.x - _pos.startCenter.x;
-                    var _distance_y = _pos.center.y - _pos.startCenter.y;
-                    _distance = Math.sqrt(_distance_x*_distance_x + _distance_y*_distance_y);
-
-                    var event_obj = {
-                        originalEvent   : event,
-                        position        : _pos.center,
-                        scale           : scale,
-                        rotation        : rotation,
-                        distance        : _distance,
-                        distanceX       : _distance_x,
-                        distanceY       : _distance_y,
-                    };
-
-                    // on the first time trigger the start event
-                    if(_first) {
-                        triggerEvent("transformstart", event_obj);
-                        _first = false;
-                    }
-
-                    triggerEvent("transform", event_obj);
-
-                    cancelEvent(event);
-
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
-
-        // tap and double tap gesture
-        // fired on touchend
-        tap : function(event)
-        {
-            // compare the kind of gesture by time
-            var now = new Date().getTime();
-            var touch_time = now - _touch_start_time;
-
-            // dont fire when hold is fired
-            if(options.hold && !(options.hold && options.hold_timeout > touch_time)) {
-                return;
-            }
-
-            // when previous event was tap and the tap was max_interval ms ago
-            var is_double_tap = (function(){
-                if (_prev_tap_pos &&
-                    options.tap_double &&
-                    _prev_gesture == 'tap' &&
-                    (_touch_start_time - _prev_tap_end_time) < options.tap_max_interval)
-                {
-                    var x_distance = Math.abs(_prev_tap_pos[0].x - _pos.start[0].x);
-                    var y_distance = Math.abs(_prev_tap_pos[0].y - _pos.start[0].y);
-                    return (_prev_tap_pos && _pos.start && Math.max(x_distance, y_distance) < options.tap_double_distance);
-                }
-                return false;
-            })();
-
-            if(is_double_tap) {
-                _gesture = 'double_tap';
-                _prev_tap_end_time = null;
-
-                triggerEvent("doubletap", {
-                    originalEvent   : event,
-                    position        : _pos.start
-                });
-                cancelEvent(event);
-            }
-
-            // single tap is single touch
-            else {
-                var x_distance = (_pos.move) ? Math.abs(_pos.move[0].x - _pos.start[0].x) : 0;
-                var y_distance =  (_pos.move) ? Math.abs(_pos.move[0].y - _pos.start[0].y) : 0;
-                _distance = Math.max(x_distance, y_distance);
-
-                if(_distance < options.tap_max_distance) {
-                    _gesture = 'tap';
-                    _prev_tap_end_time = now;
-                    _prev_tap_pos = _pos.start;
-
-                    if(options.tap) {
-                        triggerEvent("tap", {
-                            originalEvent   : event,
-                            position        : _pos.start
-                        });
-                        cancelEvent(event);
-                    }
-                }
-            }
-
-        }
-
-    };
-
-
-    function handleEvents(event)
-    {
-        switch(event.type)
-        {
-            case 'mousedown':
-            case 'touchstart':
-                _pos.start = getXYfromEvent(event);
-                _touch_start_time = new Date().getTime();
-                _fingers = countFingers(event);
-                _first = true;
-                _event_start = event;
-
-                // borrowed from jquery offset https://github.com/jquery/jquery/blob/master/src/offset.js
-                var box = element.getBoundingClientRect();
-                var clientTop  = element.clientTop  || document.body.clientTop  || 0;
-                var clientLeft = element.clientLeft || document.body.clientLeft || 0;
-                var scrollTop  = window.pageYOffset || element.scrollTop  || document.body.scrollTop;
-                var scrollLeft = window.pageXOffset || element.scrollLeft || document.body.scrollLeft;
-
-                _offset = {
-                    top: box.top + scrollTop - clientTop,
-                    left: box.left + scrollLeft - clientLeft
-                };
-
-                _mousedown = true;
-
-                // hold gesture
-                gestures.hold(event);
-
-                if(options.prevent_default) {
-                    cancelEvent(event);
-                }
-                break;
-
-            case 'mousemove':
-            case 'touchmove':
-                if(!_mousedown) {
-                    return false;
-                }
-                _event_move = event;
-                _pos.move = getXYfromEvent(event);
-
-                if(!gestures.transform(event)) {
-                    gestures.drag(event);
-                }
-                break;
-
-            case 'mouseup':
-            case 'mouseout':
-            case 'touchcancel':
-            case 'touchend':
-                if(!_mousedown || (_gesture != 'transform' && event.touches && event.touches.length > 0)) {
-                    return false;
-                }
-
-                _mousedown = false;
-                _event_end = event;
-
-
-                // swipe gesture
-                gestures.swipe(event);
-
-
-                // drag gesture
-                // dragstart is triggered, so dragend is possible
-                if(_gesture == 'drag') {
-                    triggerEvent("dragend", {
-                        originalEvent   : event,
-                        direction       : _direction,
-                        distance        : _distance,
-                        angle           : _angle
-                    });
-                }
-
-                // transform
-                // transformstart is triggered, so transformed is possible
-                else if(_gesture == 'transform') {
-                    triggerEvent("transformend", {
-                        originalEvent   : event,
-                        position        : _pos.center,
-                        scale           : calculateScale(_pos.start, _pos.move),
-                        rotation        : calculateRotation(_pos.start, _pos.move),
-                        distance        : _distance,
-                        distanceX       : _distance_x,
-                        distanceY       : _distance_y
-                    });
-                }
-                else {
-                    gestures.tap(_event_start);
-                }
-
-                _prev_gesture = _gesture;
-
-                // trigger release event. 
-                // "release" by default doesn't return the co-ords where your 
-                // finger was released. "position" will return "the last touched co-ords"
-                triggerEvent("release", {
-                    originalEvent   : event,
-                    gesture         : _gesture,
-                    position        : _pos.move || _pos.start
-                });
-
-                // reset vars
-                reset();
-                break;
-        }
-    }
-
-
-    function handleMouseOut(event) {
-        if(!isInsideHammer(element, event.relatedTarget)) {
-            handleEvents(event);
-        }
-    }
-
-
-    // bind events for touch devices
-    // except for windows phone 7.5, it doesnt support touch events..!
-    if(_has_touch) {
-        addEvent(element, "touchstart touchmove touchend touchcancel", handleEvents);
-    }
-    // for non-touch
-    else {
-        addEvent(element, "mouseup mousedown mousemove", handleEvents);
-        addEvent(element, "mouseout", handleMouseOut);
-    }
-
-
-    /**
-     * find if element is (inside) given parent element
-     * @param   object  element
-     * @param   object  parent
-     * @return  bool    inside
-     */
-    function isInsideHammer(parent, child) {
-        // get related target for IE
-        if(!child && window.event && window.event.toElement){
-            child = window.event.toElement;
-        }
-
-        if(parent === child){
-            return true;
-        }
-
-        // loop over parentNodes of child until we find hammer element
-        if(child){
-            var node = child.parentNode;
-            while(node !== null){
-                if(node === parent){
-                    return true;
-                };
-                node = node.parentNode;
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * merge 2 objects into a new object
-     * @param   object  obj1
-     * @param   object  obj2
-     * @return  object  merged object
-     */
-    function mergeObject(obj1, obj2) {
-        var output = {};
-
-        if(!obj2) {
-            return obj1;
-        }
-
-        for (var prop in obj1) {
-            if (prop in obj2) {
-                output[prop] = obj2[prop];
-            } else {
-                output[prop] = obj1[prop];
-            }
-        }
-        return output;
-    }
-
-
-    /**
-     * check if object is a function
-     * @param   object  obj
-     * @return  bool    is function
-     */
-    function isFunction( obj ){
-        return Object.prototype.toString.call( obj ) == "[object Function]";
-    }
-
-
-    /**
-     * attach event
-     * @param   node    element
-     * @param   string  types
-     * @param   object  callback
-     */
-    function addEvent(element, types, callback) {
-        types = types.split(" ");
-        for(var t= 0,len=types.length; t<len; t++) {
-            if(element.addEventListener){
-                element.addEventListener(types[t], callback, false);
-            }
-            else if(document.attachEvent){
-                element.attachEvent("on"+ types[t], callback);
-            }
-        }
-    }
-
-
-    /**
-     * detach event
-     * @param   node    element
-     * @param   string  types
-     * @param   object  callback
-     */
-    function removeEvent(element, types, callback) {
-        types = types.split(" ");
-        for(var t= 0,len=types.length; t<len; t++) {
-            if(element.removeEventListener){
-                element.removeEventListener(types[t], callback, false);
-            }
-            else if(document.detachEvent){
-                element.detachEvent("on"+ types[t], callback);
-            }
-        }
-    }
-}
+})();

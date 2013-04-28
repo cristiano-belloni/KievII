@@ -1,0 +1,41 @@
+{
+    "name": "kievII",
+    "title": "KievII",
+    "description": "GUI and audio/DSP Javascript library, for web and mobile audio applications developers.",
+    "version": "0.5",
+    "homepage": "http://kievii.net/",
+    "licenses": [{
+        "type": "MIT",
+        "url": "https://github.com/janesconference/KievII/blob/master/LICENSE"
+    }],
+    "keywords": ["audio","gui","webapp"],
+    "author": {
+        "name": "Cristiano Belloni",
+        "email": "janesconference@bitterspring.net"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/janesconference/KievII.git"
+    },
+    "bugs": {
+        "url": "https://github.com/janesconference/KievII/issues"
+    },
+    "devDependencies": {
+        "grunt": "0.4.x",
+        "grunt-contrib-concat": "0.1.x",
+        "grunt-contrib-uglify": "0.1.x",
+        "grunt-contrib-jshint": "0.1.x"
+    },
+    "dependencies":{
+         "hammerjs": "1.0.5"
+    },
+    "jspm": {
+        "dependencies": {
+            "hammerjs": "1.0.5"
+        }
+     },
+    "main": "dist/kievII.js",
+    "engines": {
+        "node": ">=0.8.0"
+    }
+}
