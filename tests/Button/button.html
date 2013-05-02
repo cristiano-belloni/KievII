@@ -13,7 +13,7 @@
 
         <meta name="viewport" content="width=device-width; initial-scale=1.0" />
         
-        <script type="text/javascript" src="../../dist/kievII.js"></script>
+        <script src="http://dev.jspm.io/require.js"></script>
         <script type="text/javascript" src="buttontest.js"></script>
 
         <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
@@ -24,7 +24,10 @@
     <body>
         <canvas style="border: 1px solid gray;" id="button_canvas" width="300" height="300"></canvas>
         <script type="text/javascript">
-            ButtonTest.init(document.getElementById('button_canvas'), ["assets/img/state0.png", "assets/img/state1.png", "assets/img/state2.png"]);
+            require (['../../dist/kievII.js'], function (K2) {
+                ButtonTest.init(document.getElementById('button_canvas'), ["assets/img/state0.png", "assets/img/state1.png", "assets/img/state2.png"], K2);
+                }
+            );
         </script>
     </body>
 </html>

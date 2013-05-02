@@ -13,7 +13,7 @@
 
         <meta name="viewport" content="width=device-width; initial-scale=1.0" />
         
-        <script type="text/javascript" src="../../dist/kievII.js"></script>
+        <script src="http://dev.jspm.io/require.js"></script>
         <script type="text/javascript" src="curvetest.js"></script>
 
         <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
@@ -24,7 +24,10 @@
     <body>
         <canvas style='border: 1px solid gray;' id='curve_canvas' width='800' height='600'></canvas>
         <script type='text/javascript'>
-            CurveTest.init(document.getElementById('curve_canvas'));
+            require (['../../dist/kievII.js'], function (K2) {
+                CurveTest.init(document.getElementById('curve_canvas'), K2);
+                }
+            );
         </script>
     </body>
 </html>

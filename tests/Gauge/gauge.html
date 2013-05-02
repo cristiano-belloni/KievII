@@ -11,9 +11,9 @@
         <meta name="description" content="" />
         <meta name="author" content="janesconference" />
 
-        <meta name="viewport" content="width=device-width; initial-scale=1.0" />
-        
-        <script type="text/javascript" src="../../dist/kievII.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <script src="http://dev.jspm.io/require.js"></script>
         <script type="text/javascript" src="gaugetest.js"></script>
 
         <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
@@ -26,7 +26,10 @@
     	<h2>Some random offset for the canvas</h2>
         <canvas style='border: 10px solid black; background: #333;' id='gauge_canvas' width='500' height='500'></canvas>
         <script type='text/javascript'>
-            GaugeTest.init(document.getElementById('gauge_canvas'));
+            require (['../../dist/kievII.js'], function (K2) {
+                    GaugeTest.init(document.getElementById('gauge_canvas'), K2);
+                }
+            );
         </script>
     </body>
 </html>

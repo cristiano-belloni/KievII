@@ -38,7 +38,7 @@ var RotKnobTest = {
         
         this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
         
-        var imageLoader = new loadImageArray ({ID : "rot_knobTestLoader",
+        var imageLoader = new K2.loadImageArray ({ID : "rot_knobTestLoader",
                                                imageNames: images,
                                                onComplete: imagesCompleted.bind(this),
                                                onSingle: imageSingle.bind(this),

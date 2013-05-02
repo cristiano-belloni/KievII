@@ -137,12 +137,12 @@ K2.UI = function(engine, parameters) {
         var that = this;
             return function(evt) {
 
-            var event = evt.originalEvent;
+            var event = evt.gesture.srcEvent;
             var type = evt.type;
 
             var realCoords = that.getEventPosition(event, that.domElement, evt);
 
-            //console.log ("About to notify an Hammer event of type", type);
+            console.log ("About to notify an Hammer event of type", type);
 
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
 
@@ -220,22 +220,14 @@ K2.UI = function(engine, parameters) {
   })();
 
 	// Hammer.js is present
-	if (typeof Hammer === 'undefined') {
+	if (typeof K2.Hammer === 'undefined') {
 		throw ("Hammer.js needed!");
 	}
 	
-	this.hammer = new Hammer(this.domElement, {drag_min_distance: 2});
-	this.hammer.ondragstart = this.onHammerEvent();
-	this.hammer.ondrag = this.onHammerEvent();
-	this.hammer.ondragend = this.onHammerEvent();
-	this.hammer.onswipe = this.onHammerEvent();
-	this.hammer.ontap = this.onHammerEvent();
-	this.hammer.ondoubletap = this.onHammerEvent();
-	this.hammer.onhold = this.onHammerEvent();
-	this.hammer.ontransformstart = this.onHammerEvent();
-	this.hammer.ontransform = this.onHammerEvent();
-	this.hammer.ontransformend = this.onHammerEvent();
-	this.hammer.onrelease = this.onHammerEvent();
+	this.hammer = new K2.Hammer(this.domElement, {drag_min_distance: 2});
+
+    var hammerEvent = this.onHammerEvent();
+    this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend", hammerEvent);
 	
 	if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
