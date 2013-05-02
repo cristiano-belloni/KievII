@@ -37,12 +37,12 @@ K2.UI = function(engine, parameters) {
 	    mx = e.pageX - offsetX;
 	    my = e.pageY - offsetY;
 		
-		// this returns in element's css value
-		// var cssWidth = window.getComputedStyle (obj, null).getPropertyValue("width");
-		// var cssHeight = window.getComputedStyle (obj, null).getPropertyValue("height");
+		// this returns in element's css value, without borders
+		var cssWidth = parseInt(document.defaultView.getComputedStyle(obj, null).getPropertyValue("width"), 10) || 0;
+		var cssHeight = parseInt(document.defaultView.getComputedStyle(obj, null).getPropertyValue("height"), 10) || 0;
 		
-		var cssWidth  = obj.offsetWidth;
-		var cssHeight = obj.offsetHeight;
+		//var cssWidth  = obj.offsetWidth;
+		//var cssHeight = obj.offsetHeight;
 		
 		var attrWidth = obj.getAttribute("width");
 		var attrHeight = obj.getAttribute("height");
@@ -227,7 +227,7 @@ K2.UI = function(engine, parameters) {
 	this.hammer = new K2.Hammer(this.domElement, {drag_min_distance: 2});
 
     var hammerEvent = this.onHammerEvent();
-    this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend", hammerEvent);
+    this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
 	
 	if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);

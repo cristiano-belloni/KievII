@@ -83,7 +83,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
     return retVal;
 };
 
-K2.Bar.prototype.mousedown = K2.Bar.prototype.touchstart = function (curr_x, curr_y) {
+K2.Bar.prototype.touch = function (curr_x, curr_y) {
     // Must be (strictly) in ROI
     if (! this.isInROI (curr_x, curr_y)) {
         return;

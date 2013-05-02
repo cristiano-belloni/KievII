@@ -336,12 +336,12 @@ K2.UI = function(engine, parameters) {
 	    mx = e.pageX - offsetX;
 	    my = e.pageY - offsetY;
 		
-		// this returns in element's css value
-		// var cssWidth = window.getComputedStyle (obj, null).getPropertyValue("width");
-		// var cssHeight = window.getComputedStyle (obj, null).getPropertyValue("height");
+		// this returns in element's css value, without borders
+		var cssWidth = parseInt(document.defaultView.getComputedStyle(obj, null).getPropertyValue("width"), 10) || 0;
+		var cssHeight = parseInt(document.defaultView.getComputedStyle(obj, null).getPropertyValue("height"), 10) || 0;
 		
-		var cssWidth  = obj.offsetWidth;
-		var cssHeight = obj.offsetHeight;
+		//var cssWidth  = obj.offsetWidth;
+		//var cssHeight = obj.offsetHeight;
 		
 		var attrWidth = obj.getAttribute("width");
 		var attrHeight = obj.getAttribute("height");
@@ -525,20 +525,8 @@ K2.UI = function(engine, parameters) {
 	
 	this.hammer = new K2.Hammer(this.domElement, {drag_min_distance: 2});
 
-	/*this.hammer.on("dragstart") = this.onHammerEvent();
-	this.hammer.on("drag") = this.onHammerEvent();
-	this.hammer.on("dragend") = this.onHammerEvent();
-	this.hammer.on("swipe") = this.onHammerEvent();
-	this.hammer.on("tap") = this.onHammerEvent();
-	this.hammer.on("doubletap") = this.onHammerEvent();
-	this.hammer.on("hold") = this.onHammerEvent();
-	this.hammer.on("transformstart") = this.onHammerEvent();
-	this.hammer.on("transform") = this.onHammerEvent();
-	this.hammer.on("transformend") = this.onHammerEvent();
-	this.hammer.onrelease = this.onHammerEvent();*/
-
     var hammerEvent = this.onHammerEvent();
-    this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend", hammerEvent);
+    this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
 	
 	if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
@@ -2115,7 +2103,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
     return retVal;
 };
 
-K2.Bar.prototype.mousedown = K2.Bar.prototype.touchstart = function (curr_x, curr_y) {
+K2.Bar.prototype.touch = function (curr_x, curr_y) {
     // Must be (strictly) in ROI
     if (! this.isInROI (curr_x, curr_y)) {
         return;
