@@ -141,7 +141,7 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         else this.inside = false;
 };
 
-K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, curr_y) {
+K2.Area.prototype.drag =  function(curr_x, curr_y) {
 
     var ret = [];
     var newWidth, newHeight;
@@ -222,7 +222,7 @@ K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, c
 
 };
 
-K2.Area.prototype.release = K2.Area.prototype.dragend = K2.Area.prototype.mouseup = function(x, y) {
+/*K2.Area.prototype.release =*/ K2.Area.prototype.dragend /*= K2.Area.prototype.mouseup*/ = function(x, y) {
     
     var ret;
     

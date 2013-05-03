@@ -38,9 +38,7 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
+/*K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown*/ K2.Wavebox.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -48,7 +46,7 @@ K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, curr_y) {
+K2.Wavebox.prototype.release /*= K2.Wavebox.prototype.mouseup*/ = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -72,6 +70,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
             // Click on button is completed, the button is no more triggered.
             this.triggered = false;
 
+            console.log ("returning event", ret);
             return ret;
         }
     }
@@ -83,8 +82,6 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
 };
 
 K2.Wavebox.prototype.setValue = function(slot, value) {
-
-	console.log('Setting ' + slot + ' to ' + value);
 
     // Won't call the parent: this element has a custom way to set values.
 

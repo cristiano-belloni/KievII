@@ -55,7 +55,7 @@ K2.Grid.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Grid.prototype.mousedown = function(x, y) {
+K2.Grid.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -65,7 +65,7 @@ K2.Grid.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Grid.prototype.mouseup = function(curr_x, curr_y) {
+K2.Grid.prototype.release = function(curr_x, curr_y) {
 
     if (this.triggered) {
         // Grid is activated when cursor is still in the element ROI, otherwise action is void.

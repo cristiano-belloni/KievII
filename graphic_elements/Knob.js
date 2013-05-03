@@ -136,7 +136,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart = function(x, y) {
+/*K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart*/ K2.Knob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -155,7 +155,7 @@ K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.to
     return undefined;
 };
 
-K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
+/*K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup*/ K2.Knob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -166,7 +166,7 @@ K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
 
 };
 
-K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) {
+K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr_y) {
 
 	var ret;
 

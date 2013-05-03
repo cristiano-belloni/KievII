@@ -119,7 +119,7 @@ K2.Curve.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mousedown = function(x, y) {
+K2.Curve.prototype.touch = K2.Curve.prototype.dragstart /* = K2.Curve.prototype.mousedown*/ = function(x, y) {
 
     var points = this.values.points;
 
@@ -220,7 +220,7 @@ K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
     return ret;
 };
 
-K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
+K2.Curve.prototype.release /*= K2.Curve.prototype.mouseup*/ = function(x, y) {
 	this.handleClicked = null;
 	// check the selection-end
 	// check if the point is "on" the curve plot
@@ -230,6 +230,7 @@ K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
 		if (this.isInCurve(x, y)) {
 			//Curve is selected
 			this.selectStart = false;
+            console.log ("selected curve!", this);
 			var ret = {'slot' : 'selected', 'value' : [x, y]};
 			return ret;
 			}
@@ -252,10 +253,12 @@ K2.Curve.prototype.doubletap = function(x, y) {
 		var handleNum;
 		if ((handleNum = this.isInHandle(x, y)) !== null) {
 			// Handle is double-tapped. This has precedence
+            console.log ("duble tapped handle!", this);
 			return {'slot' : 'doubletap_h', 'value' : [[x, y], handleNum]};
 		}
 		if (this.isInCurve(x, y)) {
 			//Curve is double-tapped
+            console.log ("duble tapped curve!", this);
 			return {'slot' : 'doubletap_c', 'value' : [x, y]};
 		}
 	}

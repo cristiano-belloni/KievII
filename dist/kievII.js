@@ -359,48 +359,6 @@ K2.UI = function(engine, parameters) {
 	    };
 	};
 
-    // Thanks for these two functions to the noVNC project. You are great.
-    // https://github.com/kanaka/noVNC/blob/master/include/util.js#L121
-
-    // Get DOM element position on page
-    this.getPosition = function(obj) {
-        var x = 0, y = 0;
-        if (obj.offsetParent) {
-            do {
-                x += obj.offsetLeft;
-                y += obj.offsetTop;
-                obj = obj.offsetParent;
-            } while (obj);
-        }
-        return {'x': x, 'y': y};
-    };
-    
-    // Get mouse event position in DOM element (don't know how to use scale yet).
-    /*this.getEventPosition = function(e, obj, aux_e, scale) {
-
-		var evt, docX, docY, pos;
-
-        evt = (e ? e : window.event);
-        if (evt.pageX || evt.pageY) {
-            docX = evt.pageX;
-            docY = evt.pageY;
-        } else if (evt.clientX || evt.clientY) {
-            docX = evt.clientX + document.body.scrollLeft +
-                document.documentElement.scrollLeft;
-            docY = evt.clientY + document.body.scrollTop +
-                document.documentElement.scrollTop;
-        }
-        else if (typeof aux_e !== 'undefined') {
-            docX = aux_e.touches[0].x;
-            docY = aux_e.touches[0].y;
-        }
-        pos = this.getPosition(obj);
-        if (typeof scale === 'undefined') {
-            scale = 1;
-        }
-        return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
-    };*/
-    
     // Event handlers
 
 	// onMouse events
@@ -413,7 +371,7 @@ K2.UI = function(engine, parameters) {
 
 			var realCoords = that.getEventPosition(event, that.domElement);
 
-			if (type === 'mousedown') {
+			/*if (type === 'mousedown') {
 				that.mouseUp = false;
 			}
 			else if (type === 'mouseup') {
@@ -425,8 +383,8 @@ K2.UI = function(engine, parameters) {
                 if (that.mouseUp === false) {
                     that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
                 }
-            }
-            //console.log ("About to notify a mouse event of type", type);
+            }*/
+            console.log ("About to notify a mouse event of type", type);
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
@@ -528,7 +486,7 @@ K2.UI = function(engine, parameters) {
     var hammerEvent = this.onHammerEvent();
     this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
 	
-	if (isEventSupported('touchstart')) {
+	/*if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
 		console.log ("touchstart supported");
 	}
@@ -545,7 +503,7 @@ K2.UI = function(engine, parameters) {
 		console.log ("no touchend, supporting mouseup");
     }
     // TODO see if it's not superseded by ondrag
-    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
+    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);*/
 
     // Add listeners for mouseover and mouseout
     this.domElement.addEventListener('mouseover', this.onMouseEvent(), true);
@@ -1168,7 +1126,7 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         else this.inside = false;
 };
 
-K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, curr_y) {
+K2.Area.prototype.drag =  function(curr_x, curr_y) {
 
     var ret = [];
     var newWidth, newHeight;
@@ -1249,7 +1207,7 @@ K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, c
 
 };
 
-K2.Area.prototype.release = K2.Area.prototype.dragend = K2.Area.prototype.mouseup = function(x, y) {
+/*K2.Area.prototype.release =*/ K2.Area.prototype.dragend /*= K2.Area.prototype.mouseup*/ = function(x, y) {
     
     var ret;
     
@@ -1461,7 +1419,7 @@ K2.Curve.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mousedown = function(x, y) {
+K2.Curve.prototype.touch = K2.Curve.prototype.dragstart /* = K2.Curve.prototype.mousedown*/ = function(x, y) {
 
     var points = this.values.points;
 
@@ -1562,7 +1520,7 @@ K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
     return ret;
 };
 
-K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
+K2.Curve.prototype.release /*= K2.Curve.prototype.mouseup*/ = function(x, y) {
 	this.handleClicked = null;
 	// check the selection-end
 	// check if the point is "on" the curve plot
@@ -1572,6 +1530,7 @@ K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
 		if (this.isInCurve(x, y)) {
 			//Curve is selected
 			this.selectStart = false;
+            console.log ("selected curve!", this);
 			var ret = {'slot' : 'selected', 'value' : [x, y]};
 			return ret;
 			}
@@ -1594,10 +1553,12 @@ K2.Curve.prototype.doubletap = function(x, y) {
 		var handleNum;
 		if ((handleNum = this.isInHandle(x, y)) !== null) {
 			// Handle is double-tapped. This has precedence
+            console.log ("duble tapped handle!", this);
 			return {'slot' : 'doubletap_h', 'value' : [[x, y], handleNum]};
 		}
 		if (this.isInCurve(x, y)) {
 			//Curve is double-tapped
+            console.log ("duble tapped curve!", this);
 			return {'slot' : 'doubletap_c', 'value' : [x, y]};
 		}
 	}
@@ -2253,7 +2214,7 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) {
+/*K2.Button.prototype.mousedown = K2.Button.prototype.touchstart =*/ K2.Button.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2286,7 +2247,7 @@ K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) 
     }
 };*/
 
-K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, curr_y) {
+/*K2.Button.prototype.mouseup = K2.Button.prototype.touchend =*/ K2.Button.prototype.release = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -2524,7 +2485,7 @@ K2.ClickBar.prototype.calculateValue = function (x,y) {
 };
 
 
-K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown = function(x, y) {
+/*K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown =*/ K2.ClickBar.prototype.touch = function(x, y) {
     
         if (this.isInROI (x,y)) {
             
@@ -2537,7 +2498,8 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.proto
             
             if (clickedValue === this.values.barvalue) {
                 return;
-            }            
+            }
+            
             //this.prevValue = this.values.barvalue;
             return {slot : 'barvalue', value : clickedValue};
        }
@@ -2566,7 +2528,7 @@ K2.ClickBar.prototype.drag = function(x, y) {
 };
 
 
-K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup = function(x, y) {
+/*K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup*/ K2.ClickBar.prototype.release = function(x, y) {
     
     this.triggered = false;
 
@@ -2690,7 +2652,7 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	
 };
 
-K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
+/*K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart*/ K2.Gauge.prototype.touch = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
 	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
@@ -2711,7 +2673,7 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touch
 	return undefined;
 };
 
-K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
+K2.Gauge.prototype.drag /*= K2.Gauge.prototype.mousemove*/ = function (x, y) {
 	
 	if (this.triggered) {
 		console.log ("triggered mousemove");
@@ -2722,7 +2684,7 @@ K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
 	}
 };
 
-K2.Gauge.prototype.release = K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup = function(curr_x, curr_y) {
+K2.Gauge.prototype.release = /*K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup =*/ function(curr_x, curr_y) {
 
 	if (this.triggered) {
 		this.triggered = false;
@@ -2849,7 +2811,7 @@ K2.Grid.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Grid.prototype.mousedown = function(x, y) {
+K2.Grid.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2859,7 +2821,7 @@ K2.Grid.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Grid.prototype.mouseup = function(curr_x, curr_y) {
+K2.Grid.prototype.release = function(curr_x, curr_y) {
 
     if (this.triggered) {
         // Grid is activated when cursor is still in the element ROI, otherwise action is void.
@@ -3069,7 +3031,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart = function(x, y) {
+/*K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart*/ K2.Knob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -3088,7 +3050,7 @@ K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.to
     return undefined;
 };
 
-K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
+/*K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup*/ K2.Knob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -3099,7 +3061,7 @@ K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
 
 };
 
-K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) {
+K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr_y) {
 
 	var ret;
 
@@ -3401,7 +3363,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     
 };
 
-K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart = function(x, y) {
+/*K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart*/ K2.RotKnob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -3421,7 +3383,7 @@ K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.pro
     return undefined;
 };
 
-K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend = function(x, y) {
+/*K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend*/ K2.RotKnob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = null;
@@ -3432,7 +3394,7 @@ K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototy
 
 };
 
-K2.RotKnob.prototype.drag = K2.RotKnob.prototype.mousemove = function(curr_x, curr_y) {
+K2.RotKnob.prototype.drag /*= K2.RotKnob.prototype.mousemove*/ = function(curr_x, curr_y) {
     
     var ret;
 
@@ -3624,7 +3586,7 @@ K2.Slider.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown = function(x, y) {
+/*K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown*/ K2.Slider.prototype.touch = function(x, y) {
     if (this.isInROI(x, y)) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
@@ -3646,13 +3608,13 @@ K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Slider.prototype.dragend = K2.Slider.prototype.mouseup = function(x, y) {
+/*K2.Slider.prototype.dragend = K2.Slider.prototype.mouseup*/ K2.Slider.prototype.release = function(x, y) {
     this.triggered = false;
     this.drag_offset = undefined;
     return undefined;
 };
 
-K2.Slider.prototype.drag = K2.Slider.prototype.mousemove = function(curr_x, curr_y) {
+K2.Slider.prototype.drag /*= K2.Slider.prototype.mousemove*/ = function(curr_x, curr_y) {
 
         if (this.triggered === true) {
             var to_set,
@@ -3808,9 +3770,7 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
+/*K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown*/ K2.Wavebox.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -3818,7 +3778,7 @@ K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, curr_y) {
+K2.Wavebox.prototype.release /*= K2.Wavebox.prototype.mouseup*/ = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -3842,6 +3802,7 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
             // Click on button is completed, the button is no more triggered.
             this.triggered = false;
 
+            console.log ("returning event", ret);
             return ret;
         }
     }
@@ -3853,8 +3814,6 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
 };
 
 K2.Wavebox.prototype.setValue = function(slot, value) {
-
-	console.log('Setting ' + slot + ' to ' + value);
 
     // Won't call the parent: this element has a custom way to set values.
 

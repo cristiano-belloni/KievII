@@ -160,7 +160,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     
 };
 
-K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart = function(x, y) {
+/*K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart*/ K2.RotKnob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -180,7 +180,7 @@ K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.pro
     return undefined;
 };
 
-K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend = function(x, y) {
+/*K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend*/ K2.RotKnob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = null;
@@ -191,7 +191,7 @@ K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototy
 
 };
 
-K2.RotKnob.prototype.drag = K2.RotKnob.prototype.mousemove = function(curr_x, curr_y) {
+K2.RotKnob.prototype.drag /*= K2.RotKnob.prototype.mousemove*/ = function(curr_x, curr_y) {
     
     var ret;
 

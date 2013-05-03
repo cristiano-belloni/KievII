@@ -71,7 +71,7 @@ K2.ClickBar.prototype.calculateValue = function (x,y) {
 };
 
 
-K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown = function(x, y) {
+/*K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown =*/ K2.ClickBar.prototype.touch = function(x, y) {
     
         if (this.isInROI (x,y)) {
             
@@ -84,7 +84,8 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.proto
             
             if (clickedValue === this.values.barvalue) {
                 return;
-            }            
+            }
+            
             //this.prevValue = this.values.barvalue;
             return {slot : 'barvalue', value : clickedValue};
        }
@@ -113,7 +114,7 @@ K2.ClickBar.prototype.drag = function(x, y) {
 };
 
 
-K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup = function(x, y) {
+/*K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup*/ K2.ClickBar.prototype.release = function(x, y) {
     
     this.triggered = false;
 

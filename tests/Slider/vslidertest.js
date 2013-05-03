@@ -35,7 +35,7 @@ var VSliderTest = {
         
         this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
         
-        var imageLoader = new loadImageArray ({ID : "v_sliderTestLoader",
+        var imageLoader = new K2.loadImageArray ({ID : "v_sliderTestLoader",
                                                imageNames: images,
                                                onComplete: imagesCompleted.bind(this),
                                                onSingle: imageSingle.bind(this),

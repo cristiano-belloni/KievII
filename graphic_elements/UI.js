@@ -60,48 +60,6 @@ K2.UI = function(engine, parameters) {
 	    };
 	};
 
-    // Thanks for these two functions to the noVNC project. You are great.
-    // https://github.com/kanaka/noVNC/blob/master/include/util.js#L121
-
-    // Get DOM element position on page
-    this.getPosition = function(obj) {
-        var x = 0, y = 0;
-        if (obj.offsetParent) {
-            do {
-                x += obj.offsetLeft;
-                y += obj.offsetTop;
-                obj = obj.offsetParent;
-            } while (obj);
-        }
-        return {'x': x, 'y': y};
-    };
-    
-    // Get mouse event position in DOM element (don't know how to use scale yet).
-    /*this.getEventPosition = function(e, obj, aux_e, scale) {
-
-		var evt, docX, docY, pos;
-
-        evt = (e ? e : window.event);
-        if (evt.pageX || evt.pageY) {
-            docX = evt.pageX;
-            docY = evt.pageY;
-        } else if (evt.clientX || evt.clientY) {
-            docX = evt.clientX + document.body.scrollLeft +
-                document.documentElement.scrollLeft;
-            docY = evt.clientY + document.body.scrollTop +
-                document.documentElement.scrollTop;
-        }
-        else if (typeof aux_e !== 'undefined') {
-            docX = aux_e.touches[0].x;
-            docY = aux_e.touches[0].y;
-        }
-        pos = this.getPosition(obj);
-        if (typeof scale === 'undefined') {
-            scale = 1;
-        }
-        return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
-    };*/
-    
     // Event handlers
 
 	// onMouse events
@@ -114,7 +72,7 @@ K2.UI = function(engine, parameters) {
 
 			var realCoords = that.getEventPosition(event, that.domElement);
 
-			if (type === 'mousedown') {
+			/*if (type === 'mousedown') {
 				that.mouseUp = false;
 			}
 			else if (type === 'mouseup') {
@@ -126,8 +84,8 @@ K2.UI = function(engine, parameters) {
                 if (that.mouseUp === false) {
                     that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
                 }
-            }
-            //console.log ("About to notify a mouse event of type", type);
+            }*/
+            console.log ("About to notify a mouse event of type", type);
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
@@ -229,7 +187,7 @@ K2.UI = function(engine, parameters) {
     var hammerEvent = this.onHammerEvent();
     this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
 	
-	if (isEventSupported('touchstart')) {
+	/*if (isEventSupported('touchstart')) {
 		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
 		console.log ("touchstart supported");
 	}
@@ -246,7 +204,7 @@ K2.UI = function(engine, parameters) {
 		console.log ("no touchend, supporting mouseup");
     }
     // TODO see if it's not superseded by ondrag
-    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
+    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);*/
 
     // Add listeners for mouseover and mouseout
     this.domElement.addEventListener('mouseover', this.onMouseEvent(), true);

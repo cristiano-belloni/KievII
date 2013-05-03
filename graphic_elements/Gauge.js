@@ -65,7 +65,7 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	
 };
 
-K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
+/*K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart*/ K2.Gauge.prototype.touch = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
 	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
@@ -86,7 +86,7 @@ K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touch
 	return undefined;
 };
 
-K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
+K2.Gauge.prototype.drag /*= K2.Gauge.prototype.mousemove*/ = function (x, y) {
 	
 	if (this.triggered) {
 		console.log ("triggered mousemove");
@@ -97,7 +97,7 @@ K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
 	}
 };
 
-K2.Gauge.prototype.release = K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup = function(curr_x, curr_y) {
+K2.Gauge.prototype.release = /*K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup =*/ function(curr_x, curr_y) {
 
 	if (this.triggered) {
 		this.triggered = false;

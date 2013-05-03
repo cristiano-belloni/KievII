@@ -53,7 +53,7 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) {
+/*K2.Button.prototype.mousedown = K2.Button.prototype.touchstart =*/ K2.Button.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -86,7 +86,7 @@ K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) 
     }
 };*/
 
-K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, curr_y) {
+/*K2.Button.prototype.mouseup = K2.Button.prototype.touchend =*/ K2.Button.prototype.release = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
