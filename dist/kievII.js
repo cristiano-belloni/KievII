@@ -72,17 +72,6 @@ K2.mergeObject = function(obj1, obj2) {
     return output;
 };
 
-// This should fix "console not defined" problem.
-if (typeof console === 'undefined') {
-    console = {
-        log: function(A) {
-            var B=false;
-            if(B) {
-                alert(A);
-                }
-            }
-    };
-}
 K2.UIElement = function(args) {
     if (arguments.length) {
         this.getready(args);
@@ -370,7 +359,7 @@ K2.UI = function(engine, parameters) {
 
 			var realCoords = that.getEventPosition(evt, that.domElement);
 
-            console.log ("About to notify a mouse event of type", type);
+            0;
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
@@ -385,7 +374,7 @@ K2.UI = function(engine, parameters) {
 
             var realCoords = that.getEventPosition(event, that.domElement, evt);
 
-            console.log ("About to notify an Hammer event of type", type);
+            0;
 
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
 
@@ -1023,26 +1012,26 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         if ((x > left_min_prox) &&  x < (left_max_prox) && this.dragBorders.left === true) {
             // We're next to the left side
             this.leftSide = true;
-            console.log ("Left side click detected");
+            0;
         }
         if ((x > right_min_prox) &&  x < (right_max_prox) && this.dragBorders.right === true) {
             // We're next to the right side
             this.rightSide = true;
-            console.log ("Right side click detected");
+            0;
         }
         if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.dragBorders.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
-            console.log ("Bottom side click detected");
+            0;
         }
         if ((y > top_min_prox) &&  y < (top_max_prox) && this.dragBorders.top === true) {
             // We're next to the top side
             this.topSide = true;
-            console.log ("Top side click detected");
+            0;
         }
         
         if (this.isInArea (x,y)) {
-            console.log ("clicked inside!");
+            0;
             this.inside = true;
             this.startPoint = [x,y];
         }
@@ -1454,7 +1443,7 @@ K2.Curve.prototype.release = function(x, y) {
 		if (this.isInCurve(x, y)) {
 			//Curve is selected
 			this.selectStart = false;
-            console.log ("selected curve!", this);
+            0;
 
             return {'slot': 'selected', 'value': [x, y]};
 			}
@@ -1478,12 +1467,12 @@ K2.Curve.prototype.doubletap = function(x, y) {
 		var handleNum;
 		if ((handleNum = this.isInHandle(x, y)) !== null) {
 			// Handle is double-tapped. This has precedence
-            console.log ("duble tapped handle!", this);
+            0;
 			return {'slot' : 'doubletap_h', 'value' : [[x, y], handleNum]};
 		}
 		if (this.isInCurve(x, y)) {
 			//Curve is double-tapped
-            console.log ("duble tapped curve!", this);
+            0;
 			return {'slot' : 'doubletap_c', 'value' : [x, y]};
 		}
 	}
@@ -2039,7 +2028,7 @@ K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
 
 K2.Bar.prototype.setValue = function(slot, value) {
 
-	console.log('Setting ' + slot + ' to ' + value);
+	0;
 
     if (slot == 'barPos') {
         if (value[0] <= this.width) {
@@ -2357,11 +2346,11 @@ K2.ClickBar.prototype.getready = function(args) {
 
 K2.ClickBar.prototype.isInROI = function(x, y) {
 
-    console.log ('y = ', y, "roitop = ", this.ROITop);
+    0;
     if ((x >= this.ROILeft) && (y >= this.ROITop - this.landingHeight)) {
-            console.log ("1st");
+            0;
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight + this.landingHeight))) {
-            console.log ("In ROI!");
+            0;
             return true;
         }
     }
@@ -2372,9 +2361,9 @@ K2.ClickBar.prototype.isInROI = function(x, y) {
 K2.ClickBar.prototype.calculateValue = function (x,y) {
     
     var clickedHeigth = y - this.yOrigin;
-    console.log ("heigth on click is ", clickedHeigth, " pixels"); 
+    0; 
     var clickedValue = 1 - (clickedHeigth / this.height);
-    console.log ("for a value of ", clickedValue, " (", clickedHeigth, " / ", this.height, ")");
+    0;
         
     if (clickedValue > this.maxValue) {
         clickedValue = this.maxValue;
@@ -2539,14 +2528,14 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	0;
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	console.log('radiant atan ', radtan);
+	0;
 	
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
-	console.log('degree atan ', degreetan);
+	0;
 
     return K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	
@@ -2555,11 +2544,11 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 K2.Gauge.prototype.touch = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
-	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
+	0;
 	
 	if ((dist > this.radius - this.thickness / 2) && (dist < this.radius + this.thickness / 2)) {
 		
-		console.log("down / tapped Inside the dial");
+		0;
 		this.triggered = true;
 
 		var range_val = this.calculateAngle (x,y);
@@ -2575,7 +2564,7 @@ K2.Gauge.prototype.touch = function(x, y) {
 K2.Gauge.prototype.drag = function (x, y) {
 	
 	if (this.triggered) {
-		console.log ("triggered mousemove");
+		0;
 		var range_val = this.calculateAngle (x,y);
 
         return {'slot': 'gaugevalue', 'value': range_val};
@@ -2881,18 +2870,18 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	0;
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	console.log('radiant atan ', radtan);
+	0;
 	// normalize arctan
 	if (radtan < 0) {
         radtan += (2 * Math.PI);
     }
-	console.log ('radiant atan, normalized, is ', radtan);
+	0;
 	
 	var degreetan = radtan * (180 / Math.PI);
-	console.log('degree atan is', degreetan);
+	0;
 	
 	// now we have a value from 0 to 360, where 0 is the lowest 
 	// intersection with the circumference. degree increases anticlockwise
@@ -2913,7 +2902,7 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	}
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-	console.log ('value is', range_val);
+	0;
 	return range_val;
 	
 };
@@ -3193,16 +3182,16 @@ K2.RotKnob.prototype.getRangedAmount = function (angle) {
     var endAngOffset = this.stopAngValue - this.initAngValue;
     var startAngOffset = this.startAngValue - this.initAngValue;
     
-    console.log ("start -> end", startAngOffset, endAngOffset);
+    0;
     
     if ((angle > this.initAngValue) && (startAngOffset < 0)) {
-        console.log ("Angle now is", angle);
+        0;
         angle = -(360 - angle);
     }
     
     var rangedAng = K2.MathUtils.linearRange(startAngOffset, endAngOffset, 0, 1, angle);
     
-    console.log ("knob value", rangedAng);
+    0;
     
     if (rangedAng < 0) {
         rangedAng = 0;
@@ -3231,10 +3220,10 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var centerX = this.xOrigin + this.width / 2;
     var centerY = this.yOrigin + this.height / 2;
     
-    console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+    0;
     
     var radtan = Math.atan2 (x - centerX, y - centerY);
-    console.log('radiant atan ', radtan);
+    0;
     
     var degreetan = radtan * (180 / Math.PI);
     degreetan = 180 - degreetan;
@@ -3247,7 +3236,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     }
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
-    console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
+    0;
 
     return this.getRangedAmount(Math.floor(degreeOffset));
     
@@ -3365,7 +3354,7 @@ K2.RotKnob.prototype.setValue = function(slot, value) {
         stepped_new_value = value;
     }
 
-    console.log('Value is: ', stepped_new_value);
+    0;
 
     // Now, we call the superclass
     K2.RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
@@ -3684,13 +3673,13 @@ K2.Wavebox.prototype.release = function(curr_x, curr_y) {
             }
 
             else {
-                console.error('orientation invalid, this will probably break something');
+                0;
             }
 
             // Click on button is completed, the button is no more triggered.
             this.triggered = false;
 
-            console.log ("returning event", ret);
+            0;
             return ret;
         }
     }
@@ -3756,11 +3745,11 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if (slot == 'yPos') {
         if (value <= this.height) {
-            console.log('Setting yPos to ' + value);
+            0;
             this.values.yPos = value;
         }
         else {
-            console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
+            0;
         }
     }
 };
@@ -3797,7 +3786,7 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 binFunction = this.calculateBinNone;
             }
             else {
-                console.log('Error: no binMethod!');
+                0;
             }
 
             var i;
@@ -4014,7 +4003,7 @@ var CurveEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4077,7 +4066,7 @@ var CurveEditor = function(parameters) {
 
                 that.status.curveArray.splice(that.status.selected + 1, 0, newCurveArgs.ID);
             }
-            console.log("Reorganizing elements");
+            0;
             that.reorganizeElements();
             that.ui.refresh();
         };
@@ -4095,7 +4084,7 @@ var CurveEditor = function(parameters) {
     };
 
     this.addCurve = function(curveType, grade, first_point, last_point) {
-        console.log("Adding a curve");
+        0;
         var lastElementID;
 
         // Get a deep copy of the template object
@@ -4149,7 +4138,7 @@ var CurveEditor = function(parameters) {
 	
 	        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
 	            // Set the curve to paint only its first handle
-	            console.log("Remove something before adding stuff");
+	            0;
 	            // Undo the previous paintTerminalPoints inference
 	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
 	            return;
@@ -4190,7 +4179,7 @@ var CurveEditor = function(parameters) {
         var prevID;
         
         if (this.status.selected !== null) {
-            console.log("Deleting selected curve " + this.status.selected);
+            0;
 
             //arr = arr.filter(function(){return true});
 
@@ -4235,7 +4224,7 @@ var CurveEditor = function(parameters) {
         var i;
         if (this.status.selected !== null) {
 
-            console.log("Transforming selected curve " + this.status.selected);
+            0;
 
             var bezierN = grade;
 
@@ -4246,11 +4235,11 @@ var CurveEditor = function(parameters) {
 
             if (curveNow === curveType) {
                 if (curveType !== 'bezier') {
-                    console.log("Identical type, doing nothing");
+                    0;
                     return;
                 } else {
                     if (bezierN === curveGrade) {
-                        console.log("Identical type and grade, doing nothing");
+                        0;
                         return;
                     }
                 }
@@ -4375,7 +4364,7 @@ var AreaEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4444,7 +4433,7 @@ var AreaEditor = function(parameters) {
     };
 
     this.addArea = function(width, height) {
-        console.log("Adding an area");
+        0;
         var lastElement;
 
         // Get a deep copy of the template object
@@ -4571,11 +4560,11 @@ var BarSelect = function (parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             var width;
             
             if (slot === 'dragStart') {
-                console.log ('Storing dragStart value ', value);
+                0;
                 that.dragStart = value;
                 
                 if (that.areaElement === null) {
@@ -5105,7 +5094,7 @@ K2.OSC.Decoder.prototype.decode = function (msg) {
         }
     }
     catch (e) {
-        console.log("can't decode incoming message: " + e.message);
+        0;
     }
 };
 
@@ -5151,13 +5140,13 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
         }
         catch (e) {
-            console.error ("io.connect failed. No proxy server?");
+            0;
             return;
         }
         this.socket.on('admin', function (data) {
             
             // TODO check the version and the ID
-            console.log("Received an admin message: ", data);
+            0;
             // Let's assume everything is OK
             this.proxyOK = true;
             
@@ -5173,7 +5162,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             // OSC is received from the server
             // Transform it in an array
             var oscArray =  Array.prototype.slice.call(data.osc, 0);
-            console.log ("received osc from the server: " + oscArray);
+            0;
             
             // Send it to the local clients
             this.sendLocalMessage (oscArray);
@@ -5181,7 +5170,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('disconnect', function (data) {
             
-            console.log ("socket disconnected");
+            0;
             this.proxyConnected = false;
             this.proxyOK = false;
             
@@ -5189,7 +5178,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('connect', function (data) {
             
-            console.log ("socket connected");
+            0;
             this.proxyConnected = true;
             
         }.bind(this));
@@ -5208,7 +5197,7 @@ K2.OSCHandler.prototype.unregisterClient = function (clientID) {
 K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     // Try to decode it
     var received = this.OSCDecoder.decode (oscMessage);
-    console.log ("decoded OSC = " + received);
+    0;
     
     // Send it to the callbacks, except for the clientID one
     for (var client in this.localClients) {
@@ -5467,15 +5456,15 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.restore();
 };
 if (typeof define === "function" && define.amd) {
-  console.log ("AMD detected, setting define");  
+  0;  
   define(["hammerjs"], function(Hammer) {
-    console.log ("KievII: returning K2 object inside the define (AMD detected)");
+    0;
     K2.Hammer = Hammer;
     return K2;
   });
 }
 else {
-    console.log ("KievII: setting window.K2 (no AMD)");
+    0;
     // Check if Hammer.js is present
 	if (typeof window.Hammer === 'undefined') {
 		throw ("Hammer.js needed!");

@@ -71,15 +71,3 @@ K2.mergeObject = function(obj1, obj2) {
     }
     return output;
 };
-
-// This should fix "console not defined" problem.
-if (typeof console === 'undefined') {
-    console = {
-        log: function(A) {
-            var B=false;
-            if(B) {
-                alert(A);
-                }
-            }
-    };
-}
