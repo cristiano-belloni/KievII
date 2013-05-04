@@ -92,7 +92,7 @@ K2.Slider.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown*/ K2.Slider.prototype.touch = function(x, y) {
+K2.Slider.prototype.touch = function(x, y) {
     if (this.isInROI(x, y)) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
@@ -114,13 +114,13 @@ K2.Slider.prototype.isInROI = function(x, y) {
     return undefined;
 };
 
-/*K2.Slider.prototype.dragend = K2.Slider.prototype.mouseup*/ K2.Slider.prototype.release = function(x, y) {
+K2.Slider.prototype.release = function(x, y) {
     this.triggered = false;
     this.drag_offset = undefined;
     return undefined;
 };
 
-K2.Slider.prototype.drag /*= K2.Slider.prototype.mousemove*/ = function(curr_x, curr_y) {
+K2.Slider.prototype.drag = function(curr_x, curr_y) {
 
         if (this.triggered === true) {
             var to_set,

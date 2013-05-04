@@ -306,10 +306,10 @@ K2.UI = function(engine, parameters) {
 	// http://stackoverflow.com/questions/12342438/find-coordinates-of-an-html5-canvas-click-event-with-borders/
 	this.getEventPosition = function (e, obj) {
 		
-		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingLeft, 10) || 0;
-		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingTop, 10) || 0;
-		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderLeftWidth, 10) || 0;
-		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderTopWidth, 10) || 0;
+		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, null).paddingLeft, 10) || 0;
+		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, null).paddingTop, 10) || 0;
+		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, null).borderLeftWidth, 10) || 0;
+		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, null).borderTopWidth, 10) || 0;
 		var html = document.body.parentNode;
 		var htmlTop = html.offsetTop;
 		var htmlLeft = html.offsetLeft;
@@ -321,7 +321,7 @@ K2.UI = function(engine, parameters) {
 	        mx, my;
 	
 	    // Compute the total offset
-	    if (element.offsetParent !== undefined) {
+	    if (typeof element.offsetParent !== 'undefined') {
 	        do {
 	            offsetX += element.offsetLeft;
 	            offsetY += element.offsetTop;
@@ -366,24 +366,10 @@ K2.UI = function(engine, parameters) {
         var that = this;
             return function(evt) {
 
-            var event = evt;
             var type = evt.type;
 
-			var realCoords = that.getEventPosition(event, that.domElement);
+			var realCoords = that.getEventPosition(evt, that.domElement);
 
-			/*if (type === 'mousedown') {
-				that.mouseUp = false;
-			}
-			else if (type === 'mouseup') {
-				that.mouseUp = true;
-			}
-
-			if (type === 'mousemove') {
-				// Only if the mouse button is still down (This could be incomplete TODO).
-                if (that.mouseUp === false) {
-                    that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
-                }
-            }*/
             console.log ("About to notify a mouse event of type", type);
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
@@ -455,26 +441,6 @@ K2.UI = function(engine, parameters) {
 	var renderTarget = engine.renderTarget || engine.target;
     
     this.domElement = eventTarget;
-    
-    var isEventSupported = (function(){
-    var TAGNAMES = {
-      'select':'input','change':'input',
-      'submit':'form','reset':'form',
-      'error':'img','load':'img','abort':'img'
-	};
-    function isEventSupported(eventName) {
-      var el = document.createElement(TAGNAMES[eventName] || 'div');
-      eventName = 'on' + eventName;
-      var isSupported = (eventName in el);
-      if (!isSupported) {
-        el.setAttribute(eventName, 'return;');
-        isSupported = typeof el[eventName] == 'function';
-      }
-      el = null;
-      return isSupported;
-    }
-    return isEventSupported;
-  })();
 
 	// Hammer.js is present
 	if (typeof K2.Hammer === 'undefined') {
@@ -485,33 +451,10 @@ K2.UI = function(engine, parameters) {
 
     var hammerEvent = this.onHammerEvent();
     this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
-	
-	/*if (isEventSupported('touchstart')) {
-		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-		console.log ("touchstart supported");
-	}
-    else {
-		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-		console.log ("no touchstart, supporting mousedown");
-	}
-	if (isEventSupported('touchend')) {
-		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
-		console.log ("touchend supported");
-    }
-    else {
-		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-		console.log ("no touchend, supporting mouseup");
-    }
-    // TODO see if it's not superseded by ondrag
-    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);*/
 
     // Add listeners for mouseover and mouseout
     this.domElement.addEventListener('mouseover', this.onMouseEvent(), true);
     this.domElement.addEventListener('mouseout', this.onMouseEvent(), true);
-
-    this.mouseUp = true;
-
-    var ret;
 
     // Elements in this UI.
     this.elements = {};
@@ -536,8 +479,7 @@ K2.UI = function(engine, parameters) {
 
     // Add and remove elements
     this.addElement = function(element, elementParameters) {
-        var slot,
-            slots;
+        var slots;
 
         if (typeof this.elements[element.ID] !== 'undefined') {
             throw new Error('Conflicting / Duplicated ID in UI: ' + element.ID + ' (IDs are identifiers and should be unique)');
@@ -555,12 +497,7 @@ K2.UI = function(engine, parameters) {
         }
 
         // Create the element to insert
-        var tempEl = {'element': element, 'zIndex': zIndex};
-
-        this.elements[element.ID] = tempEl;
-
-        // Get the slots available from the element.
-        slots = element.getValues();
+        this.elements[element.ID] = {'element': element, 'zIndex': zIndex};
 
         // if it's the first element having this zIndex, create the subarray.
         if (typeof this.zArray[zIndex] === 'undefined') {
@@ -596,10 +533,8 @@ K2.UI = function(engine, parameters) {
     
     this.isElement = function (elementId) {
 
-        if (typeof this.elements[elementId] !== 'undefined') {
-            return true;
-        }
-        return false;
+        return typeof this.elements[elementId] !== 'undefined';
+
     };
 
     // Z-Index getter and setter
@@ -773,7 +708,7 @@ K2.UI = function(engine, parameters) {
             // Get the default slot here, if no one specified a slot
             if (typeof setParms.slot === 'undefined') {
                 slot = this.elements[elementID].element.defaultSlot;
-                if (typeof slot === undefined) {
+                if (typeof slot === 'undefined') {
                     throw 'Default slot is undefined!';
                 }
             }
@@ -840,12 +775,7 @@ K2.UI = function(engine, parameters) {
                     // Check if consequent setValue()s should have cascading
                     // consequences (i.e. fire the callbacks)
                     var fire_conn_callback;
-                    if (receiverHash.cascade === false) {
-                        fire_conn_callback = false;
-                    }
-                    else {
-                        fire_conn_callback = true;
-                    }
+                    fire_conn_callback = receiverHash.cascade !== false;
 
                     // Recursively calls itself, keeping an history in the stack
                     this.setValue({elementID: recvElementID, slot: recvSlot, value: recvValue, history: hist, fireCallback: fire_conn_callback});
@@ -994,8 +924,6 @@ K2.extend(K2.Area, K2.UIElement);
 
 K2.Area.prototype.getready = function(args) {
 
-    var valueName, i;
-
      // Call the constructor from the superclass.
     K2.Area.superclass.getready.call(this, args);
 
@@ -1074,12 +1002,7 @@ K2.Area.prototype.isInArea = function (x,y) {
         }
     }
     
-    if (xInside && yInside) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return xInside && yInside;
     
 };
 
@@ -1205,9 +1128,11 @@ K2.Area.prototype.drag =  function(curr_x, curr_y) {
         }
     }
 
+    return undefined;
+
 };
 
-/*K2.Area.prototype.release =*/ K2.Area.prototype.dragend /*= K2.Area.prototype.mouseup*/ = function(x, y) {
+ K2.Area.prototype.dragend  = function(x, y) {
     
     var ret;
     
@@ -1229,15 +1154,16 @@ K2.Area.prototype.drag =  function(curr_x, curr_y) {
 K2.Area.prototype.hold = function(x, y) {
 	if (this.isInArea(x, y)) {
 		//Area is held
-	    var ret = {'slot' : 'held', 'value' : [x, y]};
-	    return ret;
-   }
+	    return {'slot' : 'held', 'value' : [x, y]};
+    }
+    return undefined;
 };
 
 K2.Area.prototype.doubletap = function(x, y) {
 	if (this.isInArea(x, y)) {
 		return {'slot' : 'doubletap', 'value' : [x, y]};
 	}
+    return undefined;
 };
 
 K2.Area.prototype.setValue = function(slot, value) {
@@ -1345,8 +1271,6 @@ K2.Curve.prototype.getready = function(args) {
     this.supportPoints = [];
     this.selectStart = false;
     this.whereHappened = [];
-
-
     // Check for correct number of arguments
     switch (args.curveType) {
 		case 'bezier':
@@ -1384,7 +1308,7 @@ K2.Curve.prototype.getready = function(args) {
 };
 
 K2.Curve.prototype.isInCurve = function(x, y) {
-	for (i = 0; i < this.supportPoints.length; i += 1) {
+	for (var i = 0; i < this.supportPoints.length; i += 1) {
 		if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
 				if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
 					// Curve selected
@@ -1419,7 +1343,7 @@ K2.Curve.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Curve.prototype.touch = K2.Curve.prototype.dragstart /* = K2.Curve.prototype.mousedown*/ = function(x, y) {
+K2.Curve.prototype.touch = K2.Curve.prototype.dragstart = function(x, y) {
 
     var points = this.values.points;
 
@@ -1520,7 +1444,7 @@ K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
     return ret;
 };
 
-K2.Curve.prototype.release /*= K2.Curve.prototype.mouseup*/ = function(x, y) {
+K2.Curve.prototype.release = function(x, y) {
 	this.handleClicked = null;
 	// check the selection-end
 	// check if the point is "on" the curve plot
@@ -1531,8 +1455,8 @@ K2.Curve.prototype.release /*= K2.Curve.prototype.mouseup*/ = function(x, y) {
 			//Curve is selected
 			this.selectStart = false;
             console.log ("selected curve!", this);
-			var ret = {'slot' : 'selected', 'value' : [x, y]};
-			return ret;
+
+            return {'slot': 'selected', 'value': [x, y]};
 			}
 	}
 };
@@ -1545,6 +1469,7 @@ K2.Curve.prototype.hold = function(x, y) {
 		    return ret;
 	   }
 	}
+    return undefined;
 };
 
 K2.Curve.prototype.doubletap = function(x, y) {
@@ -1562,6 +1487,7 @@ K2.Curve.prototype.doubletap = function(x, y) {
 			return {'slot' : 'doubletap_c', 'value' : [x, y]};
 		}
 	}
+    return undefined;
 };
 
 K2.Curve.prototype.setValue = function(slot, value) {
@@ -1602,7 +1528,7 @@ K2.Curve.prototype.refresh_CANVAS2D = function(engine) {
         if (this.isVisible === true) {
             
             var context = engine.context;
-            var initialPoints = this.values.points;
+
             var parameters = {
                 thickness: this.thickness,
                 curveColor: this.curveColor,
@@ -2017,17 +1943,11 @@ K2.Bar.prototype.isInROI = function(x, y) {
 };
 
 K2.Bar.prototype.isInROIX = function(x) {
-    if ((x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth))) {
-            return true;
-        }
-    return false;
+    return (x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth));
 };
 
 K2.Bar.prototype.isInROIY = function(y) {
-    if ((y > this.ROITop) && (y < (this.ROITop + this.ROIHeight))) {
-            return true;
-        }
-    return false;
+    return (y > this.ROITop) && (y < (this.ROITop + this.ROIHeight));
 };
 
 K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
@@ -2037,7 +1957,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
     
     if (this.orientation === 0) {
         if (! this.isInROIY (curr_y)) {
-            return;
+            return undefined;
         }
         retVal = [curr_x - this.xOrigin, tempValue[1]];
         if (retVal[0] > this.width) {
@@ -2050,7 +1970,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
 
     else if (this.orientation === 1) {
         if (! this.isInROIY (curr_x)) {
-            return;
+            return undefined;
         }
         retVal = [tempValue[0], curr_y - this.yOrigin];
         if (retVal[1] > this.height) {
@@ -2066,53 +1986,55 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
 
 K2.Bar.prototype.touch = function (curr_x, curr_y) {
     // Must be (strictly) in ROI
-    if (! this.isInROI (curr_x, curr_y)) {
-        return;
+    if (this.isInROI(curr_x, curr_y)) {
+
+        this.started = true;
+
+        var retVal = this.commonDrag(curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return {'slot': 'barPos', 'value': retVal};
+        }
     }
-    
-    this.started = true;
-    
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = {'slot' : 'barPos', 'value' : retVal};
-        return ret;
-    }
+    return undefined;
 };
 
 K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
-    if (!this.started) {
-        return;
+    if (this.started) {
+        var retVal = this.commonDrag (curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return {'slot' : 'barPos', 'value' : retVal};
+        }
     }
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = {'slot' : 'barPos', 'value' : retVal};
-        return ret;
-    }
+
+    return undefined;
+
 };
 
 K2.Bar.prototype.dragend = K2.Bar.prototype.swipe = function(curr_x, curr_y) {
     
-    if (!this.started) {
-        return;
+    if (this.started) {
+
+        this.started = false;
+
+        var retVal = this.commonDrag (curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
+        }
+
     }
-    this.started = false;
-    
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
-        return ret;
-    }
+
+    return undefined;
 };
 
 K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
     if (this.isInROI(curr_x, curr_y)) {
-        ret = {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
-        return ret;
+        return {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
     }
+    return undefined;
 };
 
 K2.Bar.prototype.setValue = function(slot, value) {
@@ -2214,7 +2136,7 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Button.prototype.mousedown = K2.Button.prototype.touchstart =*/ K2.Button.prototype.touch = function(x, y) {
+K2.Button.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2225,29 +2147,16 @@ K2.Button.prototype.isInROI = function(x, y) {
         }
         else if (this.mode === 'immediate') {
             //Simply add 1 to the button value until it rolls back.
-            to_set = (this.values.buttonvalue + 1) % this.nButtons;
-            ret = {'slot' : 'buttonvalue', 'value' : to_set};
-            return ret;
+            var to_set = (this.values.buttonvalue + 1) % this.nButtons;
+
+            return {'slot': 'buttonvalue', 'value': to_set};
         } 
     }
+    return undefined;
     
 };
 
-/*K2.Button.prototype.touchstart = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
-
-    if (this.isInROI(x, y)) {
-        
-    //Simply add 1 to the button value until it rolls back.
-    to_set = (this.values.buttonvalue + 1) % this.nButtons;
-    ret = {'slot' : 'buttonvalue', 'value' : to_set};
-    
-    return ret;
-    }
-};*/
-
-/*K2.Button.prototype.mouseup = K2.Button.prototype.touchend =*/ K2.Button.prototype.release = function(curr_x, curr_y) {
+K2.Button.prototype.release = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -2286,11 +2195,12 @@ K2.Button.prototype.isInROI = function(x, y) {
 };
 
 K2.Button.prototype.mouseout = function (curr_x, curr_y) {
-    // On immediate, this count as a mouseup (undo)
+    // On immediate, this count as a release (undo)
     // On persistent, this counts as nothing (undo)
     if (this.mode === 'immediate') {
-        return this.mouseup (curr_x, curr_y);
+        return this.release (curr_x, curr_y);
     }
+    return undefined;
 };
 
 // Setters
@@ -2363,14 +2273,12 @@ K2.Background.prototype.GetImage = function() {
 // This methods returns true if the point given belongs to this element.
 K2.Background.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
-        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
-            return true;
-        }
-        return false;
+        return (x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight));
     }
+    return false;
 };
 
-K2.Background.prototype.mousedown = function(x, y) {
+K2.Background.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -2378,21 +2286,16 @@ K2.Background.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Background.prototype.mouseup = function(curr_x, curr_y) {
-
-    var to_set = 0,
-        ret = {};
+K2.Background.prototype.release = function(curr_x, curr_y) {
 
     if (this.triggered) {
 
         if (this.isInROI(curr_x, curr_y)) {
 
-            ret = {'slot' : 'selected', 'value' : [curr_x, curr_y]};
-
             // Click on bg is completed.
             this.triggered = false;
 
-            return ret;
+            return {'slot' : 'selected', 'value' : [curr_x, curr_y]};
         }
     }
 
@@ -2624,8 +2527,6 @@ K2.Gauge.prototype.getready = function(args) {
 	this.radius = args.radius || ((this.width < this.height) ? Math.floor(this.width / 2) : Math.floor(this.height / 2));
 	this.thickness = args.thickness || ((this.width < this.height) ? Math.floor(this.width / 3) : Math.floor(this.height / 3));
 
-	this.animationInterval = null;
-
 };
 
 // This methods returns true if the point given belongs to this element.
@@ -2646,13 +2547,12 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
 	console.log('degree atan ', degreetan);
-	
-	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-	return range_val;
+
+    return K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	
 };
 
-/*K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart*/ K2.Gauge.prototype.touch = function(x, y) {
+K2.Gauge.prototype.touch = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
 	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
@@ -2665,32 +2565,30 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 		var range_val = this.calculateAngle (x,y);
 		
 		this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
-		
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': range_val};
 	}
 
 	return undefined;
 };
 
-K2.Gauge.prototype.drag /*= K2.Gauge.prototype.mousemove*/ = function (x, y) {
+K2.Gauge.prototype.drag = function (x, y) {
 	
 	if (this.triggered) {
 		console.log ("triggered mousemove");
 		var range_val = this.calculateAngle (x,y);
-		//this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': range_val};
 	}
 };
 
-K2.Gauge.prototype.release = /*K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup =*/ function(curr_x, curr_y) {
+K2.Gauge.prototype.release = function(curr_x, curr_y) {
 
 	if (this.triggered) {
 		this.triggered = false;
 		this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : this.values.gaugevalue};
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': this.values.gaugevalue};
 	}
 
 };
@@ -2965,8 +2863,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
-    return ret;
+    return Math.round(this.values.knobvalue * (this.imageNum - 1));
 };
 
 K2.Knob.prototype.getImage = function() {
@@ -3031,7 +2928,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart*/ K2.Knob.prototype.touch = function(x, y) {
+K2.Knob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -3041,8 +2938,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
         
         if (this.knobMethod === 'atan') {
             var range_val = this.calculateAngle (x,y);
-            var ret = {'slot' : 'knobvalue', 'value' : range_val};
-            return ret;
+            return {'slot': 'knobvalue', 'value': range_val};
         }
     }
     
@@ -3050,7 +2946,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return undefined;
 };
 
-/*K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup*/ K2.Knob.prototype.release = function(x, y) {
+K2.Knob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -3061,7 +2957,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
 
 };
 
-K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr_y) {
+K2.Knob.prototype.drag = function(curr_x, curr_y) {
 
 	var ret;
 
@@ -3070,7 +2966,7 @@ K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr
 	    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
 	
 	        // This means that the mouse is currently down.
-	        var deltaY = 0,
+	        var deltaY,
 	            temp_value,
 	            to_set;
 	
@@ -3110,9 +3006,8 @@ K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr
 
 // Setters
 K2.Knob.prototype.setValue = function(slot, value) {
-    var temp_value = value;
 
-    if ((temp_value < 0) || (temp_value > 1)) {
+    if ((value < 0) || (value > 1)) {
         // Out of range; do not set
         return;
     }
@@ -3179,8 +3074,6 @@ K2.Label.prototype.setValue = function(slot, value) {
 };
 
 K2.Label.prototype.refresh_CANVAS2D = function(engine) {
-
-    var text;
 
     if (this.isVisible === true) {
 
@@ -3292,8 +3185,7 @@ K2.RotKnob.prototype.getRotateAmount = function() {
     var offsetAngularValue = (360 - this.initAngValue + rangedAngularValue) % 360;
 
     // Convert to radians
-    var ret = offsetAngularValue * Math.PI / 180;
-    return ret;
+    return offsetAngularValue * Math.PI / 180;
 };
 
 K2.RotKnob.prototype.getRangedAmount = function (angle) {
@@ -3356,14 +3248,12 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
     console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
-    
-    var range_val = this.getRangedAmount (Math.floor(degreeOffset));
-    
-    return range_val;
+
+    return this.getRangedAmount(Math.floor(degreeOffset));
     
 };
 
-/*K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart*/ K2.RotKnob.prototype.touch = function(x, y) {
+K2.RotKnob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -3373,8 +3263,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
         
         if (this.knobMethod === 'atan') {
             var range_val = this.calculateAngle (x,y);
-            var ret = {'slot' : 'knobvalue', 'value' : range_val};
-            return ret;
+            return {'slot': 'knobvalue', 'value': range_val};
         }
         
     }
@@ -3383,7 +3272,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     return undefined;
 };
 
-/*K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend*/ K2.RotKnob.prototype.release = function(x, y) {
+K2.RotKnob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = null;
@@ -3394,7 +3283,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
 
 };
 
-K2.RotKnob.prototype.drag /*= K2.RotKnob.prototype.mousemove*/ = function(curr_x, curr_y) {
+K2.RotKnob.prototype.drag = function(curr_x, curr_y) {
     
     var ret;
 
@@ -3402,7 +3291,7 @@ K2.RotKnob.prototype.drag /*= K2.RotKnob.prototype.mousemove*/ = function(curr_x
         if ((this.start_x !== null) && (this.start_y !== null)) {
     
             // This means that the mouse is currently down.
-            var deltaY = 0,
+            var deltaY,
                 temp_value,
                 to_set;
     
@@ -3586,7 +3475,7 @@ K2.Slider.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown*/ K2.Slider.prototype.touch = function(x, y) {
+K2.Slider.prototype.touch = function(x, y) {
     if (this.isInROI(x, y)) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
@@ -3608,13 +3497,13 @@ K2.Slider.prototype.isInROI = function(x, y) {
     return undefined;
 };
 
-/*K2.Slider.prototype.dragend = K2.Slider.prototype.mouseup*/ K2.Slider.prototype.release = function(x, y) {
+K2.Slider.prototype.release = function(x, y) {
     this.triggered = false;
     this.drag_offset = undefined;
     return undefined;
 };
 
-K2.Slider.prototype.drag /*= K2.Slider.prototype.mousemove*/ = function(curr_x, curr_y) {
+K2.Slider.prototype.drag = function(curr_x, curr_y) {
 
         if (this.triggered === true) {
             var to_set,
@@ -3770,7 +3659,7 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown*/ K2.Wavebox.prototype.touch = function(x, y) {
+K2.Wavebox.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -3778,10 +3667,9 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return undefined;
 };
 
-K2.Wavebox.prototype.release /*= K2.Wavebox.prototype.mouseup*/ = function(curr_x, curr_y) {
+K2.Wavebox.prototype.release = function(curr_x, curr_y) {
 
-    var to_set = 0,
-        ret = {};
+    var ret = {};
 
     if (this.triggered) {
         // Button is activated when cursor is still in the element ROI, otherwise action is void.
@@ -3830,24 +3718,24 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if ((slot === 'startsample') || (slot === 'endsample')) {
         if (value < 0) {
-            throw new Error('Error: Trying to set ', slot, ' less than 0: ', value);
+            throw new Error('Error: Trying to set ' + slot + ' less than 0: ' + value);
         }
         if (typeof this.values.waveboxsignal !== 'undefined') {
             if (value > this.values.waveboxsignal.length) {
-                throw new Error('Error: Trying to set ', slot, ' bigger than signal length: ', value, ' > ', this.values.waveboxsignal.length);
+                throw new Error('Error: Trying to set ' + slot + ' bigger than signal length: ' + value + ' > ' + this.values.waveboxsignal.length);
             }
         }
     }
 
     if (slot === 'startsample') {
         if (value > this.values.endsample) {
-                throw new Error('Error: Trying to set startsample > endsample: ', value, ' > ', this.values.endsample);
+                throw new Error('Error: Trying to set startsample > endsample: ' + value + ' > ' + this.values.endsample);
             }
     }
 
     if (slot === 'endsample') {
-        if (value < this.values.startample) {
-                throw new Error('Error: Trying to set endsample < startsample: ', value, ' < ', this.values.startsample);
+        if (value < this.values.startsample) {
+                throw new Error('Error: Trying to set endsample < startsample: ' + value + ' < ' + this.values.startsample);
             }
     }
 
@@ -3912,103 +3800,79 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 console.log('Error: no binMethod!');
             }
 
-            var i = 0;
+            var i;
             // One bin per pixel
             bin_size = parseInt(((this.values.endsample - this.values.startsample) / dim1), 10);
 
-            if (true) {
-
-				context.beginPath();
-				//Start from the middle
-				if (this.orientation === 0) {
-                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-                }
-
-                for (i = 0; i < dim1; i += 1) {
-
-                    bin_value = binFunction(i, bin_size, this.values);
-
-                    if (this.orientation === 0) {
-	                    y_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
-	                    x_point = i + this.xOrigin;
-                    }
-                    else if (this.orientation === 1) {
-                        y_point = i + this.yOrigin;
-                        x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
-                    }
-
-                    context.lineTo(x_point, y_point);
-
-                }
-                if (this.orientation === 0) {
-                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
-                }
-
-               context.fill();
-               context.closePath();
-
-               context.beginPath();
-
-				if (this.orientation === 0) {
-                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-                }
-
-                for (i = 0; i < dim1; i += 1) {
-
-                    bin_value = binFunction(i, bin_size, this.values);
-
-                    if (this.orientation === 0) {
-	                    y_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
-	                    x_point = i + this.xOrigin;
-                    }
-                    if (this.orientation === 1) {
-                        y_point = i + this.yOrigin;
-                        x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
-                    }
-
-                    context.lineTo(x_point, y_point);
-                }
-
-                if (this.orientation === 0) {
-                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
-                }
-
-                context.fill();
-                context.closePath();
+            context.beginPath();
+            //Start from the middle
+            if (this.orientation === 0) {
+                context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
             }
 
-            if (false) {
+            for (i = 0; i < dim1; i += 1) {
 
-                // TODO this doesn't work with orientations
+                bin_value = binFunction(i, bin_size, this.values);
 
-                for (i = 0; i < dim1; i += 1) {
-                    bin_value = binFunction(i, bin_size, this.values);
+                if (this.orientation === 0) {
+                    y_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
+                    x_point = i + this.xOrigin;
+                }
+                else if (this.orientation === 1) {
+                    y_point = i + this.yOrigin;
+                    x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
+                }
 
-                   //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+                context.lineTo(x_point, y_point);
 
-                   var y = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
-                   var y1 = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
-                   var x = i + this.xOrigin;
-                   var width = 1;
-                   var height = y1 - y;
+            }
+            if (this.orientation === 0) {
+                context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+            }
 
-                   //this.drawClass.drawRect.draw(x, y, width, height, 0);
+            context.fill();
+            context.closePath();
 
-               }
+            context.beginPath();
 
-           }
+            if (this.orientation === 0) {
+                context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
+            }
+
+            for (i = 0; i < dim1; i += 1) {
+
+                bin_value = binFunction(i, bin_size, this.values);
+
+                if (this.orientation === 0) {
+                    y_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
+                    x_point = i + this.xOrigin;
+                }
+                if (this.orientation === 1) {
+                    y_point = i + this.yOrigin;
+                    x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
+                }
+
+                context.lineTo(x_point, y_point);
+            }
+
+            if (this.orientation === 0) {
+                context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+            }
+
+            context.fill();
+            context.closePath();
 
         }
 };
@@ -4034,12 +3898,10 @@ K2.Wavebox.prototype.calculateBinMix = function(bin_index, bin_size, values) {
         }
     }
 
-    var bin_res = {
-        'max' : bin_max,
-        'min' : bin_min
+    return {
+        'max': bin_max,
+        'min': bin_min
     };
-
-    return bin_res;
 };
 
 K2.Wavebox.prototype.calculateBinNone = function(bin_index, bin_size, values) {
@@ -4050,12 +3912,10 @@ K2.Wavebox.prototype.calculateBinNone = function(bin_index, bin_size, values) {
     var middle = parseInt((bin_size / 2), 10);
     var sample_val = values.waveboxsignal[start + middle];
 
-    var bin_res = {
-        'max' : sample_val,
-        'min' : (-sample_val)
+    return {
+        'max': sample_val,
+        'min': (-sample_val)
     };
-
-    return bin_res;
 
 };
 

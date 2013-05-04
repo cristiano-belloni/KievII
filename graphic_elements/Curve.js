@@ -45,8 +45,6 @@ K2.Curve.prototype.getready = function(args) {
     this.supportPoints = [];
     this.selectStart = false;
     this.whereHappened = [];
-
-
     // Check for correct number of arguments
     switch (args.curveType) {
 		case 'bezier':
@@ -84,7 +82,7 @@ K2.Curve.prototype.getready = function(args) {
 };
 
 K2.Curve.prototype.isInCurve = function(x, y) {
-	for (i = 0; i < this.supportPoints.length; i += 1) {
+	for (var i = 0; i < this.supportPoints.length; i += 1) {
 		if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
 				if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
 					// Curve selected
@@ -119,7 +117,7 @@ K2.Curve.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Curve.prototype.touch = K2.Curve.prototype.dragstart /* = K2.Curve.prototype.mousedown*/ = function(x, y) {
+K2.Curve.prototype.touch = K2.Curve.prototype.dragstart = function(x, y) {
 
     var points = this.values.points;
 
@@ -220,7 +218,7 @@ K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
     return ret;
 };
 
-K2.Curve.prototype.release /*= K2.Curve.prototype.mouseup*/ = function(x, y) {
+K2.Curve.prototype.release = function(x, y) {
 	this.handleClicked = null;
 	// check the selection-end
 	// check if the point is "on" the curve plot
@@ -231,8 +229,8 @@ K2.Curve.prototype.release /*= K2.Curve.prototype.mouseup*/ = function(x, y) {
 			//Curve is selected
 			this.selectStart = false;
             console.log ("selected curve!", this);
-			var ret = {'slot' : 'selected', 'value' : [x, y]};
-			return ret;
+
+            return {'slot': 'selected', 'value': [x, y]};
 			}
 	}
 };
@@ -245,6 +243,7 @@ K2.Curve.prototype.hold = function(x, y) {
 		    return ret;
 	   }
 	}
+    return undefined;
 };
 
 K2.Curve.prototype.doubletap = function(x, y) {
@@ -262,6 +261,7 @@ K2.Curve.prototype.doubletap = function(x, y) {
 			return {'slot' : 'doubletap_c', 'value' : [x, y]};
 		}
 	}
+    return undefined;
 };
 
 K2.Curve.prototype.setValue = function(slot, value) {
@@ -302,7 +302,7 @@ K2.Curve.prototype.refresh_CANVAS2D = function(engine) {
         if (this.isVisible === true) {
             
             var context = engine.context;
-            var initialPoints = this.values.points;
+
             var parameters = {
                 thickness: this.thickness,
                 curveColor: this.curveColor,

@@ -7,10 +7,10 @@ K2.UI = function(engine, parameters) {
 	// http://stackoverflow.com/questions/12342438/find-coordinates-of-an-html5-canvas-click-event-with-borders/
 	this.getEventPosition = function (e, obj) {
 		
-		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingLeft, 10) || 0;
-		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingTop, 10) || 0;
-		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderLeftWidth, 10) || 0;
-		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderTopWidth, 10) || 0;
+		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, null).paddingLeft, 10) || 0;
+		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, null).paddingTop, 10) || 0;
+		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, null).borderLeftWidth, 10) || 0;
+		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, null).borderTopWidth, 10) || 0;
 		var html = document.body.parentNode;
 		var htmlTop = html.offsetTop;
 		var htmlLeft = html.offsetLeft;
@@ -22,7 +22,7 @@ K2.UI = function(engine, parameters) {
 	        mx, my;
 	
 	    // Compute the total offset
-	    if (element.offsetParent !== undefined) {
+	    if (typeof element.offsetParent !== 'undefined') {
 	        do {
 	            offsetX += element.offsetLeft;
 	            offsetY += element.offsetTop;
@@ -67,24 +67,10 @@ K2.UI = function(engine, parameters) {
         var that = this;
             return function(evt) {
 
-            var event = evt;
             var type = evt.type;
 
-			var realCoords = that.getEventPosition(event, that.domElement);
+			var realCoords = that.getEventPosition(evt, that.domElement);
 
-			/*if (type === 'mousedown') {
-				that.mouseUp = false;
-			}
-			else if (type === 'mouseup') {
-				that.mouseUp = true;
-			}
-
-			if (type === 'mousemove') {
-				// Only if the mouse button is still down (This could be incomplete TODO).
-                if (that.mouseUp === false) {
-                    that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
-                }
-            }*/
             console.log ("About to notify a mouse event of type", type);
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
@@ -156,26 +142,6 @@ K2.UI = function(engine, parameters) {
 	var renderTarget = engine.renderTarget || engine.target;
     
     this.domElement = eventTarget;
-    
-    var isEventSupported = (function(){
-    var TAGNAMES = {
-      'select':'input','change':'input',
-      'submit':'form','reset':'form',
-      'error':'img','load':'img','abort':'img'
-	};
-    function isEventSupported(eventName) {
-      var el = document.createElement(TAGNAMES[eventName] || 'div');
-      eventName = 'on' + eventName;
-      var isSupported = (eventName in el);
-      if (!isSupported) {
-        el.setAttribute(eventName, 'return;');
-        isSupported = typeof el[eventName] == 'function';
-      }
-      el = null;
-      return isSupported;
-    }
-    return isEventSupported;
-  })();
 
 	// Hammer.js is present
 	if (typeof K2.Hammer === 'undefined') {
@@ -186,33 +152,10 @@ K2.UI = function(engine, parameters) {
 
     var hammerEvent = this.onHammerEvent();
     this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
-	
-	/*if (isEventSupported('touchstart')) {
-		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-		console.log ("touchstart supported");
-	}
-    else {
-		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-		console.log ("no touchstart, supporting mousedown");
-	}
-	if (isEventSupported('touchend')) {
-		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
-		console.log ("touchend supported");
-    }
-    else {
-		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-		console.log ("no touchend, supporting mouseup");
-    }
-    // TODO see if it's not superseded by ondrag
-    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);*/
 
     // Add listeners for mouseover and mouseout
     this.domElement.addEventListener('mouseover', this.onMouseEvent(), true);
     this.domElement.addEventListener('mouseout', this.onMouseEvent(), true);
-
-    this.mouseUp = true;
-
-    var ret;
 
     // Elements in this UI.
     this.elements = {};
@@ -237,8 +180,7 @@ K2.UI = function(engine, parameters) {
 
     // Add and remove elements
     this.addElement = function(element, elementParameters) {
-        var slot,
-            slots;
+        var slots;
 
         if (typeof this.elements[element.ID] !== 'undefined') {
             throw new Error('Conflicting / Duplicated ID in UI: ' + element.ID + ' (IDs are identifiers and should be unique)');
@@ -256,12 +198,7 @@ K2.UI = function(engine, parameters) {
         }
 
         // Create the element to insert
-        var tempEl = {'element': element, 'zIndex': zIndex};
-
-        this.elements[element.ID] = tempEl;
-
-        // Get the slots available from the element.
-        slots = element.getValues();
+        this.elements[element.ID] = {'element': element, 'zIndex': zIndex};
 
         // if it's the first element having this zIndex, create the subarray.
         if (typeof this.zArray[zIndex] === 'undefined') {
@@ -297,10 +234,8 @@ K2.UI = function(engine, parameters) {
     
     this.isElement = function (elementId) {
 
-        if (typeof this.elements[elementId] !== 'undefined') {
-            return true;
-        }
-        return false;
+        return typeof this.elements[elementId] !== 'undefined';
+
     };
 
     // Z-Index getter and setter
@@ -474,7 +409,7 @@ K2.UI = function(engine, parameters) {
             // Get the default slot here, if no one specified a slot
             if (typeof setParms.slot === 'undefined') {
                 slot = this.elements[elementID].element.defaultSlot;
-                if (typeof slot === undefined) {
+                if (typeof slot === 'undefined') {
                     throw 'Default slot is undefined!';
                 }
             }
@@ -541,12 +476,7 @@ K2.UI = function(engine, parameters) {
                     // Check if consequent setValue()s should have cascading
                     // consequences (i.e. fire the callbacks)
                     var fire_conn_callback;
-                    if (receiverHash.cascade === false) {
-                        fire_conn_callback = false;
-                    }
-                    else {
-                        fire_conn_callback = true;
-                    }
+                    fire_conn_callback = receiverHash.cascade !== false;
 
                     // Recursively calls itself, keeping an history in the stack
                     this.setValue({elementID: recvElementID, slot: recvSlot, value: recvValue, history: hist, fireCallback: fire_conn_callback});

@@ -36,17 +36,11 @@ K2.Bar.prototype.isInROI = function(x, y) {
 };
 
 K2.Bar.prototype.isInROIX = function(x) {
-    if ((x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth))) {
-            return true;
-        }
-    return false;
+    return (x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth));
 };
 
 K2.Bar.prototype.isInROIY = function(y) {
-    if ((y > this.ROITop) && (y < (this.ROITop + this.ROIHeight))) {
-            return true;
-        }
-    return false;
+    return (y > this.ROITop) && (y < (this.ROITop + this.ROIHeight));
 };
 
 K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
@@ -56,7 +50,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
     
     if (this.orientation === 0) {
         if (! this.isInROIY (curr_y)) {
-            return;
+            return undefined;
         }
         retVal = [curr_x - this.xOrigin, tempValue[1]];
         if (retVal[0] > this.width) {
@@ -69,7 +63,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
 
     else if (this.orientation === 1) {
         if (! this.isInROIY (curr_x)) {
-            return;
+            return undefined;
         }
         retVal = [tempValue[0], curr_y - this.yOrigin];
         if (retVal[1] > this.height) {
@@ -85,53 +79,55 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
 
 K2.Bar.prototype.touch = function (curr_x, curr_y) {
     // Must be (strictly) in ROI
-    if (! this.isInROI (curr_x, curr_y)) {
-        return;
+    if (this.isInROI(curr_x, curr_y)) {
+
+        this.started = true;
+
+        var retVal = this.commonDrag(curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return {'slot': 'barPos', 'value': retVal};
+        }
     }
-    
-    this.started = true;
-    
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = {'slot' : 'barPos', 'value' : retVal};
-        return ret;
-    }
+    return undefined;
 };
 
 K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
-    if (!this.started) {
-        return;
+    if (this.started) {
+        var retVal = this.commonDrag (curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return {'slot' : 'barPos', 'value' : retVal};
+        }
     }
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = {'slot' : 'barPos', 'value' : retVal};
-        return ret;
-    }
+
+    return undefined;
+
 };
 
 K2.Bar.prototype.dragend = K2.Bar.prototype.swipe = function(curr_x, curr_y) {
     
-    if (!this.started) {
-        return;
+    if (this.started) {
+
+        this.started = false;
+
+        var retVal = this.commonDrag (curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
+        }
+
     }
-    this.started = false;
-    
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
-        return ret;
-    }
+
+    return undefined;
 };
 
 K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
     if (this.isInROI(curr_x, curr_y)) {
-        ret = {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
-        return ret;
+        return {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
     }
+    return undefined;
 };
 
 K2.Bar.prototype.setValue = function(slot, value) {

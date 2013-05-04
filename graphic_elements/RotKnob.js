@@ -89,8 +89,7 @@ K2.RotKnob.prototype.getRotateAmount = function() {
     var offsetAngularValue = (360 - this.initAngValue + rangedAngularValue) % 360;
 
     // Convert to radians
-    var ret = offsetAngularValue * Math.PI / 180;
-    return ret;
+    return offsetAngularValue * Math.PI / 180;
 };
 
 K2.RotKnob.prototype.getRangedAmount = function (angle) {
@@ -153,14 +152,12 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
     console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
-    
-    var range_val = this.getRangedAmount (Math.floor(degreeOffset));
-    
-    return range_val;
+
+    return this.getRangedAmount(Math.floor(degreeOffset));
     
 };
 
-/*K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart*/ K2.RotKnob.prototype.touch = function(x, y) {
+K2.RotKnob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -170,8 +167,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
         
         if (this.knobMethod === 'atan') {
             var range_val = this.calculateAngle (x,y);
-            var ret = {'slot' : 'knobvalue', 'value' : range_val};
-            return ret;
+            return {'slot': 'knobvalue', 'value': range_val};
         }
         
     }
@@ -180,7 +176,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     return undefined;
 };
 
-/*K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend*/ K2.RotKnob.prototype.release = function(x, y) {
+K2.RotKnob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = null;
@@ -191,7 +187,7 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
 
 };
 
-K2.RotKnob.prototype.drag /*= K2.RotKnob.prototype.mousemove*/ = function(curr_x, curr_y) {
+K2.RotKnob.prototype.drag = function(curr_x, curr_y) {
     
     var ret;
 
@@ -199,7 +195,7 @@ K2.RotKnob.prototype.drag /*= K2.RotKnob.prototype.mousemove*/ = function(curr_x
         if ((this.start_x !== null) && (this.start_y !== null)) {
     
             // This means that the mouse is currently down.
-            var deltaY = 0,
+            var deltaY,
                 temp_value,
                 to_set;
     

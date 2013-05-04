@@ -40,14 +40,12 @@ K2.Background.prototype.GetImage = function() {
 // This methods returns true if the point given belongs to this element.
 K2.Background.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
-        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
-            return true;
-        }
-        return false;
+        return (x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight));
     }
+    return false;
 };
 
-K2.Background.prototype.mousedown = function(x, y) {
+K2.Background.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -55,21 +53,16 @@ K2.Background.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Background.prototype.mouseup = function(curr_x, curr_y) {
-
-    var to_set = 0,
-        ret = {};
+K2.Background.prototype.release = function(curr_x, curr_y) {
 
     if (this.triggered) {
 
         if (this.isInROI(curr_x, curr_y)) {
 
-            ret = {'slot' : 'selected', 'value' : [curr_x, curr_y]};
-
             // Click on bg is completed.
             this.triggered = false;
 
-            return ret;
+            return {'slot' : 'selected', 'value' : [curr_x, curr_y]};
         }
     }
 

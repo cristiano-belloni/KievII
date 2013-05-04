@@ -70,8 +70,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
-    return ret;
+    return Math.round(this.values.knobvalue * (this.imageNum - 1));
 };
 
 K2.Knob.prototype.getImage = function() {
@@ -136,7 +135,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart*/ K2.Knob.prototype.touch = function(x, y) {
+K2.Knob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -146,8 +145,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
         
         if (this.knobMethod === 'atan') {
             var range_val = this.calculateAngle (x,y);
-            var ret = {'slot' : 'knobvalue', 'value' : range_val};
-            return ret;
+            return {'slot': 'knobvalue', 'value': range_val};
         }
     }
     
@@ -155,7 +153,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return undefined;
 };
 
-/*K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup*/ K2.Knob.prototype.release = function(x, y) {
+K2.Knob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -166,7 +164,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
 
 };
 
-K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr_y) {
+K2.Knob.prototype.drag = function(curr_x, curr_y) {
 
 	var ret;
 
@@ -175,7 +173,7 @@ K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr
 	    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
 	
 	        // This means that the mouse is currently down.
-	        var deltaY = 0,
+	        var deltaY,
 	            temp_value,
 	            to_set;
 	
@@ -215,9 +213,8 @@ K2.Knob.prototype.drag /*= K2.Knob.prototype.mousemove*/ = function(curr_x, curr
 
 // Setters
 K2.Knob.prototype.setValue = function(slot, value) {
-    var temp_value = value;
 
-    if ((temp_value < 0) || (temp_value > 1)) {
+    if ((value < 0) || (value > 1)) {
         // Out of range; do not set
         return;
     }

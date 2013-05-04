@@ -13,7 +13,7 @@ var ButtonTest = {
             ID: "test_button",
             left: Math.floor ((this.viewWidth - img.width) / 2),
             top: Math.floor ((this.viewHeight - img.height) / 2),
-            mode: 'immediate',
+            mode: 'persistent',
             imagesArray : imgs,
             onValueSet: function (slot, value) {
                 this.ui.refresh();

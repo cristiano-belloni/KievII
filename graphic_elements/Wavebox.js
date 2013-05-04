@@ -38,7 +38,7 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown*/ K2.Wavebox.prototype.touch = function(x, y) {
+K2.Wavebox.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -46,10 +46,9 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return undefined;
 };
 
-K2.Wavebox.prototype.release /*= K2.Wavebox.prototype.mouseup*/ = function(curr_x, curr_y) {
+K2.Wavebox.prototype.release = function(curr_x, curr_y) {
 
-    var to_set = 0,
-        ret = {};
+    var ret = {};
 
     if (this.triggered) {
         // Button is activated when cursor is still in the element ROI, otherwise action is void.
@@ -98,24 +97,24 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if ((slot === 'startsample') || (slot === 'endsample')) {
         if (value < 0) {
-            throw new Error('Error: Trying to set ', slot, ' less than 0: ', value);
+            throw new Error('Error: Trying to set ' + slot + ' less than 0: ' + value);
         }
         if (typeof this.values.waveboxsignal !== 'undefined') {
             if (value > this.values.waveboxsignal.length) {
-                throw new Error('Error: Trying to set ', slot, ' bigger than signal length: ', value, ' > ', this.values.waveboxsignal.length);
+                throw new Error('Error: Trying to set ' + slot + ' bigger than signal length: ' + value + ' > ' + this.values.waveboxsignal.length);
             }
         }
     }
 
     if (slot === 'startsample') {
         if (value > this.values.endsample) {
-                throw new Error('Error: Trying to set startsample > endsample: ', value, ' > ', this.values.endsample);
+                throw new Error('Error: Trying to set startsample > endsample: ' + value + ' > ' + this.values.endsample);
             }
     }
 
     if (slot === 'endsample') {
-        if (value < this.values.startample) {
-                throw new Error('Error: Trying to set endsample < startsample: ', value, ' < ', this.values.startsample);
+        if (value < this.values.startsample) {
+                throw new Error('Error: Trying to set endsample < startsample: ' + value + ' < ' + this.values.startsample);
             }
     }
 
@@ -180,103 +179,79 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 console.log('Error: no binMethod!');
             }
 
-            var i = 0;
+            var i;
             // One bin per pixel
             bin_size = parseInt(((this.values.endsample - this.values.startsample) / dim1), 10);
 
-            if (true) {
-
-				context.beginPath();
-				//Start from the middle
-				if (this.orientation === 0) {
-                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-                }
-
-                for (i = 0; i < dim1; i += 1) {
-
-                    bin_value = binFunction(i, bin_size, this.values);
-
-                    if (this.orientation === 0) {
-	                    y_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
-	                    x_point = i + this.xOrigin;
-                    }
-                    else if (this.orientation === 1) {
-                        y_point = i + this.yOrigin;
-                        x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
-                    }
-
-                    context.lineTo(x_point, y_point);
-
-                }
-                if (this.orientation === 0) {
-                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
-                }
-
-               context.fill();
-               context.closePath();
-
-               context.beginPath();
-
-				if (this.orientation === 0) {
-                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-                }
-
-                for (i = 0; i < dim1; i += 1) {
-
-                    bin_value = binFunction(i, bin_size, this.values);
-
-                    if (this.orientation === 0) {
-	                    y_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
-	                    x_point = i + this.xOrigin;
-                    }
-                    if (this.orientation === 1) {
-                        y_point = i + this.yOrigin;
-                        x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
-                    }
-
-                    context.lineTo(x_point, y_point);
-                }
-
-                if (this.orientation === 0) {
-                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
-                }
-
-                context.fill();
-                context.closePath();
+            context.beginPath();
+            //Start from the middle
+            if (this.orientation === 0) {
+                context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
             }
 
-            if (false) {
+            for (i = 0; i < dim1; i += 1) {
 
-                // TODO this doesn't work with orientations
+                bin_value = binFunction(i, bin_size, this.values);
 
-                for (i = 0; i < dim1; i += 1) {
-                    bin_value = binFunction(i, bin_size, this.values);
+                if (this.orientation === 0) {
+                    y_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
+                    x_point = i + this.xOrigin;
+                }
+                else if (this.orientation === 1) {
+                    y_point = i + this.yOrigin;
+                    x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
+                }
 
-                   //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+                context.lineTo(x_point, y_point);
 
-                   var y = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
-                   var y1 = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
-                   var x = i + this.xOrigin;
-                   var width = 1;
-                   var height = y1 - y;
+            }
+            if (this.orientation === 0) {
+                context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+            }
 
-                   //this.drawClass.drawRect.draw(x, y, width, height, 0);
+            context.fill();
+            context.closePath();
 
-               }
+            context.beginPath();
 
-           }
+            if (this.orientation === 0) {
+                context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
+            }
+
+            for (i = 0; i < dim1; i += 1) {
+
+                bin_value = binFunction(i, bin_size, this.values);
+
+                if (this.orientation === 0) {
+                    y_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
+                    x_point = i + this.xOrigin;
+                }
+                if (this.orientation === 1) {
+                    y_point = i + this.yOrigin;
+                    x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
+                }
+
+                context.lineTo(x_point, y_point);
+            }
+
+            if (this.orientation === 0) {
+                context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+            }
+
+            context.fill();
+            context.closePath();
 
         }
 };
@@ -302,12 +277,10 @@ K2.Wavebox.prototype.calculateBinMix = function(bin_index, bin_size, values) {
         }
     }
 
-    var bin_res = {
-        'max' : bin_max,
-        'min' : bin_min
+    return {
+        'max': bin_max,
+        'min': bin_min
     };
-
-    return bin_res;
 };
 
 K2.Wavebox.prototype.calculateBinNone = function(bin_index, bin_size, values) {
@@ -318,12 +291,10 @@ K2.Wavebox.prototype.calculateBinNone = function(bin_index, bin_size, values) {
     var middle = parseInt((bin_size / 2), 10);
     var sample_val = values.waveboxsignal[start + middle];
 
-    var bin_res = {
-        'max' : sample_val,
-        'min' : (-sample_val)
+    return {
+        'max': sample_val,
+        'min': (-sample_val)
     };
-
-    return bin_res;
 
 };
 

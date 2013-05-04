@@ -38,8 +38,6 @@ K2.Label.prototype.setValue = function(slot, value) {
 
 K2.Label.prototype.refresh_CANVAS2D = function(engine) {
 
-    var text;
-
     if (this.isVisible === true) {
 
         if (typeof this.objParms !== 'undefined') {

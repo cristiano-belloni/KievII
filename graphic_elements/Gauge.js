@@ -37,8 +37,6 @@ K2.Gauge.prototype.getready = function(args) {
 	this.radius = args.radius || ((this.width < this.height) ? Math.floor(this.width / 2) : Math.floor(this.height / 2));
 	this.thickness = args.thickness || ((this.width < this.height) ? Math.floor(this.width / 3) : Math.floor(this.height / 3));
 
-	this.animationInterval = null;
-
 };
 
 // This methods returns true if the point given belongs to this element.
@@ -59,13 +57,12 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
 	console.log('degree atan ', degreetan);
-	
-	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-	return range_val;
+
+    return K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	
 };
 
-/*K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart*/ K2.Gauge.prototype.touch = function(x, y) {
+K2.Gauge.prototype.touch = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
 	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
@@ -78,32 +75,30 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 		var range_val = this.calculateAngle (x,y);
 		
 		this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
-		
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': range_val};
 	}
 
 	return undefined;
 };
 
-K2.Gauge.prototype.drag /*= K2.Gauge.prototype.mousemove*/ = function (x, y) {
+K2.Gauge.prototype.drag = function (x, y) {
 	
 	if (this.triggered) {
 		console.log ("triggered mousemove");
 		var range_val = this.calculateAngle (x,y);
-		//this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': range_val};
 	}
 };
 
-K2.Gauge.prototype.release = /*K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup =*/ function(curr_x, curr_y) {
+K2.Gauge.prototype.release = function(curr_x, curr_y) {
 
 	if (this.triggered) {
 		this.triggered = false;
 		this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : this.values.gaugevalue};
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': this.values.gaugevalue};
 	}
 
 };

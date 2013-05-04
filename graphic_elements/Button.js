@@ -53,7 +53,7 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-/*K2.Button.prototype.mousedown = K2.Button.prototype.touchstart =*/ K2.Button.prototype.touch = function(x, y) {
+K2.Button.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -64,29 +64,16 @@ K2.Button.prototype.isInROI = function(x, y) {
         }
         else if (this.mode === 'immediate') {
             //Simply add 1 to the button value until it rolls back.
-            to_set = (this.values.buttonvalue + 1) % this.nButtons;
-            ret = {'slot' : 'buttonvalue', 'value' : to_set};
-            return ret;
+            var to_set = (this.values.buttonvalue + 1) % this.nButtons;
+
+            return {'slot': 'buttonvalue', 'value': to_set};
         } 
     }
+    return undefined;
     
 };
 
-/*K2.Button.prototype.touchstart = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
-
-    if (this.isInROI(x, y)) {
-        
-    //Simply add 1 to the button value until it rolls back.
-    to_set = (this.values.buttonvalue + 1) % this.nButtons;
-    ret = {'slot' : 'buttonvalue', 'value' : to_set};
-    
-    return ret;
-    }
-};*/
-
-/*K2.Button.prototype.mouseup = K2.Button.prototype.touchend =*/ K2.Button.prototype.release = function(curr_x, curr_y) {
+K2.Button.prototype.release = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -125,11 +112,12 @@ K2.Button.prototype.isInROI = function(x, y) {
 };
 
 K2.Button.prototype.mouseout = function (curr_x, curr_y) {
-    // On immediate, this count as a mouseup (undo)
+    // On immediate, this count as a release (undo)
     // On persistent, this counts as nothing (undo)
     if (this.mode === 'immediate') {
-        return this.mouseup (curr_x, curr_y);
+        return this.release (curr_x, curr_y);
     }
+    return undefined;
 };
 
 // Setters

@@ -9,8 +9,6 @@ K2.extend(K2.Area, K2.UIElement);
 
 K2.Area.prototype.getready = function(args) {
 
-    var valueName, i;
-
      // Call the constructor from the superclass.
     K2.Area.superclass.getready.call(this, args);
 
@@ -89,12 +87,7 @@ K2.Area.prototype.isInArea = function (x,y) {
         }
     }
     
-    if (xInside && yInside) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return xInside && yInside;
     
 };
 
@@ -220,9 +213,11 @@ K2.Area.prototype.drag =  function(curr_x, curr_y) {
         }
     }
 
+    return undefined;
+
 };
 
-/*K2.Area.prototype.release =*/ K2.Area.prototype.dragend /*= K2.Area.prototype.mouseup*/ = function(x, y) {
+ K2.Area.prototype.dragend  = function(x, y) {
     
     var ret;
     
@@ -244,15 +239,16 @@ K2.Area.prototype.drag =  function(curr_x, curr_y) {
 K2.Area.prototype.hold = function(x, y) {
 	if (this.isInArea(x, y)) {
 		//Area is held
-	    var ret = {'slot' : 'held', 'value' : [x, y]};
-	    return ret;
-   }
+	    return {'slot' : 'held', 'value' : [x, y]};
+    }
+    return undefined;
 };
 
 K2.Area.prototype.doubletap = function(x, y) {
 	if (this.isInArea(x, y)) {
 		return {'slot' : 'doubletap', 'value' : [x, y]};
 	}
+    return undefined;
 };
 
 K2.Area.prototype.setValue = function(slot, value) {
