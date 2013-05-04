@@ -1,0 +1,36 @@
+{
+  "name": "kievII",
+  "version": "0.5.0",
+  "description": "Javascript library for web and mobile audio applications developers",
+  "main": "dist/kievII.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-strip": "~0.2.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-uglify": "~0.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/janesconference/KievII.git"
+  },
+  "keywords": [
+    "audio",
+    "kiev",
+    "kievII",
+    "plugins",
+    "hyacinth"
+  ],
+  "author": "Cristiano Belloni (Jane's Conference)",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/janesconference/KievII/issues"
+  }
+}

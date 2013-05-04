@@ -1,3 +1,5 @@
+(function () {
+
 /* The K2 element! */
 var K2 = {};
 
@@ -70,17 +72,6 @@ K2.mergeObject = function(obj1, obj2) {
     return output;
 };
 
-// This should fix "console not defined" problem.
-if (typeof console === 'undefined') {
-    console = {
-        log: function(A) {
-            var B=false;
-            if(B) {
-                alert(A);
-                }
-            }
-    };
-}
 K2.UIElement = function(args) {
     if (arguments.length) {
         this.getready(args);
@@ -304,10 +295,10 @@ K2.UI = function(engine, parameters) {
 	// http://stackoverflow.com/questions/12342438/find-coordinates-of-an-html5-canvas-click-event-with-borders/
 	this.getEventPosition = function (e, obj) {
 		
-		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingLeft, 10) || 0;
-		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).paddingTop, 10) || 0;
-		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderLeftWidth, 10) || 0;
-		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, undefined).borderTopWidth, 10) || 0;
+		var stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(obj, null).paddingLeft, 10) || 0;
+		var stylePaddingTop = parseInt(document.defaultView.getComputedStyle(obj, null).paddingTop, 10) || 0;
+		var styleBorderLeft = parseInt(document.defaultView.getComputedStyle(obj, null).borderLeftWidth, 10) || 0;
+		var styleBorderTop = parseInt(document.defaultView.getComputedStyle(obj, null).borderTopWidth, 10) || 0;
 		var html = document.body.parentNode;
 		var htmlTop = html.offsetTop;
 		var htmlLeft = html.offsetLeft;
@@ -319,7 +310,7 @@ K2.UI = function(engine, parameters) {
 	        mx, my;
 	
 	    // Compute the total offset
-	    if (element.offsetParent !== undefined) {
+	    if (typeof element.offsetParent !== 'undefined') {
 	        do {
 	            offsetX += element.offsetLeft;
 	            offsetY += element.offsetTop;
@@ -334,12 +325,12 @@ K2.UI = function(engine, parameters) {
 	    mx = e.pageX - offsetX;
 	    my = e.pageY - offsetY;
 		
-		// this returns in element's css value
-		// var cssWidth = window.getComputedStyle (obj, null).getPropertyValue("width");
-		// var cssHeight = window.getComputedStyle (obj, null).getPropertyValue("height");
+		// this returns in element's css value, without borders
+		var cssWidth = parseInt(document.defaultView.getComputedStyle(obj, null).getPropertyValue("width"), 10) || 0;
+		var cssHeight = parseInt(document.defaultView.getComputedStyle(obj, null).getPropertyValue("height"), 10) || 0;
 		
-		var cssWidth  = obj.offsetWidth;
-		var cssHeight = obj.offsetHeight;
+		//var cssWidth  = obj.offsetWidth;
+		//var cssHeight = obj.offsetHeight;
 		
 		var attrWidth = obj.getAttribute("width");
 		var attrHeight = obj.getAttribute("height");
@@ -357,48 +348,6 @@ K2.UI = function(engine, parameters) {
 	    };
 	};
 
-    // Thanks for these two functions to the noVNC project. You are great.
-    // https://github.com/kanaka/noVNC/blob/master/include/util.js#L121
-
-    // Get DOM element position on page
-    this.getPosition = function(obj) {
-        var x = 0, y = 0;
-        if (obj.offsetParent) {
-            do {
-                x += obj.offsetLeft;
-                y += obj.offsetTop;
-                obj = obj.offsetParent;
-            } while (obj);
-        }
-        return {'x': x, 'y': y};
-    };
-    
-    // Get mouse event position in DOM element (don't know how to use scale yet).
-    /*this.getEventPosition = function(e, obj, aux_e, scale) {
-
-		var evt, docX, docY, pos;
-
-        evt = (e ? e : window.event);
-        if (evt.pageX || evt.pageY) {
-            docX = evt.pageX;
-            docY = evt.pageY;
-        } else if (evt.clientX || evt.clientY) {
-            docX = evt.clientX + document.body.scrollLeft +
-                document.documentElement.scrollLeft;
-            docY = evt.clientY + document.body.scrollTop +
-                document.documentElement.scrollTop;
-        }
-        else if (typeof aux_e !== 'undefined') {
-            docX = aux_e.touches[0].x;
-            docY = aux_e.touches[0].y;
-        }
-        pos = this.getPosition(obj);
-        if (typeof scale === 'undefined') {
-            scale = 1;
-        }
-        return {'x': (docX - pos.x) / scale, 'y': (docY - pos.y) / scale};
-    };*/
-    
     // Event handlers
 
 	// onMouse events
@@ -406,25 +355,11 @@ K2.UI = function(engine, parameters) {
         var that = this;
             return function(evt) {
 
-            var event = evt;
             var type = evt.type;
 
-			var realCoords = that.getEventPosition(event, that.domElement);
+			var realCoords = that.getEventPosition(evt, that.domElement);
 
-			if (type === 'mousedown') {
-				that.mouseUp = false;
-			}
-			else if (type === 'mouseup') {
-				that.mouseUp = true;
-			}
-
-			if (type === 'mousemove') {
-				// Only if the mouse button is still down (This could be incomplete TODO).
-                if (that.mouseUp === false) {
-                    that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
-                }
-            }
-            //console.log ("About to notify a mouse event of type", type);
+            0;
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
         };
     };
@@ -434,12 +369,12 @@ K2.UI = function(engine, parameters) {
         var that = this;
             return function(evt) {
 
-            var event = evt.originalEvent;
+            var event = evt.gesture.srcEvent;
             var type = evt.type;
 
             var realCoords = that.getEventPosition(event, that.domElement, evt);
 
-            //console.log ("About to notify an Hammer event of type", type);
+            0;
 
             that.elementsNotifyEvent(realCoords.x, realCoords.y, type);
 
@@ -495,71 +430,20 @@ K2.UI = function(engine, parameters) {
 	var renderTarget = engine.renderTarget || engine.target;
     
     this.domElement = eventTarget;
-    
-    var isEventSupported = (function(){
-    var TAGNAMES = {
-      'select':'input','change':'input',
-      'submit':'form','reset':'form',
-      'error':'img','load':'img','abort':'img'
-	};
-    function isEventSupported(eventName) {
-      var el = document.createElement(TAGNAMES[eventName] || 'div');
-      eventName = 'on' + eventName;
-      var isSupported = (eventName in el);
-      if (!isSupported) {
-        el.setAttribute(eventName, 'return;');
-        isSupported = typeof el[eventName] == 'function';
-      }
-      el = null;
-      return isSupported;
-    }
-    return isEventSupported;
-  })();
 
 	// Hammer.js is present
-	if (typeof Hammer === 'undefined') {
+	if (typeof K2.Hammer === 'undefined') {
 		throw ("Hammer.js needed!");
 	}
 	
-	this.hammer = new Hammer(this.domElement, {drag_min_distance: 2});
-	this.hammer.ondragstart = this.onHammerEvent();
-	this.hammer.ondrag = this.onHammerEvent();
-	this.hammer.ondragend = this.onHammerEvent();
-	this.hammer.onswipe = this.onHammerEvent();
-	this.hammer.ontap = this.onHammerEvent();
-	this.hammer.ondoubletap = this.onHammerEvent();
-	this.hammer.onhold = this.onHammerEvent();
-	this.hammer.ontransformstart = this.onHammerEvent();
-	this.hammer.ontransform = this.onHammerEvent();
-	this.hammer.ontransformend = this.onHammerEvent();
-	this.hammer.onrelease = this.onHammerEvent();
-	
-	if (isEventSupported('touchstart')) {
-		this.domElement.addEventListener('touchstart', this.onMouseEvent(), true);
-		console.log ("touchstart supported");
-	}
-    else {
-		this.domElement.addEventListener('mousedown', this.onMouseEvent(), true);
-		console.log ("no touchstart, supporting mousedown");
-	}
-	if (isEventSupported('touchend')) {
-		this.domElement.addEventListener('touchend', this.onMouseEvent(), true);
-		console.log ("touchend supported");
-    }
-    else {
-		this.domElement.addEventListener('mouseup', this.onMouseEvent(), true);
-		console.log ("no touchend, supporting mouseup");
-    }
-    // TODO see if it's not superseded by ondrag
-    this.domElement.addEventListener('mousemove', this.onMouseEvent(), true);
+	this.hammer = new K2.Hammer(this.domElement, {drag_min_distance: 2});
+
+    var hammerEvent = this.onHammerEvent();
+    this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
 
     // Add listeners for mouseover and mouseout
     this.domElement.addEventListener('mouseover', this.onMouseEvent(), true);
     this.domElement.addEventListener('mouseout', this.onMouseEvent(), true);
-
-    this.mouseUp = true;
-
-    var ret;
 
     // Elements in this UI.
     this.elements = {};
@@ -584,8 +468,7 @@ K2.UI = function(engine, parameters) {
 
     // Add and remove elements
     this.addElement = function(element, elementParameters) {
-        var slot,
-            slots;
+        var slots;
 
         if (typeof this.elements[element.ID] !== 'undefined') {
             throw new Error('Conflicting / Duplicated ID in UI: ' + element.ID + ' (IDs are identifiers and should be unique)');
@@ -603,12 +486,7 @@ K2.UI = function(engine, parameters) {
         }
 
         // Create the element to insert
-        var tempEl = {'element': element, 'zIndex': zIndex};
-
-        this.elements[element.ID] = tempEl;
-
-        // Get the slots available from the element.
-        slots = element.getValues();
+        this.elements[element.ID] = {'element': element, 'zIndex': zIndex};
 
         // if it's the first element having this zIndex, create the subarray.
         if (typeof this.zArray[zIndex] === 'undefined') {
@@ -644,10 +522,8 @@ K2.UI = function(engine, parameters) {
     
     this.isElement = function (elementId) {
 
-        if (typeof this.elements[elementId] !== 'undefined') {
-            return true;
-        }
-        return false;
+        return typeof this.elements[elementId] !== 'undefined';
+
     };
 
     // Z-Index getter and setter
@@ -821,7 +697,7 @@ K2.UI = function(engine, parameters) {
             // Get the default slot here, if no one specified a slot
             if (typeof setParms.slot === 'undefined') {
                 slot = this.elements[elementID].element.defaultSlot;
-                if (typeof slot === undefined) {
+                if (typeof slot === 'undefined') {
                     throw 'Default slot is undefined!';
                 }
             }
@@ -888,12 +764,7 @@ K2.UI = function(engine, parameters) {
                     // Check if consequent setValue()s should have cascading
                     // consequences (i.e. fire the callbacks)
                     var fire_conn_callback;
-                    if (receiverHash.cascade === false) {
-                        fire_conn_callback = false;
-                    }
-                    else {
-                        fire_conn_callback = true;
-                    }
+                    fire_conn_callback = receiverHash.cascade !== false;
 
                     // Recursively calls itself, keeping an history in the stack
                     this.setValue({elementID: recvElementID, slot: recvSlot, value: recvValue, history: hist, fireCallback: fire_conn_callback});
@@ -1042,8 +913,6 @@ K2.extend(K2.Area, K2.UIElement);
 
 K2.Area.prototype.getready = function(args) {
 
-    var valueName, i;
-
      // Call the constructor from the superclass.
     K2.Area.superclass.getready.call(this, args);
 
@@ -1122,12 +991,7 @@ K2.Area.prototype.isInArea = function (x,y) {
         }
     }
     
-    if (xInside && yInside) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return xInside && yInside;
     
 };
 
@@ -1148,33 +1012,33 @@ K2.Area.prototype.tap = K2.Area.prototype.dragstart = function(x, y) {
         if ((x > left_min_prox) &&  x < (left_max_prox) && this.dragBorders.left === true) {
             // We're next to the left side
             this.leftSide = true;
-            console.log ("Left side click detected");
+            0;
         }
         if ((x > right_min_prox) &&  x < (right_max_prox) && this.dragBorders.right === true) {
             // We're next to the right side
             this.rightSide = true;
-            console.log ("Right side click detected");
+            0;
         }
         if ((y > bottom_min_prox) &&  y < (bottom_max_prox) && this.dragBorders.bottom === true) {
             // We're next to the bottom side
             this.bottomSide = true;
-            console.log ("Bottom side click detected");
+            0;
         }
         if ((y > top_min_prox) &&  y < (top_max_prox) && this.dragBorders.top === true) {
             // We're next to the top side
             this.topSide = true;
-            console.log ("Top side click detected");
+            0;
         }
         
         if (this.isInArea (x,y)) {
-            console.log ("clicked inside!");
+            0;
             this.inside = true;
             this.startPoint = [x,y];
         }
         else this.inside = false;
 };
 
-K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, curr_y) {
+K2.Area.prototype.drag =  function(curr_x, curr_y) {
 
     var ret = [];
     var newWidth, newHeight;
@@ -1253,9 +1117,11 @@ K2.Area.prototype.drag /*= K2.Area.prototype.mousemove =*/ =  function(curr_x, c
         }
     }
 
+    return undefined;
+
 };
 
-K2.Area.prototype.release = K2.Area.prototype.dragend = K2.Area.prototype.mouseup = function(x, y) {
+ K2.Area.prototype.dragend  = function(x, y) {
     
     var ret;
     
@@ -1277,15 +1143,16 @@ K2.Area.prototype.release = K2.Area.prototype.dragend = K2.Area.prototype.mouseu
 K2.Area.prototype.hold = function(x, y) {
 	if (this.isInArea(x, y)) {
 		//Area is held
-	    var ret = {'slot' : 'held', 'value' : [x, y]};
-	    return ret;
-   }
+	    return {'slot' : 'held', 'value' : [x, y]};
+    }
+    return undefined;
 };
 
 K2.Area.prototype.doubletap = function(x, y) {
 	if (this.isInArea(x, y)) {
 		return {'slot' : 'doubletap', 'value' : [x, y]};
 	}
+    return undefined;
 };
 
 K2.Area.prototype.setValue = function(slot, value) {
@@ -1393,8 +1260,6 @@ K2.Curve.prototype.getready = function(args) {
     this.supportPoints = [];
     this.selectStart = false;
     this.whereHappened = [];
-
-
     // Check for correct number of arguments
     switch (args.curveType) {
 		case 'bezier':
@@ -1432,7 +1297,7 @@ K2.Curve.prototype.getready = function(args) {
 };
 
 K2.Curve.prototype.isInCurve = function(x, y) {
-	for (i = 0; i < this.supportPoints.length; i += 1) {
+	for (var i = 0; i < this.supportPoints.length; i += 1) {
 		if ((x > this.supportPoints[i][0] - this.thickness) && (x < this.supportPoints[i][0] + this.thickness)) {
 				if ((y > this.supportPoints[i][1] - this.thickness) && (y < this.supportPoints[i][1] + this.thickness)) {
 					// Curve selected
@@ -1467,7 +1332,7 @@ K2.Curve.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Curve.prototype.tap = K2.Curve.prototype.dragstart = K2.Curve.prototype.mousedown = function(x, y) {
+K2.Curve.prototype.touch = K2.Curve.prototype.dragstart = function(x, y) {
 
     var points = this.values.points;
 
@@ -1568,7 +1433,7 @@ K2.Curve.prototype.dragend = K2.Curve.prototype.swipe = function (x,y) {
     return ret;
 };
 
-K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
+K2.Curve.prototype.release = function(x, y) {
 	this.handleClicked = null;
 	// check the selection-end
 	// check if the point is "on" the curve plot
@@ -1578,8 +1443,9 @@ K2.Curve.prototype.release = K2.Curve.prototype.mouseup = function(x, y) {
 		if (this.isInCurve(x, y)) {
 			//Curve is selected
 			this.selectStart = false;
-			var ret = {'slot' : 'selected', 'value' : [x, y]};
-			return ret;
+            0;
+
+            return {'slot': 'selected', 'value': [x, y]};
 			}
 	}
 };
@@ -1592,6 +1458,7 @@ K2.Curve.prototype.hold = function(x, y) {
 		    return ret;
 	   }
 	}
+    return undefined;
 };
 
 K2.Curve.prototype.doubletap = function(x, y) {
@@ -1600,13 +1467,16 @@ K2.Curve.prototype.doubletap = function(x, y) {
 		var handleNum;
 		if ((handleNum = this.isInHandle(x, y)) !== null) {
 			// Handle is double-tapped. This has precedence
+            0;
 			return {'slot' : 'doubletap_h', 'value' : [[x, y], handleNum]};
 		}
 		if (this.isInCurve(x, y)) {
 			//Curve is double-tapped
+            0;
 			return {'slot' : 'doubletap_c', 'value' : [x, y]};
 		}
 	}
+    return undefined;
 };
 
 K2.Curve.prototype.setValue = function(slot, value) {
@@ -1647,7 +1517,7 @@ K2.Curve.prototype.refresh_CANVAS2D = function(engine) {
         if (this.isVisible === true) {
             
             var context = engine.context;
-            var initialPoints = this.values.points;
+
             var parameters = {
                 thickness: this.thickness,
                 curveColor: this.curveColor,
@@ -2062,17 +1932,11 @@ K2.Bar.prototype.isInROI = function(x, y) {
 };
 
 K2.Bar.prototype.isInROIX = function(x) {
-    if ((x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth))) {
-            return true;
-        }
-    return false;
+    return (x > this.ROILeft) && (x < (this.ROILeft + this.ROIWidth));
 };
 
 K2.Bar.prototype.isInROIY = function(y) {
-    if ((y > this.ROITop) && (y < (this.ROITop + this.ROIHeight))) {
-            return true;
-        }
-    return false;
+    return (y > this.ROITop) && (y < (this.ROITop + this.ROIHeight));
 };
 
 K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
@@ -2082,7 +1946,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
     
     if (this.orientation === 0) {
         if (! this.isInROIY (curr_y)) {
-            return;
+            return undefined;
         }
         retVal = [curr_x - this.xOrigin, tempValue[1]];
         if (retVal[0] > this.width) {
@@ -2095,7 +1959,7 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
 
     else if (this.orientation === 1) {
         if (! this.isInROIY (curr_x)) {
-            return;
+            return undefined;
         }
         retVal = [tempValue[0], curr_y - this.yOrigin];
         if (retVal[1] > this.height) {
@@ -2109,60 +1973,62 @@ K2.Bar.prototype.commonDrag = function (curr_x, curr_y) {
     return retVal;
 };
 
-K2.Bar.prototype.mousedown = K2.Bar.prototype.touchstart = function (curr_x, curr_y) {
+K2.Bar.prototype.touch = function (curr_x, curr_y) {
     // Must be (strictly) in ROI
-    if (! this.isInROI (curr_x, curr_y)) {
-        return;
+    if (this.isInROI(curr_x, curr_y)) {
+
+        this.started = true;
+
+        var retVal = this.commonDrag(curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return {'slot': 'barPos', 'value': retVal};
+        }
     }
-    
-    this.started = true;
-    
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = {'slot' : 'barPos', 'value' : retVal};
-        return ret;
-    }
+    return undefined;
 };
 
 K2.Bar.prototype.drag = function(curr_x, curr_y) {
 
-    if (!this.started) {
-        return;
+    if (this.started) {
+        var retVal = this.commonDrag (curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return {'slot' : 'barPos', 'value' : retVal};
+        }
     }
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = {'slot' : 'barPos', 'value' : retVal};
-        return ret;
-    }
+
+    return undefined;
+
 };
 
 K2.Bar.prototype.dragend = K2.Bar.prototype.swipe = function(curr_x, curr_y) {
     
-    if (!this.started) {
-        return;
+    if (this.started) {
+
+        this.started = false;
+
+        var retVal = this.commonDrag (curr_x, curr_y);
+
+        if (typeof retVal !== 'undefined') {
+            return [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
+        }
+
     }
-    this.started = false;
-    
-    var retVal = this.commonDrag (curr_x, curr_y);
-    
-    if (typeof retVal !== 'undefined') {
-        ret = [{'slot' : 'barPos', 'value' : retVal}, {'slot' : 'dragEnd', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]}];
-        return ret;
-    }
+
+    return undefined;
 };
 
 K2.Bar.prototype.dragstart = function(curr_x, curr_y) {
     if (this.isInROI(curr_x, curr_y)) {
-        ret = {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
-        return ret;
+        return {'slot' : 'dragStart', 'value' : [curr_x - this.xOrigin, curr_y - this.yOrigin]};
     }
+    return undefined;
 };
 
 K2.Bar.prototype.setValue = function(slot, value) {
 
-	console.log('Setting ' + slot + ' to ' + value);
+	0;
 
     if (slot == 'barPos') {
         if (value[0] <= this.width) {
@@ -2259,7 +2125,7 @@ K2.Button.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) {
+K2.Button.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2270,29 +2136,16 @@ K2.Button.prototype.mousedown = K2.Button.prototype.touchstart = function(x, y) 
         }
         else if (this.mode === 'immediate') {
             //Simply add 1 to the button value until it rolls back.
-            to_set = (this.values.buttonvalue + 1) % this.nButtons;
-            ret = {'slot' : 'buttonvalue', 'value' : to_set};
-            return ret;
+            var to_set = (this.values.buttonvalue + 1) % this.nButtons;
+
+            return {'slot': 'buttonvalue', 'value': to_set};
         } 
     }
+    return undefined;
     
 };
 
-/*K2.Button.prototype.touchstart = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
-
-    if (this.isInROI(x, y)) {
-        
-    //Simply add 1 to the button value until it rolls back.
-    to_set = (this.values.buttonvalue + 1) % this.nButtons;
-    ret = {'slot' : 'buttonvalue', 'value' : to_set};
-    
-    return ret;
-    }
-};*/
-
-K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, curr_y) {
+K2.Button.prototype.release = function(curr_x, curr_y) {
 
     var to_set = 0,
         ret = {};
@@ -2331,11 +2184,12 @@ K2.Button.prototype.mouseup = K2.Button.prototype.touchend = function(curr_x, cu
 };
 
 K2.Button.prototype.mouseout = function (curr_x, curr_y) {
-    // On immediate, this count as a mouseup (undo)
+    // On immediate, this count as a release (undo)
     // On persistent, this counts as nothing (undo)
     if (this.mode === 'immediate') {
-        return this.mouseup (curr_x, curr_y);
+        return this.release (curr_x, curr_y);
     }
+    return undefined;
 };
 
 // Setters
@@ -2408,14 +2262,12 @@ K2.Background.prototype.GetImage = function() {
 // This methods returns true if the point given belongs to this element.
 K2.Background.prototype.isInROI = function(x, y) {
     if ((x > this.ROILeft) && (y > this.ROITop)) {
-        if ((x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight))) {
-            return true;
-        }
-        return false;
+        return (x < (this.ROILeft + this.ROIWidth)) && (y < (this.ROITop + this.ROIHeight));
     }
+    return false;
 };
 
-K2.Background.prototype.mousedown = function(x, y) {
+K2.Background.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -2423,21 +2275,16 @@ K2.Background.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Background.prototype.mouseup = function(curr_x, curr_y) {
-
-    var to_set = 0,
-        ret = {};
+K2.Background.prototype.release = function(curr_x, curr_y) {
 
     if (this.triggered) {
 
         if (this.isInROI(curr_x, curr_y)) {
 
-            ret = {'slot' : 'selected', 'value' : [curr_x, curr_y]};
-
             // Click on bg is completed.
             this.triggered = false;
 
-            return ret;
+            return {'slot' : 'selected', 'value' : [curr_x, curr_y]};
         }
     }
 
@@ -2499,11 +2346,11 @@ K2.ClickBar.prototype.getready = function(args) {
 
 K2.ClickBar.prototype.isInROI = function(x, y) {
 
-    console.log ('y = ', y, "roitop = ", this.ROITop);
+    0;
     if ((x >= this.ROILeft) && (y >= this.ROITop - this.landingHeight)) {
-            console.log ("1st");
+            0;
         if ((x <= (this.ROILeft + this.ROIWidth)) && (y <= (this.ROITop + this.ROIHeight + this.landingHeight))) {
-            console.log ("In ROI!");
+            0;
             return true;
         }
     }
@@ -2514,9 +2361,9 @@ K2.ClickBar.prototype.isInROI = function(x, y) {
 K2.ClickBar.prototype.calculateValue = function (x,y) {
     
     var clickedHeigth = y - this.yOrigin;
-    console.log ("heigth on click is ", clickedHeigth, " pixels"); 
+    0; 
     var clickedValue = 1 - (clickedHeigth / this.height);
-    console.log ("for a value of ", clickedValue, " (", clickedHeigth, " / ", this.height, ")");
+    0;
         
     if (clickedValue > this.maxValue) {
         clickedValue = this.maxValue;
@@ -2530,7 +2377,7 @@ K2.ClickBar.prototype.calculateValue = function (x,y) {
 };
 
 
-K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown = function(x, y) {
+/*K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.prototype.mousedown =*/ K2.ClickBar.prototype.touch = function(x, y) {
     
         if (this.isInROI (x,y)) {
             
@@ -2543,7 +2390,8 @@ K2.ClickBar.prototype.tap = K2.ClickBar.prototype.touchstart = K2.ClickBar.proto
             
             if (clickedValue === this.values.barvalue) {
                 return;
-            }            
+            }
+            
             //this.prevValue = this.values.barvalue;
             return {slot : 'barvalue', value : clickedValue};
        }
@@ -2572,7 +2420,7 @@ K2.ClickBar.prototype.drag = function(x, y) {
 };
 
 
-K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup = function(x, y) {
+/*K2.ClickBar.prototype.release = K2.ClickBar.prototype.dragend = K2.ClickBar.prototype.mouseup*/ K2.ClickBar.prototype.release = function(x, y) {
     
     this.triggered = false;
 
@@ -2668,8 +2516,6 @@ K2.Gauge.prototype.getready = function(args) {
 	this.radius = args.radius || ((this.width < this.height) ? Math.floor(this.width / 2) : Math.floor(this.height / 2));
 	this.thickness = args.thickness || ((this.width < this.height) ? Math.floor(this.width / 3) : Math.floor(this.height / 3));
 
-	this.animationInterval = null;
-
 };
 
 // This methods returns true if the point given belongs to this element.
@@ -2682,59 +2528,56 @@ K2.Gauge.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	0;
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	console.log('radiant atan ', radtan);
+	0;
 	
 	var degreetan = radtan * (180 / Math.PI);
 	degreetan = 180 - degreetan;
-	console.log('degree atan ', degreetan);
-	
-	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-	return range_val;
+	0;
+
+    return K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
 	
 };
 
-K2.Gauge.prototype.tap = K2.Gauge.prototype.mousedown = K2.Gauge.prototype.touchstart = function(x, y) {
+K2.Gauge.prototype.touch = function(x, y) {
 	
 	var dist = K2.MathUtils.distance(x, y, this.xOrigin + this.width / 2, this.yOrigin + this.height / 2);
-	console.log("dist is, ", dist, " radius is ", this.radius, " thickness is ", this.thickness);
+	0;
 	
 	if ((dist > this.radius - this.thickness / 2) && (dist < this.radius + this.thickness / 2)) {
 		
-		console.log("down / tapped Inside the dial");
+		0;
 		this.triggered = true;
 
 		var range_val = this.calculateAngle (x,y);
 		
 		this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
-		
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': range_val};
 	}
 
 	return undefined;
 };
 
-K2.Gauge.prototype.drag = K2.Gauge.prototype.mousemove = function (x, y) {
+K2.Gauge.prototype.drag = function (x, y) {
 	
 	if (this.triggered) {
-		console.log ("triggered mousemove");
+		0;
 		var range_val = this.calculateAngle (x,y);
-		//this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : range_val};
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': range_val};
 	}
 };
 
-K2.Gauge.prototype.release = K2.Gauge.prototype.dragend = K2.Gauge.prototype.mouseup = function(curr_x, curr_y) {
+K2.Gauge.prototype.release = function(curr_x, curr_y) {
 
 	if (this.triggered) {
 		this.triggered = false;
 		this.prevValue = this.values.gaugevalue;
-		var ret = {'slot' : 'gaugevalue', 'value' : this.values.gaugevalue};
-		return ret;
+
+        return {'slot': 'gaugevalue', 'value': this.values.gaugevalue};
 	}
 
 };
@@ -2855,7 +2698,7 @@ K2.Grid.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Grid.prototype.mousedown = function(x, y) {
+K2.Grid.prototype.touch = function(x, y) {
 
     //console.log ("Click down on ", x, y);
 
@@ -2865,7 +2708,7 @@ K2.Grid.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Grid.prototype.mouseup = function(curr_x, curr_y) {
+K2.Grid.prototype.release = function(curr_x, curr_y) {
 
     if (this.triggered) {
         // Grid is activated when cursor is still in the element ROI, otherwise action is void.
@@ -3009,8 +2852,7 @@ K2.Knob.prototype.getImageNum = function() {
         // Do nothing
         return undefined;
     }
-    var ret = Math.round(this.values.knobvalue * (this.imageNum - 1));
-    return ret;
+    return Math.round(this.values.knobvalue * (this.imageNum - 1));
 };
 
 K2.Knob.prototype.getImage = function() {
@@ -3028,18 +2870,18 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	var centerX = this.xOrigin + this.width / 2;
 	var centerY = this.yOrigin + this.height / 2;
 	
-	console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+	0;
 	
 	var radtan = Math.atan2 (x - centerX, y - centerY);
-	console.log('radiant atan ', radtan);
+	0;
 	// normalize arctan
 	if (radtan < 0) {
         radtan += (2 * Math.PI);
     }
-	console.log ('radiant atan, normalized, is ', radtan);
+	0;
 	
 	var degreetan = radtan * (180 / Math.PI);
-	console.log('degree atan is', degreetan);
+	0;
 	
 	// now we have a value from 0 to 360, where 0 is the lowest 
 	// intersection with the circumference. degree increases anticlockwise
@@ -3060,7 +2902,7 @@ K2.Knob.prototype.calculateAngle = function (x,y) {
 	}
 	
 	var range_val = K2.MathUtils.linearRange(0, 360, 0, 1, Math.floor(degreetan));
-	console.log ('value is', range_val);
+	0;
 	return range_val;
 	
 };
@@ -3075,7 +2917,7 @@ K2.Knob.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.touchstart = function(x, y) {
+K2.Knob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -3085,8 +2927,7 @@ K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.to
         
         if (this.knobMethod === 'atan') {
             var range_val = this.calculateAngle (x,y);
-            var ret = {'slot' : 'knobvalue', 'value' : range_val};
-            return ret;
+            return {'slot': 'knobvalue', 'value': range_val};
         }
     }
     
@@ -3094,7 +2935,7 @@ K2.Knob.prototype.dragstart = K2.Knob.prototype.mousedown = K2.Knob.prototype.to
     return undefined;
 };
 
-K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
+K2.Knob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = undefined;
@@ -3105,7 +2946,7 @@ K2.Knob.prototype.dragend = K2.Knob.prototype.mouseup = function(x, y) {
 
 };
 
-K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) {
+K2.Knob.prototype.drag = function(curr_x, curr_y) {
 
 	var ret;
 
@@ -3114,7 +2955,7 @@ K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) 
 	    if ((this.start_x !== undefined) && (this.start_y !== undefined)) {
 	
 	        // This means that the mouse is currently down.
-	        var deltaY = 0,
+	        var deltaY,
 	            temp_value,
 	            to_set;
 	
@@ -3154,9 +2995,8 @@ K2.Knob.prototype.drag = K2.Knob.prototype.mousemove = function(curr_x, curr_y) 
 
 // Setters
 K2.Knob.prototype.setValue = function(slot, value) {
-    var temp_value = value;
 
-    if ((temp_value < 0) || (temp_value > 1)) {
+    if ((value < 0) || (value > 1)) {
         // Out of range; do not set
         return;
     }
@@ -3223,8 +3063,6 @@ K2.Label.prototype.setValue = function(slot, value) {
 };
 
 K2.Label.prototype.refresh_CANVAS2D = function(engine) {
-
-    var text;
 
     if (this.isVisible === true) {
 
@@ -3336,8 +3174,7 @@ K2.RotKnob.prototype.getRotateAmount = function() {
     var offsetAngularValue = (360 - this.initAngValue + rangedAngularValue) % 360;
 
     // Convert to radians
-    var ret = offsetAngularValue * Math.PI / 180;
-    return ret;
+    return offsetAngularValue * Math.PI / 180;
 };
 
 K2.RotKnob.prototype.getRangedAmount = function (angle) {
@@ -3345,16 +3182,16 @@ K2.RotKnob.prototype.getRangedAmount = function (angle) {
     var endAngOffset = this.stopAngValue - this.initAngValue;
     var startAngOffset = this.startAngValue - this.initAngValue;
     
-    console.log ("start -> end", startAngOffset, endAngOffset);
+    0;
     
     if ((angle > this.initAngValue) && (startAngOffset < 0)) {
-        console.log ("Angle now is", angle);
+        0;
         angle = -(360 - angle);
     }
     
     var rangedAng = K2.MathUtils.linearRange(startAngOffset, endAngOffset, 0, 1, angle);
     
-    console.log ("knob value", rangedAng);
+    0;
     
     if (rangedAng < 0) {
         rangedAng = 0;
@@ -3383,10 +3220,10 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     var centerX = this.xOrigin + this.width / 2;
     var centerY = this.yOrigin + this.height / 2;
     
-    console.log ("Point is: ", x, y, "Center is: ", centerX, centerY);
+    0;
     
     var radtan = Math.atan2 (x - centerX, y - centerY);
-    console.log('radiant atan ', radtan);
+    0;
     
     var degreetan = radtan * (180 / Math.PI);
     degreetan = 180 - degreetan;
@@ -3399,15 +3236,13 @@ K2.RotKnob.prototype.calculateAngle = function (x,y) {
     }
     var degreeMod = (degreetan - this.initAngValue) % 360;
     
-    console.log('degreetan -> offset', degreetan, degreeOffset, degreeMod);
-    
-    var range_val = this.getRangedAmount (Math.floor(degreeOffset));
-    
-    return range_val;
+    0;
+
+    return this.getRangedAmount(Math.floor(degreeOffset));
     
 };
 
-K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.prototype.touchstart = function(x, y) {
+K2.RotKnob.prototype.touch = function(x, y) {
 
     var inROI = this.isInROI(x, y);
     // Save the starting point if event happened in our ROI.
@@ -3417,8 +3252,7 @@ K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.pro
         
         if (this.knobMethod === 'atan') {
             var range_val = this.calculateAngle (x,y);
-            var ret = {'slot' : 'knobvalue', 'value' : range_val};
-            return ret;
+            return {'slot': 'knobvalue', 'value': range_val};
         }
         
     }
@@ -3427,7 +3261,7 @@ K2.RotKnob.prototype.dragstart = K2.RotKnob.prototype.mousedown = K2.RotKnob.pro
     return undefined;
 };
 
-K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototype.touchend = function(x, y) {
+K2.RotKnob.prototype.release = function(x, y) {
 
     // Reset the starting point.
     this.start_x = null;
@@ -3438,7 +3272,7 @@ K2.RotKnob.prototype.dragend = K2.RotKnob.prototype.mouseup = K2.RotKnob.prototy
 
 };
 
-K2.RotKnob.prototype.drag = K2.RotKnob.prototype.mousemove = function(curr_x, curr_y) {
+K2.RotKnob.prototype.drag = function(curr_x, curr_y) {
     
     var ret;
 
@@ -3446,7 +3280,7 @@ K2.RotKnob.prototype.drag = K2.RotKnob.prototype.mousemove = function(curr_x, cu
         if ((this.start_x !== null) && (this.start_y !== null)) {
     
             // This means that the mouse is currently down.
-            var deltaY = 0,
+            var deltaY,
                 temp_value,
                 to_set;
     
@@ -3520,7 +3354,7 @@ K2.RotKnob.prototype.setValue = function(slot, value) {
         stepped_new_value = value;
     }
 
-    console.log('Value is: ', stepped_new_value);
+    0;
 
     // Now, we call the superclass
     K2.RotKnob.superclass.setValue.call(this, slot, stepped_new_value);
@@ -3630,7 +3464,7 @@ K2.Slider.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown = function(x, y) {
+K2.Slider.prototype.touch = function(x, y) {
     if (this.isInROI(x, y)) {
         this.triggered = true;
         // This remembers the difference between the current knob start and
@@ -3652,13 +3486,13 @@ K2.Slider.prototype.dragstart = K2.Slider.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Slider.prototype.dragend = K2.Slider.prototype.mouseup = function(x, y) {
+K2.Slider.prototype.release = function(x, y) {
     this.triggered = false;
     this.drag_offset = undefined;
     return undefined;
 };
 
-K2.Slider.prototype.drag = K2.Slider.prototype.mousemove = function(curr_x, curr_y) {
+K2.Slider.prototype.drag = function(curr_x, curr_y) {
 
         if (this.triggered === true) {
             var to_set,
@@ -3814,9 +3648,7 @@ K2.Wavebox.prototype.isInROI = function(x, y) {
     return false;
 };
 
-K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown = function(x, y) {
-
-    //console.log ("Click down on ", x, y);
+K2.Wavebox.prototype.touch = function(x, y) {
 
     if (this.isInROI(x, y)) {
         this.triggered = true;
@@ -3824,10 +3656,9 @@ K2.Wavebox.prototype.tap = K2.Wavebox.prototype.mousedown = function(x, y) {
     return undefined;
 };
 
-K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, curr_y) {
+K2.Wavebox.prototype.release = function(curr_x, curr_y) {
 
-    var to_set = 0,
-        ret = {};
+    var ret = {};
 
     if (this.triggered) {
         // Button is activated when cursor is still in the element ROI, otherwise action is void.
@@ -3842,12 +3673,13 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
             }
 
             else {
-                console.error('orientation invalid, this will probably break something');
+                0;
             }
 
             // Click on button is completed, the button is no more triggered.
             this.triggered = false;
 
+            0;
             return ret;
         }
     }
@@ -3859,8 +3691,6 @@ K2.Wavebox.prototype.release = K2.Wavebox.prototype.mouseup = function(curr_x, c
 };
 
 K2.Wavebox.prototype.setValue = function(slot, value) {
-
-	console.log('Setting ' + slot + ' to ' + value);
 
     // Won't call the parent: this element has a custom way to set values.
 
@@ -3877,24 +3707,24 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if ((slot === 'startsample') || (slot === 'endsample')) {
         if (value < 0) {
-            throw new Error('Error: Trying to set ', slot, ' less than 0: ', value);
+            throw new Error('Error: Trying to set ' + slot + ' less than 0: ' + value);
         }
         if (typeof this.values.waveboxsignal !== 'undefined') {
             if (value > this.values.waveboxsignal.length) {
-                throw new Error('Error: Trying to set ', slot, ' bigger than signal length: ', value, ' > ', this.values.waveboxsignal.length);
+                throw new Error('Error: Trying to set ' + slot + ' bigger than signal length: ' + value + ' > ' + this.values.waveboxsignal.length);
             }
         }
     }
 
     if (slot === 'startsample') {
         if (value > this.values.endsample) {
-                throw new Error('Error: Trying to set startsample > endsample: ', value, ' > ', this.values.endsample);
+                throw new Error('Error: Trying to set startsample > endsample: ' + value + ' > ' + this.values.endsample);
             }
     }
 
     if (slot === 'endsample') {
-        if (value < this.values.startample) {
-                throw new Error('Error: Trying to set endsample < startsample: ', value, ' < ', this.values.startsample);
+        if (value < this.values.startsample) {
+                throw new Error('Error: Trying to set endsample < startsample: ' + value + ' < ' + this.values.startsample);
             }
     }
 
@@ -3915,11 +3745,11 @@ K2.Wavebox.prototype.setValue = function(slot, value) {
 
     if (slot == 'yPos') {
         if (value <= this.height) {
-            console.log('Setting yPos to ' + value);
+            0;
             this.values.yPos = value;
         }
         else {
-            console.log('NOT setting yPos to ' + value + ' because height is ' + this.height);
+            0;
         }
     }
 };
@@ -3956,106 +3786,82 @@ K2.Wavebox.prototype.refresh_CANVAS2D = function(engine) {
                 binFunction = this.calculateBinNone;
             }
             else {
-                console.log('Error: no binMethod!');
+                0;
             }
 
-            var i = 0;
+            var i;
             // One bin per pixel
             bin_size = parseInt(((this.values.endsample - this.values.startsample) / dim1), 10);
 
-            if (true) {
-
-				context.beginPath();
-				//Start from the middle
-				if (this.orientation === 0) {
-                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-                }
-
-                for (i = 0; i < dim1; i += 1) {
-
-                    bin_value = binFunction(i, bin_size, this.values);
-
-                    if (this.orientation === 0) {
-	                    y_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
-	                    x_point = i + this.xOrigin;
-                    }
-                    else if (this.orientation === 1) {
-                        y_point = i + this.yOrigin;
-                        x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
-                    }
-
-                    context.lineTo(x_point, y_point);
-
-                }
-                if (this.orientation === 0) {
-                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
-                }
-
-               context.fill();
-               context.closePath();
-
-               context.beginPath();
-
-				if (this.orientation === 0) {
-                    context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
-                }
-
-                for (i = 0; i < dim1; i += 1) {
-
-                    bin_value = binFunction(i, bin_size, this.values);
-
-                    if (this.orientation === 0) {
-	                    y_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
-	                    x_point = i + this.xOrigin;
-                    }
-                    if (this.orientation === 1) {
-                        y_point = i + this.yOrigin;
-                        x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
-                    }
-
-                    context.lineTo(x_point, y_point);
-                }
-
-                if (this.orientation === 0) {
-                    context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
-                }
-                else if (this.orientation === 1) {
-                    context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
-                }
-
-                context.fill();
-                context.closePath();
+            context.beginPath();
+            //Start from the middle
+            if (this.orientation === 0) {
+                context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
             }
 
-            if (false) {
+            for (i = 0; i < dim1; i += 1) {
 
-                // TODO this doesn't work with orientations
+                bin_value = binFunction(i, bin_size, this.values);
 
-                for (i = 0; i < dim1; i += 1) {
-                    bin_value = binFunction(i, bin_size, this.values);
+                if (this.orientation === 0) {
+                    y_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
+                    x_point = i + this.xOrigin;
+                }
+                else if (this.orientation === 1) {
+                    y_point = i + this.yOrigin;
+                    x_point = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.xOrigin;
+                }
 
-                   //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+                context.lineTo(x_point, y_point);
 
-                   var y = (dim2 - (((bin_value.max + 1) * (dim2)) / 2)) + this.yOrigin;
-                   var y1 = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
-                   var x = i + this.xOrigin;
-                   var width = 1;
-                   var height = y1 - y;
+            }
+            if (this.orientation === 0) {
+                context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+            }
 
-                   //this.drawClass.drawRect.draw(x, y, width, height, 0);
+            context.fill();
+            context.closePath();
 
-               }
+            context.beginPath();
 
-           }
+            if (this.orientation === 0) {
+                context.moveTo(this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.moveTo(this.xOrigin + dim2 * 0.5, this.yOrigin);
+            }
+
+            for (i = 0; i < dim1; i += 1) {
+
+                bin_value = binFunction(i, bin_size, this.values);
+
+                if (this.orientation === 0) {
+                    y_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.yOrigin;
+                    x_point = i + this.xOrigin;
+                }
+                if (this.orientation === 1) {
+                    y_point = i + this.yOrigin;
+                    x_point = (dim2 - (((bin_value.min + 1) * (dim2)) / 2)) + this.xOrigin;
+                }
+
+                context.lineTo(x_point, y_point);
+            }
+
+            if (this.orientation === 0) {
+                context.lineTo(dim1 + this.xOrigin, dim2 * 0.5 + this.yOrigin);
+            }
+            else if (this.orientation === 1) {
+                context.lineTo(dim2 * 0.5 + this.xOrigin, dim1 + this.yOrigin);
+            }
+
+            context.fill();
+            context.closePath();
 
         }
 };
@@ -4081,12 +3887,10 @@ K2.Wavebox.prototype.calculateBinMix = function(bin_index, bin_size, values) {
         }
     }
 
-    var bin_res = {
-        'max' : bin_max,
-        'min' : bin_min
+    return {
+        'max': bin_max,
+        'min': bin_min
     };
-
-    return bin_res;
 };
 
 K2.Wavebox.prototype.calculateBinNone = function(bin_index, bin_size, values) {
@@ -4097,12 +3901,10 @@ K2.Wavebox.prototype.calculateBinNone = function(bin_index, bin_size, values) {
     var middle = parseInt((bin_size / 2), 10);
     var sample_val = values.waveboxsignal[start + middle];
 
-    var bin_res = {
-        'max' : sample_val,
-        'min' : (-sample_val)
+    return {
+        'max': sample_val,
+        'min': (-sample_val)
     };
-
-    return bin_res;
 
 };
 
@@ -4201,7 +4003,7 @@ var CurveEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4264,7 +4066,7 @@ var CurveEditor = function(parameters) {
 
                 that.status.curveArray.splice(that.status.selected + 1, 0, newCurveArgs.ID);
             }
-            console.log("Reorganizing elements");
+            0;
             that.reorganizeElements();
             that.ui.refresh();
         };
@@ -4282,7 +4084,7 @@ var CurveEditor = function(parameters) {
     };
 
     this.addCurve = function(curveType, grade, first_point, last_point) {
-        console.log("Adding a curve");
+        0;
         var lastElementID;
 
         // Get a deep copy of the template object
@@ -4336,7 +4138,7 @@ var CurveEditor = function(parameters) {
 	
 	        if ((lastPoint[0] === this.lastCalculatedPoint[0]) && (lastPoint[1] === this.lastCalculatedPoint[1])) {
 	            // Set the curve to paint only its first handle
-	            console.log("Remove something before adding stuff");
+	            0;
 	            // Undo the previous paintTerminalPoints inference
 	            this.ui.setProp(lastElementID, 'paintTerminalPoints', 'all');
 	            return;
@@ -4377,7 +4179,7 @@ var CurveEditor = function(parameters) {
         var prevID;
         
         if (this.status.selected !== null) {
-            console.log("Deleting selected curve " + this.status.selected);
+            0;
 
             //arr = arr.filter(function(){return true});
 
@@ -4422,7 +4224,7 @@ var CurveEditor = function(parameters) {
         var i;
         if (this.status.selected !== null) {
 
-            console.log("Transforming selected curve " + this.status.selected);
+            0;
 
             var bezierN = grade;
 
@@ -4433,11 +4235,11 @@ var CurveEditor = function(parameters) {
 
             if (curveNow === curveType) {
                 if (curveType !== 'bezier') {
-                    console.log("Identical type, doing nothing");
+                    0;
                     return;
                 } else {
                     if (bezierN === curveGrade) {
-                        console.log("Identical type and grade, doing nothing");
+                        0;
                         return;
                     }
                 }
@@ -4562,7 +4364,7 @@ var AreaEditor = function(parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             
             // Call the optional callback
             if (typeof that.externalCallback === 'function') {
@@ -4631,7 +4433,7 @@ var AreaEditor = function(parameters) {
     };
 
     this.addArea = function(width, height) {
-        console.log("Adding an area");
+        0;
         var lastElement;
 
         // Get a deep copy of the template object
@@ -4758,11 +4560,11 @@ var BarSelect = function (parameters) {
     this.callback = function() {
         var that = this;
         return function(slot, value, element) {
-            console.log("Element: ", element, ". onValueSet callback: slot is ", slot, " and value is ", value, " while that is ", that);
+            0;
             var width;
             
             if (slot === 'dragStart') {
-                console.log ('Storing dragStart value ', value);
+                0;
                 that.dragStart = value;
                 
                 if (that.areaElement === null) {
@@ -5292,7 +5094,7 @@ K2.OSC.Decoder.prototype.decode = function (msg) {
         }
     }
     catch (e) {
-        console.log("can't decode incoming message: " + e.message);
+        0;
     }
 };
 
@@ -5338,13 +5140,13 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             this.socket = io.connect('http://' + this.proxyServer.host + ':' + this.proxyServer.port);
         }
         catch (e) {
-            console.error ("io.connect failed. No proxy server?");
+            0;
             return;
         }
         this.socket.on('admin', function (data) {
             
             // TODO check the version and the ID
-            console.log("Received an admin message: ", data);
+            0;
             // Let's assume everything is OK
             this.proxyOK = true;
             
@@ -5360,7 +5162,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
             // OSC is received from the server
             // Transform it in an array
             var oscArray =  Array.prototype.slice.call(data.osc, 0);
-            console.log ("received osc from the server: " + oscArray);
+            0;
             
             // Send it to the local clients
             this.sendLocalMessage (oscArray);
@@ -5368,7 +5170,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('disconnect', function (data) {
             
-            console.log ("socket disconnected");
+            0;
             this.proxyConnected = false;
             this.proxyOK = false;
             
@@ -5376,7 +5178,7 @@ K2.OSCHandler = function (proxyServer, udpServers) {
         
         this.socket.on ('connect', function (data) {
             
-            console.log ("socket connected");
+            0;
             this.proxyConnected = true;
             
         }.bind(this));
@@ -5395,7 +5197,7 @@ K2.OSCHandler.prototype.unregisterClient = function (clientID) {
 K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     // Try to decode it
     var received = this.OSCDecoder.decode (oscMessage);
-    console.log ("decoded OSC = " + received);
+    0;
     
     // Send it to the callbacks, except for the clientID one
     for (var client in this.localClients) {
@@ -5410,7 +5212,7 @@ K2.OSCHandler.prototype.sendLocalMessage = function (oscMessage, clientID) {
     }
 };
 
-function loadImageArray(args) {
+K2.loadImageArray = function (args) {
 
     this.onCompletion = function() {
 
@@ -5485,9 +5287,9 @@ function loadImageArray(args) {
         this.imagesArray[i].onerror = this.onError(this);
         this.imagesArray[i].src = args.imageNames[i];
     }
-}
+};
 
-function loadMultipleImages(args) {
+K2.loadMultipleImages = function(args) {
 
     this.loadingManager = function() {
         // Storage the closurage.
@@ -5567,7 +5369,7 @@ function loadMultipleImages(args) {
         this.loaders[this.multipleImages[i].ID] = loader;
     }
 
-}
+};
 
 function memoize(func, max) {
     max = max || 5000;
@@ -5579,20 +5381,6 @@ function memoize(func, max) {
         }
         return fn;
     }());
-}
-
-
-var fact_table = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000, 51090942171709440000, 1124000727777607680000, 25852016738884976640000, 620448401733239439360000, 15511210043330985984000000, 403291461126605635584000000, 10888869450418352160768000000, 304888344611713860501504000000, 8841761993739701954543616000000, 265252859812191058636308480000000, 8222838654177922817725562880000000, 263130836933693530167218012160000000, 8683317618811886495518194401280000000, 295232799039604140847618609643520000000, 10333147966386144929666651337523200000000, 371993326789901217467999448150835200000000, 13763753091226345046315979581580902400000000, 523022617466601111760007224100074291200000000, 20397882081197443358640281739902897356800000000, 815915283247897734345611269596115894272000000000, 33452526613163807108170062053440751665152000000000, 1405006117752879898543142606244511569936384000000000, 60415263063373835637355132068513997507264512000000000, 2658271574788448768043625811014615890319638528000000000, 119622220865480194561963161495657715064383733760000000000, 5502622159812088949850305428800254892961651752960000000000, 258623241511168180642964355153611979969197632389120000000000, 12413915592536072670862289047373375038521486354677760000000000, 608281864034267560872252163321295376887552831379210240000000000, 30414093201713378043612608166064768844377641568960512000000000000, 1551118753287382280224243016469303211063259720016986112000000000000, 80658175170943878571660636856403766975289505440883277824000000000000, 4274883284060025564298013753389399649690343788366813724672000000000000, 230843697339241380472092742683027581083278564571807941132288000000000000, 12696403353658275925965100847566516959580321051449436762275840000000000000, 710998587804863451854045647463724949736497978881168458687447040000000000000, 40526919504877216755680601905432322134980384796226602145184481280000000000000, 2350561331282878571829474910515074683828862318181142924420699914240000000000000, 138683118545689835737939019720389406345902876772687432540821294940160000000000000, 8320987112741390144276341183223364380754172606361245952449277696409600000000000000, 507580213877224798800856812176625227226004528988036003099405939480985600000000000000, 31469973260387937525653122354950764088012280797258232192163168247821107200000000000000, 1982608315404440064116146708361898137544773690227268628106279599612729753600000000000000, 126886932185884164103433389335161480802865516174545192198801894375214704230400000000000000, 8247650592082470666723170306785496252186258551345437492922123134388955774976000000000000000, 544344939077443064003729240247842752644293064388798874532860126869671081148416000000000000000, 36471110918188685288249859096605464427167635314049524593701628500267962436943872000000000000000, 2480035542436830599600990418569171581047399201355367672371710738018221445712183296000000000000000, 171122452428141311372468338881272839092270544893520369393648040923257279754140647424000000000000000, 11978571669969891796072783721689098736458938142546425857555362864628009582789845319680000000000000000, 850478588567862317521167644239926010288584608120796235886430763388588680378079017697280000000000000000, 61234458376886086861524070385274672740778091784697328983823014963978384987221689274204160000000000000000, 4470115461512684340891257138125051110076800700282905015819080092370422104067183317016903680000000000000000, 330788544151938641225953028221253782145683251820934971170611926835411235700971565459250872320000000000000000, 24809140811395398091946477116594033660926243886570122837795894512655842677572867409443815424000000000000000000, 1885494701666050254987932260861146558230394535379329335672487982961844043495537923117729972224000000000000000000, 145183092028285869634070784086308284983740379224208358846781574688061991349156420080065207861248000000000000000000, 11324281178206297831457521158732046228731749579488251990048962825668835325234200766245086213177344000000000000000000, 894618213078297528685144171539831652069808216779571907213868063227837990693501860533361810841010176000000000000000000, 71569457046263802294811533723186532165584657342365752577109445058227039255480148842668944867280814080000000000000000000, 5797126020747367985879734231578109105412357244731625958745865049716390179693892056256184534249745940480000000000000000000, 475364333701284174842138206989404946643813294067993328617160934076743994734899148613007131808479167119360000000000000000000, 39455239697206586511897471180120610571436503407643446275224357528369751562996629334879591940103770870906880000000000000000000, 3314240134565353266999387579130131288000666286242049487118846032383059131291716864129885722968716753156177920000000000000000000, 281710411438055027694947944226061159480056634330574206405101912752560026159795933451040286452340924018275123200000000000000000000, 24227095383672732381765523203441259715284870552429381750838764496720162249742450276789464634901319465571660595200000000000000000000, 2107757298379527717213600518699389595229783738061356212322972511214654115727593174080683423236414793504734471782400000000000000000000, 185482642257398439114796845645546284380220968949399346684421580986889562184028199319100141244804501828416633516851200000000000000000000, 16507955160908461081216919262453619309839666236496541854913520707833171034378509739399912570787600662729080382999756800000000000000000000, 1485715964481761497309522733620825737885569961284688766942216863704985393094065876545992131370884059645617234469978112000000000000000000000, 135200152767840296255166568759495142147586866476906677791741734597153670771559994765685283954750449427751168336768008192000000000000000000000, 12438414054641307255475324325873553077577991715875414356840239582938137710983519518443046123837041347353107486982656753664000000000000000000000, 1156772507081641574759205162306240436214753229576413535186142281213246807121467315215203289516844845303838996289387078090752000000000000000000000, 108736615665674308027365285256786601004186803580182872307497374434045199869417927630229109214583415458560865651202385340530688000000000000000000000, 10329978488239059262599702099394727095397746340117372869212250571234293987594703124871765375385424468563282236864226607350415360000000000000000000000, 991677934870949689209571401541893801158183648651267795444376054838492222809091499987689476037000748982075094738965754305639874560000000000000000000000, 96192759682482119853328425949563698712343813919172976158104477319333745612481875498805879175589072651261284189679678167647067832320000000000000000000000, 9426890448883247745626185743057242473809693764078951663494238777294707070023223798882976159207729119823605850588608460429412647567360000000000000000000000, 933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000, 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000];
-function fact_lookup(n) {
-	if (0 < n <= 100) {
-		return fact_table[n];
-	}
-	else {
-		var rval = 1;
-        for (var i = 2; i <= n; i++)
-            rval = rval * i;
-        return rval;
-	}
 }
 
 K2.GenericUtils = {};
@@ -5644,6 +5432,19 @@ K2.MathUtils.distance = function (x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 };
 
+K2.MathUtils.fact_table = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000, 51090942171709440000, 1124000727777607680000, 25852016738884976640000, 620448401733239439360000, 15511210043330985984000000, 403291461126605635584000000, 10888869450418352160768000000, 304888344611713860501504000000, 8841761993739701954543616000000, 265252859812191058636308480000000, 8222838654177922817725562880000000, 263130836933693530167218012160000000, 8683317618811886495518194401280000000, 295232799039604140847618609643520000000, 10333147966386144929666651337523200000000, 371993326789901217467999448150835200000000, 13763753091226345046315979581580902400000000, 523022617466601111760007224100074291200000000, 20397882081197443358640281739902897356800000000, 815915283247897734345611269596115894272000000000, 33452526613163807108170062053440751665152000000000, 1405006117752879898543142606244511569936384000000000, 60415263063373835637355132068513997507264512000000000, 2658271574788448768043625811014615890319638528000000000, 119622220865480194561963161495657715064383733760000000000, 5502622159812088949850305428800254892961651752960000000000, 258623241511168180642964355153611979969197632389120000000000, 12413915592536072670862289047373375038521486354677760000000000, 608281864034267560872252163321295376887552831379210240000000000, 30414093201713378043612608166064768844377641568960512000000000000, 1551118753287382280224243016469303211063259720016986112000000000000, 80658175170943878571660636856403766975289505440883277824000000000000, 4274883284060025564298013753389399649690343788366813724672000000000000, 230843697339241380472092742683027581083278564571807941132288000000000000, 12696403353658275925965100847566516959580321051449436762275840000000000000, 710998587804863451854045647463724949736497978881168458687447040000000000000, 40526919504877216755680601905432322134980384796226602145184481280000000000000, 2350561331282878571829474910515074683828862318181142924420699914240000000000000, 138683118545689835737939019720389406345902876772687432540821294940160000000000000, 8320987112741390144276341183223364380754172606361245952449277696409600000000000000, 507580213877224798800856812176625227226004528988036003099405939480985600000000000000, 31469973260387937525653122354950764088012280797258232192163168247821107200000000000000, 1982608315404440064116146708361898137544773690227268628106279599612729753600000000000000, 126886932185884164103433389335161480802865516174545192198801894375214704230400000000000000, 8247650592082470666723170306785496252186258551345437492922123134388955774976000000000000000, 544344939077443064003729240247842752644293064388798874532860126869671081148416000000000000000, 36471110918188685288249859096605464427167635314049524593701628500267962436943872000000000000000, 2480035542436830599600990418569171581047399201355367672371710738018221445712183296000000000000000, 171122452428141311372468338881272839092270544893520369393648040923257279754140647424000000000000000, 11978571669969891796072783721689098736458938142546425857555362864628009582789845319680000000000000000, 850478588567862317521167644239926010288584608120796235886430763388588680378079017697280000000000000000, 61234458376886086861524070385274672740778091784697328983823014963978384987221689274204160000000000000000, 4470115461512684340891257138125051110076800700282905015819080092370422104067183317016903680000000000000000, 330788544151938641225953028221253782145683251820934971170611926835411235700971565459250872320000000000000000, 24809140811395398091946477116594033660926243886570122837795894512655842677572867409443815424000000000000000000, 1885494701666050254987932260861146558230394535379329335672487982961844043495537923117729972224000000000000000000, 145183092028285869634070784086308284983740379224208358846781574688061991349156420080065207861248000000000000000000, 11324281178206297831457521158732046228731749579488251990048962825668835325234200766245086213177344000000000000000000, 894618213078297528685144171539831652069808216779571907213868063227837990693501860533361810841010176000000000000000000, 71569457046263802294811533723186532165584657342365752577109445058227039255480148842668944867280814080000000000000000000, 5797126020747367985879734231578109105412357244731625958745865049716390179693892056256184534249745940480000000000000000000, 475364333701284174842138206989404946643813294067993328617160934076743994734899148613007131808479167119360000000000000000000, 39455239697206586511897471180120610571436503407643446275224357528369751562996629334879591940103770870906880000000000000000000, 3314240134565353266999387579130131288000666286242049487118846032383059131291716864129885722968716753156177920000000000000000000, 281710411438055027694947944226061159480056634330574206405101912752560026159795933451040286452340924018275123200000000000000000000, 24227095383672732381765523203441259715284870552429381750838764496720162249742450276789464634901319465571660595200000000000000000000, 2107757298379527717213600518699389595229783738061356212322972511214654115727593174080683423236414793504734471782400000000000000000000, 185482642257398439114796845645546284380220968949399346684421580986889562184028199319100141244804501828416633516851200000000000000000000, 16507955160908461081216919262453619309839666236496541854913520707833171034378509739399912570787600662729080382999756800000000000000000000, 1485715964481761497309522733620825737885569961284688766942216863704985393094065876545992131370884059645617234469978112000000000000000000000, 135200152767840296255166568759495142147586866476906677791741734597153670771559994765685283954750449427751168336768008192000000000000000000000, 12438414054641307255475324325873553077577991715875414356840239582938137710983519518443046123837041347353107486982656753664000000000000000000000, 1156772507081641574759205162306240436214753229576413535186142281213246807121467315215203289516844845303838996289387078090752000000000000000000000, 108736615665674308027365285256786601004186803580182872307497374434045199869417927630229109214583415458560865651202385340530688000000000000000000000, 10329978488239059262599702099394727095397746340117372869212250571234293987594703124871765375385424468563282236864226607350415360000000000000000000000, 991677934870949689209571401541893801158183648651267795444376054838492222809091499987689476037000748982075094738965754305639874560000000000000000000000, 96192759682482119853328425949563698712343813919172976158104477319333745612481875498805879175589072651261284189679678167647067832320000000000000000000000, 9426890448883247745626185743057242473809693764078951663494238777294707070023223798882976159207729119823605850588608460429412647567360000000000000000000000, 933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000, 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000];
+K2.MathUtils.fact_lookup = function (n) {
+    if (0 < n <= 100) {
+        return K2.MathUtils.fact_table[n];
+    }
+    else {
+        var rval = 1;
+        for (var i = 2; i <= n; i++)
+            rval = rval * i;
+        return rval;
+    }
+};
+
 K2.CanvasUtils = {};
 
 K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
@@ -5654,795 +5455,22 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.drawImage(args.image, args.x, args.y);
     ctx.restore();
 };
-if (typeof window.define === "function" && window.define.amd) {
-  console.log ("AMD detected, setting define");  
-  window.define("kievII", [], function() {
-    console.log ("KievII: returning K2 object inside the define (AMD detected)");
+if (typeof define === "function" && define.amd) {
+  0;  
+  define(["hammerjs"], function(Hammer) {
+    0;
+    K2.Hammer = Hammer;
     return K2;
   });
 }
 else {
-    console.log ("KievII: setting window.K2 (no AMD)");
+    0;
+    // Check if Hammer.js is present
+	if (typeof window.Hammer === 'undefined') {
+		throw ("Hammer.js needed!");
+	}
+	K2.Hammer = window.Hammer;
     window.kievII = window.K2 = K2;
 }
 
-/*
- * Hammer.JS
- * version 0.6.3
- * author: Eight Media
- * https://github.com/EightMedia/hammer.js
- * Licensed under the MIT license.
- */
-function Hammer(element, options, undefined)
-{
-    var self = this;
-
-    var defaults = {
-        // prevent the default event or not... might be buggy when false
-        prevent_default    : false,
-        css_hacks          : true,
-
-        swipe              : true,
-        swipe_time         : 200,   // ms
-        swipe_min_distance : 20, // pixels
-
-        drag               : true,
-        drag_vertical      : true,
-        drag_horizontal    : true,
-        // minimum distance before the drag event starts
-        drag_min_distance  : 20, // pixels
-
-        // pinch zoom and rotation
-        transform          : true,
-        scale_treshold     : 0.1,
-        rotation_treshold  : 15, // degrees
-
-        tap                : true,
-        tap_double         : true,
-        tap_max_interval   : 300,
-        tap_max_distance   : 10,
-        tap_double_distance: 20,
-
-        hold               : true,
-        hold_timeout       : 500
-    };
-    options = mergeObject(defaults, options);
-
-    // some css hacks
-    (function() {
-        if(!options.css_hacks) {
-            return false;
-        }
-
-        var vendors = ['webkit','moz','ms','o',''];
-        var css_props = {
-            "userSelect": "none",
-            "touchCallout": "none",
-            "userDrag": "none",
-            "tapHighlightColor": "rgba(0,0,0,0)"
-        };
-
-        var prop = '';
-        for(var i = 0; i < vendors.length; i++) {
-            for(var p in css_props) {
-                prop = p;
-                if(vendors[i]) {
-                    prop = vendors[i] + prop.substring(0, 1).toUpperCase() + prop.substring(1);
-                }
-                element.style[ prop ] = css_props[p];
-            }
-        }
-    })();
-
-    // holds the distance that has been moved
-    var _distance = 0;
-
-    // holds the exact angle that has been moved
-    var _angle = 0;
-
-    // holds the direction that has been moved
-    var _direction = 0;
-
-    // holds position movement for sliding
-    var _pos = { };
-
-    // how many fingers are on the screen
-    var _fingers = 0;
-
-    var _first = false;
-
-    var _gesture = null;
-    var _prev_gesture = null;
-
-    var _touch_start_time = null;
-    var _prev_tap_pos = {x: 0, y: 0};
-    var _prev_tap_end_time = null;
-
-    var _hold_timer = null;
-
-    var _offset = {};
-
-    // keep track of the mouse status
-    var _mousedown = false;
-
-    var _event_start;
-    var _event_move;
-    var _event_end;
-
-    var _has_touch = ('ontouchstart' in window);
-
-
-    /**
-     * option setter/getter
-     * @param   string  key
-     * @param   mixed   value
-     * @return  mixed   value
-     */
-    this.option = function(key, val) {
-        if(val != undefined) {
-            options[key] = val;
-        }
-
-        return options[key];
-    };
-
-
-    /**
-     * angle to direction define
-     * @param  float    angle
-     * @return string   direction
-     */
-    this.getDirectionFromAngle = function( angle ) {
-        var directions = {
-            down: angle >= 45 && angle < 135, //90
-            left: angle >= 135 || angle <= -135, //180
-            up: angle < -45 && angle > -135, //270
-            right: angle >= -45 && angle <= 45 //0
-        };
-
-        var direction, key;
-        for(key in directions){
-            if(directions[key]){
-                direction = key;
-                break;
-            }
-        }
-        return direction;
-    };
-
-
-    /**
-     * destroy events
-     * @return  void
-     */
-    this.destroy = function() {
-        if(_has_touch) {
-            removeEvent(element, "touchstart touchmove touchend touchcancel", handleEvents);
-        }
-        // for non-touch
-        else {
-            removeEvent(element, "mouseup mousedown mousemove", handleEvents);
-            removeEvent(element, "mouseout", handleMouseOut);
-        }
-    };
-
-
-    /**
-     * count the number of fingers in the event
-     * when no fingers are detected, one finger is returned (mouse pointer)
-     * @param  event
-     * @return int  fingers
-     */
-    function countFingers( event )
-    {
-        // there is a bug on android (until v4?) that touches is always 1,
-        // so no multitouch is supported, e.g. no, zoom and rotation...
-        return event.touches ? event.touches.length : 1;
-    }
-
-
-    /**
-     * get the x and y positions from the event object
-     * @param  event
-     * @return array  [{ x: int, y: int }]
-     */
-    function getXYfromEvent( event )
-    {
-        event = event || window.event;
-
-        // no touches, use the event pageX and pageY
-        if(!_has_touch) {
-            var doc = document,
-                body = doc.body;
-
-            return [{
-                x: event.pageX || event.clientX + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && doc.clientLeft || 0 ),
-                y: event.pageY || event.clientY + ( doc && doc.scrollTop || body && body.scrollTop || 0 ) - ( doc && doc.clientTop || body && doc.clientTop || 0 )
-            }];
-        }
-        // multitouch, return array with positions
-        else {
-            var pos = [], src;
-            for(var t=0, len=event.touches.length; t<len; t++) {
-                src = event.touches[t];
-                pos.push({ x: src.pageX, y: src.pageY });
-            }
-            return pos;
-        }
-    }
-
-
-    /**
-     * calculate the angle between two points
-     * @param   object  pos1 { x: int, y: int }
-     * @param   object  pos2 { x: int, y: int }
-     */
-    function getAngle( pos1, pos2 )
-    {
-        return Math.atan2(pos2.y - pos1.y, pos2.x - pos1.x) * 180 / Math.PI;
-    }
-
-    /**
-     * calculate the distance between two points
-     * @param   object  pos1 { x: int, y: int }
-     * @param   object  pos2 { x: int, y: int }
-     */
-    function getDistance( pos1, pos2 )
-    {
-        var x = pos2.x - pos1.x, y = pos2.y - pos1.y;
-        return Math.sqrt((x * x) + (y * y));
-    }
-
-
-    /**
-     * calculate the scale size between two fingers
-     * @param   object  pos_start
-     * @param   object  pos_move
-     * @return  float   scale
-     */
-    function calculateScale(pos_start, pos_move)
-    {
-        if(pos_start.length == 2 && pos_move.length == 2) {
-            var start_distance = getDistance(pos_start[0], pos_start[1]);
-            var end_distance = getDistance(pos_move[0], pos_move[1]);
-            return end_distance / start_distance;
-        }
-
-        return 0;
-    }
-
-
-    /**
-     * calculate the rotation degrees between two fingers
-     * @param   object  pos_start
-     * @param   object  pos_move
-     * @return  float   rotation
-     */
-    function calculateRotation(pos_start, pos_move)
-    {
-        if(pos_start.length == 2 && pos_move.length == 2) {
-            var start_rotation = getAngle(pos_start[1], pos_start[0]);
-            var end_rotation = getAngle(pos_move[1], pos_move[0]);
-            return end_rotation - start_rotation;
-        }
-
-        return 0;
-    }
-
-
-    /**
-     * trigger an event/callback by name with params
-     * @param string name
-     * @param array  params
-     */
-    function triggerEvent( eventName, params )
-    {
-        // return touches object
-        params.touches = getXYfromEvent(params.originalEvent);
-        params.type = eventName;
-
-        // trigger callback
-        if(isFunction(self["on"+ eventName])) {
-            self["on"+ eventName].call(self, params);
-        }
-    }
-
-
-    /**
-     * cancel event
-     * @param   object  event
-     * @return  void
-     */
-
-    function cancelEvent(event)
-    {
-        event = event || window.event;
-        if(event.preventDefault){
-            event.preventDefault();
-            event.stopPropagation();
-        }else{
-            event.returnValue = false;
-            event.cancelBubble = true;
-        }
-    }
-
-
-    /**
-     * reset the internal vars to the start values
-     */
-    function reset()
-    {
-        _pos = {};
-        _first = false;
-        _fingers = 0;
-        _distance = 0;
-        _angle = 0;
-        _gesture = null;
-    }
-
-
-    var gestures = {
-        // hold gesture
-        // fired on touchstart
-        hold : function(event)
-        {
-            // only when one finger is on the screen
-            if(options.hold) {
-                _gesture = 'hold';
-                clearTimeout(_hold_timer);
-
-                _hold_timer = setTimeout(function() {
-                    if(_gesture == 'hold') {
-                        triggerEvent("hold", {
-                            originalEvent   : event,
-                            position        : _pos.start
-                        });
-                    }
-                }, options.hold_timeout);
-            }
-        },
-
-        // swipe gesture
-        // fired on touchend
-        swipe : function(event)
-        {
-            //Do not allow a swipe event to be fired when in a transform state.
-            if (!_pos.move || _gesture === "transform") {
-                return;
-            }
-
-            // get the distance we moved
-            var _distance_x = _pos.move[0].x - _pos.start[0].x;
-            var _distance_y = _pos.move[0].y - _pos.start[0].y;
-            _distance = Math.sqrt(_distance_x*_distance_x + _distance_y*_distance_y);
-
-            // compare the kind of gesture by time
-            var now = new Date().getTime();
-            var touch_time = now - _touch_start_time;
-
-            if(options.swipe && (options.swipe_time > touch_time) && (_distance > options.swipe_min_distance)) {
-                // calculate the angle
-                _angle = getAngle(_pos.start[0], _pos.move[0]);
-                _direction = self.getDirectionFromAngle(_angle);
-
-                _gesture = 'swipe';
-
-                var position = { x: _pos.move[0].x - _offset.left,
-                    y: _pos.move[0].y - _offset.top };
-
-                var event_obj = {
-                    originalEvent   : event,
-                    position        : position,
-                    direction       : _direction,
-                    distance        : _distance,
-                    distanceX       : _distance_x,
-                    distanceY       : _distance_y,
-                    angle           : _angle
-                };
-
-                // normal slide event
-                triggerEvent("swipe", event_obj);
-            }
-        },
-
-
-        // drag gesture
-        // fired on mousemove
-        drag : function(event)
-        {
-            // get the distance we moved
-            var _distance_x = _pos.move[0].x - _pos.start[0].x;
-            var _distance_y = _pos.move[0].y - _pos.start[0].y;
-            _distance = Math.sqrt(_distance_x * _distance_x + _distance_y * _distance_y);
-
-            // drag
-            // minimal movement required
-            if(options.drag && (_distance > options.drag_min_distance) || _gesture == 'drag') {
-                // calculate the angle
-                _angle = getAngle(_pos.start[0], _pos.move[0]);
-                _direction = self.getDirectionFromAngle(_angle);
-
-                // check the movement and stop if we go in the wrong direction
-                var is_vertical = (_direction == 'up' || _direction == 'down');
-                if(((is_vertical && !options.drag_vertical) || (!is_vertical && !options.drag_horizontal))
-                    && (_distance > options.drag_min_distance)) {
-                    return;
-                }
-
-                _gesture = 'drag';
-
-                var position = { x: _pos.move[0].x - _offset.left,
-                    y: _pos.move[0].y - _offset.top };
-
-                var event_obj = {
-                    originalEvent   : event,
-                    position        : position,
-                    direction       : _direction,
-                    distance        : _distance,
-                    distanceX       : _distance_x,
-                    distanceY       : _distance_y,
-                    angle           : _angle
-                };
-
-                // on the first time trigger the start event
-                if(_first) {
-                    triggerEvent("dragstart", event_obj);
-
-                    _first = false;
-                }
-
-                // normal slide event
-                triggerEvent("drag", event_obj);
-
-                cancelEvent(event);
-            }
-        },
-
-
-        // transform gesture
-        // fired on touchmove
-        transform : function(event)
-        {
-            if(options.transform) {
-                if(countFingers(event) != 2) {
-                    return false;
-                }
-
-                var rotation = calculateRotation(_pos.start, _pos.move);
-                var scale = calculateScale(_pos.start, _pos.move);
-
-                if(_gesture != 'drag' &&
-                    (_gesture == 'transform' || Math.abs(1-scale) > options.scale_treshold || Math.abs(rotation) > options.rotation_treshold)) {
-                    _gesture = 'transform';
-
-                    _pos.center = {  x: ((_pos.move[0].x + _pos.move[1].x) / 2) - _offset.left,
-                        y: ((_pos.move[0].y + _pos.move[1].y) / 2) - _offset.top };
-
-                    if(_first)
-                        _pos.startCenter = _pos.center;
-
-                    var _distance_x = _pos.center.x - _pos.startCenter.x;
-                    var _distance_y = _pos.center.y - _pos.startCenter.y;
-                    _distance = Math.sqrt(_distance_x*_distance_x + _distance_y*_distance_y);
-
-                    var event_obj = {
-                        originalEvent   : event,
-                        position        : _pos.center,
-                        scale           : scale,
-                        rotation        : rotation,
-                        distance        : _distance,
-                        distanceX       : _distance_x,
-                        distanceY       : _distance_y,
-                    };
-
-                    // on the first time trigger the start event
-                    if(_first) {
-                        triggerEvent("transformstart", event_obj);
-                        _first = false;
-                    }
-
-                    triggerEvent("transform", event_obj);
-
-                    cancelEvent(event);
-
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
-
-        // tap and double tap gesture
-        // fired on touchend
-        tap : function(event)
-        {
-            // compare the kind of gesture by time
-            var now = new Date().getTime();
-            var touch_time = now - _touch_start_time;
-
-            // dont fire when hold is fired
-            if(options.hold && !(options.hold && options.hold_timeout > touch_time)) {
-                return;
-            }
-
-            // when previous event was tap and the tap was max_interval ms ago
-            var is_double_tap = (function(){
-                if (_prev_tap_pos &&
-                    options.tap_double &&
-                    _prev_gesture == 'tap' &&
-                    (_touch_start_time - _prev_tap_end_time) < options.tap_max_interval)
-                {
-                    var x_distance = Math.abs(_prev_tap_pos[0].x - _pos.start[0].x);
-                    var y_distance = Math.abs(_prev_tap_pos[0].y - _pos.start[0].y);
-                    return (_prev_tap_pos && _pos.start && Math.max(x_distance, y_distance) < options.tap_double_distance);
-                }
-                return false;
-            })();
-
-            if(is_double_tap) {
-                _gesture = 'double_tap';
-                _prev_tap_end_time = null;
-
-                triggerEvent("doubletap", {
-                    originalEvent   : event,
-                    position        : _pos.start
-                });
-                cancelEvent(event);
-            }
-
-            // single tap is single touch
-            else {
-                var x_distance = (_pos.move) ? Math.abs(_pos.move[0].x - _pos.start[0].x) : 0;
-                var y_distance =  (_pos.move) ? Math.abs(_pos.move[0].y - _pos.start[0].y) : 0;
-                _distance = Math.max(x_distance, y_distance);
-
-                if(_distance < options.tap_max_distance) {
-                    _gesture = 'tap';
-                    _prev_tap_end_time = now;
-                    _prev_tap_pos = _pos.start;
-
-                    if(options.tap) {
-                        triggerEvent("tap", {
-                            originalEvent   : event,
-                            position        : _pos.start
-                        });
-                        cancelEvent(event);
-                    }
-                }
-            }
-
-        }
-
-    };
-
-
-    function handleEvents(event)
-    {
-        switch(event.type)
-        {
-            case 'mousedown':
-            case 'touchstart':
-                _pos.start = getXYfromEvent(event);
-                _touch_start_time = new Date().getTime();
-                _fingers = countFingers(event);
-                _first = true;
-                _event_start = event;
-
-                // borrowed from jquery offset https://github.com/jquery/jquery/blob/master/src/offset.js
-                var box = element.getBoundingClientRect();
-                var clientTop  = element.clientTop  || document.body.clientTop  || 0;
-                var clientLeft = element.clientLeft || document.body.clientLeft || 0;
-                var scrollTop  = window.pageYOffset || element.scrollTop  || document.body.scrollTop;
-                var scrollLeft = window.pageXOffset || element.scrollLeft || document.body.scrollLeft;
-
-                _offset = {
-                    top: box.top + scrollTop - clientTop,
-                    left: box.left + scrollLeft - clientLeft
-                };
-
-                _mousedown = true;
-
-                // hold gesture
-                gestures.hold(event);
-
-                if(options.prevent_default) {
-                    cancelEvent(event);
-                }
-                break;
-
-            case 'mousemove':
-            case 'touchmove':
-                if(!_mousedown) {
-                    return false;
-                }
-                _event_move = event;
-                _pos.move = getXYfromEvent(event);
-
-                if(!gestures.transform(event)) {
-                    gestures.drag(event);
-                }
-                break;
-
-            case 'mouseup':
-            case 'mouseout':
-            case 'touchcancel':
-            case 'touchend':
-                if(!_mousedown || (_gesture != 'transform' && event.touches && event.touches.length > 0)) {
-                    return false;
-                }
-
-                _mousedown = false;
-                _event_end = event;
-
-
-                // swipe gesture
-                gestures.swipe(event);
-
-
-                // drag gesture
-                // dragstart is triggered, so dragend is possible
-                if(_gesture == 'drag') {
-                    triggerEvent("dragend", {
-                        originalEvent   : event,
-                        direction       : _direction,
-                        distance        : _distance,
-                        angle           : _angle
-                    });
-                }
-
-                // transform
-                // transformstart is triggered, so transformed is possible
-                else if(_gesture == 'transform') {
-                    triggerEvent("transformend", {
-                        originalEvent   : event,
-                        position        : _pos.center,
-                        scale           : calculateScale(_pos.start, _pos.move),
-                        rotation        : calculateRotation(_pos.start, _pos.move),
-                        distance        : _distance,
-                        distanceX       : _distance_x,
-                        distanceY       : _distance_y
-                    });
-                }
-                else {
-                    gestures.tap(_event_start);
-                }
-
-                _prev_gesture = _gesture;
-
-                // trigger release event. 
-                // "release" by default doesn't return the co-ords where your 
-                // finger was released. "position" will return "the last touched co-ords"
-                triggerEvent("release", {
-                    originalEvent   : event,
-                    gesture         : _gesture,
-                    position        : _pos.move || _pos.start
-                });
-
-                // reset vars
-                reset();
-                break;
-        }
-    }
-
-
-    function handleMouseOut(event) {
-        if(!isInsideHammer(element, event.relatedTarget)) {
-            handleEvents(event);
-        }
-    }
-
-
-    // bind events for touch devices
-    // except for windows phone 7.5, it doesnt support touch events..!
-    if(_has_touch) {
-        addEvent(element, "touchstart touchmove touchend touchcancel", handleEvents);
-    }
-    // for non-touch
-    else {
-        addEvent(element, "mouseup mousedown mousemove", handleEvents);
-        addEvent(element, "mouseout", handleMouseOut);
-    }
-
-
-    /**
-     * find if element is (inside) given parent element
-     * @param   object  element
-     * @param   object  parent
-     * @return  bool    inside
-     */
-    function isInsideHammer(parent, child) {
-        // get related target for IE
-        if(!child && window.event && window.event.toElement){
-            child = window.event.toElement;
-        }
-
-        if(parent === child){
-            return true;
-        }
-
-        // loop over parentNodes of child until we find hammer element
-        if(child){
-            var node = child.parentNode;
-            while(node !== null){
-                if(node === parent){
-                    return true;
-                };
-                node = node.parentNode;
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * merge 2 objects into a new object
-     * @param   object  obj1
-     * @param   object  obj2
-     * @return  object  merged object
-     */
-    function mergeObject(obj1, obj2) {
-        var output = {};
-
-        if(!obj2) {
-            return obj1;
-        }
-
-        for (var prop in obj1) {
-            if (prop in obj2) {
-                output[prop] = obj2[prop];
-            } else {
-                output[prop] = obj1[prop];
-            }
-        }
-        return output;
-    }
-
-
-    /**
-     * check if object is a function
-     * @param   object  obj
-     * @return  bool    is function
-     */
-    function isFunction( obj ){
-        return Object.prototype.toString.call( obj ) == "[object Function]";
-    }
-
-
-    /**
-     * attach event
-     * @param   node    element
-     * @param   string  types
-     * @param   object  callback
-     */
-    function addEvent(element, types, callback) {
-        types = types.split(" ");
-        for(var t= 0,len=types.length; t<len; t++) {
-            if(element.addEventListener){
-                element.addEventListener(types[t], callback, false);
-            }
-            else if(document.attachEvent){
-                element.attachEvent("on"+ types[t], callback);
-            }
-        }
-    }
-
-
-    /**
-     * detach event
-     * @param   node    element
-     * @param   string  types
-     * @param   object  callback
-     */
-    function removeEvent(element, types, callback) {
-        types = types.split(" ");
-        for(var t= 0,len=types.length; t<len; t++) {
-            if(element.removeEventListener){
-                element.removeEventListener(types[t], callback, false);
-            }
-            else if(document.detachEvent){
-                element.detachEvent("on"+ types[t], callback);
-            }
-        }
-    }
-}
+})();

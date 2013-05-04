@@ -3,7 +3,7 @@ var KnobTest = {
     name: 'KnobTest',
     ui: null,
     
-    main: function () {
+    main: function (K2) {
         
         // !VIEWABLEDOCSTART
         var images = this.imageLoader.imagesArray;
@@ -30,7 +30,7 @@ var KnobTest = {
         // !VIEWABLEDOCEND            
     },
     
-    init: function (canvas, images) {
+    init: function (canvas, images, K2) {
     
                                                
         this.viewWidth = canvas.width;
@@ -38,7 +38,7 @@ var KnobTest = {
         
         this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
         
-        var imageLoader = new loadImageArray ({ID : "knobTestLoader",
+        var imageLoader = new K2.loadImageArray ({ID : "knobTestLoader",
                                                imageNames: images,
                                                onComplete: imagesCompleted.bind(this),
                                                onSingle: imageSingle.bind(this),
@@ -58,7 +58,7 @@ var KnobTest = {
             this.imageLoader = imageLoader;
             if (imageLoader.status.error !== 0) {
                 throw new Error(imageLoader.status.error + " elements failed to load on loader " + imageLoader.status.id); }
-            this.main();
+            this.main(K2);
         }
         
     }

@@ -3,7 +3,7 @@ var ButtonTest = {
     name: 'ButtonTest',
     ui: null,
     
-    main: function () {
+    main: function (K2) {
         
         // !VIEWABLEDOCSTART
         var imgs = this.imageLoader.imagesArray;
@@ -13,7 +13,7 @@ var ButtonTest = {
             ID: "test_button",
             left: Math.floor ((this.viewWidth - img.width) / 2),
             top: Math.floor ((this.viewHeight - img.height) / 2),
-            mode: 'immediate',
+            mode: 'persistent',
             imagesArray : imgs,
             onValueSet: function (slot, value) {
                 this.ui.refresh();
@@ -26,7 +26,7 @@ var ButtonTest = {
         // !VIEWABLEDOCEND            
     },
     
-    init: function (canvas, images) {
+    init: function (canvas, images, K2) {
     
                                                
         this.viewWidth = canvas.width;
@@ -34,7 +34,7 @@ var ButtonTest = {
         
         this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
         
-        var imageLoader = new loadImageArray ({ID : "buttonTestLoader",
+        var imageLoader = new K2.loadImageArray ({ID : "buttonTestLoader",
                                                imageNames: images,
                                                onComplete: imagesCompleted.bind(this),
                                                onSingle: imageSingle.bind(this),
@@ -54,7 +54,7 @@ var ButtonTest = {
             this.imageLoader = imageLoader;
             if (imageLoader.status.error !== 0) {
                 throw new Error(imageLoader.status.error + " elements failed to load on loader " + imageLoader.status.id); }
-            this.main();
+            this.main(K2);
         }
         
     }

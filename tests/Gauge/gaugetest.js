@@ -3,7 +3,7 @@ var GaugeTest = {
     name : 'GaugeTest',
     ui : null,
 
-    main : function() {
+    main : function(K2) {
 
         // !VIEWABLEDOCSTART
         var gaugeArgs = {
@@ -28,7 +28,7 @@ var GaugeTest = {
         // !VIEWABLEDOCEND
     },
 
-    init : function(canvas) {
+    init : function(canvas, K2) {
 
         this.viewWidth = canvas.width;
         this.viewHeight = canvas.height;
@@ -38,7 +38,7 @@ var GaugeTest = {
             target : canvas
         });
 
-        this.main();
+        this.main(K2);
 
     }
 }

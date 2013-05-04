@@ -3,7 +3,7 @@ var CurveTest = {
     name: 'CurveTest',
     ui: null,
     
-    main: function () {
+    main: function (K2) {
         
         // !VIEWABLEDOCSTART
         var vW = this.viewWidth;
@@ -52,7 +52,7 @@ var CurveTest = {
         // !VIEWABLEDOCEND            
     },
     
-    init: function (canvas) {
+    init: function (canvas, K2) {
     
                                                
         this.viewWidth = canvas.width;
@@ -60,7 +60,7 @@ var CurveTest = {
         
         this.ui = new K2.UI ({type: 'CANVAS2D', target: canvas});
         
-        this.main();
+        this.main(K2);
         
     }
 }
