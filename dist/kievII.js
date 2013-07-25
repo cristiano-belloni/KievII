@@ -5456,8 +5456,9 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.restore();
 };
 if (typeof define === "function" && define.amd) {
+  // JSPM loader support
   0;  
-  define(["hammerjs"], function(Hammer) {
+  define(["github:EightMedia/hammer.js@v1.0/dist/hammer"], function(Hammer) {
     0;
     K2.Hammer = Hammer;
     return K2;

@@ -1,6 +1,7 @@
 if (typeof define === "function" && define.amd) {
+  // JSPM loader support
   console.log ("AMD detected, setting define");  
-  define(["hammerjs"], function(Hammer) {
+  define(["github:EightMedia/hammer.js@v1.0/dist/hammer"], function(Hammer) {
     console.log ("KievII: returning K2 object inside the define (AMD detected)");
     K2.Hammer = Hammer;
     return K2;
