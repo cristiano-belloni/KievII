@@ -144,11 +144,11 @@ K2.UI = function(engine, parameters) {
     this.domElement = eventTarget;
 
 	// Hammer.js is present
-	if (typeof K2.Hammer === 'undefined') {
+	if (typeof hammer === 'undefined') {
 		throw ("Hammer.js needed!");
 	}
 	
-	this.hammer = new K2.Hammer(this.domElement, {drag_min_distance: 2});
+	this.hammer = new hammer(this.domElement, {drag_min_distance: 2});
 
     var hammerEvent = this.onHammerEvent();
     this.hammer.on("dragstart drag dragend swipe tap doubletap hold transformstart transform transformend touch release", hammerEvent);
