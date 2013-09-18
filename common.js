@@ -1,4 +1,9 @@
-(function () {
+(function(factory) {
+  if (typeof define == 'function' && define.amd)
+    define(['hammer'], factory);
+  else
+    window.KievII = factory(window.Hammer);
+})(function(hammer) {
 
 /* The K2 element! */
 var K2 = {};
