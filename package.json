@@ -27,6 +27,9 @@
     "plugins",
     "hyacinth"
   ],
+  "dependencyMap": {
+    "hammer": "github:EightMedia/hammer.js@1.0.0/dist/hammer"
+  },
   "author": "Cristiano Belloni (Jane's Conference)",
   "license": "MIT",
   "readmeFilename": "README.md",

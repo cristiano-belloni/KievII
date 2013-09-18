@@ -2,7 +2,7 @@
   if (typeof define == 'function' && define.amd)
     define(['hammer'], factory);
   else
-    window.KievII = factory(window.Hammer);
+    window.K2 = window.KievII = factory(window.Hammer);
 })(function(hammer) {
 
 /* The K2 element! */
