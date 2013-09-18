@@ -5460,4 +5460,5 @@ K2.CanvasUtils.drawRotate = function (ctx, args /*{image, x, y, rot}*/) {
     ctx.drawImage(args.image, args.x, args.y);
     ctx.restore();
 };
+return K2;
 });
