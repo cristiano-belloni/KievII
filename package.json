@@ -1,6 +1,6 @@
 {
   "name": "kievII",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Javascript library for web and mobile audio applications developers",
   "main": "dist/kievII.js",
   "directories": {
