@@ -37,7 +37,7 @@
     "url": "https://github.com/janesconference/KievII/issues"
   },
   "buildConfig": {
-    "uglify": false
+    "uglify": true
   },
    "directories": {
     "lib": "dist"
