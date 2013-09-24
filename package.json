@@ -35,5 +35,11 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/janesconference/KievII/issues"
+  },
+  "buildConfig": {
+    "uglify": true
+  },
+   "directories": {
+    "lib": "dist"
   }
 }
