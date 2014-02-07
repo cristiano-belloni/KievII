@@ -46,22 +46,18 @@
           <a class="brand" href="#">KievII</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li><a style="color: rgb(202, 41, 41);" href="k2h.html"><b>KievII Host <small>(*NEW)</small></b></a></li>
+              <li><a style="color: rgb(202, 41, 41);" href="http://hya.io"><b>Hya.io</b></a></li>
               <li class="active"><a href="#">Home</a></li>
-              <li><a href="#started">Get Started</a></li>
-              <li><a href="#apps">Apps</a></li>
               <li class="divider-vertical"></li>
               <li><a href="examples.html">Examples</a></li>
-              <li><a href="https://github.com/janesconference/KievII">Code</a></li>
+              <li><a href="https://github.com/janesconference/KievII">Github</a></li>
               <li class="divider-vertical"></li>
-              <li><a href="http://twitter.com/kievII_library"><i class="icon-user icon-white"></i> KievII on Twitter</a></li>
-              <li><a href="http://bitterspring.net/blog"><i class="icon-globe icon-white"></i> Author's blog</a></li>
+              <li><a href="http://twitter.com/kievII_library"><i class="icon-user icon-white"></i> Twitter</a></li>
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contacts<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="mailto:janesconference@bitterspring.net"><i class="icon-envelope"></i> Author's E-mail</a></li>
                     <li><a href="http://twitter.com/janesconference"><i class="icon-user"></i> Author's Twitter</a></li>
-                    <li><a href="http://groups.google.com/group/kievii"><i class="icon-globe"></i> Google Group</a></li>
                   </ul>
               </li>
             </ul>
@@ -81,14 +77,14 @@
 		        </div>
 		        <div class="span6">
 			        <h1>KievII</h1>
-			        <p>GUI and audio/DSP Javascript library, for web and mobile audio applications developers.</p>
+			        <p>GUI Javascript library, for web audio applications developers.</p>
 			        
 			        <div class="btn-group">
 			          <button class="btn btn-success btn-large dropdown-toggle" data-toggle="dropdown"> <i class="icon-download icon-white"></i> Get KievII <span class="caret"></span></button>
 			          <ul class="dropdown-menu">
-			            <li><a href="http://bitterspring.net/k2cdn/v0.4.3/kievII.min.js">Download stable-minified (0.4.3)</a></li>
-                        <li><a href="http://bitterspring.net/k2cdn/v0.4.3/kievII.js">Download stable-uncompressed (0.4.3)</a></li>
-			            <li><a href='https://github.com/janesconference/KievII/archive/v0.4.3.zip'>Download entire library (stable zipball) (0.4.3)</a></li>
+			            <li><a href="https://github.com/janesconference/KievII/releases/download/0.6.0/kievII.min.js">Download stable-minified (0.6.0)</a></li>
+                        <li><a href="https://github.com/janesconference/KievII/releases/download/0.6.0/kievII.js">Download stable-uncompressed (0.6.0)</a></li>
+			            <li><a href='https://github.com/janesconference/KievII/archive/0.6.0.zip'>Download entire library (stable zipball) (0.6.0)</a></li>
 			            <li class="divider"></li>
 			            <li><a href='https://github.com/janesconference/KievII/'>Go to source code</a></li>
 			          </ul>
@@ -102,7 +98,7 @@
       
       <div id="mainContent">
       
-          <h1 id="started">Get Started</h2>
+          <h2 id="started">Get Started</h2>
     	  
     	  <div class="row">
     	  	
@@ -110,14 +106,27 @@
     	  	
     		  	<!--  Including -->
     	        <div class="span12">
-    	        	<h4>Include KievII</h4>
-    			        	<pre> <code data-language="html" id="knob_code">
-&lt;script type='text/javascript' src='kievII.min.js'&gt; &lt;/script&gt;
+    	        	<h4>Include KievII via the <a href="http://jspm.io">jspm</a> CDN (with Hammer.js dependency).</h4>
+    			        	<pre> <code data-language="html">
+&lt;script type='text/javascript' src='https://github.jspm.io/EightMedia/hammer.js@1.0.0/dist/hammer.js'&gt; &lt;/script&gt;
+&lt;script type='text/javascript' src='https://github.jspm.io/janesconference/KievII@0.6.0/kievII.js'&gt; &lt;/script&gt;
     			        	</code> </pre>
     			</div>
+              <div class="span12">
+                  <h4>Use KievII in a <a href="http://hya.io">hya.io</a> plugin.</h4>
+<pre> <code data-language="javascript">
+define(['github:janesconference/KievII@0.6.0/kievII', ...], function(K2) { ... });
+</code> </pre>
+              </div>
+              <div class="span12">
+                  <h4>Use KievII with the <a href="https://github.com/systemjs/systemjs">SystemJS</a> module loader.</h4>
+<pre> <code data-language="javascript">
+System.import('github:janesconference/KievII@0.6.0/kievII').then(function (K2) { ... });
+</code> </pre>
+              </div>
     			<div class="span12">        	
     	        	<h4>Create a KievII UI</h4>
-    	        	<pre> <code data-language="javascript" id="knob_code">
+    	        	<pre> <code data-language="javascript">
 // Get your Canvas Element ID	        		
 var targetCanvas = document.getElementById("your_canvas");
 // Create a new KievII UI
@@ -126,7 +135,7 @@ var ui = new K2.UI ({type: 'CANVAS2D', target: targetCanvas});
     	       </div>
     	       <div class="span12"> 	
     	        	<h4>Add an Element to the UI</h4>
-                    <pre> <code data-language="javascript" id="knob_code">
+                    <pre> <code data-language="javascript">
 // Set the element arguments
 var ElementArgs = {
     ID: 'elementID',
@@ -144,51 +153,50 @@ ui.addElement(new K2.UIElement(gaugeArgs, {zIndex: ... }));
                 </div>
                 <div class="span12">    
                     <h4>Remove an Element from the UI</h4>
-                    <pre> <code data-language="javascript" id="knob_code">
+                    <pre> <code data-language="javascript">
 // Remove element from the UI
 ui.removeElement('elementID');
                     </code> </pre>
     	        </div>
     
             </div>
-	  
-    	  <hr class='style-one'/>
-    	  
-    	  <h1 id="apps"> Applications <small> (made with KievII)</small></h2>
-    	  
-    	  <div class="row-fluid">
-            <ul class="thumbnails">
-              <li class="span4">
-                <div class="thumbnail">
-                  <img src="img/morningstar_screenshot.png" alt="Morning Star">
-                  <div class="caption">
-                    <h3>Morning Star synth</h3>
-                    <p>Morning Star is a monophonic bassline synthesizer controlled by a step sequencer.</p>
-                    <p>Supports <a href="https://developer.mozilla.org/en-US/docs/Introducing_the_Audio_API_Extension"> Mozilla Audio API</a> and <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html"> Web Audio API</a></p>
-                      <p><a href="http://bitterspring.net/ms/morningstar/" class="btn btn-inverse">Launch Morning Star</a> 
-                         <a href="https://github.com/janesconference/MorningStar" class="btn">See Source Code</a></p>
-                  </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail">
-                  <img src="img/voron_screenshot.png" alt="Voron">
-                  <div class="caption">
-                    <h3>Voron</h3>
-                    <p>Voron is a real-time pitchshifter and low-pass filter effect</p>
-                    <p>Supports <a href="https://developer.mozilla.org/en-US/docs/Introducing_the_Audio_API_Extension"> Mozilla Audio API</a></p>
-                    <p><a href="https://developer.mozilla.org/en-US/demos/detail/voron" class="btn btn-inverse">Launch Voron</a>
-                       <a href="https://github.com/janesconference/Voron" class="btn">See Source Code</a></p>
-                  </div>
-                </div>
-              </li>
-            </ul>
           </div>
-    	  
-      <hr />
+
+        <!-- <h1 id="apps"> Applications <small> (made with KievII)</small></h1>
+
+         <div class="row-fluid">
+          <ul class="thumbnails">
+            <li class="span4">
+              <div class="thumbnail">
+                <img src="img/morningstar_screenshot.png" alt="Morning Star">
+                <div class="caption">
+                  <h3>Morning Star synth</h3>
+                  <p>Morning Star is a monophonic bassline synthesizer controlled by a step sequencer.</p>
+                  <p>Supports <a href="https://developer.mozilla.org/en-US/docs/Introducing_the_Audio_API_Extension"> Mozilla Audio API</a> and <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html"> Web Audio API</a></p>
+                    <p><a href="http://bitterspring.net/ms/morningstar/" class="btn btn-inverse">Launch Morning Star</a>
+                       <a href="https://github.com/janesconference/MorningStar" class="btn">See Source Code</a></p>
+                </div>
+              </div>
+            </li>
+            <li class="span4">
+              <div class="thumbnail">
+                <img src="img/voron_screenshot.png" alt="Voron">
+                <div class="caption">
+                  <h3>Voron</h3>
+                  <p>Voron is a real-time pitchshifter and low-pass filter effect</p>
+                  <p>Supports <a href="https://developer.mozilla.org/en-US/docs/Introducing_the_Audio_API_Extension"> Mozilla Audio API</a></p>
+                  <p><a href="https://developer.mozilla.org/en-US/demos/detail/voron" class="btn btn-inverse">Launch Voron</a>
+                     <a href="https://github.com/janesconference/Voron" class="btn">See Source Code</a></p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div> -->
+
+        <hr class='style-one'/>
       
       <footer>
-        <p>&copy; KievII.net / Bitterspring.net 2013</p>
+        <p>&copy; KievII.net 2014</p>
       </footer>
 
     </div> <!-- /container -->
